@@ -14,9 +14,14 @@ endif
 
 CXXFLAGS=
 
-all: opengl
+#
+# Project name
+#
+BINARY=engine
 
-opengl: main.o
+all: $(BINARY)
+
+$(BINARY): main.o
 	g++ -o $@ $? $(LDFLAGS)
 
 %.o: %.cpp
@@ -25,3 +30,4 @@ opengl: main.o
 
 clean:
 	rm *.o
+	rm $(BINARY)
