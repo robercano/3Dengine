@@ -12,6 +12,15 @@ else
 LDFLAGS= -lGL -lGLUT
 endif
 
+#
+# Files to be compiled
+#
+FILES= main.cpp shaders.cpp
+OBJECTS=$(patsubst %.cpp,%.o,$(FILES))
+
+#
+# Compilation flags
+#
 CXXFLAGS=
 
 #
@@ -21,7 +30,7 @@ BINARY=engine
 
 all: $(BINARY)
 
-$(BINARY): main.o
+$(BINARY): $(OBJECTS)
 	g++ -o $@ $? $(LDFLAGS)
 
 %.o: %.cpp
