@@ -19,12 +19,17 @@ GLUTWindowManager::GLUTWindowManager() : _width(0), _height(0), _renderer(NULL)
 
 bool GLUTWindowManager::init()
 {
-	glutInit(NULL, NULL);
+	char *argv;
+	int argc = 0;
+	glutInit(&argc, &argv);
 	return true;
 }
 
 bool GLUTWindowManager::createWindow(std::string &name, uint16_t width, uint16_t height)
 {
+	_width  = width;
+	_height = height;
+
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
 	glutInitWindowSize(_width, _height);
 	glutCreateWindow(name.c_str());
@@ -38,6 +43,11 @@ bool GLUTWindowManager::setRenderer(Renderer *renderer)
 
 	_renderer = renderer;
 	return true;
+}
+
+void GLUTWindowManager::loop(void)
+{
+	glutMainLoop();
 }
 
 void GLUTWindowManager::display_callback(void)

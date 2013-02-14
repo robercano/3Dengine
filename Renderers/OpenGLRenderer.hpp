@@ -14,6 +14,11 @@ class OpenGLRenderer : public Renderer
 {
 	public:
 		/**
+		 * Initializes the renderer
+		 */
+		void init(void);
+
+		/**
 		 * Updates the display
 		 */
 		bool render();

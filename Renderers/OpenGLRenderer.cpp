@@ -8,6 +8,14 @@
 #include "OpenGLRenderer.hpp"
 #include <OpenGL/gl.h>
 
+void OpenGLRenderer::init()
+{
+	glClearColor(0.0, 0.0, 0.0, 0.0);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0.0, 1.0, 0.0, 1.0, -1.0, 1.0);
+}
+
 bool OpenGLRenderer::render()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -17,7 +25,6 @@ bool OpenGLRenderer::render()
 	for (; it != _objects.end(); ++it) {
 		(*it)->render();
 	}
-
 }
 
 bool OpenGLRenderer::resize(uint16_t width, uint16_t height)

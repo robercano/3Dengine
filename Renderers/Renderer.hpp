@@ -19,6 +19,11 @@ class Renderer
 		virtual ~Renderer() {}
 
 		/**
+		 * Initializes the renderer
+		 */
+		virtual void init(void) = 0;
+
+		/**
 		 * Updates the display contents
 		 */
 		virtual bool render() = 0;

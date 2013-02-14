@@ -48,6 +48,11 @@ class GLUTWindowManager : public WindowManager
 		 */
 		bool setRenderer(Renderer *renderer);
 
+		/**
+		 * Enters GLUT main loop
+		 */
+		void loop(void);
+
 	private:
 		/**
 		 * Internal callback for GLUT C interface render function

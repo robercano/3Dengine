@@ -15,28 +15,34 @@ endif
 #
 # Files to be compiled
 #
-FILES= main.cpp shaders.cpp
-OBJECTS=$(patsubst %.cpp,%.o,$(FILES))
+VPATH=WindowManagers:Renderers:Object3D
+FILES= main.cpp GLUTWindowManager.cpp OpenGLRenderer.cpp Object3D.cpp WindowManager.cpp
+
+OBJDIR=obj
+OBJECTS=$(patsubst %.cpp,$(OBJDIR)/%.o,$(FILES))
 
 #
 # Compilation flags
 #
-CXXFLAGS=
+CXXFLAGS= -IWindowManagers -IRenderers -IObject3D -g
 
 #
 # Project name
 #
 BINARY=engine
 
-all: $(BINARY)
+all: dirs $(BINARY)
+
+dirs:
+	mkdir -p $(OBJDIR)
 
 $(BINARY): $(OBJECTS)
 	g++ -o $@ $? $(LDFLAGS)
 
-%.o: %.cpp
-	echo $(UNAME)
+$(OBJDIR)/%.o: %.cpp
 	g++ $(CXXFLAGS) -c -o $@ $?
 
 clean:
-	rm *.o
+	rm $(OBJDIR)/*.o
+	rmdir $(OBJDIR)
 	rm $(BINARY)
