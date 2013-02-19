@@ -4,8 +4,8 @@
  * @author	Roberto Sosa Cano
  */
 
-#include "WindowManagers/WindowManager.hpp"
-#include "Renderers/OpenGLRenderer.hpp"
+#include "WindowManager.hpp"
+#include "OpenGLRenderer.hpp"
 
 int main(int argc, char** argv)
 {
