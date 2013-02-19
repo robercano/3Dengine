@@ -7,7 +7,7 @@
  */
 
 #include "GLUTWindowManager.hpp"
-#include <GLUT/glut.h>
+#include <GL/freeglut.h>
 
 /* Internal reference to the object for the C like callbacks */
 static GLUTWindowManager *_thiz = NULL;
@@ -22,6 +22,13 @@ bool GLUTWindowManager::init()
 	char *argv;
 	int argc = 0;
 	glutInit(&argc, &argv);
+	glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
+
+	/* Ensure OpenGL 3.0 compatibility */
+	//glutInitContextVersion(3, 0);
+	//glutInitContextFlags(GLUT_FORWARD_COMPATIBLE);
+	//glutInitContextProfile(GLUT_CORE_PROFILE);
+
 	return true;
 }
 
@@ -30,9 +37,9 @@ bool GLUTWindowManager::createWindow(std::string &name, uint16_t width, uint16_t
 	_width  = width;
 	_height = height;
 
-	glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
 	glutInitWindowSize(_width, _height);
 	glutCreateWindow(name.c_str());
+	glutSetWindowTitle((const char *)glGetString(GL_VERSION));
 	return true;
 }
 

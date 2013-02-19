@@ -11,9 +11,16 @@ class Object3D
 {
 	public:
 		/**
-		 * WRONG FUNCTION just to test
+		 * Destructor
 		 */
-		bool render();
+		virtual ~Object3D() {}
+
+		/**
+		 * Renders the object by using graphic API commands
+		 *
+		 * @returns	true if the object was rendered or false otherwise
+		 */
+		virtual bool render() = 0;
 };
 
 #endif

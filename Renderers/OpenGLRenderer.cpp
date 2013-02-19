@@ -25,6 +25,8 @@ bool OpenGLRenderer::render()
 	for (; it != _objects.end(); ++it) {
 		(*it)->render();
 	}
+
+	glFlush();
 }
 
 bool OpenGLRenderer::resize(uint16_t width, uint16_t height)

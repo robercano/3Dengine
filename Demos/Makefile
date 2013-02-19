@@ -3,28 +3,21 @@
 # Copyright 2013
 #
 
-UNAME=$(shell uname)
-
-# Mac OS alternate cmdline link options
-ifeq ($(UNAME), Darwin)
-LDFLAGS= -framework Carbon -framework OpenGL -framework GLUT
-else
-LDFLAGS= -lGL -lGLUT
-endif
-
-#
-# Files to be compiled
-#
-LDFLAGS+= -L../lib -lengine
-
-#
-# Compilation flags
-#
+LDFLAGS+= -L/opt/X11/lib -lGL -L../lib -lengine
 CXXFLAGS= -I../WindowManagers -I../Renderers -I../Object3D -g
 
-all: square
+all: square polylines geodetails polydetails
 
 square: square.o
+	@g++ -o $@ $? $(LDFLAGS)
+
+polylines: polylines.o
+	@g++ -o $@ $? $(LDFLAGS)
+
+geodetails: geodetails.o
+	@g++ -o $@ $? $(LDFLAGS)
+
+polydetails: polydetails.o
 	@g++ -o $@ $? $(LDFLAGS)
 
 %.o: %.cpp
@@ -32,4 +25,4 @@ square: square.o
 
 clean:
 	@rm -f *.o
-	@rm -f square
+	@rm -f square polylines geodetails polydetails

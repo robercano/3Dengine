@@ -15,7 +15,7 @@ CC=gcc
 
 # Mac OS alternate cmdline link options
 ifeq ($(UNAME), Darwin)
-LDFLAGS= -framework Carbon -framework OpenGL -framework GLUT
+LDFLAGS= -L/opt/X11/lib -lglut
 SHAREDGEN= -dynamiclib -Wl,-headerpad_max_install_names,-undefined,dynamic_lookup,-compatibility_version,1.0,-current_version,1.0,-install_name,
 SHAREDEXT=dylib
 PREFIX=/usr/local/lib
@@ -43,7 +43,7 @@ DEMODIR=Demos
 #
 # Compilation flags
 #
-CXXFLAGS= -fpic -IWindowManagers -IRenderers -IObject3D -g
+CXXFLAGS= -fpic -IWindowManagers -IRenderers -IObject3D -I/opt/X11/include -g
 
 #
 # Main rules
@@ -59,7 +59,7 @@ install: all
 
 demos: all
 	@echo "- Compiling project demos...\c"
-	@make -C $(DEMODIR)
+	@make -C $(DEMODIR) 1>/dev/null
 	@echo "done"
 
 dirs:

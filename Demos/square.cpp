@@ -1,11 +1,29 @@
 /**
- * Engine main
+ * Plain simple square test
  *
  * @author	Roberto Sosa Cano
  */
 
+#include <OpenGL/gl.h>
 #include "WindowManager.hpp"
 #include "OpenGLRenderer.hpp"
+
+class Square : public Object3D
+{
+public:
+	~Square() {}
+
+	bool render()
+	{
+		glColor3f(1.0, 0.0, 0.0);
+		glBegin(GL_POLYGON);
+			glVertex3f(0.25, 0.25, 0.0);
+			glVertex3f(0.75, 0.25, 0.0);
+			glVertex3f(0.75, 0.75, 0.0);
+			glVertex3f(0.25, 0.75, 0.0);
+		glEnd();
+	}
+};
 
 int main(int argc, char** argv)
 {
@@ -32,8 +50,8 @@ int main(int argc, char** argv)
 	renderer->init();	// only after creating the window
 	wmanager->setRenderer(renderer);
 
-	Object3D object;
-	renderer->addObject(&object);
+	Square square;
+	renderer->addObject(&square);
 
 	wmanager->loop();
 
