@@ -118,7 +118,7 @@ public:
 
 int main(int argc, char** argv)
 {
-	WindowManager *wmanager = WindowManager::NewWindowManager(WindowManager::WINDOW_MANAGER_GLUT);
+	WindowManager *wmanager = WindowManager::GetWindowManager(WindowManager::WINDOW_MANAGER_GLUT);
 	if (!wmanager) {
 		fprintf(stderr, "ERROR creating new window manager\n");
 		exit(1);
@@ -127,7 +127,7 @@ int main(int argc, char** argv)
 	Renderer *renderer = new OpenGLRenderer();
 	if (!renderer) {
 		fprintf(stderr, "ERROR allocating renderer\n");
-		WindowManager::DeleteWindowManager(wmanager);
+		WindowManager::DisposeWindowManager(wmanager);
 		exit(1);
 	}
 

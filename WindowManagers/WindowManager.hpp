@@ -18,7 +18,8 @@ class WindowManager
 		 * Supported window managers
 		 */
 		enum WindowManagerType {
-			WINDOW_MANAGER_GLUT
+			WINDOW_MANAGER_GLUT,
+			WINDOW_MANAGER_GLFW
 		};
 
 		/**
@@ -28,14 +29,21 @@ class WindowManager
 		 *
 		 * @return Pointer to a the requested window manager or NULL
 		 */
-		static WindowManager *NewWindowManager(WindowManagerType type);
+		static WindowManager *GetWindowManager(WindowManagerType type);
 
 		/**
 		 * Window Manager disposal
 		 *
 		 * @param	wmanager	Window manager to be disposed
 		 */
-		static void DeleteWindowManager(WindowManager *wmanager);
+		static void DisposeWindowManager(WindowManager *wmanager);
+
+		/**
+		 * Gets the current manager
+		 *
+		 * @return The current manager or NULL if no manager is available
+		 */
+		static WindowManager *GetCurrentManager();
 
 		/**
 		 * Initializes the window manager
@@ -58,6 +66,16 @@ class WindowManager
 		virtual bool createWindow(std::string &name, uint16_t width, uint16_t height) = 0;
 
 		/**
+		 * Called when the window must be resized
+		 *
+		 * @param	width	Width of the window
+		 * @param	height	Height of the window
+		 *
+		 * @return  true or false
+		 */
+		virtual bool resize(uint16_t width, uint16_t height) = 0;
+
+		/**
 		 * Sets a new renderer to handle display requests
 		 *
 		 * @param	renderer	Renderer that will handle display/reshape requests
@@ -70,6 +88,12 @@ class WindowManager
 		 * Enters window manager main loop
 		 */
 		virtual void loop(void) = 0;
+
+	private:
+		/**
+		 * Current window manager
+		 */
+		static WindowManager *_windowManager;
 };
 
 #endif

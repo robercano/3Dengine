@@ -7,26 +7,44 @@
 
 #include "WindowManager.hpp"
 #include "GLUTWindowManager.hpp"
+#include "GLFWWindowManager.hpp"
 
-WindowManager *WindowManager::NewWindowManager(WindowManagerType type)
+WindowManager *WindowManager::_windowManager = NULL;
+
+WindowManager *WindowManager::GetWindowManager(WindowManagerType type)
 {
-	GLUTWindowManager *glutWindowManager = NULL;
-
+	// TODO: Check here that the type of the already instantiated manager
+	//  is the same as the requested one
 	switch (type)
 	{
 		case WINDOW_MANAGER_GLUT:
 			/* Take care of creating only one of this, as it is using
 			 * static callbacks */
-			if (glutWindowManager == NULL) {
-				glutWindowManager = new GLUTWindowManager();
+			if (_windowManager == NULL) {
+				_windowManager = new GLUTWindowManager();
 			}
-			return glutWindowManager;
+			return _windowManager;
+		case WINDOW_MANAGER_GLFW:
+			/* Take care of creating only one of this, as it is using
+			 * static callbacks */
+			if (_windowManager == NULL) {
+				_windowManager = new GLFWWindowManager();
+			}
+			return _windowManager;
 		default:
 			return NULL;
 	}
 }
 
-void WindowManager::DeleteWindowManager(WindowManager *wmanager)
+void WindowManager::DisposeWindowManager(WindowManager *wmanager)
 {
-	delete wmanager;
+	if (wmanager == _windowManager) {
+		delete _windowManager;
+		_windowManager = NULL;
+	}
+}
+
+WindowManager *WindowManager::GetCurrentManager()
+{
+	return _windowManager;
 }

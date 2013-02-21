@@ -72,10 +72,14 @@ void GLUTWindowManager::display(void)
 
 void GLUTWindowManager::resize_callback(int width, int height)
 {
-	_thiz->resize((uint16_t)width, (uint16_t)height);
+	WindowManager *windowManager = WindowManager::GetCurrentManager();
+
+	if (windowManager) {
+		windowManager->resize((uint16_t)width, (uint16_t)height);
+	}
 }
 
-void GLUTWindowManager::resize(uint16_t width, uint16_t height)
+bool GLUTWindowManager::resize(uint16_t width, uint16_t height)
 {
 	if (_renderer) {
 		_renderer->resize(width, height);

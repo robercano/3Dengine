@@ -1,23 +1,24 @@
 /**
- * @class	GLUTWindowManager
- * @brief	GLUT based window manager
+ * @class	GLFWWindowManager
+ * @brief	GLFW based window manager
  *
  * @author	Roberto Sosa Cano
  * @todo	Standarize the interface to make a generic Window Manager
  */
-#ifndef __GLUTWINDOWMANAGER_HPP__
-#define __GLUTWINDOWMANAGER_HPP__
+#ifndef __GLFWWINDOWMANAGER_HPP__
+#define __GLFWWINDOWMANAGER_HPP__
 
 #include <stdint.h>
+#include <GL/glfw.h>
 #include "WindowManager.hpp"
 
-class GLUTWindowManager : public WindowManager
+class GLFWWindowManager : public WindowManager
 {
 	public:
 		/**
 		 * @brief Constructor of the class
 		 */
-		GLUTWindowManager(void);
+		GLFWWindowManager(void);
 
 		/**
 		 * @brief	Initializes the window manager
@@ -41,6 +42,11 @@ class GLUTWindowManager : public WindowManager
 
 		/**
 		 * Called when the window is resized
+		 *
+		 * @param	width	Width of the window
+		 * @param	height	Height of the window
+		 *
+		 * @return true or false
 		 */
 		bool resize(uint16_t width, uint16_t height);
 
@@ -54,25 +60,15 @@ class GLUTWindowManager : public WindowManager
 		bool setRenderer(Renderer *renderer);
 
 		/**
-		 * Enters GLUT main loop
+		 * Enters main loop
 		 */
 		void loop(void);
 
 	private:
 		/**
-		 * Internal callback for GLUT C interface render function
+		 * Static callback for resize of the window
 		 */
-		static void display_callback(void);
-
-		/**
-		 * Calls the registered render to display the scene
-		 */
-		void display(void);
-
-		/**
-		 * Internal callback for GLUT C interface resize function
-		 */
-		static void resize_callback(int width, int height);
+		static void GLFWCALL handle_resize(int width,int height);
 
 		/**
 		 * Width of the created window
@@ -88,6 +84,7 @@ class GLUTWindowManager : public WindowManager
 		 * Renderer associated to this manager
 		 */
 		Renderer *_renderer;
+
 };
 
 #endif

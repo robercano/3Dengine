@@ -3,7 +3,7 @@
 # Copyright 2013
 #
 
-LDFLAGS+= -L/opt/X11/lib -lGL -L../lib -lengine
+LDFLAGS+= -L../lib -lengine -framework OpenGL
 CXXFLAGS= -I../WindowManagers -I../Renderers -I../Object3D -g
 
 all: square polylines geodetails polydetails
