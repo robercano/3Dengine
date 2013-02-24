@@ -16,8 +16,8 @@ class Square : public Object3D
 public:
 	~Square() {}
 
-	bool init() {}
-	bool destroy() {}
+	bool init() { return true; }
+	bool destroy() { return true; }
 	bool render()
 	{
 		int angle;

@@ -2,30 +2,22 @@
 # Roberto Sosa Cano
 # Copyright 2013
 #
-
 LDFLAGS+= -L../lib -lengine -lglew -lglfw -framework OpenGL
 CXXFLAGS= -I../WindowManagers -I../Renderers -I../Object3D -g
 
-all: square polylines geodetails polydetails opengl32
+FILES=$(shell \ls *.cpp)
+TARGETS=$(FILES:%.cpp=%.out)
+BINARIES=$(FILES:%.cpp=%)
 
-square: square.o
-	@g++ -o $@ $? $(LDFLAGS)
+all: $(TARGETS)
+	@for target in *.out; do mv $$target $${target%.*}; done
 
-polylines: polylines.o
-	@g++ -o $@ $? $(LDFLAGS)
-
-geodetails: geodetails.o
-	@g++ -o $@ $? $(LDFLAGS)
-
-opengl32: opengl32.o
-	@g++ -o $@ $? $(LDFLAGS)
-
-polydetails: polydetails.o
-	@g++ -o $@ $? $(LDFLAGS)
+%.out: %.o
+	@g++ $(LDFLAGS) -o $@ $?
 
 %.o: %.cpp
-	@g++ $(CXXFLAGS) -c -o $@ $?
+	@g++ $(CXXFLAGS) -o $@ -c $?
 
 clean:
 	@rm -f *.o
-	@rm -f square polylines geodetails polydetails opengl32
+	@rm -f $(BINARIES)

@@ -7,7 +7,6 @@
 PROJECT=engine
 
 ### System config
-
 UNAME=$(shell uname)
 
 CXX=g++
@@ -50,14 +49,16 @@ CXXFLAGS= -fpic -IWindowManagers -IRenderers -IObject3D -I/opt/X11/include -g
 #
 .PHONY: demos
 
-all: dirs $(LIBDIR)/$(LIBNAME)
+all: engine 
 
-install: all
+engine: dirs $(LIBDIR)/$(LIBNAME)
+
+install: engine
 	@echo "- Installing $(LIBNAME) into $(HOME)/$(LIBDIR)...\c"
 	@cp $(LIBDIR)/$(LIBNAME) $(HOME)/$(LIBDIR)/
 	@echo "done"
 
-demos: all
+demos: engine install
 	@echo "- Compiling project demos...\c"
 	@make -C $(DEMODIR) 1>/dev/null
 	@echo "done"
