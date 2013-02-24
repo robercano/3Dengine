@@ -3,21 +3,17 @@
 # Copyright 2013
 #
 LDFLAGS+= -L../lib -lengine -lglew -lglfw -framework OpenGL
-CXXFLAGS= -I../WindowManagers -I../Renderers -I../Object3D -g
+CXXFLAGS= -I../WindowManagers -I../Renderers -I../Object3D -I../Libraries -g
 
 FILES=$(shell \ls *.cpp)
-TARGETS=$(FILES:%.cpp=%.out)
-BINARIES=$(FILES:%.cpp=%)
+TARGETS=$(FILES:.cpp=)
 
 all: $(TARGETS)
-	@for target in *.out; do mv $$target $${target%.*}; done
+	@rm -rf *.dSYM
 
-%.out: %.o
-	@g++ $(LDFLAGS) -o $@ $?
-
-%.o: %.cpp
-	@g++ $(CXXFLAGS) -o $@ -c $?
+%: %.cpp
+	@g++ $(CXXFLAGS) $(LDFLAGS) -o $@ $?
 
 clean:
 	@rm -f *.o
-	@rm -f $(BINARIES)
+	@rm -f $(TARGETS)

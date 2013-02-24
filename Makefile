@@ -29,7 +29,7 @@ endif
 # Files to be compiled
 #
 VPATH=WindowManagers:Renderers:Object3D
-FILES=GLUTWindowManager.cpp OpenGLRenderer.cpp WindowManager.cpp GLFWWindowManager.cpp
+FILES=GLUTWindowManager.cpp OpenGLRenderer.cpp WindowManager.cpp GLFWWindowManager.cpp ColorCube.cpp
 
 OBJDIR=obj
 OBJECTS=$(patsubst %.cpp,$(OBJDIR)/%.o,$(FILES))
@@ -42,7 +42,7 @@ DEMODIR=Demos
 #
 # Compilation flags
 #
-CXXFLAGS= -fpic -IWindowManagers -IRenderers -IObject3D -I/opt/X11/include -g
+CXXFLAGS= -fpic -IWindowManagers -IRenderers -IObject3D -I/opt/X11/include -I ./Libraries -g
 
 #
 # Main rules

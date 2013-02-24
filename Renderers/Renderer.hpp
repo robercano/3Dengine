@@ -8,6 +8,7 @@
 #ifndef __RENDERER_HPP__
 #define __RENDERER_HPP__
 
+#include <string>
 #include "Object3D.hpp"
 
 class Renderer

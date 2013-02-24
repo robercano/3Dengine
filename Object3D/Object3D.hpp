@@ -4,8 +4,8 @@
  *
  * @author	Roberto Sosa Cano
  */
-#ifndef __OBJECT3D_HPP
-#define __OBJECT3D_HPP
+#ifndef __OBJECT3D_HPP__
+#define __OBJECT3D_HPP__
 
 class Object3D
 {
