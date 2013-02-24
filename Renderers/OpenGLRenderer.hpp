@@ -13,6 +13,12 @@
 class OpenGLRenderer : public Renderer
 {
 	public:
+
+		/**
+		 * Destructor
+		 */
+		~OpenGLRenderer();
+
 		/**
 		 * Initializes the renderer
 		 */

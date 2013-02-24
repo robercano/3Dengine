@@ -7,8 +7,6 @@
  */
 
 #include "GLFWWindowManager.hpp"
-//#define GLFW_INCLUDE_GL3
-#include <GL/glfw.h>
 
 GLFWWindowManager::GLFWWindowManager() : _width(0), _height(0), _renderer(NULL)
 {
@@ -25,12 +23,21 @@ bool GLFWWindowManager::createWindow(std::string &name, uint16_t width, uint16_t
 	_width  = width;
 	_height = height;
 
+	/* Request OpenGL 3.2 */
+	glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 4);
 	glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, 3);
 	glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, 2);
-	glfwOpenWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwOpenWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	glfwOpenWindow(_width, _height, 1, 0, 0, 0, 0, 0, GLFW_WINDOW);
+	glfwOpenWindow(_width, _height, 0, 0, 0, 0, 0, 0, GLFW_WINDOW);
+
+	/* Initialize GLEW */
+	glewExperimental = true; // Needed for core profile
+	if (glewInit() != GLEW_OK) {
+		fprintf(stderr, "Failed to initialize GLEW\n");
+		return false;
+	}
+
 	glfwSetWindowTitle(name.c_str());
     glfwSetWindowSizeCallback(handle_resize);
 	return true;

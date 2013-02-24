@@ -15,7 +15,7 @@ CC=gcc
 
 # Mac OS alternate cmdline link options
 ifeq ($(UNAME), Darwin)
-LDFLAGS= -L/opt/X11/lib -lglut -lglfw -framework Cocoa -framework OpenGL -framework IOKit
+LDFLAGS= -L/opt/X11/lib -lglut -lglew -lglfw -framework Cocoa -framework OpenGL -framework IOKit
 SHAREDGEN= -dynamiclib -Wl,-headerpad_max_install_names,-undefined,dynamic_lookup,-compatibility_version,1.0,-current_version,1.0,-install_name,
 SHAREDEXT=dylib
 PREFIX=/usr/local/lib
@@ -30,7 +30,7 @@ endif
 # Files to be compiled
 #
 VPATH=WindowManagers:Renderers:Object3D
-FILES=GLUTWindowManager.cpp OpenGLRenderer.cpp Object3D.cpp WindowManager.cpp GLFWWindowManager.cpp
+FILES=GLUTWindowManager.cpp OpenGLRenderer.cpp WindowManager.cpp GLFWWindowManager.cpp
 
 OBJDIR=obj
 OBJECTS=$(patsubst %.cpp,$(OBJDIR)/%.o,$(FILES))

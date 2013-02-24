@@ -13,6 +13,8 @@ class Square : public Object3D
 public:
 	~Square() {}
 
+	bool init() {}
+	bool destroy() {}
 	bool render()
 	{
 		glColor3f(1.0, 0.0, 0.0);

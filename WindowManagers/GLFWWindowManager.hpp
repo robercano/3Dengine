@@ -9,6 +9,8 @@
 #define __GLFWWINDOWMANAGER_HPP__
 
 #include <stdint.h>
+#include <GL/glew.h>
+//#define GLFW_INCLUDE_GL3
 #include <GL/glfw.h>
 #include "WindowManager.hpp"
 
