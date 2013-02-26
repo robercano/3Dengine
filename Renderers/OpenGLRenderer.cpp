@@ -33,7 +33,7 @@ uint32_t OpenGLRenderer::loadShaders(std::string &vertexShader, std::string &fra
 	if ( InfoLogLength > 0 ){
 		std::vector<char> VertexShaderErrorMessage(InfoLogLength+1);
 		glGetShaderInfoLog(VertexShaderID, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
-		printf("%s\n", &VertexShaderErrorMessage[0]);
+		printf("Vertex Shader: %s\n", &VertexShaderErrorMessage[0]);
 	}
 
 	char const * FragmentSourcePointer = fragmentShader.c_str();
@@ -46,7 +46,7 @@ uint32_t OpenGLRenderer::loadShaders(std::string &vertexShader, std::string &fra
 	if ( InfoLogLength > 0 ){
 		std::vector<char> FragmentShaderErrorMessage(InfoLogLength+1);
 		glGetShaderInfoLog(FragmentShaderID, InfoLogLength, NULL, &FragmentShaderErrorMessage[0]);
-		printf("%s\n", &FragmentShaderErrorMessage[0]);
+		printf("Fragment Shader: %s\n", &FragmentShaderErrorMessage[0]);
 	}
 
 	GLuint ProgramID = glCreateProgram();
@@ -58,7 +58,7 @@ uint32_t OpenGLRenderer::loadShaders(std::string &vertexShader, std::string &fra
 	if ( InfoLogLength > 0 ){
 		std::vector<char> ProgramErrorMessage(InfoLogLength+1);
 		glGetProgramInfoLog(ProgramID, InfoLogLength, NULL, &ProgramErrorMessage[0]);
-		printf("%s\n", &ProgramErrorMessage[0]);
+		printf("Program Shader: %s\n", &ProgramErrorMessage[0]);
 	}
 
 	glDeleteShader(VertexShaderID);

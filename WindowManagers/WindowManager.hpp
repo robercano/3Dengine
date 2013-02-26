@@ -25,7 +25,7 @@ class WindowManager
 		/**
 		 * Window Manager factory
 		 *
-		 * @param	type	Type of window manager to be created
+		 * @param	type		Type of window manager to be created
 		 *
 		 * @return Pointer to a the requested window manager or NULL
 		 */
