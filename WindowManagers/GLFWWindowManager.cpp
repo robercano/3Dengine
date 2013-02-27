@@ -12,6 +12,11 @@ GLFWWindowManager::GLFWWindowManager() : _width(0), _height(0), _renderer(NULL)
 {
 }
 
+KeyManager *GLFWWindowManager::getKeyManager()
+{
+	return GLFWKeyManager::GetKeyManager();
+}
+
 bool GLFWWindowManager::init()
 {
 	glfwInit();

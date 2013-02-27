@@ -9,6 +9,7 @@
 
 #include <string>
 #include <stdint.h>
+#include "KeyManager.hpp"
 #include "Renderer.hpp"
 
 class WindowManager
@@ -44,6 +45,13 @@ class WindowManager
 		 * @return The current manager or NULL if no manager is available
 		 */
 		static WindowManager *GetCurrentManager();
+
+		/**
+		 * Gets the associated key manager
+		 *
+		 * @return The key manager or NULL if no manager is available
+		 */
+		virtual KeyManager *getKeyManager() = 0;
 
 		/**
 		 * Initializes the window manager

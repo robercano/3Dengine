@@ -20,6 +20,13 @@ class GLUTWindowManager : public WindowManager
 		GLUTWindowManager(void);
 
 		/**
+		 * Gets the associated key manager
+		 *
+		 * @return The key manager or NULL if no manager is available
+		 */
+		KeyManager *getKeyManager();
+
+		/**
 		 * @brief	Initializes the window manager
 		 * @details	Prepares the window manager to be used. After calling
 		 *          this method the rest of the methods can be called

@@ -29,7 +29,7 @@ endif
 # Files to be compiled
 #
 VPATH=WindowManagers:Renderers:Object3D
-FILES=GLUTWindowManager.cpp OpenGLRenderer.cpp WindowManager.cpp GLFWWindowManager.cpp ColorCube.cpp
+FILES=GLUTWindowManager.cpp OpenGLRenderer.cpp WindowManager.cpp GLFWWindowManager.cpp GLFWKeyManager.cpp ColorCube.cpp
 
 OBJDIR=obj
 OBJECTS=$(patsubst %.cpp,$(OBJDIR)/%.o,$(FILES))

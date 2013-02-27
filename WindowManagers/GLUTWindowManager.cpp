@@ -17,6 +17,11 @@ GLUTWindowManager::GLUTWindowManager() : _width(0), _height(0), _renderer(NULL)
 	_thiz = this;
 }
 
+KeyManager *GLUTWindowManager::getKeyManager()
+{
+	return NULL;
+}
+
 bool GLUTWindowManager::init()
 {
 	char *argv;

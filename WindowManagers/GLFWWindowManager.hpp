@@ -10,9 +10,9 @@
 
 #include <stdint.h>
 #include <GL/glew.h>
-//#define GLFW_INCLUDE_GL3
 #include <GL/glfw.h>
 #include "WindowManager.hpp"
+#include "GLFWKeyManager.hpp"
 
 class GLFWWindowManager : public WindowManager
 {
@@ -21,6 +21,13 @@ class GLFWWindowManager : public WindowManager
 		 * @brief Constructor of the class
 		 */
 		GLFWWindowManager(void);
+
+		/**
+		 * Gets the associated key manager
+		 *
+		 * @return The key manager or NULL if no manager is available
+		 */
+		KeyManager *getKeyManager();
 
 		/**
 		 * @brief	Initializes the window manager
