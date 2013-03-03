@@ -12,24 +12,43 @@
 #include "ObjectLib.hpp"
 #include "OpenGLRenderer.hpp"
 
+WindowManager *wmanager = NULL;
 double angle = 0.0;
 double far = 8.0;
 
-class MyListener : public KeyManagerListener
+class MyKeyListener : public KeyListener
 {
 	public:
 		void processKey(uint32_t key, uint32_t flags)
 		{
-			if (key == 285) {
-				angle -= 3.0;
-			} else if(key == 286){
-				angle += 3.0;
-			} else if (key == 283) {
-				far *= 0.95;
-			} else {
-				far *= 1.05;
+			switch (key) {
+				case GLFW_KEY_LEFT:
+					angle -= 3.0;
+					break;
+				case GLFW_KEY_RIGHT:
+					angle += 3.0;
+					break;
+				case GLFW_KEY_UP:
+					far *= 0.95;
+					break;
+				case GLFW_KEY_DOWN:
+					far *= 1.05;
+					break;
+				case GLFW_KEY_ESC:
+					wmanager->stop();
+					break;
+				default:
+					break;
 			}
+		}
+};
 
+class MyMouseListener : public MouseListener
+{
+	public:
+		void processMouse(int32_t x, int32_t y)
+		{
+			printf("-------- (%d, %d)\n", x, y);
 		}
 };
 
@@ -203,7 +222,7 @@ class Simple : public Object3D
 
 int main(int argc, char** argv)
 {
-	WindowManager *wmanager = WindowManager::GetWindowManager(WindowManager::WINDOW_MANAGER_GLFW);
+	wmanager = WindowManager::GetWindowManager(WindowManager::WINDOW_MANAGER_GLFW);
 	if (!wmanager) {
 		fprintf(stderr, "ERROR creating new window manager\n");
 		exit(1);
@@ -221,24 +240,33 @@ int main(int argc, char** argv)
 
 	/* Set the window size */
 	std::string windowName("OpenGL Test");
-	wmanager->createWindow(windowName, 1024, 768);
+	wmanager->createWindow(windowName, 1440, 900);
 
 	renderer->init();	// only after creating the window
 	wmanager->setRenderer(renderer);
 
-	MyListener keyhandler;
+	MyKeyListener keyhandler;
 	std::vector<uint32_t> keys;
 
-	keys.push_back(285);
-	keys.push_back(286);
-	keys.push_back(283);
-	keys.push_back(284);
+	keys.push_back(GLFW_KEY_UP);
+	keys.push_back(GLFW_KEY_DOWN);
+	keys.push_back(GLFW_KEY_LEFT);
+	keys.push_back(GLFW_KEY_RIGHT);
+	keys.push_back(GLFW_KEY_ESC);
 
 	wmanager->getKeyManager()->registerListener(keyhandler, keys);
+
+	MyMouseListener mousehandler;
+	//wmanager->getMouseManager()->registerListener(mousehandler);
+	wmanager->getMouseManager();
 
 	Simple simple;
 	renderer->addObject(&simple);
 
 	wmanager->loop();
+
+	WindowManager::DisposeWindowManager(wmanager);
+	delete renderer;
+
 	return 0;
 }

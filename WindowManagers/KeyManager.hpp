@@ -1,6 +1,6 @@
 /**
  * @class	KeyManager
- * @brief	Interface for key manager management
+ * @brief	Interface for key management
  *
  * @author	Roberto Sosa Cano
  */
@@ -14,7 +14,7 @@
 /**
  * Interface to be implemented by listeners of the key manager
  */
-class KeyManagerListener
+class KeyListener
 {
 	public:
 		/**
@@ -37,7 +37,7 @@ class KeyManager
 		 *
 		 * @return true if the listener was correctly registered, false otherwise
 		 */
-		virtual bool registerListener(KeyManagerListener &listener, std::vector<uint32_t> &keys) = 0;
+		virtual bool registerListener(KeyListener &listener, std::vector<uint32_t> &keys) = 0;
 };
 
 #endif

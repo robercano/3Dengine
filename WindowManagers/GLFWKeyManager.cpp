@@ -23,7 +23,7 @@ GLFWKeyManager::GLFWKeyManager(void)
 	glfwEnable(GLFW_KEY_REPEAT);
 }
 
-bool GLFWKeyManager::registerListener(KeyManagerListener &listener, std::vector<uint32_t> &keys)
+bool GLFWKeyManager::registerListener(KeyListener &listener, std::vector<uint32_t> &keys)
 {
 	std::vector<uint32_t>::iterator it;
 	for (it = keys.begin(); it != keys.end(); ++it) {
@@ -33,11 +33,11 @@ bool GLFWKeyManager::registerListener(KeyManagerListener &listener, std::vector<
 
 void GLFWKeyManager::processKey(uint32_t key, uint32_t flags)
 {
-	std::map<uint32_t, std::vector<KeyManagerListener*> >::iterator it = _listeners.find(key);
+	std::map<uint32_t, std::vector<KeyListener*> >::iterator it = _listeners.find(key);
 	if (it == _listeners.end()) {
 		return;
 	}
-	std::vector<KeyManagerListener *>::iterator listener;
+	std::vector<KeyListener *>::iterator listener;
 	for (listener = it->second.begin(); listener != it->second.end(); ++listener) {
 		(*listener)->processKey(key, flags);
 	}

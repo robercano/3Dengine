@@ -33,7 +33,7 @@ class GLFWKeyManager: public KeyManager
 		 *
 		 * @return true if the listener was correctly registered, false otherwise
 		 */
-		bool registerListener(KeyManagerListener &listener, std::vector<uint32_t> &keys);
+		bool registerListener(KeyListener &listener, std::vector<uint32_t> &keys);
 
 	private:
 		/**
@@ -60,7 +60,7 @@ class GLFWKeyManager: public KeyManager
 		/**
 		 * Map for key listeners
 		 */
-		std::map<uint32_t, std::vector<KeyManagerListener *> > _listeners;
+		std::map<uint32_t, std::vector<KeyListener *> > _listeners;
 };
 
 #endif

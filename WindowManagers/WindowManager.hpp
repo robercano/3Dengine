@@ -10,6 +10,7 @@
 #include <string>
 #include <stdint.h>
 #include "KeyManager.hpp"
+#include "MouseManager.hpp"
 #include "Renderer.hpp"
 
 class WindowManager
@@ -54,6 +55,13 @@ class WindowManager
 		virtual KeyManager *getKeyManager() = 0;
 
 		/**
+		 * Gets the associated mouse manager
+		 *
+		 * @return The mouse manager or NULL if no manager is available
+		 */
+		virtual MouseManager *getMouseManager() = 0;
+
+		/**
 		 * Initializes the window manager
 		 * @details	Prepares the window manager to be used. After calling
 		 *          this method the rest of the methods can be called
@@ -65,13 +73,14 @@ class WindowManager
 		/**
 		 * Creates a new window
 		 *
-		 * @param	name	Title of the window
-		 * @param	width	Width of the window
-		 * @param	height	Height of the window
+		 * @param	name		Title of the window
+		 * @param	width		Width of the window
+		 * @param	height		Height of the window
+		 * @param	fullscreen	Set the window to fullscreen
 		 *
 		 * @return  true or false
 		 */
-		virtual bool createWindow(std::string &name, uint16_t width, uint16_t height) = 0;
+		virtual bool createWindow(std::string &name, uint16_t width, uint16_t height, bool fullscreen = false) = 0;
 
 		/**
 		 * Called when the window must be resized
@@ -96,6 +105,11 @@ class WindowManager
 		 * Enters window manager main loop
 		 */
 		virtual void loop(void) = 0;
+
+		/**
+		 * Stops the main loop
+		 */
+		virtual void stop(void) = 0;
 
 	private:
 		/**

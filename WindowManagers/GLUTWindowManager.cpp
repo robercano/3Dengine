@@ -21,6 +21,10 @@ KeyManager *GLUTWindowManager::getKeyManager()
 {
 	return NULL;
 }
+MouseManager *GLUTWindowManager::getMouseManager()
+{
+	return NULL;
+}
 
 bool GLUTWindowManager::init()
 {
@@ -37,7 +41,7 @@ bool GLUTWindowManager::init()
 	return true;
 }
 
-bool GLUTWindowManager::createWindow(std::string &name, uint16_t width, uint16_t height)
+bool GLUTWindowManager::createWindow(std::string &name, uint16_t width, uint16_t height, bool fullscreen)
 {
 	_width  = width;
 	_height = height;
@@ -60,6 +64,10 @@ bool GLUTWindowManager::setRenderer(Renderer *renderer)
 void GLUTWindowManager::loop(void)
 {
 	glutMainLoop();
+}
+
+void GLUTWindowManager::stop(void)
+{
 }
 
 void GLUTWindowManager::display_callback(void)

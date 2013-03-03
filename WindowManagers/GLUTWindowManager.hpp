@@ -27,6 +27,13 @@ class GLUTWindowManager : public WindowManager
 		KeyManager *getKeyManager();
 
 		/**
+		 * Gets the associated mouse manager
+		 *
+		 * @return The mouse manager or NULL if no manager is available
+		 */
+		MouseManager *getMouseManager();
+
+		/**
 		 * @brief	Initializes the window manager
 		 * @details	Prepares the window manager to be used. After calling
 		 *          this method the rest of the methods can be called
@@ -38,13 +45,14 @@ class GLUTWindowManager : public WindowManager
 		/**
 		 * @brief	Creates a new window
 		 *
-		 * @param	name	Title of the window
-		 * @param	width	Width of the window
-		 * @param	height	Height of the window
+		 * @param	name		Title of the window
+		 * @param	width		Width of the window
+		 * @param	height		Height of the window
+		 * @param	fullscreen	Set the window to fullscreen
 		 *
 		 * @return  true or false
 		 */
-		bool createWindow(std::string &name, uint16_t width, uint16_t height);
+		bool createWindow(std::string &name, uint16_t width, uint16_t height, bool fullscreen);
 
 		/**
 		 * Called when the window is resized
@@ -64,6 +72,11 @@ class GLUTWindowManager : public WindowManager
 		 * Enters GLUT main loop
 		 */
 		void loop(void);
+
+		/**
+		 * Stops the main loop
+		 */
+		void stop(void);
 
 	private:
 		/**

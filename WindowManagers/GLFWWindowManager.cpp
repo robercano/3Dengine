@@ -7,14 +7,22 @@
  */
 
 #include "GLFWWindowManager.hpp"
+#include "GLFWKeyManager.hpp"
+#include "GLFWMouseManager.hpp"
 
 GLFWWindowManager::GLFWWindowManager() : _width(0), _height(0), _renderer(NULL)
 {
+	_alive = true;
 }
 
 KeyManager *GLFWWindowManager::getKeyManager()
 {
 	return GLFWKeyManager::GetKeyManager();
+}
+
+MouseManager *GLFWWindowManager::getMouseManager()
+{
+	return GLFWMouseManager::GetMouseManager();
 }
 
 bool GLFWWindowManager::init()
@@ -23,7 +31,7 @@ bool GLFWWindowManager::init()
 	return true;
 }
 
-bool GLFWWindowManager::createWindow(std::string &name, uint16_t width, uint16_t height)
+bool GLFWWindowManager::createWindow(std::string &name, uint16_t width, uint16_t height, bool fullscreen)
 {
 	_width  = width;
 	_height = height;
@@ -34,7 +42,7 @@ bool GLFWWindowManager::createWindow(std::string &name, uint16_t width, uint16_t
 	glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, 2);
 	glfwOpenWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	glfwOpenWindow(_width, _height, 0, 0, 0, 0, 32, 0, GLFW_WINDOW);
+	glfwOpenWindow(_width, _height, 8, 8, 8, 8, 32, 8, fullscreen ? GLFW_FULLSCREEN : GLFW_WINDOW);
 
 	/* Initialize GLEW */
 	glewExperimental = true; // Needed for core profile
@@ -45,6 +53,7 @@ bool GLFWWindowManager::createWindow(std::string &name, uint16_t width, uint16_t
 
 	glfwSetWindowTitle(name.c_str());
     glfwSetWindowSizeCallback(handle_resize);
+	glfwDisable(GLFW_MOUSE_CURSOR);
 	return true;
 }
 
@@ -56,11 +65,16 @@ bool GLFWWindowManager::setRenderer(Renderer *renderer)
 
 void GLFWWindowManager::loop(void)
 {
-	while (true)
+	while (_alive)
 	{
 		_renderer->render();
 		glfwSwapBuffers();
 	}
+}
+
+void GLFWWindowManager::stop(void)
+{
+	_alive = false;
 }
 
 void GLFWCALL GLFWWindowManager::handle_resize(int width,int height)
