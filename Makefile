@@ -14,12 +14,12 @@ CC=gcc
 
 # Mac OS alternate cmdline link options
 ifeq ($(UNAME), Darwin)
-LDFLAGS= -L/opt/X11/lib -lglut -lglew -lglfw -framework Cocoa -framework OpenGL -framework IOKit
+LDFLAGS= -L/opt/X11/lib -lglut -lglew -lglfw -framework Cocoa -framework OpenGL -framework IOKit -fPIC
 SHAREDGEN= -dynamiclib -Wl,-headerpad_max_install_names,-undefined,dynamic_lookup,-compatibility_version,1.0,-current_version,1.0,-install_name,
 SHAREDEXT=dylib
 PREFIX=/usr/local/lib
 else
-LDFLAGS= -lGL -lGLUT
+LDFLAGS= -lGL -lGLUT -fPIC
 SHAREDGEN= -shared -Wl,-dynamiclib,
 SHAREDEXT=so
 PREFIX=/usr/local/lib
@@ -42,7 +42,7 @@ DEMODIR=Demos
 #
 # Compilation flags
 #
-CXXFLAGS= -fpic -IWindowManagers -IRenderers -IObject3D -I/opt/X11/include -I ./Libraries -g
+CXXFLAGS= -fPIC -IWindowManagers -IRenderers -IObject3D -I/opt/X11/include -I ./Libraries -g
 
 #
 # Main rules

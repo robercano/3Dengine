@@ -15,6 +15,14 @@ GLFWWindowManager::GLFWWindowManager() : _width(0), _height(0), _renderer(NULL)
 	_alive = true;
 }
 
+GLFWWindowManager::~GLFWWindowManager()
+{
+	stop();
+	GLFWMouseManager::DisposeMouseManager();
+	GLFWKeyManager::DisposeKeyManager();
+	glfwTerminate();
+}
+
 KeyManager *GLFWWindowManager::getKeyManager()
 {
 	return GLFWKeyManager::GetKeyManager();
@@ -65,10 +73,15 @@ bool GLFWWindowManager::setRenderer(Renderer *renderer)
 
 void GLFWWindowManager::loop(void)
 {
+	double start = glfwGetTime();
+	uint32_t frames = 0;
 	while (_alive)
 	{
 		_renderer->render();
 		glfwSwapBuffers();
+		if ((++frames)%100 == 0) {
+			printf("Framerate %.1f fps\n", frames/(glfwGetTime()-start));
+		}
 	}
 }
 

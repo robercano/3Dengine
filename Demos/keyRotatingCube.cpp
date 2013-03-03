@@ -22,17 +22,17 @@ class MyKeyListener : public KeyListener
 		void processKey(uint32_t key, uint32_t flags)
 		{
 			switch (key) {
-				case GLFW_KEY_LEFT:
-					angle -= 3.0;
+				case 'W':
+					far -= 0.02;
 					break;
-				case GLFW_KEY_RIGHT:
-					angle += 3.0;
+				case 'S':
+					far += 0.02;
 					break;
-				case GLFW_KEY_UP:
-					far *= 0.95;
+				case 'A':
+					angle-=0.5f;
 					break;
-				case GLFW_KEY_DOWN:
-					far *= 1.05;
+				case 'D':
+					angle+=0.5f;
 					break;
 				case GLFW_KEY_ESC:
 					wmanager->stop();
@@ -43,12 +43,14 @@ class MyKeyListener : public KeyListener
 		}
 };
 
+float cameraX = 0.0f, cameraY = 0.0f, cameraSpeed = 2.0f;
 class MyMouseListener : public MouseListener
 {
 	public:
 		void processMouse(int32_t x, int32_t y)
 		{
-			printf("-------- (%d, %d)\n", x, y);
+			cameraX = cameraSpeed*x/1440.f-0.5f;
+			cameraY = cameraSpeed*y/900.f-0.5f;
 		}
 };
 
@@ -93,7 +95,7 @@ class Simple : public Object3D
 			};
 
 			/* Background color */
-			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+			glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 			/* Basic shaders with only position and color attributes, with no camera */
 			std::string vertexShader("#version 330 core\
@@ -183,12 +185,12 @@ class Simple : public Object3D
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			/* Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units */
-			glm::mat4 Projection = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
+			glm::mat4 Projection = glm::perspective(45.0f, 1440.0f / 900.0f, 0.1f, 100.0f);
 
 			/* Camera matrix */
 			glm::mat4 View       =	glm::lookAt(
-					glm::vec3(x,far,z), // Camera is at (4,3,-3), in World Space
-					glm::vec3(0,0,0), // and looks at the origin
+					glm::vec3(x,-.5,z), // Camera is at (4,3,-3), in World Space
+					glm::vec3(cameraX,cameraY,0), // and looks at the origin
 					glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
 					);
 			/* Model matrix : an identity matrix (model will be at the origin) */
@@ -240,7 +242,7 @@ int main(int argc, char** argv)
 
 	/* Set the window size */
 	std::string windowName("OpenGL Test");
-	wmanager->createWindow(windowName, 1440, 900);
+	wmanager->createWindow(windowName, 1440, 900, true);
 
 	renderer->init();	// only after creating the window
 	wmanager->setRenderer(renderer);
@@ -248,17 +250,16 @@ int main(int argc, char** argv)
 	MyKeyListener keyhandler;
 	std::vector<uint32_t> keys;
 
-	keys.push_back(GLFW_KEY_UP);
-	keys.push_back(GLFW_KEY_DOWN);
-	keys.push_back(GLFW_KEY_LEFT);
-	keys.push_back(GLFW_KEY_RIGHT);
+	keys.push_back('W');
+	keys.push_back('S');
+	keys.push_back('A');
+	keys.push_back('D');
 	keys.push_back(GLFW_KEY_ESC);
 
 	wmanager->getKeyManager()->registerListener(keyhandler, keys);
 
 	MyMouseListener mousehandler;
-	//wmanager->getMouseManager()->registerListener(mousehandler);
-	wmanager->getMouseManager();
+	wmanager->getMouseManager()->registerListener(mousehandler);
 
 	Simple simple;
 	renderer->addObject(&simple);

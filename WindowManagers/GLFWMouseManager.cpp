@@ -17,14 +17,34 @@ GLFWMouseManager *GLFWMouseManager::GetMouseManager(void)
 	return _mouseManager;
 }
 
+void GLFWMouseManager::DisposeMouseManager()
+{
+	delete _mouseManager;
+}
+
 GLFWMouseManager::GLFWMouseManager(void)
 {
-	glfwSetMousePosCallback(mouseCallback);
+}
+
+GLFWMouseManager::~GLFWMouseManager(void)
+{
+	glfwSetMousePosCallback(NULL);
 }
 
 bool GLFWMouseManager::registerListener(MouseListener &listener)
 {
+	bool setCallback = false;
+	if (_listeners.empty()) {
+		setCallback = true;
+	}
 	_listeners.push_back(&listener);
+	if (setCallback) {
+		/* Set the callback here as setting it in the constructor leads
+		 * to an infinite loop because setting the callback calls back and
+		 * the _mouseManager field is still not set when the callback is called,
+		 * leading to another object being created and so on */
+		glfwSetMousePosCallback(mouseCallback);
+	}
 }
 
 void GLFWMouseManager::processMouse(int32_t x, int32_t y)
@@ -37,6 +57,5 @@ void GLFWMouseManager::processMouse(int32_t x, int32_t y)
 
 void GLFWMouseManager::mouseCallback(int x, int y)
 {
-	printf("(%d, %d)\n", x, y);
 	GLFWMouseManager::GetMouseManager()->processMouse(x, y);
 }

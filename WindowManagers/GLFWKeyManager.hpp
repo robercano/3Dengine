@@ -21,9 +21,19 @@ class GLFWKeyManager: public KeyManager
 		static GLFWKeyManager *GetKeyManager(void);
 
 		/**
-		 * @brief Constructor of the class
+		 * Disposes the singleton
+		 */
+		static void DisposeKeyManager(void);
+
+		/**
+		 * Constructor of the class
 		 */
 		GLFWKeyManager(void);
+
+		/**
+		 * Destructor of the class
+		 */
+		~GLFWKeyManager(void);
 
 		/**
 		 * Registers a listener for the given keys

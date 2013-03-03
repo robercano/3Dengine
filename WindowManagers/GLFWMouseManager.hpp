@@ -20,9 +20,19 @@ class GLFWMouseManager: public MouseManager
 		static GLFWMouseManager *GetMouseManager(void);
 
 		/**
-		 * @brief Constructor of the class
+		 * Disposes the singleton
+		 */
+		static void DisposeMouseManager();
+
+		/**
+		 * Constructor of the class
 		 */
 		GLFWMouseManager(void);
+
+		/**
+		 * Destructor of the class
+		 */
+		~GLFWMouseManager(void);
 
 		/**
 		 * Registers a listener for the mouse

@@ -17,9 +17,14 @@ class GLFWWindowManager : public WindowManager
 {
 	public:
 		/**
-		 * @brief Constructor of the class
+		 * Constructor of the class
 		 */
 		GLFWWindowManager(void);
+
+		/**
+		 * Destructor of the class
+		 */
+		~GLFWWindowManager(void);
 
 		/**
 		 * Gets the associated key manager
@@ -36,7 +41,8 @@ class GLFWWindowManager : public WindowManager
 		MouseManager *getMouseManager();
 
 		/**
-		 * @brief	Initializes the window manager
+		 * Initializes the window manager
+		 *
 		 * @details	Prepares the window manager to be used. After calling
 		 *          this method the rest of the methods can be called
 		 *
@@ -45,7 +51,7 @@ class GLFWWindowManager : public WindowManager
 		bool init(void);
 
 		/**
-		 * @brief	Creates a new window
+		 * Creates a new window
 		 *
 		 * @param	name		Title of the window
 		 * @param	width		Width of the window
@@ -67,7 +73,7 @@ class GLFWWindowManager : public WindowManager
 		bool resize(uint16_t width, uint16_t height);
 
 		/**
-		 * @brief	Sets a new renderer to handle display requests
+		 * Sets a new renderer to handle display requests
 		 *
 		 * @param	renderer	Renderer that will handle display/reshape requests
 		 *

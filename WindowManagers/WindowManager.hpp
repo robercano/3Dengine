@@ -62,6 +62,11 @@ class WindowManager
 		virtual MouseManager *getMouseManager() = 0;
 
 		/**
+		 * Destructor of the class
+		 */
+		virtual ~WindowManager(void) {}
+
+		/**
 		 * Initializes the window manager
 		 * @details	Prepares the window manager to be used. After calling
 		 *          this method the rest of the methods can be called

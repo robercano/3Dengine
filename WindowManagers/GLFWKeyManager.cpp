@@ -17,10 +17,20 @@ GLFWKeyManager *GLFWKeyManager::GetKeyManager(void)
 	return _keyManager;
 }
 
+void GLFWKeyManager::DisposeKeyManager(void)
+{
+	delete _keyManager;
+}
+
 GLFWKeyManager::GLFWKeyManager(void)
 {
 	glfwSetKeyCallback(keyCallback);
 	glfwEnable(GLFW_KEY_REPEAT);
+}
+
+GLFWKeyManager::~GLFWKeyManager(void)
+{
+	glfwSetKeyCallback(NULL);
 }
 
 bool GLFWKeyManager::registerListener(KeyListener &listener, std::vector<uint32_t> &keys)
@@ -45,7 +55,6 @@ void GLFWKeyManager::processKey(uint32_t key, uint32_t flags)
 
 void GLFWKeyManager::keyCallback(int key, int state)
 {
-	//printf("%d\n", key);
 	if (state == GLFW_RELEASE) {
 		return;
 	}
