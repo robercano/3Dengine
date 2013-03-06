@@ -58,9 +58,9 @@ class GLFWKeyManager: public KeyManager
 		 * Object wrapper callback
 		 *
 		 * @param	key		Key being pressed
-		 * @param	flags	Modifier keys
+		 * @param	state	State of the key, pressed or released
 		 */
-		 void processKey(uint32_t key, uint32_t flags);
+		 void processKey(uint32_t key, bool state);
 
 		/**
 		 * Static GLFW key manager

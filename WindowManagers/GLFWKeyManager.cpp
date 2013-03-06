@@ -41,7 +41,7 @@ bool GLFWKeyManager::registerListener(KeyListener &listener, std::vector<uint32_
 	}
 }
 
-void GLFWKeyManager::processKey(uint32_t key, uint32_t flags)
+void GLFWKeyManager::processKey(uint32_t key, bool state)
 {
 	std::map<uint32_t, std::vector<KeyListener*> >::iterator it = _listeners.find(key);
 	if (it == _listeners.end()) {
@@ -49,14 +49,11 @@ void GLFWKeyManager::processKey(uint32_t key, uint32_t flags)
 	}
 	std::vector<KeyListener *>::iterator listener;
 	for (listener = it->second.begin(); listener != it->second.end(); ++listener) {
-		(*listener)->processKey(key, flags);
+		(*listener)->processKey(key, state);
 	}
 }
 
 void GLFWKeyManager::keyCallback(int key, int state)
 {
-	if (state == GLFW_RELEASE) {
-		return;
-	}
-	GLFWKeyManager::GetKeyManager()->processKey(key, 0);
+	GLFWKeyManager::GetKeyManager()->processKey(key, state == GLFW_PRESS);
 }

@@ -107,14 +107,14 @@ class WindowManager
 		virtual bool setRenderer(Renderer *renderer) = 0;
 
 		/**
-		 * Enters window manager main loop
+		 * Swaps the double buffer
 		 */
-		virtual void loop(void) = 0;
+		virtual void swapBuffers(void) = 0;
 
 		/**
-		 * Stops the main loop
+		 * Polls for input events
 		 */
-		virtual void stop(void) = 0;
+		virtual void poll(void) = 0;
 
 	private:
 		/**

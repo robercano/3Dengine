@@ -82,14 +82,14 @@ class GLFWWindowManager : public WindowManager
 		bool setRenderer(Renderer *renderer);
 
 		/**
-		 * Enters main loop
+		 * Swaps the double buffer
 		 */
-		void loop(void);
+		void swapBuffers(void);
 
 		/**
-		 * Stops the main loop
+		 * Polls for input events
 		 */
-		void stop(void);
+		void poll(void);
 
 	private:
 		/**
@@ -111,12 +111,6 @@ class GLFWWindowManager : public WindowManager
 		 * Renderer associated to this manager
 		 */
 		Renderer *_renderer;
-
-		/**
-		 * Indicates if the main loop is alive
-		 */
-		bool _alive;
-
 };
 
 #endif

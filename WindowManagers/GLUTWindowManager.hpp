@@ -69,14 +69,14 @@ class GLUTWindowManager : public WindowManager
 		bool setRenderer(Renderer *renderer);
 
 		/**
-		 * Enters GLUT main loop
+		 * Swaps the double buffer
 		 */
-		void loop(void);
+		void swapBuffers(void);
 
 		/**
-		 * Stops the main loop
+		 * Polls for input events
 		 */
-		void stop(void);
+		void poll(void);
 
 	private:
 		/**

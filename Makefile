@@ -28,8 +28,9 @@ endif
 #
 # Files to be compiled
 #
-VPATH=WindowManagers:Renderers:Object3D
-FILES=GLUTWindowManager.cpp OpenGLRenderer.cpp WindowManager.cpp GLFWWindowManager.cpp GLFWKeyManager.cpp ColorCube.cpp GLFWMouseManager.cpp
+VPATH=WindowManagers:Renderers:Object3D:Game:Input
+FILES=GLUTWindowManager.cpp OpenGLRenderer.cpp WindowManager.cpp GLFWWindowManager.cpp GLFWKeyManager.cpp \
+	  ColorCube.cpp GLFWMouseManager.cpp Game.cpp InputManager.cpp
 
 OBJDIR=obj
 OBJECTS=$(patsubst %.cpp,$(OBJDIR)/%.o,$(FILES))
@@ -42,7 +43,7 @@ DEMODIR=Demos
 #
 # Compilation flags
 #
-CXXFLAGS= -fPIC -IWindowManagers -IRenderers -IObject3D -I/opt/X11/include -I ./Libraries -g
+CXXFLAGS= -fPIC -IWindowManagers -IRenderers -IObject3D -I Game -I Input -I/opt/X11/include -I ./Libraries -g
 
 #
 # Main rules

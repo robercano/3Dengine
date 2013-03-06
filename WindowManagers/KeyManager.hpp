@@ -20,10 +20,10 @@ class KeyListener
 		/**
 		 * Method called when one of the registered keys is pressed/released
 		 *
-		 * @param	key			ID of the processed key
-		 * @param	modifiers	Flag with the current modifiers that apply to the key
+		 * @param	key		ID of the processed key
+		 * @param	state	State of the key, pressed or released
 		 */
-		virtual void processKey(uint32_t key, uint32_t flags) = 0;
+		virtual void processKey(uint32_t key, bool state) = 0;
 };
 
 class KeyManager

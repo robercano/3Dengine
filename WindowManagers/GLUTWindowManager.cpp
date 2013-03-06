@@ -61,13 +61,9 @@ bool GLUTWindowManager::setRenderer(Renderer *renderer)
 	return true;
 }
 
-void GLUTWindowManager::loop(void)
+void GLUTWindowManager::swapBuffers(void)
 {
-	glutMainLoop();
-}
-
-void GLUTWindowManager::stop(void)
-{
+	glutSwapBuffers();
 }
 
 void GLUTWindowManager::display_callback(void)
@@ -99,3 +95,6 @@ bool GLUTWindowManager::resize(uint16_t width, uint16_t height)
 	}
 }
 
+void GLUTWindowManager::poll(void)
+{
+}
