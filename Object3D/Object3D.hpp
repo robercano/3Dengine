@@ -7,6 +7,8 @@
 #ifndef __OBJECT3D_HPP__
 #define __OBJECT3D_HPP__
 
+#include <glm/glm.hpp>
+
 class Object3D
 {
 	public:
@@ -25,9 +27,12 @@ class Object3D
 		/**
 		 * Renders the object by using graphic API commands
 		 *
+		 * @param projection	Projection matrix
+		 * @param view			View matrix
+		 *
 		 * @returns	true if the object was rendered or false otherwise
 		 */
-		virtual bool render() = 0;
+		virtual bool render(const glm::mat4 &projection, const glm::mat4 &view) = 0;
 
 		/**
 		 * Destroys the object by deinitilising it

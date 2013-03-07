@@ -14,7 +14,7 @@ CC=gcc
 
 # Mac OS alternate cmdline link options
 ifeq ($(UNAME), Darwin)
-LDFLAGS= -L/opt/X11/lib -lglut -lglew -lglfw -framework Cocoa -framework OpenGL -framework IOKit -fPIC
+LDFLAGS= -L/opt/X11/lib -lglew -lglfw -framework Cocoa -framework OpenGL -framework IOKit -fPIC
 SHAREDGEN= -dynamiclib -Wl,-headerpad_max_install_names,-undefined,dynamic_lookup,-compatibility_version,1.0,-current_version,1.0,-install_name,
 SHAREDEXT=dylib
 PREFIX=/usr/local/lib
@@ -28,9 +28,9 @@ endif
 #
 # Files to be compiled
 #
-VPATH=WindowManagers:Renderers:Object3D:Game:Input
-FILES=GLUTWindowManager.cpp OpenGLRenderer.cpp WindowManager.cpp GLFWWindowManager.cpp GLFWKeyManager.cpp \
-	  ColorCube.cpp GLFWMouseManager.cpp Game.cpp InputManager.cpp
+VPATH=WindowManagers:Renderers:Object3D:Game:Input:Camera
+FILES=OpenGLRenderer.cpp WindowManager.cpp GLFWWindowManager.cpp GLFWKeyManager.cpp \
+	  ColorCube.cpp GLFWMouseManager.cpp Game.cpp InputManager.cpp Camera.cpp
 
 OBJDIR=obj
 OBJECTS=$(patsubst %.cpp,$(OBJDIR)/%.o,$(FILES))
@@ -43,7 +43,7 @@ DEMODIR=Demos
 #
 # Compilation flags
 #
-CXXFLAGS= -fPIC -IWindowManagers -IRenderers -IObject3D -I Game -I Input -I/opt/X11/include -I ./Libraries -g
+CXXFLAGS= -fPIC -IWindowManagers -IRenderers -IObject3D -I Game -I Input -I Camera -I/opt/X11/include -I ./Libraries -g
 
 #
 # Main rules

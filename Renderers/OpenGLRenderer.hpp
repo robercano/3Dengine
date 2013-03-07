@@ -31,8 +31,11 @@ class OpenGLRenderer : public Renderer
 
 		/**
 		 * Updates the display
+		 *
+		 * @param projection	Projection matrix
+		 * @param view			View matrix
 		 */
-		bool render();
+		bool render(const glm::mat4 &projection, const glm::mat4 &view);
 
 		/**
 		 * Adjusts the display size

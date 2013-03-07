@@ -68,17 +68,17 @@ uint32_t OpenGLRenderer::loadShaders(std::string &vertexShader, std::string &fra
 }
 void OpenGLRenderer::init()
 {
-/*	glClearColor(0.0, 0.0, 0.0, 0.0);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0.0, 1.0, 0.0, 1.0, -1.0, 1.0);*/
+	glClearColor(1.0, 1.0, 1.0, 1.0);
+	glEnable(GL_DEPTH_TEST);
 }
 
-bool OpenGLRenderer::render()
+bool OpenGLRenderer::render(const glm::mat4 &projection, const glm::mat4 &view)
 {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 	std::vector<Object3D*>::iterator it = _objects.begin();
 	for (; it != _objects.end(); ++it) {
-		(*it)->render();
+		(*it)->render(projection, view);		// TODO: Not sure this should be like this
 	}
 }
 

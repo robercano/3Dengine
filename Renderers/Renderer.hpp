@@ -9,6 +9,7 @@
 #define __RENDERER_HPP__
 
 #include <string>
+#include <glm/glm.hpp>
 #include "Object3D.hpp"
 
 class Renderer
@@ -26,8 +27,11 @@ class Renderer
 
 		/**
 		 * Updates the display contents
+		 *
+		 * @param projection	Projection matrix
+		 * @param view			View matrix
 		 */
-		virtual bool render() = 0;
+		virtual bool render(const glm::mat4 &projection, const glm::mat4 &view) = 0;
 
 		/**
 		 * Adjusts the renderer's display size

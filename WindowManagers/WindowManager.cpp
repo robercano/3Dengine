@@ -6,7 +6,6 @@
  */
 
 #include "WindowManager.hpp"
-#include "GLUTWindowManager.hpp"
 #include "GLFWWindowManager.hpp"
 
 WindowManager *WindowManager::_windowManager = NULL;
@@ -17,13 +16,6 @@ WindowManager *WindowManager::GetWindowManager(WindowManagerType type)
 	//  is the same as the requested one
 	switch (type)
 	{
-		case WINDOW_MANAGER_GLUT:
-			/* Take care of creating only one of this, as it is using
-			 * static callbacks */
-			if (_windowManager == NULL) {
-				_windowManager = new GLUTWindowManager();
-			}
-			return _windowManager;
 		case WINDOW_MANAGER_GLFW:
 			/* Take care of creating only one of this, as it is using
 			 * static callbacks */

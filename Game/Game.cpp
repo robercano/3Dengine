@@ -25,7 +25,7 @@ void Game::DisposeGame()
 	_game = NULL;
 }
 
-Game::Game() : _windowManager(NULL), _renderer(NULL)
+Game::Game() : _windowManager(NULL), _renderer(NULL), _camera(NULL)
 {
 }
 
@@ -74,12 +74,20 @@ bool Game::init(std::string &gameName)
 
 	_windowManager->getKeyManager()->registerListener(_inputManager, keys);
 	_windowManager->getMouseManager()->registerListener(_inputManager);
+
+	/* Create the game camera */
+	_camera = new Camera();
+	_camera->setProjection(45, 1440.0/900.0, 0.1, 100.0);
+	_camera->setPosition(0.0, 0.0, -10.0);
+	_camera->setLookAt(0.0, 0.0, 0.0);
 }
 
-float angle = 0.0, far = 8.0, cameraX = 0.0f, cameraY = 0.0f, cameraSpeed = 2.0f;
 bool Game::loop(void)
 {
 	const uint32_t fps=60;
+	const float MouseSensibility = 4.0;
+	const float InvertMouse = -1.0;
+	static int32_t _prevX = 0xFFFFFF, _prevY = 0xFFFFFF;
 	struct timeval lastRender, now, previous;
 	gettimeofday(&now, NULL);
 	lastRender = previous = now;
@@ -100,22 +108,33 @@ bool Game::loop(void)
 		previous = now;
 		gettimeofday(&now, NULL);
 		double elapsed_ms = (now.tv_sec - previous.tv_sec)*1000.0 + (now.tv_usec - previous.tv_usec)/1000.0;
-		//double elapsed_s  = elapsed_ms/1000.0;
 		passes++;
 
 		/* Dispatch input to geometry */
 		if (_inputManager._keys['W']) {
-			far -= 0.05*elapsed_ms;
+			_camera->forward(0.05*elapsed_ms);
 		} else if (_inputManager._keys['S']) {
-			far += 0.05*elapsed_ms;
+			_camera->forward(-0.05*elapsed_ms);
 		} else if (_inputManager._keys['A']) {
-			angle-= 0.2*elapsed_ms;
+			_camera->stroll(-0.05*elapsed_ms);
 		} else if (_inputManager._keys['D']) {
-			angle+= 0.2*elapsed_ms;
+			_camera->stroll(0.05*elapsed_ms);
 		}
 
-		cameraX = 2.0*_inputManager._xMouse/1440.f-0.5f;
-		cameraY = 2.0*(900.0-_inputManager._yMouse)/900.f-0.5f;
+		if (_prevX == 0xFFFFFF) {
+			_prevX = _inputManager._xMouse;
+		}
+		if (_prevY == 0xFFFFFF) {
+			_prevY = _inputManager._yMouse;
+		}
+		int32_t diffMouseX = _prevX - _inputManager._xMouse;
+		int32_t diffMouseY = InvertMouse*(_prevY - _inputManager._yMouse);
+
+		_camera->rotateYaw(MouseSensibility*M_PI*diffMouseX/1440.0);
+		_camera->rotatePitch(MouseSensibility*M_PI*diffMouseY/900.0);
+
+		_prevX = _inputManager._xMouse;
+		_prevY = _inputManager._yMouse;
 
 		//usleep(2000);
 
@@ -123,7 +142,7 @@ bool Game::loop(void)
 		double render_ms = (now.tv_sec - lastRender.tv_sec)*1000.0 + (now.tv_usec - lastRender.tv_usec)/1000.0;
 		if (render_ms > (1000.0/fps)) {
 			renders++;
-			_renderer->render();
+			_renderer->render(_camera->getProjection(), _camera->getView());
 			_windowManager->swapBuffers();
 			gettimeofday(&lastRender, NULL);
 		}

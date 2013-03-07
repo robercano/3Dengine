@@ -8,136 +8,72 @@ using namespace glm;
 #include "ColorCube.hpp"
 #include "OpenGLRenderer.hpp"
 
-ColorCube::~ColorCube()
-{
-}
-
 bool ColorCube::init()
 {
-	glClearColor(0.0f, 0.0f, 0.4f, 1.0f);
+	GLfloat cubeVerts[][3] = {
+		{ -1.0, -1.0, -1.0 },
+		{ -1.0, -1.0,  1.0 },
+		{ -1.0,  1.0, -1.0 },
+		{ -1.0,  1.0,  1.0 },
+		{  1.0, -1.0, -1.0 },
+		{  1.0, -1.0,  1.0 },
+		{  1.0,  1.0, -1.0 },
+		{  1.0,  1.0,  1.0 } };
 
-	glEnable(GL_DEPTH_TEST);
-	// Accept fragment if it closer to the camera than the former one
-	glDepthFunc(GL_LESS);
+	GLfloat cubeColors[][3] = {
+		{  0.0,  0.0,  0.0 },
+		{  0.0,  0.0,  1.0 },
+		{  0.0,  1.0,  0.0 },
+		{  0.0,  1.0,  1.0 },
+		{  1.0,  0.0,  0.0 },
+		{  1.0,  0.0,  0.0 },
+		{  1.0,  1.0,  0.0 },
+		{  1.0,  1.0,  1.0 } };
 
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-	glGenVertexArrays(1, &_VertexArrayID);
-	glBindVertexArray(_VertexArrayID);
-
-	// Create and compile our GLSL program from the shaders
-	std::string vertexShader("#version 330 core\
-			layout(location = 0) in vec3 vertexPosition_modelspace;\
-			layout(location = 1) in vec3 vertexColor;\
-			out vec3 fragmentColor;\
-			uniform mat4 MVP;\
-			void main(){\
-			gl_Position =  MVP * vec4(vertexPosition_modelspace,1);\
-			fragmentColor = vertexColor; }\n");
-
-	std::string fragmentShader("#version 330 core\
-			in vec3 fragmentColor;\
-			out vec3 color;\
-			void main(){ color = fragmentColor;}\n");
-	_programID = OpenGLRenderer::loadShaders(vertexShader, fragmentShader);
-
-	// Get a handle for our "MVP" uniform
-	_MatrixID = glGetUniformLocation(_programID, "MVP");
-
-	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
-	glm::mat4 Projection = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
-	// Camera matrix
-	glm::mat4 View       =	glm::lookAt(
-			glm::vec3(4,3,3), // Camera is at (4,3,-3), in World Space
-			glm::vec3(0,0,0), // and looks at the origin
-			glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
-			);
-	// Model matrix : an identity matrix (model will be at the origin)
-	glm::mat4 Model      = glm::mat4(1.0f);
-	// Our ModelViewProjection : multiplication of our 3 matrices
-	_MVP        = Projection * View * Model; // Remember, matrix multiplication is the other way around
-
-	// Our vertices. Tree consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
-	// A cube has 6 faces with 2 triangles each, so this makes 6*2=12 triangles, and 12*3 vertices
-	static const GLfloat g_vertex_buffer_data[] = {
-		-1.0f,-1.0f,-1.0f,
-		-1.0f,-1.0f, 1.0f,
-		-1.0f, 1.0f, 1.0f,
-		1.0f, 1.0f,-1.0f,
-		-1.0f,-1.0f,-1.0f,
-		-1.0f, 1.0f,-1.0f,
-		1.0f,-1.0f, 1.0f,
-		-1.0f,-1.0f,-1.0f,
-		1.0f,-1.0f,-1.0f,
-		1.0f, 1.0f,-1.0f,
-		1.0f,-1.0f,-1.0f,
-		-1.0f,-1.0f,-1.0f,
-		-1.0f,-1.0f,-1.0f,
-		-1.0f, 1.0f, 1.0f,
-		-1.0f, 1.0f,-1.0f,
-		1.0f,-1.0f, 1.0f,
-		-1.0f,-1.0f, 1.0f,
-		-1.0f,-1.0f,-1.0f,
-		-1.0f, 1.0f, 1.0f,
-		-1.0f,-1.0f, 1.0f,
-		1.0f,-1.0f, 1.0f,
-		1.0f, 1.0f, 1.0f,
-		1.0f,-1.0f,-1.0f,
-		1.0f, 1.0f,-1.0f,
-		1.0f,-1.0f,-1.0f,
-		1.0f, 1.0f, 1.0f,
-		1.0f,-1.0f, 1.0f,
-		1.0f, 1.0f, 1.0f,
-		1.0f, 1.0f,-1.0f,
-		-1.0f, 1.0f,-1.0f,
-		1.0f, 1.0f, 1.0f,
-		-1.0f, 1.0f,-1.0f,
-		-1.0f, 1.0f, 1.0f,
-		1.0f, 1.0f, 1.0f,
-		-1.0f, 1.0f, 1.0f,
-		1.0f,-1.0f, 1.0f
+	GLubyte cubeIndices[] = {
+		0, 1, 2,
+		2, 1, 3,
+		0, 2, 4,
+		4, 2, 6,
+		4, 6, 5,
+		5, 6, 7,
+		2, 3, 6,
+		6, 3, 7,
+		5, 7, 3,
+		5, 3, 1,
+		1, 4, 5,
+		4, 1, 0
 	};
 
-	// One color for each vertex. They were generated randomly.
-	static GLfloat g_color_buffer_data[36*3];
-	for (int i=0;i<36; i++) {
-		g_color_buffer_data[3*i]   = g_vertex_buffer_data[3*i+2] < 0 ? 0.0f : 1.0f;
-		g_color_buffer_data[3*i+1] = g_vertex_buffer_data[3*i]   < 0 ? 0.0f : 1.0f;
-		g_color_buffer_data[3*i+2] = g_vertex_buffer_data[3*i+1] < 0 ? 0.0f : 1.0f;
-	}
+	/* Basic shaders with only position and color attributes, with no camera */
+	std::string vertexShader("#version 330 core\
+			layout(location = 0) in vec3 position;\
+			layout(location = 1) in vec3 color;\
+			uniform mat4 MVP;\
+			out vec3 fragment_color;\
+			void main(){\
+			gl_Position    = MVP * vec4(position, 1);\
+			fragment_color = color; }\n");
 
-	glGenBuffers(1, &_vertexbuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, _vertexbuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+	std::string fragmentShader("#version 330 core\
+			in vec3 fragment_color;\
+			out vec3 color;\
+			void main(){ color = fragment_color.bgr;}\n");
+	_programID = OpenGLRenderer::loadShaders(vertexShader, fragmentShader);
 
-	glGenBuffers(1, &_colorbuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, _colorbuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data), g_color_buffer_data, GL_STATIC_DRAW);
-}
+	/* Generate a vertex array to reference the attributes */
+	glGenVertexArrays(1, &_gVAO);
+	glBindVertexArray(_gVAO);
 
-bool ColorCube::destroy()
-{
-	// Cleanup VBO and shader
-	glDeleteBuffers(1, &_vertexbuffer);
-	glDeleteBuffers(1, &_colorbuffer);
-	glDeleteProgram(_programID);
-	glDeleteVertexArrays(1, &_VertexArrayID);
-}
+	/* Generate a buffer object for the vertices positions */
+	glGenBuffers(1, &_verticesVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, _verticesVBO);
 
-bool ColorCube::render()
-{
-	// Clear the screen
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	/* Upload the data for this buffer */
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVerts), cubeVerts, GL_STATIC_DRAW);
 
-	glUseProgram(_programID);
-
-	// Send our transformation to the currently bound shader,
-	// in the "MVP" uniform
-	glUniformMatrix4fv(_MatrixID, 1, GL_FALSE, &_MVP[0][0]);
-
-	// 1rst attribute buffer : vertices
+	/* Link the data with the first shader attribute */
 	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, _vertexbuffer);
 	glVertexAttribPointer(
 			0,                  // attribute. No particular reason for 0, but must match the layout in the shader.
 			3,                  // size
@@ -147,22 +83,60 @@ bool ColorCube::render()
 			(void*)0            // array buffer offset
 			);
 
-	// 2nd attribute buffer : colors
+	/* Generate a buffer for the vertices colors */
+	glGenBuffers(1, &_colorsVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, _colorsVBO);
+
+	/* Upload the data for this buffer */
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeColors), cubeColors, GL_STATIC_DRAW);
+
+	/* Link the data with the second shader attribute */
 	glEnableVertexAttribArray(1);
-	glBindBuffer(GL_ARRAY_BUFFER, _colorbuffer);
 	glVertexAttribPointer(
-			1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
-			3,                                // size
-			GL_FLOAT,                         // type
-			GL_FALSE,                         // normalized?
-			0,                                // stride
-			(void*)0                          // array buffer offset
+			1,                  // attribute
+			3,                  // size
+			GL_FLOAT,           // type
+			GL_FALSE,           // normalized?
+			0,                  // stride
+			(void*)0            // array buffer offset
 			);
 
-	// Draw the triangle !
-	glDrawArrays(GL_TRIANGLES, 0, 12*3); // 12*3 indices starting at 0 -> 12 triangles
+	/* Generate the buffer for the indices */
+	glGenBuffers(1, &_indicesVBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indicesVBO);
 
-	glDisableVertexAttribArray(0);
-	glDisableVertexAttribArray(1);
+	/* Upload the data */
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cubeIndices), cubeIndices, GL_STATIC_DRAW);
+
+	/* Get the location of the MVP attribute in the shader */
+	_matrixID = glGetUniformLocation(_programID, "MVP");
 }
 
+bool ColorCube::destroy()
+{
+	glDeleteBuffers(1, &_colorsVBO);
+	glDeleteBuffers(1, &_verticesVBO);
+	glDeleteVertexArrays(1, &_gVAO);
+	glDeleteProgram(_programID);
+}
+
+bool ColorCube::render(const glm::mat4 &projection, const glm::mat4 &view)
+{
+	/* Model matrix : an identity matrix (model will be at the origin) */
+	glm::mat4 model      = glm::mat4(1.0f);
+
+	/* Our ModelViewProjection : multiplication of our 3 matrices */
+	glm::mat4 MVP = projection * view * model; // Remember, matrix multiplication is the other way around
+
+	/* Bind program to upload the uniform */
+	glUseProgram(_programID);
+
+	/* Send our transformation to the currently bound shader, in the "MVP" uniform */
+	glUniformMatrix4fv(_matrixID, 1, GL_FALSE, &MVP[0][0]);
+
+	/* Clear the buffer */
+	glBindVertexArray(_gVAO);
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, NULL);
+	glBindVertexArray(0);
+	glUseProgram(0);
+}

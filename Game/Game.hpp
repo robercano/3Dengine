@@ -11,6 +11,7 @@
 #include "WindowManager.hpp"
 #include "InputManager.hpp"
 #include "Renderer.hpp"
+#include "Camera.hpp"
 
 class Game
 {
@@ -72,6 +73,11 @@ class Game
 		 * Input manager
 		 */
 		InputManager _inputManager;
+
+		/**
+		 * Camera
+		 */
+		Camera *_camera;
 };
 
 #endif

@@ -1,51 +1,72 @@
 /**
- * Cube object with RGB colors
+ * @class	ColorCube
+ * @brief	Demo color cube
  *
  * @author	Roberto Sosa Cano
  */
 #ifndef __COLORCUBE_HPP__
 #define __COLORCUBE_HPP__
 
-#include <stdint.h>
-#include <glm/gtc/matrix_transform.hpp>
 #include "Object3D.hpp"
 
 class ColorCube : public Object3D
 {
 	public:
 		/**
-		 * Destructor
-		 */
-		~ColorCube();
-
-		/**
-		 * Initialisation method
+		 * Initialises the 3D object
 		 *
-		 * @return true or false
+		 * @returns	true if the object was initialised or false otherwise
 		 */
 		bool init();
 
 		/**
-		 * Destroy the geometry
+		 * Renders the object by using graphic API commands
 		 *
-		 * @return true or false
+		 * @param projection	Projection matrix
+		 * @param view			View matrix
+		 *
+		 * @returns	true if the object was rendered or false otherwise
+		 */
+		bool render(const glm::mat4 &projection, const glm::mat4 &view);
+
+		/**
+		 * Destroys the object by deinitilising it
+		 *
+		 * @returns	true if the object was destroyed or false otherwise
 		 */
 		bool destroy();
 
-		/**
-		 * Render the object
-		 *
-		 * return true or false
-		 */
-		bool render();
-
-private:
+	private:
 		glm::mat4 _MVP;
-		uint32_t _VertexArrayID;
-		uint32_t _MatrixID;
-		uint32_t _vertexbuffer;
-		uint32_t _colorbuffer;
-		uint32_t _programID;
-};
 
+		/**
+		 * Shader program ID
+		 */
+		uint32_t _programID;
+
+		/**
+		 * Vertex array object ID
+		 */
+		uint32_t _gVAO;
+
+		/**
+		 * Vertex buffer object for vertices
+		 */
+		uint32_t _verticesVBO;
+
+		/**
+		 * Vertex buffer object for colors
+		 */
+		uint32_t _colorsVBO;
+
+		/**
+		 * Vertex buffer object for indices
+		 */
+		uint32_t _indicesVBO;
+
+		/**
+		 * ID for the MVP matrix
+		 */
+		uint32_t _matrixID;
+};
 #endif

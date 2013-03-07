@@ -20,7 +20,6 @@ class WindowManager
 		 * Supported window managers
 		 */
 		enum WindowManagerType {
-			WINDOW_MANAGER_GLUT,
 			WINDOW_MANAGER_GLFW
 		};
 
