@@ -70,6 +70,8 @@ void OpenGLRenderer::init()
 {
 	glClearColor(1.0, 1.0, 1.0, 1.0);
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
 }
 
 bool OpenGLRenderer::render(const glm::mat4 &projection, const glm::mat4 &view)
