@@ -24,41 +24,83 @@ class Camera
 
 		/*
 		 * Sets the projection for the camera
+		 *
+		 * @param fov	Angle for the field of view in degrees
+		 * @param ratio	Aspect ratio of the viewport
+		 * @param near	Near plane for the frustum
+		 * @param far	Far plane for the frustum
 		 */
-		bool setProjection(float fov, float ratio, float near, float far);
+		void setProjection(float fov, float ratio, float near, float far)
+		{
+			_fov   = fov;
+			_ratio = ratio;
+			_near  = near;
+			_far   = far;
+
+			_projectionValid = false;
+		}
+
+		/**
+		 * Accesors to set each field of the projection matrix
+		 *
+		 * @see setProjection
+		 */
+		void setFov(float fov)     { _fov   = fov;   _projectionValid = false; }
+		void setRatio(float ratio) { _ratio = ratio; _projectionValid = false; }
+		void setNear(float near)   { _near  = near;  _projectionValid = false; }
+		void setFar(float far)     { _far   = far;   _projectionValid = false; }
 
 		/**
 		 * Moves the camera in the required direction
 		 */
-		bool advance(float amount);
-		bool stroll(float amount);
+		void advance(float amount);
+		void stroll(float amount);
 
 		/**
 		 * Rotates camera along the X axis
 		 */
-		bool rotatePitch(float angle);
+		void rotatePitch(float angle);
 
 		/**
 		 * Rotates camera along the Y axis
 		 */
-		bool rotateYaw(float angle);
+		void rotateYaw(float angle);
 
 		/**
 		 * Rotates camera along the Z axis
 		 */
-		bool rotateRoll(float angle);
+		void rotateRoll(float angle);
 
 		/**
 		 * Gets the projection matrix
 		 */
-		glm::mat4 getProjection(void);
+		const glm::mat4 &getProjection(void);
 
 		/**
 		 * Gets the view matrix
 		 */
-		glm::mat4 getView(void);
+		const glm::mat4 &getView(void);
 
 	private:
+
+		/**
+		 * Restricts the given angle to the 0..360 range
+		 *
+		 * @details This function assumes that an increment in angle will
+		 *          never be more than +/- 360 degrees, so no modulo
+		 *          operation is performed
+		 *
+		 * @param angle	Angle to be restricted
+		 *
+		 * @return	The restricted angle
+		 */
+		float _restrictAngle(float angle)
+		{
+			if (angle >= 360.0)   angle -= 360.0;
+			else if (angle < 0.0) angle += 360.0;
+			return angle;
+		}
+
 		/**
 		 * Position of the camera in world coordinates
 		 */
@@ -72,7 +114,7 @@ class Camera
 		/**
 		 * Where is the camera looking at
 		 */
-		glm::vec4 _lookat;
+		glm::vec3 _lookat;
 
 		/**
 		 * Field of view
@@ -89,7 +131,34 @@ class Camera
 		 */
 		float _near, _far;
 
+		/**
+		 * Rotation components for the camera
+		 */
 		float _yaw, _pitch, _roll;
+
+		/**
+		 * Projection matrix for the camera
+		 */
+		glm::mat4 _projection;
+
+		/**
+		 * Flag to control if the projection matrx mas be recalculated
+		 */
+		bool _projectionValid;
+
+		/**
+		 * View matrix for the camera
+		 */
+		glm::mat4 _view;
+
+		/**
+		 * Flag to control if the view matrx mas be recalculated
+		 */
+		bool _viewValid;
+
+		float _advanceAmount, _strollAmount;
+
+
 };
 
 #endif
