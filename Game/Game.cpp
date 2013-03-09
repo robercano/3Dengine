@@ -78,14 +78,12 @@ bool Game::init(std::string &gameName)
 	/* Create the game camera */
 	_camera = new Camera();
 	_camera->setProjection(45, 1440.0/900.0, 0.1, 100.0);
-	_camera->setPosition(0.0, 0.0, -10.0);
-	_camera->setLookAt(0.0, 0.0, 0.0);
 }
 
 bool Game::loop(void)
 {
 	const uint32_t fps=60;
-	const float MouseSensibility = 4.0;
+	const float MouseSensibility = 5.0;
 	const float InvertMouse = -1.0;
 	static int32_t _prevX = 0xFFFFFF, _prevY = 0xFFFFFF;
 	struct timeval lastRender, now, previous;
@@ -112,13 +110,13 @@ bool Game::loop(void)
 
 		/* Dispatch input to geometry */
 		if (_inputManager._keys['W']) {
-			_camera->forward(0.05*elapsed_ms);
+			_camera->advance(0.01*elapsed_ms);
 		} else if (_inputManager._keys['S']) {
-			_camera->forward(-0.05*elapsed_ms);
+			_camera->advance(-0.01*elapsed_ms);
 		} else if (_inputManager._keys['A']) {
-			_camera->stroll(-0.05*elapsed_ms);
+			_camera->stroll(-0.01*elapsed_ms);
 		} else if (_inputManager._keys['D']) {
-			_camera->stroll(0.05*elapsed_ms);
+			_camera->stroll(0.01*elapsed_ms);
 		}
 
 		if (_prevX == 0xFFFFFF) {
@@ -127,11 +125,15 @@ bool Game::loop(void)
 		if (_prevY == 0xFFFFFF) {
 			_prevY = _inputManager._yMouse;
 		}
-		int32_t diffMouseX = _prevX - _inputManager._xMouse;
-		int32_t diffMouseY = InvertMouse*(_prevY - _inputManager._yMouse);
+		int32_t diffMouseX = _inputManager._xMouse - _prevX;
+		int32_t diffMouseY = InvertMouse*(_inputManager._yMouse - _prevY);
 
-		_camera->rotateYaw(MouseSensibility*M_PI*diffMouseX/1440.0);
-		_camera->rotatePitch(MouseSensibility*M_PI*diffMouseY/900.0);
+		if (diffMouseX) {
+			_camera->rotateYaw(MouseSensibility*M_PI*diffMouseX/1440.0);
+		}
+		if (diffMouseY) {
+			_camera->rotatePitch(MouseSensibility*M_PI*diffMouseY/900.0);
+		}
 
 		_prevX = _inputManager._xMouse;
 		_prevY = _inputManager._yMouse;
