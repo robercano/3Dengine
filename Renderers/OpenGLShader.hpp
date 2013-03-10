@@ -1,0 +1,107 @@
+/**
+ * @class	OpenGLShader
+ * @brief   OpenGL shader implementation
+ *
+ * @author	Roberto Sosa Cano
+ */
+#ifndef __OPENGLSHADER_HPP__
+#define __OPENGLSHADER_HPP__
+
+#include <map>
+#include <string>
+#include "Shader.hpp"
+
+class OpenGLShader : public Shader
+{
+	public:
+		/**
+		 * Destructor
+		 */
+		~OpenGLShader();
+
+		/**
+		 * Loads a new vertex shader code and compiles it
+		 *
+		 * @param		filename  File name of the shader to be compiled
+		 * @param[out]	error	  If compilation fails error will contain
+		 *						  a description of the error
+		 *
+		 * @return true or false
+		 */
+		bool loadVertexShader(const std::string &filename, std::string &error);
+
+		/**
+		 * Loads a new fragment shader code and compiles it
+		 *
+		 * @param		filename  File name of the shader to be compiled
+		 * @param[out]	error	  If compilation fails error will contain
+		 *						  a description of the error
+		 *
+		 * @return true or false
+		 */
+		bool loadFragmentShader(const std::string &filename, std::string &error);
+
+		/**
+		 * Links the program together and prepares the shader to be used
+		 *
+		 * @param[out] error	If linking fails error will contain a
+		 *						description of the error
+		 *
+		 * @return true or false
+		 */
+		bool linkProgram(std::string &error);
+
+		/**
+		 * Gets a list of all the shader uniforms
+		 *
+		 * @return A vector with all the available uniform names
+		 */
+		const std::map<std::string, uint32_t> & getUniforms(void);
+
+		/**
+		 * Sets the value of a shader uniform as a mat4x4
+		 *
+		 * @param name  Name of the shader uniform
+		 * @param value Value of the uniform to be set
+		 *
+		 * @return true if the value was set or false if the
+		 *         attribute cannot be found
+		 */
+		bool setUniform(const std::string &name, glm::mat4 &value);
+
+	private:
+		/**
+		 * Internal function to load a shader code and compile it
+		 *
+		 * @param		shaderObjectID ID of the shader to be compiled
+		 * @param		filename       File name of the shader to be compiled
+		 * @param[out]	error	       If compilation fails error will contain
+		 *						       a description of the error
+		 *
+		 * @return true or false
+		 */
+		bool _loadShader(uint32_t shaderObjectID, const std::string &filename, std::string &error);
+
+		/**
+		 * Internal function to build up the association map for
+		 * uniforms names/IDs
+		 */
+		void _buildUniformsMap(void);
+
+		/**
+		 * List of compiled shaders
+		 */
+		std::vector<uint32_t> _shadersIDs;
+
+		/**
+		 * Map with uniform names/location pairs
+		 */
+		std::map<std::string, uint32_t> _uniformNames;
+
+		/**
+		 * ID of the compiled program
+		 */
+		uint32_t _programID;
+};
+
+#endif
