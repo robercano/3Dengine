@@ -22,6 +22,22 @@ class Camera
 		 */
 		~Camera();
 
+		/**
+		 * Sets the position of the camera
+		 *
+		 * @param position  The new position of the camera
+		 */
+		void setPosition(glm::vec4 &position);
+
+		/**
+		 * Sets the mask to restrict camera movement
+		 *
+		 * @param mask	The mask applied to restrict the movement
+		 *
+		 * @see _mask
+		 */
+		void setMask(glm::mat4 &mask);
+
 		/*
 		 * Sets the projection for the camera
 		 *
@@ -52,9 +68,12 @@ class Camera
 
 		/**
 		 * Moves the camera in the required direction
+		 *
+		 * @param amount Amount of movement in the indicated direction
 		 */
-		void advance(float amount);
-		void stroll(float amount);
+		void forward(float amount);
+		void right(float amount);
+		void up(float amount);
 
 		/**
 		 * Rotates camera along the X axis
@@ -104,17 +123,22 @@ class Camera
 		/**
 		 * Position of the camera in world coordinates
 		 */
-		glm::vec3 _position;
-
-		/**
-		 * Up vector
-		 */
-		glm::vec3 _up;
+		glm::vec4 _position;
 
 		/**
 		 * Where is the camera looking at
 		 */
-		glm::vec3 _lookat;
+		glm::vec4 _forward;
+
+		/**
+		 * Up vector
+		 */
+		glm::vec4 _up;
+
+		/**
+		 * Perpendicular to the forward/up plane
+		 */
+		glm::vec4 _right;
 
 		/**
 		 * Field of view
@@ -156,9 +180,16 @@ class Camera
 		 */
 		bool _viewValid;
 
-		float _advanceAmount, _strollAmount;
+		/**
+		 * Accumulators for the camera movement
+		 */
+		float _forwardAmount, _upAmount, _rightAmount;
 
-
+		/**
+		 * Mask to restrict camera movement. This matrix will be multiplied
+		 * by the movement vector before adding it to the current position
+		 */
+		glm::mat4 _mask;
 };
 
 #endif

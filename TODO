@@ -1,4 +1,0 @@
-
-- Transform the renderer into a listener of the WindowManager events for the resize
-- Review the GLUT manager.....useless?
-- Adjust the main loop to compensate for the swapping of the buffers time to gain some fps

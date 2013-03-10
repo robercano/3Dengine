@@ -8,6 +8,7 @@
 #include <sys/time.h>
 #include "Game.hpp"
 #include "OpenGLRenderer.hpp"
+#include "WalkingCamera.hpp"
 
 Game *Game::_game = NULL;
 
@@ -76,7 +77,7 @@ bool Game::init(std::string &gameName)
 	_windowManager->getMouseManager()->registerListener(_inputManager);
 
 	/* Create the game camera */
-	_camera = new Camera();
+	_camera = new WalkingCamera();
 	_camera->setProjection(45, 1440.0/900.0, 0.1, 100.0);
 }
 
@@ -84,7 +85,7 @@ bool Game::loop(void)
 {
 	const uint32_t fps=60;
 	const float MouseSensibility = 5.0;
-	const float InvertMouse = -1.0;
+	const float InvertMouse = 1.0;
 	static int32_t _prevX = 0xFFFFFF, _prevY = 0xFFFFFF;
 	struct timeval lastRender, now, previous;
 	gettimeofday(&now, NULL);
@@ -110,13 +111,13 @@ bool Game::loop(void)
 
 		/* Dispatch input to geometry */
 		if (_inputManager._keys['W']) {
-			_camera->advance(0.01*elapsed_ms);
+			_camera->forward(0.01*elapsed_ms);
 		} else if (_inputManager._keys['S']) {
-			_camera->advance(-0.01*elapsed_ms);
+			_camera->forward(-0.01*elapsed_ms);
 		} else if (_inputManager._keys['A']) {
-			_camera->stroll(-0.01*elapsed_ms);
+			_camera->right(-0.01*elapsed_ms);
 		} else if (_inputManager._keys['D']) {
-			_camera->stroll(0.01*elapsed_ms);
+			_camera->right(0.01*elapsed_ms);
 		}
 
 		if (_prevX == 0xFFFFFF) {
