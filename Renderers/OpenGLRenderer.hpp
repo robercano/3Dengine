@@ -25,9 +25,9 @@ class OpenGLRenderer : public Renderer
 		void init(void);
 
 		/**
-		 * Utility function to load compiled shaders
+		 * OpenGL shader factory
 		 */
-		static uint32_t loadShaders(std::string &vertexShader, std::string &fragmentShader);
+		Shader * getShader(void);
 
 		/**
 		 * Updates the display

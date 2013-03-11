@@ -6,7 +6,7 @@ using namespace glm;
 #include <string>
 
 #include "ColorCube.hpp"
-#include "OpenGLRenderer.hpp"
+#include "Renderer.hpp"
 
 bool ColorCube::init()
 {
@@ -45,21 +45,23 @@ bool ColorCube::init()
 		4, 1, 0
 	};
 
-	/* Basic shaders with only position and color attributes, with no camera */
-	std::string vertexShader("#version 330 core\
-			layout(location = 0) in vec3 position;\
-			layout(location = 1) in vec3 color;\
-			uniform mat4 MVP;\
-			out vec3 fragment_color;\
-			void main(){\
-			gl_Position    = MVP * vec4(position, 1);\
-			fragment_color = color; }\n");
+	/* Request a new shader */
+	_shader = Renderer::GetRenderer()->getShader();
 
-	std::string fragmentShader("#version 330 core\
-			in vec3 fragment_color;\
-			out vec3 color;\
-			void main(){ color = fragment_color.bgr;}\n");
-	_programID = OpenGLRenderer::loadShaders(vertexShader, fragmentShader);
+	/* Basic shaders with only position and color attributes, with no camera */
+	std::string error;
+	if (_shader->loadVertexShader("Shaders/mvp.vert", error) == false) {
+		printf("ERROR compiling vertex shader: %s\n", error.c_str());
+		return false;
+	}
+	if (_shader->loadFragmentShader("Shaders/color.frag", error) == false) {
+		printf("ERROR compiling fragment shader: %s\n", error.c_str());
+		return false;
+	}
+	if (_shader->linkProgram(error) == false) {
+		printf("ERROR linking shader: %s\n", error.c_str());
+		return false;
+	}
 
 	/* Generate a vertex array to reference the attributes */
 	glGenVertexArrays(1, &_gVAO);
@@ -107,9 +109,6 @@ bool ColorCube::init()
 
 	/* Upload the data */
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cubeIndices), cubeIndices, GL_STATIC_DRAW);
-
-	/* Get the location of the MVP attribute in the shader */
-	_matrixID = glGetUniformLocation(_programID, "MVP");
 }
 
 bool ColorCube::destroy()
@@ -117,7 +116,6 @@ bool ColorCube::destroy()
 	glDeleteBuffers(1, &_colorsVBO);
 	glDeleteBuffers(1, &_verticesVBO);
 	glDeleteVertexArrays(1, &_gVAO);
-	glDeleteProgram(_programID);
 }
 
 bool ColorCube::render(const glm::mat4 &projection, const glm::mat4 &view)
@@ -129,14 +127,15 @@ bool ColorCube::render(const glm::mat4 &projection, const glm::mat4 &view)
 	glm::mat4 MVP = projection * view * model; // Remember, matrix multiplication is the other way around
 
 	/* Bind program to upload the uniform */
-	glUseProgram(_programID);
+	_shader->attach();
 
 	/* Send our transformation to the currently bound shader, in the "MVP" uniform */
-	glUniformMatrix4fv(_matrixID, 1, GL_FALSE, &MVP[0][0]);
+	_shader->setUniform("MVP", MVP);
 
 	/* Clear the buffer */
 	glBindVertexArray(_gVAO);
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, NULL);
 	glBindVertexArray(0);
-	glUseProgram(0);
+
+	_shader->detach();
 }

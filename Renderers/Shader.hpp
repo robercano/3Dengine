@@ -9,8 +9,7 @@
 #define __SHADER_HPP__
 
 #include <string>
-#include <vector>
-#include <OpenGL/gl.h>
+#include <map>
 #include <glm/glm.hpp>
 
 class Shader
@@ -52,6 +51,16 @@ class Shader
 		 * @return true or false
 		 */
 		virtual bool linkProgram(std::string &error) = 0;
+
+		/**
+		 * Makes the shader active
+		 */
+		virtual bool attach(void) = 0;
+
+		/**
+		 * Makes the shader inactive
+		 */
+		virtual bool detach(void) = 0;
 
 		/**
 		 * Gets a list of all the shader uniforms

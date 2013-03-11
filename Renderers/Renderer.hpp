@@ -11,10 +11,21 @@
 #include <string>
 #include <glm/glm.hpp>
 #include "Object3D.hpp"
+#include "Shader.hpp"
 
 class Renderer
 {
 	public:
+		/**
+		 * Singleton
+		 */
+		static Renderer *GetRenderer(void);
+
+		/**
+		 * Shader factory
+		 */
+		virtual Shader * getShader(void) = 0;
+
 		/**
 		 * Destructor
 		 */
@@ -42,6 +53,12 @@ class Renderer
 		 * Adds a new 3D object to be rendered
 		 */
 		virtual bool addObject(Object3D *object) = 0;
+
+	private:
+		/**
+		 * Singleton instance
+		 */
+		static Renderer *_renderer;
 };
 
 #endif

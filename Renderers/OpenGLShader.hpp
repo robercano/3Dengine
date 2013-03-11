@@ -8,6 +8,7 @@
 #define __OPENGLSHADER_HPP__
 
 #include <map>
+#include <vector>
 #include <string>
 #include "Shader.hpp"
 
@@ -15,9 +16,14 @@ class OpenGLShader : public Shader
 {
 	public:
 		/**
+		 * Constructor
+		 */
+		OpenGLShader(void);
+
+		/**
 		 * Destructor
 		 */
-		~OpenGLShader();
+		~OpenGLShader(void);
 
 		/**
 		 * Loads a new vertex shader code and compiles it
@@ -52,6 +58,16 @@ class OpenGLShader : public Shader
 		bool linkProgram(std::string &error);
 
 		/**
+		 * Makes the shader active
+		 */
+		bool attach(void);
+
+		/**
+		 * Makes the shader inactive
+		 */
+		bool detach(void);
+
+		/**
 		 * Gets a list of all the shader uniforms
 		 *
 		 * @return A vector with all the available uniform names
@@ -81,6 +97,11 @@ class OpenGLShader : public Shader
 		 * @return true or false
 		 */
 		bool _loadShader(uint32_t shaderObjectID, const std::string &filename, std::string &error);
+
+		/**
+		 * Deletes all the previously allocated shaders IDs
+		 */
+		void _deleteShadersIDs(void);
 
 		/**
 		 * Internal function to build up the association map for

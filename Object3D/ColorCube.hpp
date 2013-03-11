@@ -8,6 +8,7 @@
 #define __COLORCUBE_HPP__
 
 #include "Object3D.hpp"
+#include "OpenGLShader.hpp"
 
 class ColorCube : public Object3D
 {
@@ -37,12 +38,10 @@ class ColorCube : public Object3D
 		bool destroy();
 
 	private:
-		glm::mat4 _MVP;
-
 		/**
-		 * Shader program ID
+		 * Shader
 		 */
-		uint32_t _programID;
+		Shader *_shader;
 
 		/**
 		 * Vertex array object ID
@@ -63,10 +62,5 @@ class ColorCube : public Object3D
 		 * Vertex buffer object for indices
 		 */
 		uint32_t _indicesVBO;
-
-		/**
-		 * ID for the MVP matrix
-		 */
-		uint32_t _matrixID;
 };
 #endif

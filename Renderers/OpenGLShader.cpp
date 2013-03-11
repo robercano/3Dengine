@@ -5,8 +5,21 @@
  * @author	Roberto Sosa Cano
  */
 
+#include <iostream>
+#include <fstream>
+#include <stdio.h>
 #include <OpenGL/gl.h>
 #include "OpenGLShader.hpp"
+
+OpenGLShader::OpenGLShader(void) : _programID(0)
+{
+}
+
+OpenGLShader::~OpenGLShader(void)
+{
+	_deleteShadersIDs();
+	glDeleteProgram(_programID);
+}
 
 bool OpenGLShader::loadVertexShader(const std::string &filename, std::string &error)
 {
@@ -27,8 +40,36 @@ bool OpenGLShader::_loadShader(uint32_t shaderObjectID, const std::string &filen
 	GLint result = GL_FALSE;
 
 	/* Open file and read it */
-	//glShaderSource(shaderObjectID, 1, &VertexSourcePointer, NULL);
+	FILE *shader = fopen(filename.c_str(), "r");
+
+	if (shader == NULL) {
+		error = std::string("File ") + filename + std::string(" couldn't be opened");
+		return false;
+	}
+
+	fseek(shader, 0, SEEK_END);
+	long size = ftell(shader);
+	fseek(shader, 0, SEEK_SET);
+
+	if (size == -1) {
+		error = std::string("Failed when getting the size of ") + filename;
+		fclose(shader);
+		return false;
+	}
+	char *shaderText = new char[size+1];
+	if (fread(shaderText, sizeof(char), size, shader) != size) {
+		error = std::string("Failed when reading ") + filename;
+		delete shaderText;
+		fclose(shader);
+		return false;
+	}
+	shaderText[size] = 0;
+	fclose(shader);
+
+	glShaderSource(shaderObjectID, 1, (const GLchar **)&shaderText, NULL);
 	glCompileShader(shaderObjectID);
+
+	delete shaderText;
 
 	/* Get compilation status */
 	glGetShaderiv(shaderObjectID, GL_COMPILE_STATUS, &result);
@@ -76,36 +117,19 @@ bool OpenGLShader::linkProgram(std::string &error)
 	_buildUniformsMap();
 
 	/* Delete the shaders IDs */
-	for (it=_shadersIDs.begin(); it != _shadersIDs.end(); ++it) {
-		glDeleteShader(*it);
-	}
+	_deleteShadersIDs();
 
 	return true;
 }
 
-void OpenGLShader::_buildUniformsMap(void)
+bool OpenGLShader::attach(void)
 {
-	_uniformNames.clear();
-#if 0
-	std::vector<uint32_t>::iterator it;
-	for (it=_shadersIDs.begin(); it != _shadersIDs.end(); ++it) {
-		int32_t count, i;
-		glGetProgramiv(*it, GL_OBJECT_ACTIVE_UNIFORMS, &count);
+	glUseProgram(_programID);
+}
 
-		for (i=0; i<count; ++i) {
-			char uniformName[128];
-
-			/* Get uniform name */
-			glGetActiveUniform(*it, i, sizeof name, NULL, NULL, NULL, uniformName);
-
-			/* Get location */
-			uint32_t uniformID = glGetUniformLocation(_programID, uniformName);
-
-			/* Save in map */
-			_uniformNames[uniformName] = uniformID;
-		}
-	}
-#endif
+bool OpenGLShader::detach(void)
+{
+	glUseProgram(0);
 }
 
 const std::map<std::string, uint32_t> & OpenGLShader::getUniforms(void)
@@ -123,4 +147,34 @@ bool OpenGLShader::setUniform(const std::string &name, glm::mat4 &value)
 
 	glUniformMatrix4fv(it->second, 1, GL_FALSE, &value[0][0]);
 	return true;
+}
+
+void OpenGLShader::_deleteShadersIDs(void)
+{
+	std::vector<uint32_t>::iterator it;
+	for (it=_shadersIDs.begin(); it != _shadersIDs.end(); ++it) {
+		glDeleteShader(*it);
+	}
+	_shadersIDs.clear();
+}
+
+void OpenGLShader::_buildUniformsMap(void)
+{
+	_uniformNames.clear();
+
+	int32_t count, i;
+	glGetProgramiv(_programID, GL_ACTIVE_UNIFORMS, &count);
+
+	for (i=0; i<count; ++i) {
+		char uniformName[128];
+
+		/* Get uniform name */
+		glGetActiveUniform(_programID, i, sizeof uniformName, NULL, NULL, NULL, uniformName);
+
+		/* Get location */
+		uint32_t uniformID = glGetUniformLocation(_programID, uniformName);
+
+		/* Save in map */
+		_uniformNames[uniformName] = uniformID;
+	}
 }

@@ -30,7 +30,7 @@ endif
 #
 VPATH=WindowManagers:Renderers:Object3D:Game:Input:Camera
 FILES=OpenGLRenderer.cpp WindowManager.cpp GLFWWindowManager.cpp GLFWKeyManager.cpp \
-	  ColorCube.cpp GLFWMouseManager.cpp Game.cpp InputManager.cpp Camera.cpp OpenGLShader.cpp
+	  ColorCube.cpp GLFWMouseManager.cpp Game.cpp InputManager.cpp Camera.cpp OpenGLShader.cpp Renderer.cpp
 
 OBJDIR=obj
 OBJECTS=$(patsubst %.cpp,$(OBJDIR)/%.o,$(FILES))
