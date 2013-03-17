@@ -77,7 +77,8 @@ bool Game::init(std::string &gameName)
 	_windowManager->getMouseManager()->registerListener(_inputManager);
 
 	/* Create the game camera */
-	_camera = new WalkingCamera();
+	//_camera = new WalkingCamera();
+	_camera = new Camera();
 	_camera->setProjection(45, 1440.0/900.0, 0.1, 100.0);
 }
 

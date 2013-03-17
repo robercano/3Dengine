@@ -15,8 +15,8 @@ int main(int argc, char** argv)
 	game->init(title);
 
 	/* Add the geometry */
-	ColorCube cube;
-	game->getRenderer()->addObject(&cube);
+	Sphere sphere;
+	game->getRenderer()->addObject(&sphere);
 
 	game->loop();
 	return 0;

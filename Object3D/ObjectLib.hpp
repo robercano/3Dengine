@@ -8,5 +8,6 @@
 #define __OBJECTLIB_HPP__
 
 #include "ColorCube.hpp"
+#include "Sphere.hpp"
 
 #endif
