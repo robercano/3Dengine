@@ -8,36 +8,6 @@ using namespace glm;
 #include "Sphere.hpp"
 #include "Renderer.hpp"
 
-#if 0
-	GLfloat vertices[][3] = {
-		{  1.0,  1.0,  1.0 },
-		{  1.0, -1.0,  1.0 } ,
-		{  1.0,  1.0, -1.0 },
-		{  1.0, -1.0, -1.0 },
-		{ -1.0,  1.0, -1.0 },
-		{ -1.0, -1.0, -1.0 },
-		{ -1.0,  1.0,  1.0 },
-		{ -1.0, -1.0,  1.0 }};
-
-	GLfloat colors[][3] = {
-		{  1.0,  1.0,  1.0 },
-		{  1.0,  1.0,  1.0 },
-		{  1.0,  1.0,  1.0 },
-		{  1.0,  1.0,  1.0 },
-		{  1.0,  1.0,  1.0 },
-		{  1.0,  1.0,  1.0 },
-		{  1.0,  1.0,  1.0 },
-		{  1.0,  1.0,  1.0 } };
-
-	GLubyte indices[] = {
-		0, 1, 2, 3, 4, 5, 6, 7, 0, 1,
-		0,
-		0, 6, 2, 4,
-		4, 5,
-		5, 7, 3, 1
-	};
-#endif
-
 static uint32_t numIndices = 0;
 bool Sphere::init()
 {
@@ -63,7 +33,7 @@ bool Sphere::init()
 		GLfloat r, g, b;
 	} color;
 
-	uint8_t level = 6; /* Beware! max 8 for now! */
+	uint8_t level = 2; /* Beware! max 8 for now! */
 	uint32_t H = (1<<level) + 1;
 	uint32_t V = (1<<level) + 1;
 	uint32_t horizontal = (H-1) * 4; /* 4 sides */
@@ -148,10 +118,55 @@ bool Sphere::init()
 	colors[vertNum].g = 1.0;
 	colors[vertNum].b = 1.0;
 
+	vertNum++;
+
+	/* Generate top */
+	iter = H - 2;
+	for (i=iter; i>1; i-=2) { /* Loop through all the inner squares */
+		for(j=0; j < 4*(i-1); ++j) {
+			uint32_t offset = (iter-i)/2 + 1;
+
+			if (j < (i-1)) {
+				vertices[vertNum].x = (j+offset)/(H - 1.0);
+				vertices[vertNum].y = 1.0;
+				vertices[vertNum].z = 0.0 - (offset/(H - 1.0));
+			} else if (j < 2*(i-1)) {
+				vertices[vertNum].x = 1.0 - (offset/(H - 1.0));
+				vertices[vertNum].y = 1.0;
+				vertices[vertNum].z = 0.0 - (((j-(i-1))+offset)/(H - 1.0));
+			} else if (j < 3*(i-1)) {
+				vertices[vertNum].x = 1.0 - ((j-2*(i-1)+offset)/(H - 1.0));
+				vertices[vertNum].y = 1.0;
+				vertices[vertNum].z = -1.0 + (offset/(H-1.0));;
+			} else if (j < 4*(i-1)) {
+				vertices[vertNum].x = offset/(H - 1.0);
+				vertices[vertNum].y = 1.0;
+				vertices[vertNum].z = -1.0 + ((j-3*(i-1) + offset)/(H - 1.0));
+			}
+			colors[vertNum].r = 1.0;
+			colors[vertNum].g = 1.0;
+			colors[vertNum].b = 1.0;
+
+			vertNum++;
+		}
+	}
+
+	/* Add the center */
+	vertices[vertNum].x = 0.5;
+	vertices[vertNum].y = 1.0;
+	vertices[vertNum].z = -0.5;
+
+	colors[vertNum].r = 1.0;
+	colors[vertNum].g = 1.0;
+	colors[vertNum].b = 1.0;
+
+	vertNum++;
+
 	fprintf(stderr, "Vertices: %d, allocated: %d, H*V: %d, top: %d, bottom: %d\n", vertNum, horizontal*vertical + top + bottom, horizontal*vertical, top, bottom);
 
 	/* Generate indices */
-	numIndices = 2*(horizontal+1)*(vertical-1) + 4*((1<<level)*((1<<(level-1)) + 1) -4) + (((1<<(level-1))-2))*2;
+	numIndices = 2*(horizontal+1)*(vertical-1) + 4*((1<<level)*((1<<(level-1)) + 1) -4) + (((1<<(level-1))-2))*2 + 18 +
+		                                                                                  (((1<<(level-1))-2))*2 + 18;
 
 	GLushort *indices = new GLushort[numIndices];
 	int count = 0;
@@ -165,7 +180,7 @@ bool Sphere::init()
 		indices[count++] = (i+1)*horizontal;
 	}
 
-	/* Generate bottom */
+	/* Generate bottom indices */
 	uint32_t k;
 	uint32_t _h = (1<<level)*4;
 	uint32_t _v = (1<<level)+1;
@@ -175,11 +190,11 @@ bool Sphere::init()
 	fprintf(stderr, "numIndices: %d, count: %d\n", numIndices, count);
 	uint32_t total_levels = ((1<<(level-1)) - 1);
 
-	for (k=total_levels; k>0; k--) {
+	for (k=0;k<=total_levels; k++) {
 		uint32_t shift = _h;
 		uint32_t first = base;
 
-		if (k!=total_levels) {
+		if (k!=0) {
 			indices[count++] = base;
 		}
 
@@ -205,7 +220,68 @@ bool Sphere::init()
 			shift -= 2;
 		}
 
-		if (k!=1) {
+		if (k!=total_levels) {
+			indices[count++] = base;
+		}
+
+		base += _h;
+		_h -= 2*4;
+		side -= 2;
+	}
+
+	/* Generate top indices */
+	_h = (1<<level)*4;
+	_v = (1<<level)+1;
+	base  = _h*(_v-2) + _v*_v;
+	side = 1<<level;
+
+	total_levels = ((1<<(level-1)) - 1);
+
+	for (k=0;k<total_levels; k++) {
+		uint32_t shift = _h - 8;
+		uint32_t first = base;
+
+		if (k!=0) {
+			indices[count++] = base;
+		}
+
+		for (i=0; i<4; i++) {
+			for (j=0; j<side-1; j++) {
+				if (k=0) {
+					/* Alias area */
+					if (i==0 && j==0) {
+						indices[count++] = 0;
+					} else {
+						indices[count++] = 4*(4-i)-j;
+					}
+				} else {
+					indices[count++] = first + j;
+				}
+
+				if (i == 3 && j == side-2) {
+					indices[count++] = base + _h;
+				} else {
+					indices[count++] = first + shift + j;
+				}
+			}
+
+			if (k==0) {
+				indices[count++] = 4*(4-i)-j;
+				indices[count++] = 4*(4-i)-j-1;
+			} else {
+				indices[count++] = first + j;
+				if (i == 3) {
+					indices[count++] = base;
+				} else {
+					indices[count++] = first + j + 1;
+				}
+			}
+
+			first += side;
+			shift -= 2;
+		}
+
+		if (k!=total_levels) {
 			indices[count++] = base;
 		}
 

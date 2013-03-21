@@ -28,10 +28,10 @@ endif
 #
 # Files to be compiled
 #
-VPATH=WindowManagers:Renderers:Object3D:Game:Input:Camera
+VPATH=WindowManagers:Renderers:Object3D:Game:Input:Camera:Procedural
 FILES=OpenGLRenderer.cpp WindowManager.cpp GLFWWindowManager.cpp GLFWKeyManager.cpp \
 	  ColorCube.cpp GLFWMouseManager.cpp Game.cpp InputManager.cpp Camera.cpp OpenGLShader.cpp Renderer.cpp\
-	  Sphere.cpp
+	  Sphere.cpp Procedural.cpp Plane.cpp
 
 OBJDIR=obj
 OBJECTS=$(patsubst %.cpp,$(OBJDIR)/%.o,$(FILES))
@@ -44,7 +44,7 @@ DEMODIR=Demos
 #
 # Compilation flags
 #
-CXXFLAGS= -fPIC -IWindowManagers -IRenderers -IObject3D -I Game -I Input -I Camera -I/opt/X11/include -I ./Libraries -g
+CXXFLAGS= -fPIC -IWindowManagers -IRenderers -IObject3D -I Game -I Input -I Camera -I Procedural -I/opt/X11/include -I ./Libraries -g
 
 #
 # Main rules

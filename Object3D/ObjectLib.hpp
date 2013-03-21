@@ -9,5 +9,6 @@
 
 #include "ColorCube.hpp"
 #include "Sphere.hpp"
+#include "Plane.hpp"
 
 #endif
