@@ -74,7 +74,7 @@ dirs:
 
 $(LIBDIR)/$(LIBNAME): $(OBJECTS)
 	@echo "- Generating $@...\c"
-	@$(CXX) $(SHAREDGEN)$(LIBNAME) -o $@ $? $(LDFLAGS)
+	@$(CXX) $(SHAREDGEN)$(LIBNAME) -o $@ $(OBJECTS) $(LDFLAGS)
 	@echo "done"
 
 $(OBJDIR)/%.o: %.cpp

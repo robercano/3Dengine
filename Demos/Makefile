@@ -9,7 +9,6 @@ FILES=$(shell \ls *.cpp)
 TARGETS=$(FILES:.cpp=)
 
 all: $(TARGETS)
-	@rm -rf *.dSYM
 
 %: %.cpp
 	@g++ $(CXXFLAGS) $(LDFLAGS) -o $@ $?
