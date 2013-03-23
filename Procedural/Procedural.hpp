@@ -9,34 +9,17 @@
 
 #include <stdint.h>
 #include <vector>
+#include <glm/glm.hpp>
 
 namespace procedural
 {
 	/**
-	 * Internally used structures
+	 * Vertex data structure
 	 */
-	struct vertex {
-		float x, y, z, w;
-	};
-
-	struct color {
-		float r, g, b, a;
-	};
-
-	struct normal {
-		float x, y, z, w;
-	};
-
 	struct pack {
-		vertex v;
-		color  c;
-		normal n;
-	} __attribute((packed));
-
-	enum Axis {
-		AXIS_X,
-		AXIS_Y,
-		AXIS_Z
+		glm::vec4 vertex;
+		glm::vec4 color;
+		glm::vec4 normal;
 	};
 
 	/**
@@ -64,8 +47,12 @@ namespace procedural
 			 *
 			 * @return A plane object that contains the geometry
 			 */
-			 Plane(uint32_t horizontal, uint32_t vertical, float width = 1.0, float height = 1.0,
-					Axis axis = AXIS_X, float shift = 0.0);
+			 Plane(void);
+			 void addPlane(uint32_t horizontal = 2, uint32_t vertical = 2,
+					       float xscale = 1.0, float yscale = 1.0, float zscale = 1.0,
+						   glm::vec4 &xaxis = XAXIS,
+						   glm::vec4 &yaxis = YAXIS,
+						   glm::vec4 &zaxis = ZAXIS);
 
 			 /**
 			  * Returns the internal geometry data
@@ -79,6 +66,13 @@ namespace procedural
 
 		private:
 			 /**
+			  * Default axis for plane generation
+			  */
+			 static glm::vec4 XAXIS;
+			 static glm::vec4 YAXIS;
+			 static glm::vec4 ZAXIS;
+
+			 /**
 			  * Array of data containing the plane geometry
 			  */
 			 std::vector<pack> _packs;
@@ -87,18 +81,6 @@ namespace procedural
 			  * Vector of indices in triangle strip format
 			  */
 			 std::vector<uint32_t> _indices;
-
-			 /**
-			  * Dimensions of the plane
-			  */
-			 uint32_t _width;
-			 uint32_t _height;
-
-			 /**
-			  * Number of horizontal and vertical vertices
-			  */
-			 uint32_t _horizontal;
-			 uint32_t _vertical;
 	};
 };
 

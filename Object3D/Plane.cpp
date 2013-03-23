@@ -16,7 +16,32 @@ static uint32_t numIndices = 0;
 bool Plane::init()
 {
 	/* Generate the procedural plane */
-	procedural::Plane plane(1000, 20, 0.0, 0.0, procedural::AXIS_X);
+	procedural::Plane plane;
+	glm::vec4 xaxis[] = {
+		glm::vec4(0.0, 0.0, -1.0, 0.0),
+		glm::vec4(1.0, 0.0, 0.0, 0.0),
+		glm::vec4(0.0, 0.0, 1.0, 0.0),
+		glm::vec4(-1.0, 0.0, 0.0, 0.0),
+		glm::vec4(0.0, 1.0, 0.0, 0.0),
+		glm::vec4(0.0, -1.0, 0.0, 0.0) };
+	glm::vec4 yaxis[] = {
+		glm::vec4(0.0, 1.0, 0.0, 0.0),
+		glm::vec4(0.0, 1.0, 0.0, 0.0),
+		glm::vec4(0.0, 1.0, 0.0, 0.0),
+		glm::vec4(0.0, 1.0, 0.0, 0.0),
+		glm::vec4(-1.0, 0.0, 0.0, 0.0),
+		glm::vec4(1.0, 0.0, 0.0, 0.0) };
+	glm::vec4 zaxis[] = {
+		glm::vec4(1.0, 0.0, 0.0, 0.0),
+		glm::vec4(0.0, 0.0, 1.0, 0.0),
+		glm::vec4(-1.0, 0.0, 0.0, 0.0),
+		glm::vec4(0.0, 0.0, -1.0, 0.0),
+		glm::vec4(0.0, 0.0, 1.0, 0.0),
+		glm::vec4(0.0, 0.0, 1.0, 0.0) };
+
+	for (int i=0; i<6; ++i) {
+		plane.addPlane(100, 100, 1.0, 1.0, 1.0, xaxis[i], yaxis[i], zaxis[i]);
+	}
 
 	const vector<procedural::pack> *packs = plane.getGeometry();
 	const vector<uint32_t>         *index = plane.getIndices();
@@ -76,7 +101,7 @@ bool Plane::init()
 			GL_FLOAT,           // type
 			GL_FALSE,           // normalized?
 			sizeof(procedural::pack),// stride
-			(void*)offsetof(procedural::pack, c)            // array buffer offset
+			(void*)sizeof(glm::vec4)            // array buffer offset
 			);
 
 	/* Generate the buffer for the indices */

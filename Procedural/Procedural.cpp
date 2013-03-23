@@ -5,17 +5,36 @@
  * @author	Roberto Sosa Cano
  */
 #include "Procedural.hpp"
+#include <glm/glm.hpp>
 
 using namespace procedural;
 using namespace std;
 
-Plane::Plane(uint32_t horizontal, uint32_t vertical, float width, float height,
-		     Axis axis, float shift)
+glm::vec4 Plane::XAXIS(1.0, 0.0, 0.0, 0.0);
+glm::vec4 Plane::YAXIS(0.0, 1.0, 0.0, 0.0);
+glm::vec4 Plane::ZAXIS(0.0, 0.0, 1.0, 0.0);
+
+Plane::Plane()
 {
-	_horizontal = horizontal;
-	_vertical   = vertical;
-	_width      = width;
-	_height     = height;
+}
+
+void Plane::addPlane(uint32_t horizontal, uint32_t vertical,
+					 float xscale, float yscale, float zscale,
+					 glm::vec4 &xaxis, glm::vec4 &yaxis, glm::vec4 &zaxis)
+{
+	/* Scale vectors */
+	xaxis *= xscale;
+	yaxis *= yscale;
+	zaxis *= zscale;
+
+	glm::vec4 tmp = xaxis/2.0;
+	float xcenter = tmp.x + tmp.y + tmp.z;
+
+	tmp = yaxis/2.0;
+	float ycenter = tmp.x + tmp.y + tmp.z;
+
+	tmp = zaxis/2.0;
+	float zcenter = tmp.x + tmp.y + tmp.z;
 
 	/*
 	 * For each row of vertices of the plane two indices are needed
@@ -24,75 +43,54 @@ Plane::Plane(uint32_t horizontal, uint32_t vertical, float width, float height,
 	 * Then multiplied by the number of rows minus one, as the last
 	 * row does have to generate more triangles
 	 */
-	_packs.resize(_horizontal*_vertical);
-	_indices.resize(2*(_horizontal+1)*(_vertical-1)-2);
+	uint32_t pack_size    = _packs.size();
+	uint32_t indices_size = _indices.size();
 
-	float hDiv = _horizontal - 1;
-	float vDiv = _vertical   - 1;
-
-	pack *data = &_packs[0];
-
-	/* Precalculate the normal */
-	normal X_AXIS = { 1.0, 0.0, 0.0, 0.0 },
-		   Y_AXIS = { 0.0, 1.0, 0.0, 0.0 },
-		   Z_AXIS = { 0.0, 0.0, 1.0, 0.0 };
-	normal xaxis, yaxis, zaxis;
-
-	switch (axis) {
-		case AXIS_X:
-			xaxis = X_AXIS;
-			yaxis = Y_AXIS;
-			zaxis = Z_AXIS;
-			break;
-		case AXIS_Y:
-			xaxis = Y_AXIS;
-			yaxis = X_AXIS;
-			zaxis = Z_AXIS;
-			break;
-		case AXIS_Z:
-			xaxis = Z_AXIS;
-			yaxis = Y_AXIS;
-			zaxis = X_AXIS;
-			break;
+	_packs.resize(pack_size + horizontal*vertical);
+	if (pack_size == 0) {
+		_indices.resize(indices_size + 2*(horizontal+1)*(vertical-1) - 1);
+	} else {
+		_indices.resize(indices_size + 2*(horizontal+1)*(vertical-1));
 	}
+
+	float hDiv = horizontal - 1;
+	float vDiv = vertical   - 1;
+
+	pack *data = &_packs[pack_size];
 
 	/* Generate the plane vertices */
 	uint32_t count = 0;
-	for (int i=0; i<_vertical; ++i) {
-		for (int j=0; j<_horizontal; ++j) {
-			data[count].v.x = shift*xaxis.x + xaxis.y*i/vDiv + xaxis.z*j/hDiv;
-			data[count].v.y = shift*yaxis.x + yaxis.y*i/vDiv + yaxis.z*j/hDiv;
-			data[count].v.z = shift*zaxis.x + zaxis.y*i/vDiv + zaxis.z*j/hDiv;
-			data[count].v.w = 1.0;
+	for (int i=0; i<vertical; ++i) {
+		for (int j=0; j<horizontal; ++j) {
+			data[count].vertex.x = xaxis.x + xaxis.y*i/vDiv + xaxis.z*j/hDiv - xcenter;
+			data[count].vertex.y = yaxis.x + yaxis.y*i/vDiv + yaxis.z*j/hDiv - ycenter;
+			data[count].vertex.z = zaxis.x + zaxis.y*i/vDiv + zaxis.z*j/hDiv - zcenter;
+			data[count].vertex.w = 1.0;
 
-			data[count].n = xaxis;
+			data[count].normal = xaxis;
 
-			data[count].c.r = data[count].v.x; //1.0;
-			data[count].c.g = data[count].v.y; //1.0;
-			data[count].c.b = data[count].v.z; //1.0;
-			data[count].c.a = 1.0;
-
+			data[count].color.r = data[count].vertex.x + 0.5;
+			data[count].color.g = data[count].vertex.y + 0.5;
+			data[count].color.b = data[count].vertex.z + 0.5;
+			data[count].color.a = 1.0;
 			count++;
 		}
 	}
 
 	/* Generate the indices */
-	uint32_t *index = &_indices[0];
-
+	uint32_t *index = &_indices[indices_size];
 	count = 0;
-	for (int i=0; i<_vertical-1; ++i) {
-		/* Repeat the first index */
-		if (i != 0) {
-			index[count++] = _horizontal*(i+0) + 0;
+	for (int i=0; i<vertical-1; ++i) {
+		/* Always repeat the first index, in case more geometry must be added */
+		if (pack_size != 0 || i!=0) {
+			index[count++] = pack_size + horizontal*(i+0) + 0;
 		}
-		for (int j=0; j<_horizontal; ++j) {
-			index[count++] = _horizontal*(i+0) + j;
-			index[count++] = _horizontal*(i+1) + j;
+		for (int j=0; j<horizontal; ++j) {
+			index[count++] = pack_size + horizontal*(i+0) + j;
+			index[count++] = pack_size + horizontal*(i+1) + j;
 		}
-		/* Repeat the last index */
-		if (i != (_vertical-2)) {
-			index[count++] = _horizontal*(i+1) + _horizontal-1;
-		}
+		/* Same as the first index */
+		index[count++] = pack_size + horizontal*(i+1) + horizontal-1;
 	}
 }
 
