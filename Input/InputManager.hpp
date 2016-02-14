@@ -6,8 +6,7 @@
  *
  * @author	Roberto Sosa Cano
  */
-#ifndef __INPUTMANAGER_HPP__
-#define __INPUTMANAGER_HPP__
+#pragma once
 
 #include "KeyManager.hpp"
 #include "MouseManager.hpp"
@@ -46,4 +45,3 @@ class InputManager : public KeyListener, public MouseListener
 		 */
 		int32_t _xMouse, _yMouse;
 };
-#endif

@@ -4,8 +4,7 @@
  *
  * @author	Roberto Sosa Cano
  */
-#ifndef __WINDOWMANAGER_HPP__
-#define __WINDOWMANAGER_HPP__
+#pragma once
 
 #include <string>
 #include <stdint.h>
@@ -121,5 +120,3 @@ class WindowManager
 		 */
 		static WindowManager *_windowManager;
 };
-
-#endif

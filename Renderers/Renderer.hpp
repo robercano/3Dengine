@@ -4,9 +4,7 @@
  *
  * @author	Roberto Sosa Cano
  */
-
-#ifndef __RENDERER_HPP__
-#define __RENDERER_HPP__
+#pragma once
 
 #include <string>
 #include <glm/glm.hpp>
@@ -60,5 +58,3 @@ class Renderer
 		 */
 		static Renderer *_renderer;
 };
-
-#endif

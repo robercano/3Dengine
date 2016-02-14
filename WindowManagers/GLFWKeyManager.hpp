@@ -4,8 +4,7 @@
  *
  * @author	Roberto Sosa Cano
  */
-#ifndef __GLFWKEYMANAGER_HPP__
-#define __GLFWKEYMANAGER_HPP__
+#pragma once
 
 #include <stdint.h>
 #include <map>
@@ -72,5 +71,3 @@ class GLFWKeyManager: public KeyManager
 		 */
 		std::map<uint32_t, std::vector<KeyListener *> > _listeners;
 };
-
-#endif

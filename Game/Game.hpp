@@ -4,8 +4,7 @@
  *
  * @author	Roberto Sosa Cano
  */
-#ifndef __GAME_HPP__
-#define __GAME_HPP__
+#pragma once
 
 #include <string>
 #include "WindowManager.hpp"
@@ -79,5 +78,3 @@ class Game
 		 */
 		Camera *_camera;
 };
-
-#endif

@@ -5,8 +5,7 @@
  * @author	Roberto Sosa Cano
  * @todo	Standarize the interface to make a generic Window Manager
  */
-#ifndef __GLFWWINDOWMANAGER_HPP__
-#define __GLFWWINDOWMANAGER_HPP__
+#pragma once
 
 #include <stdint.h>
 #include <GL/glew.h>
@@ -112,5 +111,3 @@ class GLFWWindowManager : public WindowManager
 		 */
 		Renderer *_renderer;
 };
-
-#endif

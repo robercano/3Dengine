@@ -4,8 +4,7 @@
  *
  * @author	Roberto Sosa Cano
  */
-#ifndef __OBJECT3D_HPP__
-#define __OBJECT3D_HPP__
+#pragma once
 
 #include <glm/glm.hpp>
 
@@ -41,5 +40,3 @@ class Object3D
 		 */
 		virtual bool destroy() = 0;
 };
-
-#endif

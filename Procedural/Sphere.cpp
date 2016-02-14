@@ -8,6 +8,8 @@ using namespace glm;
 #include "Sphere.hpp"
 #include "Renderer.hpp"
 
+using namespace procedural;
+
 static uint32_t numIndices = 0;
 bool Sphere::init()
 {

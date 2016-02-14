@@ -4,8 +4,7 @@
  *
  * @author	Roberto Sosa Cano
  */
-#ifndef __GLFWMOUSEMANAGER_HPP__
-#define __GLFWMOUSEMANAGER_HPP__
+#pragma once
 
 #include <stdint.h>
 #include <vector>
@@ -70,5 +69,3 @@ class GLFWMouseManager: public MouseManager
 		 */
 		std::vector<MouseListener *> _listeners;
 };
-
-#endif

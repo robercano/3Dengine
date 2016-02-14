@@ -1,11 +1,10 @@
 /**
- * @module  Procedural
- * @brief	Procedural objects generation library
+ * @module  Plane
+ * @brief	Plane procedural generation
  *
  * @author	Roberto Sosa Cano
  */
-#ifndef __PROCEDURAL_HPP__
-#define __PROCEDURAL_HPP__
+#pragma once
 
 #include <stdint.h>
 #include <vector>
@@ -83,5 +82,3 @@ namespace procedural
 			 std::vector<uint32_t> _indices;
 	};
 };
-
-#endif

@@ -4,8 +4,7 @@
  *
  * @author	Roberto Sosa Cano
  */
-#ifndef __OPENGLSHADER_HPP__
-#define __OPENGLSHADER_HPP__
+#pragma once
 
 #include <map>
 #include <vector>
@@ -124,5 +123,3 @@ class OpenGLShader : public Shader
 		 */
 		uint32_t _programID;
 };
-
-#endif

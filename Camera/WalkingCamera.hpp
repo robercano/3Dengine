@@ -5,8 +5,7 @@
  *
  * @author	Roberto Sosa Cano
  */
-#ifndef __WALKINGCAMERA_HPP__
-#define __WALKINGCAMERA_HPP__
+#pragma once
 
 #include "Camera.hpp"
 
@@ -25,5 +24,3 @@ class WalkingCamera : public Camera
 			setMask(mask);
 		}
 };
-
-#endif

@@ -4,9 +4,7 @@
  *
  * @author	Roberto Sosa Cano
  */
-
-#ifndef __SHADER_HPP__
-#define __SHADER_HPP__
+#pragma once
 
 #include <string>
 #include <map>
@@ -80,5 +78,3 @@ class Shader
 		 */
 		virtual bool setUniform(const std::string &name, glm::mat4 &value) = 0;
 };
-
-#endif

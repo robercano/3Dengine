@@ -4,8 +4,7 @@
  *
  * @author	Roberto Sosa Cano
  */
-#ifndef __MOUSEMANAGER_HPP__
-#define __MOUSEMANAGER_HPP__
+#pragma once
 
 #include <stdint.h>
 #include <vector>
@@ -38,5 +37,3 @@ class MouseManager
 		 */
 		virtual bool registerListener(MouseListener &listener) = 0;
 };
-
-#endif

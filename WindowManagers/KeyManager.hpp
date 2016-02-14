@@ -4,8 +4,7 @@
  *
  * @author	Roberto Sosa Cano
  */
-#ifndef __KEYMANAGER_HPP__
-#define __KEYMANAGER_HPP__
+#pragma once
 
 #include <stdint.h>
 #include <vector>
@@ -39,5 +38,3 @@ class KeyManager
 		 */
 		virtual bool registerListener(KeyListener &listener, std::vector<uint32_t> &keys) = 0;
 };
-
-#endif

@@ -4,8 +4,7 @@
  *
  * @author	Roberto Sosa Cano
  */
-#ifndef __OPENGLRENDERER_HPP__
-#define __OPENGLRENDERER_HPP__
+#pragma once
 
 #include <vector>
 #include "Renderer.hpp"
@@ -68,5 +67,3 @@ class OpenGLRenderer : public Renderer
 		 */
 		std::vector<Object3D*> _objects;
 };
-
-#endif

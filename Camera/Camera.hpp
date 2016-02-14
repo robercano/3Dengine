@@ -4,8 +4,7 @@
  *
  * @author	Roberto Sosa Cano
  */
-#ifndef __CAMERA_HPP__
-#define __CAMERA_HPP__
+#pragma once
 
 #include <glm/glm.hpp>
 
@@ -191,5 +190,3 @@ class Camera
 		 */
 		glm::mat4 _mask;
 };
-
-#endif

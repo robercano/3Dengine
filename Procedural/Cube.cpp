@@ -5,10 +5,12 @@
 using namespace glm;
 #include <string>
 
-#include "ColorCube.hpp"
+#include "Cube.hpp"
 #include "Renderer.hpp"
 
-bool ColorCube::init()
+using namespace procedural;
+
+bool Cube::init()
 {
 	GLfloat cubeVerts[][3] = {
 		{ -1.0, -1.0, -1.0 },
@@ -112,7 +114,7 @@ bool ColorCube::init()
     return true;
 }
 
-bool ColorCube::destroy()
+bool Cube::destroy()
 {
 	glDeleteBuffers(1, &_colorsVBO);
 	glDeleteBuffers(1, &_verticesVBO);
@@ -120,7 +122,7 @@ bool ColorCube::destroy()
     return true;
 }
 
-bool ColorCube::render(const glm::mat4 &projection, const glm::mat4 &view)
+bool Cube::render(const glm::mat4 &projection, const glm::mat4 &view)
 {
 	/* Model matrix : an identity matrix (model will be at the origin) */
 	glm::mat4 model      = glm::mat4(1.0f);

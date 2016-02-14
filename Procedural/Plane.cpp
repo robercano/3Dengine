@@ -4,7 +4,7 @@
  *
  * @author	Roberto Sosa Cano
  */
-#include "Procedural.hpp"
+#include "Plane.hpp"
 #include <glm/glm.hpp>
 
 using namespace procedural;
