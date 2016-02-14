@@ -7,43 +7,18 @@
 #pragma once
 
 #include "Object3D.hpp"
-#include "Shader.hpp"
 
 namespace procedural
 {
     class Icosahedron : public Object3D
     {
         public:
-            /**
-             * Initialises the 3D object
-             *
-             * @returns	true if the object was initialised or false otherwise
-             */
+            /** Object3D methods */
             bool init();
-
-            /**
-             * Renders the object by using graphic API commands
-             *
-             * @param projection	Projection matrix
-             * @param view			View matrix
-             *
-             * @returns	true if the object was rendered or false otherwise
-             */
-            bool render(const glm::mat4 &projection, const glm::mat4 &view);
-
-            /**
-             * Destroys the object by deinitilising it
-             *
-             * @returns	true if the object was destroyed or false otherwise
-             */
             bool destroy();
+            uint32_t getVertexArrayIndex();
 
         private:
-            /**
-             * Shader
-             */
-            Shader *_shader;
-
             /**
              * Vertex array object ID
              */

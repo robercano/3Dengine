@@ -46,7 +46,7 @@ bool Cube::init()
 		1, 4, 5,
 		4, 1, 0
 	};
-
+#if 0
 	/* Request a new shader */
 	_shader = Renderer::GetRenderer()->getShader();
 
@@ -64,7 +64,7 @@ bool Cube::init()
 		printf("ERROR linking shader: %s\n", error.c_str());
 		return false;
 	}
-
+#endif
 	/* Generate a vertex array to reference the attributes */
 	glGenVertexArrays(1, &_gVAO);
 	glBindVertexArray(_gVAO);
@@ -122,25 +122,7 @@ bool Cube::destroy()
     return true;
 }
 
-bool Cube::render(const glm::mat4 &projection, const glm::mat4 &view)
+uint32_t Cube::getVertexArrayIndex()
 {
-	/* Model matrix : an identity matrix (model will be at the origin) */
-	glm::mat4 model      = glm::mat4(1.0f);
-
-	/* Our ModelViewProjection : multiplication of our 3 matrices */
-	glm::mat4 MVP = projection * view * model; // Remember, matrix multiplication is the other way around
-
-	/* Bind program to upload the uniform */
-	_shader->attach();
-
-	/* Send our transformation to the currently bound shader, in the "MVP" uniform */
-	_shader->setUniform("MVP", MVP);
-
-	/* Clear the buffer */
-	glBindVertexArray(_gVAO);
-	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, NULL);
-	glBindVertexArray(0);
-
-	_shader->detach();
-    return true;
+    return _gVAO;
 }

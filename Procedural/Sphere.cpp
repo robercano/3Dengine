@@ -6,7 +6,6 @@ using namespace glm;
 #include <string>
 
 #include "Sphere.hpp"
-#include "Renderer.hpp"
 
 using namespace procedural;
 
@@ -35,7 +34,7 @@ bool Sphere::init()
 		GLfloat r, g, b;
 	} color;
 
-	uint8_t level = 2; /* Beware! max 8 for now! */
+	uint8_t level = 0; /* Beware! max 8 for now! */
 	uint32_t H = (1<<level) + 1;
 	uint32_t V = (1<<level) + 1;
 	uint32_t horizontal = (H-1) * 4; /* 4 sides */
@@ -291,25 +290,8 @@ bool Sphere::init()
 		_h -= 2*4;
 		side -= 2;
 	}
+
 	fprintf(stderr, "numIndices: %d, count: %d\n", numIndices, count);
-
-	/* Request a new shader */
-	_shader = Renderer::GetRenderer()->getShader();
-
-	/* Basic shaders with only position and color attributes, with no camera */
-	std::string error;
-	if (_shader->loadVertexShader("Shaders/mvp.vert", error) == false) {
-		printf("ERROR compiling vertex shader: %s\n", error.c_str());
-		return false;
-	}
-	if (_shader->loadFragmentShader("Shaders/color.frag", error) == false) {
-		printf("ERROR compiling fragment shader: %s\n", error.c_str());
-		return false;
-	}
-	if (_shader->linkProgram(error) == false) {
-		printf("ERROR linking shader: %s\n", error.c_str());
-		return false;
-	}
 
 	/* Generate a vertex array to reference the attributes */
 	glGenVertexArrays(1, &_gVAO);
@@ -368,25 +350,7 @@ bool Sphere::destroy()
     return true;
 }
 
-bool Sphere::render(const glm::mat4 &projection, const glm::mat4 &view)
+uint32_t Sphere::getVertexArrayIndex()
 {
-	/* Model matrix : an identity matrix (model will be at the origin) */
-	glm::mat4 model      = glm::mat4(1.0f);
-
-	/* Our ModelViewProjection : multiplication of our 3 matrices */
-	glm::mat4 MVP = projection * view * model; // Remember, matrix multiplication is the other way around
-
-	/* Bind program to upload the uniform */
-	_shader->attach();
-
-	/* Send our transformation to the currently bound shader, in the "MVP" uniform */
-	_shader->setUniform("MVP", MVP);
-
-	/* Clear the buffer */
-	glBindVertexArray(_gVAO);
-	glDrawElements(GL_TRIANGLE_STRIP, numIndices, GL_UNSIGNED_SHORT, NULL);
-	glBindVertexArray(0);
-
-	_shader->detach();
-    return true;
+    return _gVAO;
 }
