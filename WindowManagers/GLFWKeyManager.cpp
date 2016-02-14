@@ -39,6 +39,7 @@ bool GLFWKeyManager::registerListener(KeyListener &listener, std::vector<uint32_
 	for (it = keys.begin(); it != keys.end(); ++it) {
 		_listeners[*it].push_back(&listener);
 	}
+    return true;
 }
 
 void GLFWKeyManager::processKey(uint32_t key, bool state)

@@ -110,12 +110,14 @@ bool Plane::init()
 
 	/* Upload the data */
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_size, indices, GL_STATIC_DRAW);
+    return true;
 }
 
 bool Plane::destroy()
 {
 	glDeleteBuffers(1, &_verticesVBO);
 	glDeleteVertexArrays(1, &_gVAO);
+    return true;
 }
 
 bool Plane::render(const glm::mat4 &projection, const glm::mat4 &view)
@@ -138,4 +140,5 @@ bool Plane::render(const glm::mat4 &projection, const glm::mat4 &view)
 	glBindVertexArray(0);
 
 	_shader->detach();
+    return true;
 }

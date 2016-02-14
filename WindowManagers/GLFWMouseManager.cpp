@@ -45,6 +45,7 @@ bool GLFWMouseManager::registerListener(MouseListener &listener)
 		 * leading to another object being created and so on */
 		glfwSetMousePosCallback(mouseCallback);
 	}
+    return true;
 }
 
 void GLFWMouseManager::processMouse(int32_t x, int32_t y)

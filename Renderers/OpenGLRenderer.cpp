@@ -41,16 +41,20 @@ bool OpenGLRenderer::render(const glm::mat4 &projection, const glm::mat4 &view)
 	for (; it != _objects.end(); ++it) {
 		(*it)->render(projection, view);		// TODO: Not sure this should be like this
 	}
+
+    return true;
 }
 
 bool OpenGLRenderer::resize(uint16_t width, uint16_t height)
 {
 	_width  = width;
 	_height = height;
+    return true;
 }
 
 bool OpenGLRenderer::addObject(Object3D *object)
 {
 	object->init();
 	_objects.push_back(object);
+    return true;
 }

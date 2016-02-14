@@ -247,7 +247,7 @@ bool Sphere::init()
 
 		for (i=0; i<4; i++) {
 			for (j=0; j<side-1; j++) {
-				if (k=0) {
+				if (k==0) {
 					/* Alias area */
 					if (i==0 && j==0) {
 						indices[count++] = 0;
@@ -355,6 +355,7 @@ bool Sphere::init()
 
 	/* Upload the data */
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices*sizeof(GLushort), indices, GL_STATIC_DRAW);
+    return true;
 }
 
 bool Sphere::destroy()
@@ -362,6 +363,7 @@ bool Sphere::destroy()
 	glDeleteBuffers(1, &_colorsVBO);
 	glDeleteBuffers(1, &_verticesVBO);
 	glDeleteVertexArrays(1, &_gVAO);
+    return true;
 }
 
 bool Sphere::render(const glm::mat4 &projection, const glm::mat4 &view)
@@ -384,4 +386,5 @@ bool Sphere::render(const glm::mat4 &projection, const glm::mat4 &view)
 	glBindVertexArray(0);
 
 	_shader->detach();
+    return true;
 }

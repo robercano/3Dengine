@@ -125,11 +125,13 @@ bool OpenGLShader::linkProgram(std::string &error)
 bool OpenGLShader::attach(void)
 {
 	glUseProgram(_programID);
+    return true;
 }
 
 bool OpenGLShader::detach(void)
 {
 	glUseProgram(0);
+    return true;
 }
 
 const std::map<std::string, uint32_t> & OpenGLShader::getUniforms(void)

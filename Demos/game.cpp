@@ -15,8 +15,8 @@ int main(int argc, char** argv)
 	game->init(title);
 
 	/* Add the geometry */
-	Plane plane;
-	game->getRenderer()->addObject(&plane);
+	Sphere cube;
+	game->getRenderer()->addObject(&cube);
 
 	game->loop();
 	return 0;

@@ -80,6 +80,8 @@ bool Game::init(std::string &gameName)
 	//_camera = new WalkingCamera();
 	_camera = new Camera();
 	_camera->setProjection(45, 1440.0/900.0, 0.1, 100.0);
+
+    return true;
 }
 
 bool Game::loop(void)

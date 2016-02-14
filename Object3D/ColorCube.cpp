@@ -109,6 +109,7 @@ bool ColorCube::init()
 
 	/* Upload the data */
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cubeIndices), cubeIndices, GL_STATIC_DRAW);
+    return true;
 }
 
 bool ColorCube::destroy()
@@ -116,6 +117,7 @@ bool ColorCube::destroy()
 	glDeleteBuffers(1, &_colorsVBO);
 	glDeleteBuffers(1, &_verticesVBO);
 	glDeleteVertexArrays(1, &_gVAO);
+    return true;
 }
 
 bool ColorCube::render(const glm::mat4 &projection, const glm::mat4 &view)
@@ -138,4 +140,5 @@ bool ColorCube::render(const glm::mat4 &projection, const glm::mat4 &view)
 	glBindVertexArray(0);
 
 	_shader->detach();
+    return true;
 }

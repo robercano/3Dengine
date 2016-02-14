@@ -91,6 +91,7 @@ bool GLFWWindowManager::resize(uint16_t width, uint16_t height)
 	if (_renderer) {
 		_renderer->resize(width, height);
 	}
+    return true;
 }
 
 void GLFWWindowManager::poll(void)
