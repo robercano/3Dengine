@@ -13,31 +13,26 @@ namespace procedural
     class Cube : public Object3D
     {
         public:
-            /** Object3D inherited methods */
-            bool init();
-            bool destroy();
-            uint32_t getVertexArrayIndex();
+            Cube();
+            ~Cube();
+
+            /* Object3D methods */
+            const GLfloat *getVerticesArray();
+            uint32_t getVerticesArrayLen();
+            const GLfloat *getColorsArray();
+            uint32_t getColorsArrayLen();
+            const GLubyte *getIndicesArray();
+            uint32_t getIndicesArrayLen();
 
         private:
-            /**
-             * Vertex array object ID
-             */
-            uint32_t _gVAO;
+            GLfloat *_vertsArray;
+            uint32_t _vertsArrayLen;
 
-            /**
-             * Vertex buffer object for vertices
-             */
-            uint32_t _verticesVBO;
+            GLfloat *_colorsArray;
+            uint32_t _colorsArrayLen;
 
-            /**
-             * Vertex buffer object for colors
-             */
-            uint32_t _colorsVBO;
-
-            /**
-             * Vertex buffer object for indices
-             */
-            uint32_t _indicesVBO;
+            GLubyte *_indicesArray;
+            uint32_t _indicesArrayLen;
     };
 
 } /* namespace procedural */

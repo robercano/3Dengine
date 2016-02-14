@@ -5,6 +5,8 @@
  * @author	Roberto Sosa Cano
  */
 
+#include <GL/glew.h>
+#include <GL/glfw.h>
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #include "OpenGLRenderer.hpp"

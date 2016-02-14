@@ -6,6 +6,8 @@
  */
 #pragma once
 
+#include <GL/glew.h>
+#include <GL/glfw.h>
 #include <glm/glm.hpp>
 #include "Shader.hpp"
 
@@ -17,26 +19,37 @@ class Object3D
 		 */
 		virtual ~Object3D() {}
 
+        /**
+         * Returns the vertices array information
+         */
+        virtual const GLfloat *getVerticesArray() = 0;
+        virtual uint32_t getVerticesArrayLen() = 0;
+
+        /**
+         * Returns the colors array information
+         */
+        virtual const GLfloat *getColorsArray() = 0;
+        virtual uint32_t getColorsArrayLen() = 0;
+
+        /**
+         * Returns the colors array information
+         */
+        virtual const GLubyte *getIndicesArray() = 0;
+        virtual uint32_t getIndicesArrayLen() = 0;
+
 		/**
 		 * Initialises the 3D object
 		 *
 		 * @returns	true if the object was initialised or false otherwise
 		 */
-		virtual bool init() = 0;
+		virtual bool init();
 
 		/**
 		 * Destroys the object by deinitilising it
 		 *
 		 * @returns	true if the object was destroyed or false otherwise
 		 */
-		virtual bool destroy() = 0;
-
-        /**
-         * Retrieves the vertex array index to be used for the rendering
-         *
-         * @returns the vertex array index
-         */
-        virtual uint32_t getVertexArrayIndex() = 0;
+		virtual bool destroy();
 
         /**
          * Adds a new shader to the object to be used for rendering
@@ -62,4 +75,24 @@ class Object3D
          * Shader to use for the rendering of this object
          */
         Shader *_shader;
+
+        /**
+         * Vertex array object ID
+         */
+        uint32_t _gVAO;
+
+        /**
+         * Vertex buffer object for vertices
+         */
+        uint32_t _verticesVBO;
+
+        /**
+         * Vertex buffer object for colors
+         */
+        uint32_t _colorsVBO;
+
+        /**
+         * Vertex buffer object for indices
+         */
+        uint32_t _indicesVBO;
 };

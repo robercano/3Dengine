@@ -10,9 +10,9 @@ using namespace glm;
 
 using namespace procedural;
 
-bool Cube::init()
+Cube::Cube()
 {
-	GLfloat cubeVerts[][3] = {
+	GLfloat verts[][3] = {
 		{ -1.0, -1.0, -1.0 },
 		{ -1.0, -1.0,  1.0 },
 		{ -1.0,  1.0, -1.0 },
@@ -22,7 +22,7 @@ bool Cube::init()
 		{  1.0,  1.0, -1.0 },
 		{  1.0,  1.0,  1.0 } };
 
-	GLfloat cubeColors[][3] = {
+	GLfloat colors[][3] = {
 		{  0.0,  0.0,  0.0 },
 		{  0.0,  0.0,  1.0 },
 		{  0.0,  1.0,  0.0 },
@@ -32,7 +32,7 @@ bool Cube::init()
 		{  1.0,  1.0,  0.0 },
 		{  1.0,  1.0,  1.0 } };
 
-	GLubyte cubeIndices[] = {
+	GLubyte indices[] = {
 		0, 1, 2,
 		2, 1, 3,
 		0, 2, 4,
@@ -46,83 +46,53 @@ bool Cube::init()
 		1, 4, 5,
 		4, 1, 0
 	};
-#if 0
-	/* Request a new shader */
-	_shader = Renderer::GetRenderer()->getShader();
 
-	/* Basic shaders with only position and color attributes, with no camera */
-	std::string error;
-	if (_shader->loadVertexShader("Shaders/mvp.vert", error) == false) {
-		printf("ERROR compiling vertex shader: %s\n", error.c_str());
-		return false;
-	}
-	if (_shader->loadFragmentShader("Shaders/color.frag", error) == false) {
-		printf("ERROR compiling fragment shader: %s\n", error.c_str());
-		return false;
-	}
-	if (_shader->linkProgram(error) == false) {
-		printf("ERROR linking shader: %s\n", error.c_str());
-		return false;
-	}
-#endif
-	/* Generate a vertex array to reference the attributes */
-	glGenVertexArrays(1, &_gVAO);
-	glBindVertexArray(_gVAO);
+    _vertsArray = new GLfloat[sizeof verts];
+    memcpy(_vertsArray, verts, sizeof verts);
+    _vertsArrayLen = sizeof verts;
 
-	/* Generate a buffer object for the vertices positions */
-	glGenBuffers(1, &_verticesVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, _verticesVBO);
+    _colorsArray = new GLfloat[sizeof colors];
+    memcpy(_colorsArray, colors, sizeof colors);
+    _colorsArrayLen = sizeof colors;
 
-	/* Upload the data for this buffer */
-	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVerts), cubeVerts, GL_STATIC_DRAW);
-
-	/* Link the data with the first shader attribute */
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(
-			0,                  // attribute. No particular reason for 0, but must match the layout in the shader.
-			3,                  // size
-			GL_FLOAT,           // type
-			GL_FALSE,           // normalized?
-			0,                  // stride
-			(void*)0            // array buffer offset
-			);
-
-	/* Generate a buffer for the vertices colors */
-	glGenBuffers(1, &_colorsVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, _colorsVBO);
-
-	/* Upload the data for this buffer */
-	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeColors), cubeColors, GL_STATIC_DRAW);
-
-	/* Link the data with the second shader attribute */
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(
-			1,                  // attribute
-			3,                  // size
-			GL_FLOAT,           // type
-			GL_FALSE,           // normalized?
-			0,                  // stride
-			(void*)0            // array buffer offset
-			);
-
-	/* Generate the buffer for the indices */
-	glGenBuffers(1, &_indicesVBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indicesVBO);
-
-	/* Upload the data */
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cubeIndices), cubeIndices, GL_STATIC_DRAW);
-    return true;
+    _indicesArray = new GLubyte[sizeof indices];
+    memcpy(_indicesArray, indices, sizeof indices);
+    _indicesArrayLen = sizeof indices;
 }
 
-bool Cube::destroy()
+Cube::~Cube()
 {
-	glDeleteBuffers(1, &_colorsVBO);
-	glDeleteBuffers(1, &_verticesVBO);
-	glDeleteVertexArrays(1, &_gVAO);
-    return true;
+    delete[] _vertsArray;
+    delete[] _colorsArray;
+    delete[] _indicesArray;
 }
 
-uint32_t Cube::getVertexArrayIndex()
+const GLfloat *Cube::getVerticesArray()
 {
-    return _gVAO;
+    return _vertsArray;
+}
+
+uint32_t Cube::getVerticesArrayLen()
+{
+    return _vertsArrayLen;
+}
+
+const GLfloat *Cube::getColorsArray()
+{
+    return _colorsArray;
+}
+
+uint32_t Cube::getColorsArrayLen()
+{
+    return _colorsArrayLen;
+}
+
+const GLubyte *Cube::getIndicesArray()
+{
+    return _indicesArray;
+}
+
+uint32_t Cube::getIndicesArrayLen()
+{
+    return _indicesArrayLen;
 }

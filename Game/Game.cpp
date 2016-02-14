@@ -4,6 +4,7 @@
  *
  * @author	Roberto Sosa Cano
  */
+#include <GL/glew.h>
 #include <GL/glfw.h>
 #include <sys/time.h>
 #include "Game.hpp"
