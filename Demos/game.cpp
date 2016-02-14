@@ -5,7 +5,7 @@
  */
 #include <string.h>
 #include "Game.hpp"
-#include "ObjectLib.hpp"
+#include "Cube.hpp"
 
 int main(int argc, char** argv)
 {
@@ -15,7 +15,7 @@ int main(int argc, char** argv)
 	game->init(title);
 
 	/* Add the geometry */
-	Sphere cube;
+    procedural::Cube cube;
 	game->getRenderer()->addObject(&cube);
 
 	game->loop();
