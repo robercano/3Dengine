@@ -104,6 +104,16 @@ class WindowManager
 		 */
 		virtual bool setRenderer(Renderer *renderer) = 0;
 
+        /**
+         * Retrieves the actual size of the window
+         *
+         * @param width  Output width of the current window
+         * @param height Output height of the current window
+         *
+         * @return true or false
+         */
+        virtual bool getWindowSize(int *width, int *height) = 0;
+
 		/**
 		 * Swaps the double buffer
 		 */

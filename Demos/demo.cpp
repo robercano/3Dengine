@@ -6,11 +6,13 @@
 #include <string.h>
 #include "Game.hpp"
 #include "Cube.hpp"
-#include "OBJLoader.hpp"
+#include "OBJFormat.hpp"
 
 int main(int argc, char** argv)
 {
     procedural::Cube cube;
+    OBJFormat lego;
+
 	Game *game = Game::GetGame();
 
 	std::string title("Cube Test");
@@ -25,7 +27,7 @@ int main(int argc, char** argv)
 		printf("ERROR compiling vertex shader: %s\n", error.c_str());
 		return 1;
 	}
-	if (shader->loadFragmentShader("Shaders/red.frag", error) == false) {
+	if (shader->loadFragmentShader("Shaders/color.frag", error) == false) {
 		printf("ERROR compiling fragment shader: %s\n", error.c_str());
 		return 1;
 	}
@@ -35,21 +37,18 @@ int main(int argc, char** argv)
 	}
 
     /* Load the geometry */
-    Object3D *lego = NULL;
-    std::string legoobj = "lego.obj";
+    std::string legoobj = "Samples/lego.obj";
 
-#if 0
-    if (OBJLoader::Load(legoobj, lego) == false) {
+    if (lego.load(legoobj) == false) {
         printf("ERROR loading OBJ file\n");
         return 1;
     }
-#endif
 
     /* Add the shader to the geometry */
-    cube.addShader(shader);
+    lego.addShader(shader);
 
 	/* Add the geometry */
-	game->getRenderer()->addObject(&cube);
+	game->getRenderer()->addObject(&lego);
 
     /* Start */
 	game->loop();

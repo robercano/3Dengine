@@ -43,7 +43,7 @@ bool GLFWWindowManager::createWindow(std::string &name, uint16_t width, uint16_t
 	_height = height;
 
 	/* Request OpenGL 3.2 */
-	glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 4);
+	//glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 4);
 	glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, 3);
 	glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, 2);
 	glfwOpenWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -70,6 +70,12 @@ bool GLFWWindowManager::setRenderer(Renderer *renderer)
 {
 	_renderer = renderer;
 	return true;
+}
+
+bool GLFWWindowManager::getWindowSize(int *width, int *height)
+{
+    glfwGetWindowSize(width, height);
+    return true;
 }
 
 void GLFWWindowManager::swapBuffers(void)

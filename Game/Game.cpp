@@ -40,6 +40,7 @@ Game::~Game()
 bool Game::init(std::string &gameName)
 {
 	/* TODO: Get the settings from a config file */
+    int width = 1440, height = 900;
 
 	_windowManager = WindowManager::GetWindowManager(WindowManager::WINDOW_MANAGER_GLFW);
 	if (_windowManager == NULL) {
@@ -60,7 +61,8 @@ bool Game::init(std::string &gameName)
 	_windowManager->init();
 
 	/* Set the window size */
-	_windowManager->createWindow(gameName, 1440, 900, false);
+	_windowManager->createWindow(gameName, width, height, false);
+    _windowManager->getWindowSize(&width, &height);
 
 	_renderer->init();	// only after creating the window
 	_windowManager->setRenderer(_renderer);
@@ -80,7 +82,7 @@ bool Game::init(std::string &gameName)
 	/* Create the game camera */
 	//_camera = new WalkingCamera();
 	_camera = new Camera();
-	_camera->setProjection(45, 1440.0/900.0, 0.1, 100.0);
+	_camera->setProjection(45, width/(float)height, 0.1, 100.0);
 
     return true;
 }

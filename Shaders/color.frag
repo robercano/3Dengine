@@ -5,5 +5,5 @@ out vec3 color;
 
 void main()
 {
-	color = fragment_color.bgr;
+	color = abs(fragment_color.bgr);
 }

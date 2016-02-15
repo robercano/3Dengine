@@ -21,7 +21,7 @@ namespace procedural
             uint32_t getVerticesArrayLen();
             const GLfloat *getColorsArray();
             uint32_t getColorsArrayLen();
-            const GLubyte *getIndicesArray();
+            const GLuint *getIndicesArray();
             uint32_t getIndicesArrayLen();
 
         private:
@@ -31,7 +31,7 @@ namespace procedural
             GLfloat *_colorsArray;
             uint32_t _colorsArrayLen;
 
-            GLubyte *_indicesArray;
+            GLuint *_indicesArray;
             uint32_t _indicesArrayLen;
     };
 

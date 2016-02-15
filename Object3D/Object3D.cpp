@@ -17,7 +17,7 @@ bool Object3D::init()
 	glBindBuffer(GL_ARRAY_BUFFER, _verticesVBO);
 
 	/* Upload the data for this buffer */
-	glBufferData(GL_ARRAY_BUFFER, getVerticesArrayLen(), getVerticesArray(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, getVerticesArrayLen() * sizeof(GLfloat), getVerticesArray(), GL_STATIC_DRAW);
 
 	/* Link the data with the first shader attribute */
 	glEnableVertexAttribArray(0);
@@ -35,7 +35,7 @@ bool Object3D::init()
 	glBindBuffer(GL_ARRAY_BUFFER, _colorsVBO);
 
 	/* Upload the data for this buffer */
-	glBufferData(GL_ARRAY_BUFFER, getColorsArrayLen(), getColorsArray(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, getColorsArrayLen() * sizeof (GLfloat), getColorsArray(), GL_STATIC_DRAW);
 
 	/* Link the data with the second shader attribute */
 	glEnableVertexAttribArray(1);
@@ -53,7 +53,7 @@ bool Object3D::init()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indicesVBO);
 
 	/* Upload the data */
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, getIndicesArrayLen(), getIndicesArray(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, getIndicesArrayLen() * sizeof(GLuint), getIndicesArray(), GL_STATIC_DRAW);
     return true;
 }
 
@@ -88,7 +88,8 @@ bool Object3D::render(const glm::mat4 &projection, const glm::mat4 &view)
 
 	/* Clear the buffer */
 	glBindVertexArray(_gVAO);
-	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, NULL);
+
+	glDrawElements(GL_TRIANGLES, getIndicesArrayLen(), GL_UNSIGNED_INT, NULL);
 	glBindVertexArray(0);
 
 	_shader->detach();

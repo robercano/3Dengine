@@ -34,7 +34,7 @@ class Object3D
         /**
          * Returns the colors array information
          */
-        virtual const GLubyte *getIndicesArray() = 0;
+        virtual const GLuint *getIndicesArray() = 0;
         virtual uint32_t getIndicesArrayLen() = 0;
 
 		/**

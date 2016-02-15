@@ -79,6 +79,16 @@ class GLFWWindowManager : public WindowManager
 		 * @return	true or false
 		 */
 		bool setRenderer(Renderer *renderer);
+        /**
+         *
+         * Retrieves the actual size of the window
+         *
+         * @param width  Output width of the current window
+         * @param height Output height of the current window
+         *
+         * @return true or false
+         */
+        bool getWindowSize(int *width, int *height);
 
 		/**
 		 * Swaps the double buffer

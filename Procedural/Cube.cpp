@@ -32,7 +32,7 @@ Cube::Cube()
 		{  1.0,  1.0,  0.0 },
 		{  1.0,  1.0,  1.0 } };
 
-	GLubyte indices[] = {
+	GLuint indices[] = {
 		0, 1, 2,
 		2, 1, 3,
 		0, 2, 4,
@@ -55,7 +55,7 @@ Cube::Cube()
     memcpy(_colorsArray, colors, sizeof colors);
     _colorsArrayLen = sizeof colors;
 
-    _indicesArray = new GLubyte[sizeof indices];
+    _indicesArray = new GLuint[sizeof indices];
     memcpy(_indicesArray, indices, sizeof indices);
     _indicesArrayLen = sizeof indices;
 }
@@ -87,7 +87,7 @@ uint32_t Cube::getColorsArrayLen()
     return _colorsArrayLen;
 }
 
-const GLubyte *Cube::getIndicesArray()
+const GLuint *Cube::getIndicesArray()
 {
     return _indicesArray;
 }

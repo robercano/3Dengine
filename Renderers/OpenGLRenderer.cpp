@@ -27,6 +27,16 @@ void OpenGLRenderer::init()
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 
+    glDisable(GL_DITHER);
+    glDisable(GL_POINT_SMOOTH);
+    glDisable(GL_LINE_SMOOTH);
+    glDisable(GL_POLYGON_SMOOTH);
+    glHint(GL_POINT_SMOOTH, GL_DONT_CARE);
+    glHint(GL_LINE_SMOOTH, GL_DONT_CARE);
+    glHint(GL_POLYGON_SMOOTH_HINT, GL_DONT_CARE);
+#define GL_MULTISAMPLE_ARB 0x809D
+    glDisable( GL_MULTISAMPLE_ARB) ;
+
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
