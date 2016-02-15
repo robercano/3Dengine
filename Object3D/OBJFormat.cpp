@@ -14,6 +14,7 @@ using namespace std;
 
 bool OBJFormat::load(const string &filename)
 {
+    vector< glm::vec3 > temp_normals;
     bool ret = true;
     FILE *file = fopen(filename.c_str(), "r");
     if (file == NULL)  {
@@ -25,12 +26,7 @@ bool OBJFormat::load(const string &filename)
         char line[512];
         int res = fscanf(file, "%[^\n]\n", line);
         if (res == EOF) {
-            goto error_exit;
-        }
-
-        /* Parse the line */
-        if (line[0] == '#' || strlen(line) < 3) {
-            continue;
+            break;
         }
 
         /* vertices */
@@ -46,6 +42,7 @@ bool OBJFormat::load(const string &filename)
 color = glm::normalize(vertex);
 _colors.push_back(color);
         } else if (line[0] == 'v' && line[1] == 't' && line[2] == ' ') {
+            /* Texture coordinates */
             glm::vec2 uv;
             res = sscanf(line + 3, "%f %f", &uv.x, &uv.y);
             if (res != 2) {
@@ -53,14 +50,32 @@ _colors.push_back(color);
             }
             _uvs.push_back(uv);
         } else if (line[0] == 'v' && line[1] == 'n' && line[2] == ' ') {
+            /* Normals */
             glm::vec3 normal;
             res = sscanf(line + 3, "%f %f %f", &normal.x, &normal.y, &normal.z);
             if (res != 3) {
                 printf("ERROR reading vt format from OBJ file\n");
             }
-            _normals.push_back(normal);
-        } else if (line[0] == 'f' && line[1] == ' ') {
-            /* Faces */
+            temp_normals.push_back(normal);
+        }
+    }
+
+    /* Rewind the file */
+    fseek(file, SEEK_SET, 0);
+
+    /* Resize the vector for the normals */
+    _normals.resize(_vertices.size());
+
+    /* Now parse the faces */
+    for (;;) {
+        char line[512];
+        int res = fscanf(file, "%[^\n]\n", line);
+        if (res == EOF) {
+            break;
+        }
+
+        /* Faces */
+        if (line[0] == 'f' && line[1] == ' ') {
             string vertex1, vertex2, vertex3;
             unsigned int vertexIndex[3], uvIndex[3], normalIndex[3];
             int matches = sscanf(line + 2, "%d/%d/%d %d/%d/%d %d/%d/%d",
@@ -76,6 +91,10 @@ _colors.push_back(color);
             _vertexIndices.push_back(vertexIndex[0] - 1);
             _vertexIndices.push_back(vertexIndex[1] - 1);
             _vertexIndices.push_back(vertexIndex[2] - 1);
+            _normals[vertexIndex[0] - 1] = temp_normals[normalIndex[0] - 1];
+            _normals[vertexIndex[1] - 1] = temp_normals[normalIndex[1] - 1];
+            _normals[vertexIndex[2] - 1] = temp_normals[normalIndex[2] - 1];
+
             _uvIndices    .push_back(uvIndex[0]);
             _uvIndices    .push_back(uvIndex[1]);
             _uvIndices    .push_back(uvIndex[2]);
@@ -97,7 +116,7 @@ const GLfloat *OBJFormat::getVerticesArray()
 
 uint32_t OBJFormat::getVerticesArrayLen()
 {
-    return _vertices.size() * sizeof ( glm::vec3 );
+    return _vertices.size() * sizeof(glm::vec3);
 }
 
 const GLfloat *OBJFormat::getColorsArray()
@@ -107,7 +126,17 @@ const GLfloat *OBJFormat::getColorsArray()
 
 uint32_t OBJFormat::getColorsArrayLen()
 {
-    return _colors.size() * sizeof (glm::vec3 );
+    return _colors.size() * sizeof(glm::vec3);
+}
+
+const GLfloat *OBJFormat::getNormalsArray()
+{
+    return (GLfloat*)&_normals[0];
+}
+
+uint32_t OBJFormat::getNormalsArrayLen()
+{
+    return _normals.size() * sizeof(glm::vec3);
 }
 
 const GLuint *OBJFormat::getIndicesArray()

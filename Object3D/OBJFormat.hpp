@@ -20,6 +20,8 @@ class OBJFormat : public Object3D
         uint32_t getVerticesArrayLen();
         const GLfloat *getColorsArray();
         uint32_t getColorsArrayLen();
+        const GLfloat *getNormalsArray();
+        uint32_t getNormalsArrayLen();
         const GLuint *getIndicesArray();
         uint32_t getIndicesArrayLen();
 

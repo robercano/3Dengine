@@ -32,6 +32,12 @@ class Object3D
         virtual uint32_t getColorsArrayLen() = 0;
 
         /**
+         * Returns the normals array information
+         */
+        virtual const GLfloat *getNormalsArray() = 0;
+        virtual uint32_t getNormalsArrayLen() = 0;
+
+        /**
          * Returns the colors array information
          */
         virtual const GLuint *getIndicesArray() = 0;
@@ -90,6 +96,11 @@ class Object3D
          * Vertex buffer object for colors
          */
         uint32_t _colorsVBO;
+
+        /**
+         * Vertex buffer object for normals
+         */
+        uint32_t _normalsVBO;
 
         /**
          * Vertex buffer object for indices

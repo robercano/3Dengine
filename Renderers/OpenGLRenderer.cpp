@@ -22,7 +22,8 @@ OpenGLRenderer::~OpenGLRenderer()
 
 void OpenGLRenderer::init()
 {
-	glClearColor(1.0, 1.0, 1.0, 1.0);
+	//glClearColor(1.0, 1.0, 1.0, 1.0);
+	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);

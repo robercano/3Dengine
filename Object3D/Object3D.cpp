@@ -48,6 +48,24 @@ bool Object3D::init()
 			(void*)0            // array buffer offset
 			);
 
+	/* Generate a buffer for the vertices colors */
+	glGenBuffers(1, &_normalsVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, _normalsVBO);
+
+	/* Upload the data for this buffer */
+	glBufferData(GL_ARRAY_BUFFER, getNormalsArrayLen() * sizeof (GLfloat), getNormalsArray(), GL_STATIC_DRAW);
+
+	/* Link the data with the second shader attribute */
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(
+			2,                  // attribute
+			3,                  // size
+			GL_FLOAT,           // type
+			GL_FALSE,           // normalized?
+			0,                  // stride
+			(void*)0            // array buffer offset
+			);
+
 	/* Generate the buffer for the indices */
 	glGenBuffers(1, &_indicesVBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indicesVBO);
@@ -61,6 +79,7 @@ bool Object3D::destroy()
 {
 	glDeleteBuffers(1, &_colorsVBO);
 	glDeleteBuffers(1, &_verticesVBO);
+	glDeleteBuffers(1, &_normalsVBO);
 	glDeleteVertexArrays(1, &_gVAO);
     return true;
 }

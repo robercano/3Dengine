@@ -5,12 +5,10 @@
  */
 #include <string.h>
 #include "Game.hpp"
-#include "Cube.hpp"
 #include "OBJFormat.hpp"
 
 int main(int argc, char** argv)
 {
-    procedural::Cube cube;
     OBJFormat lego;
 
 	Game *game = Game::GetGame();
@@ -23,11 +21,11 @@ int main(int argc, char** argv)
 
 	/* Basic shaders with only position and color attributes, with no camera */
 	std::string error;
-	if (shader->loadVertexShader("Shaders/mvp.vert", error) == false) {
+	if (shader->loadVertexShader("Shaders/phong/mvp.vert", error) == false) {
 		printf("ERROR compiling vertex shader: %s\n", error.c_str());
 		return 1;
 	}
-	if (shader->loadFragmentShader("Shaders/color.frag", error) == false) {
+	if (shader->loadFragmentShader("Shaders/phong/phong.frag", error) == false) {
 		printf("ERROR compiling fragment shader: %s\n", error.c_str());
 		return 1;
 	}
