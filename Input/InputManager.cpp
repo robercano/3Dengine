@@ -6,6 +6,7 @@
  *
  * @author	Roberto Sosa Cano
  */
+#include <string.h>
 #include "InputManager.hpp"
 
 InputManager::InputManager()

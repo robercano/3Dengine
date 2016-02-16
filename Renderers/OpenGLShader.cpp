@@ -8,7 +8,11 @@
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
+#ifdef __linux
+#include <GL/glew.h>
+#else
 #include <OpenGL/gl.h>
+#endif
 #include "OpenGLShader.hpp"
 
 OpenGLShader::OpenGLShader(void) : _programID(0)

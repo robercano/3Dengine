@@ -12,19 +12,6 @@ UNAME=$(shell uname)
 CXX=g++
 CC=gcc
 
-# Mac OS alternate cmdline link options
-ifeq ($(UNAME), Darwin)
-LDFLAGS= -L/opt/X11/lib -lglew -lglfw -framework Cocoa -framework OpenGL -framework IOKit -fPIC
-SHAREDGEN= -dynamiclib -Wl,-headerpad_max_install_names,-undefined,dynamic_lookup,-compatibility_version,1.0,-current_version,1.0,-install_name,
-SHAREDEXT=dylib
-PREFIX=/usr/local/lib
-else
-LDFLAGS= -lGL -lGLUT -fPIC
-SHAREDGEN= -shared -Wl,-dynamiclib,
-SHAREDEXT=so
-PREFIX=/usr/local/lib
-endif
-
 #
 # Files to be compiled
 #
@@ -40,6 +27,20 @@ LIBDIR=lib
 LIBNAME=lib$(PROJECT).$(SHAREDEXT)
 
 DEMODIR=Demos
+
+# Mac OS alternate cmdline link options
+ifeq ($(UNAME), Darwin)
+LDFLAGS= -L/opt/X11/lib -lglew -lglfw -framework Cocoa -framework OpenGL -framework IOKit -fPIC
+SHAREDGEN= -dynamiclib -Wl,-headerpad_max_install_names,-undefined,dynamic_lookup,-compatibility_version,1.0,-current_version,1.0,-install_name,$(LIBNAME)
+SHAREDEXT=dylib
+PREFIX=/usr/local/lib
+else
+LDFLAGS= -lGL -lGLEW -lglfw -fPIC
+SHAREDGEN= -shared
+SHAREDEXT=so
+PREFIX=/usr/local/lib
+endif
+
 
 #
 # Compilation flags
@@ -74,7 +75,7 @@ dirs:
 
 $(LIBDIR)/$(LIBNAME): $(OBJECTS)
 	@echo "- Generating $@...\c"
-	@$(CXX) $(SHAREDGEN)$(LIBNAME) -o $@ $(OBJECTS) $(LDFLAGS)
+	@$(CXX) $(SHAREDGEN) -o $@ $(OBJECTS) $(LDFLAGS)
 	@echo "done"
 
 $(OBJDIR)/%.o: %.cpp
