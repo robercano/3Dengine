@@ -7,8 +7,13 @@
 
 #include <GL/glew.h>
 #include <GL/glfw.h>
+#ifdef __linux
+#include <GL/gl.h>
+#include <GL/glu.h>
+#else
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
+#endif
 #include "OpenGLRenderer.hpp"
 #include "OpenGLShader.hpp"
 
