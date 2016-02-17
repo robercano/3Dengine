@@ -10,6 +10,7 @@
 #include <GL/glfw.h>
 #include <glm/glm.hpp>
 #include "Shader.hpp"
+#include "RenderTarget.hpp"
 
 class Object3D
 {
@@ -71,10 +72,11 @@ class Object3D
 		 *
 		 * @param projection	Projection matrix
 		 * @param view			View matrix
+         * @param renderTarget  Render target
 		 *
 		 * @returns	true if the object was rendered or false otherwise
 		 */
-		virtual bool render(const glm::mat4 &projection, const glm::mat4 &view);
+		virtual bool render(const glm::mat4 &projection, const glm::mat4 &view, RenderTarget &renderTarget);
 
     private:
         /**

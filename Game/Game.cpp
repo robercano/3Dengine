@@ -9,6 +9,7 @@
 #include <sys/time.h>
 #include "Game.hpp"
 #include "OpenGLRenderer.hpp"
+#include "OpenGLRenderTarget.hpp"
 #include "WalkingCamera.hpp"
 
 Game *Game::_game = NULL;
@@ -56,6 +57,18 @@ bool Game::init(std::string &gameName)
 		_windowManager = NULL;
 		return false;
 	}
+
+    /* Create a render target to allow post-processing */
+    _renderTarget = new OpenGLRenderTarget();
+	if (_renderer == NULL) {
+		fprintf(stderr, "ERROR allocating renderer\n");
+        delete _renderer;
+		WindowManager::DisposeWindowManager(_windowManager);
+		_windowManager = NULL;
+		return false;
+	}
+
+    _renderTarget->init(width, height);
 
 	/* Init the window manager and the render*/
 	_windowManager->init();
@@ -151,7 +164,7 @@ bool Game::loop(void)
 		double render_ms = (now.tv_sec - lastRender.tv_sec)*1000.0 + (now.tv_usec - lastRender.tv_usec)/1000.0;
 		if (render_ms > (1000.0/fps)) {
 			renders++;
-			_renderer->render(_camera->getProjection(), _camera->getView());
+			_renderer->render(_camera->getProjection(), _camera->getView(), *_renderTarget);
 			_windowManager->swapBuffers();
 			gettimeofday(&lastRender, NULL);
 		}

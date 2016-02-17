@@ -9,6 +9,7 @@
 #include <string>
 #include <glm/glm.hpp>
 #include "Object3D.hpp"
+#include "RenderTarget.hpp"
 #include "Shader.hpp"
 
 class Renderer
@@ -35,12 +36,12 @@ class Renderer
 		virtual void init(void) = 0;
 
 		/**
-		 * Updates the display contents
+		 * Renders the internal list of objects to a render target
 		 *
 		 * @param projection	Projection matrix
 		 * @param view			View matrix
 		 */
-		virtual bool render(const glm::mat4 &projection, const glm::mat4 &view) = 0;
+		virtual bool render(const glm::mat4 &projection, const glm::mat4 &view, RenderTarget &renderTarget) = 0;
 
 		/**
 		 * Adjusts the renderer's display size

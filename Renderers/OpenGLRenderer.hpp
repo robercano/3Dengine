@@ -19,36 +19,12 @@ class OpenGLRenderer : public Renderer
 		~OpenGLRenderer();
 
 		/**
-		 * Initializes the renderer
+		 * Renderer methods
 		 */
 		void init(void);
-
-		/**
-		 * OpenGL shader factory
-		 */
 		Shader * getShader(void);
-
-		/**
-		 * Updates the display
-		 *
-		 * @param projection	Projection matrix
-		 * @param view			View matrix
-		 */
-		bool render(const glm::mat4 &projection, const glm::mat4 &view);
-
-		/**
-		 * Adjusts the display size
-		 *
-		 * @param	width	New width of the display
-		 * @param	height	New height of the display
-		 *
-		 * @return  true or false
-		 */
+		bool render(const glm::mat4 &projection, const glm::mat4 &view, RenderTarget &renderTarget);
 		bool resize(uint16_t width, uint16_t height);
-
-		/**
-		 * Adds a new 3D object to be rendered
-		 */
 		bool addObject(Object3D *object);
 
 	private:

@@ -67,6 +67,15 @@ class Shader
 		 */
 		virtual const std::map<std::string, uint32_t> & getUniforms(void) = 0;
 
+        /**
+         * Retrieves the ID of a specific uniform
+         *
+         * @param name  Name of the uniform
+         * @param id    Output ID
+         *
+         */
+        virtual const bool getUniformID(const std::string &name, uint32_t *id) = 0;
+
 		/**
 		 * Sets the value of a shader uniform as a mat4x4
 		 *
@@ -77,4 +86,12 @@ class Shader
 		 *         attribute cannot be found
 		 */
 		virtual bool setUniform(const std::string &name, glm::mat4 &value) = 0;
+
+        /**
+         * Sets the value of a uniform as a 2D texture
+         *
+         * @param name       Name of the shader uniform
+         * @param unitID     ID of the texture unit
+         */
+        bool setUniformTexture2D(const std::string &name, GLuint unitID);
 };
