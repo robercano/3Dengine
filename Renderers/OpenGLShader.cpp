@@ -226,9 +226,6 @@ void OpenGLShader::_buildUniformsMap(void)
 		uint32_t uniformID = glGetUniformLocation(_programID, uniformName);
 
 		/* Save in map */
-        printf("Found %s\n", uniformName);
-
 		_uniformNames[uniformName] = uniformID;
 	}
-    printf("---------------------\n");
 }

@@ -45,7 +45,7 @@ endif
 #
 # Compilation flags
 #
-CXXFLAGS= -fPIC -IWindowManagers -IRenderers -IObject3D -I Game -I Input -I Camera -I Procedural -I/opt/X11/include -I ./Libraries -g
+CXXFLAGS= -MMD -fPIC -IWindowManagers -IRenderers -IObject3D -I Game -I Input -I Camera -I Procedural -I/opt/X11/include -I ./Libraries -g
 
 #
 # Main rules
@@ -63,7 +63,7 @@ install: engine
 
 demos: engine install
 	@echo "- Compiling project demos...\c"
-	@make -C $(DEMODIR) 1>/dev/null
+	@make -C $(DEMODIR) >/dev/null 2>&1
 	@echo "done"
 
 dirs:
@@ -78,14 +78,16 @@ $(LIBDIR)/$(LIBNAME): $(OBJECTS)
 	@$(CXX) $(SHAREDGEN) -o $@ $(OBJECTS) $(LDFLAGS)
 	@echo "done"
 
+-include $(OBJECTS:.o=.d)
+
 $(OBJDIR)/%.o: %.cpp
-	@echo "- Compiling $?...\c"
-	@$(CXX) $(CXXFLAGS) -c -o $@ $?
+	@echo "- Compiling $<...\c"
+	@$(CXX) $(CXXFLAGS) -c -o $@ $<
 	@echo "done"
 
 clean:
 	@echo "- Cleaning project directories...\c"
 	@rm -fr $(OBJDIR)
 	@rm -fr $(LIBDIR)
-	@make -C $(DEMODIR) clean
+	@make -C $(DEMODIR) clean >/dev/null 2>&1
 	@echo "done"
