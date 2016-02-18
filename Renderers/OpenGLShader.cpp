@@ -173,9 +173,12 @@ void OpenGLShader::_buildUniformsMap(void)
 
 	for (i=0; i<count; ++i) {
 		char uniformName[128];
+        GLsizei length;
+        GLint size;
+        GLenum type;
 
 		/* Get uniform name */
-		glGetActiveUniform(_programID, i, sizeof uniformName, NULL, NULL, NULL, uniformName);
+		glGetActiveUniform(_programID, i, sizeof uniformName, NULL, &size, &type, uniformName);
 
 		/* Get location */
 		uint32_t uniformID = glGetUniformLocation(_programID, uniformName);
