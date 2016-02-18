@@ -73,6 +73,15 @@ class OpenGLShader : public Shader
 		 */
 		const std::map<std::string, uint32_t> & getUniforms(void);
 
+        /**
+         * Retrieves the ID of a specific uniform
+         *
+         * @param name  Name of the uniform
+         * @param id    Output ID
+         *
+         */
+        const bool getUniformID(const std::string &name, uint32_t *id);
+
 		/**
 		 * Sets the value of a shader uniform as a mat4x4
 		 *
@@ -83,6 +92,14 @@ class OpenGLShader : public Shader
 		 *         attribute cannot be found
 		 */
 		bool setUniform(const std::string &name, glm::mat4 &value);
+
+        /**
+         * Sets the value of a uniform as a 2D texture
+         *
+         * @param name       Name of the shader uniform
+         * @param unitID     ID of the texture unit
+         */
+        bool setUniformTexture2D(const std::string &name, GLuint unitID);
 
 	private:
 		/**

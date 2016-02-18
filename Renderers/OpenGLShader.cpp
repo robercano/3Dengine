@@ -143,6 +143,18 @@ const std::map<std::string, uint32_t> & OpenGLShader::getUniforms(void)
 	return _uniformNames;
 }
 
+const bool OpenGLShader::getUniformID(const std::string &name, uint32_t *id)
+{
+	std::map<std::string, uint32_t>::iterator it = _uniformNames.find(name);
+
+	if (it == _uniformNames.end()) {
+		return false;
+	}
+
+    *id = it->second;
+    return true;
+}
+
 bool OpenGLShader::setUniform(const std::string &name, glm::mat4 &value)
 {
 	std::map<std::string, uint32_t>::iterator it = _uniformNames.find(name);
@@ -152,6 +164,18 @@ bool OpenGLShader::setUniform(const std::string &name, glm::mat4 &value)
 	}
 
 	glUniformMatrix4fv(it->second, 1, GL_FALSE, &value[0][0]);
+	return true;
+}
+
+bool OpenGLShader::setUniformTexture2D(const std::string &name, GLuint unitID)
+{
+	std::map<std::string, uint32_t>::iterator it = _uniformNames.find(name);
+
+	if (it == _uniformNames.end()) {
+		return false;
+	}
+
+    glUniform1i(it->second, GL_TEXTURE0 + unitID);
 	return true;
 }
 

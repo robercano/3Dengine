@@ -91,7 +91,7 @@ bool Object3D::addShader(Shader *shader)
     return true;
 }
 
-bool Object3D::render(const glm::mat4 &projection, const glm::mat4 &view)
+bool Object3D::render(const glm::mat4 &projection, const glm::mat4 &view, RenderTarget &renderTarget)
 {
 	/* Model matrix : an identity matrix (model will be at the origin) */
 	glm::mat4 model      = glm::mat4(1.0f);
@@ -99,18 +99,23 @@ bool Object3D::render(const glm::mat4 &projection, const glm::mat4 &view)
 	/* Our ModelViewProjection : multiplication of our 3 matrices */
 	glm::mat4 MVP = projection * view * model; // Remember, matrix multiplication is the other way around
 
+    /* Bind the render target */
+    glBindFramebuffer(GL_FRAMEBUFFER, renderTarget.getID());
+
 	/* Bind program to upload the uniform */
 	_shader->attach();
 
 	/* Send our transformation to the currently bound shader, in the "MVP" uniform */
 	_shader->setUniform("MVP", MVP);
 
-	/* Clear the buffer */
+	/* Draw the object */
 	glBindVertexArray(_gVAO);
-
 	glDrawElements(GL_TRIANGLES, getIndicesArrayLen(), GL_UNSIGNED_INT, NULL);
 	glBindVertexArray(0);
 
+    /* Unbind */
 	_shader->detach();
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
     return true;
 };

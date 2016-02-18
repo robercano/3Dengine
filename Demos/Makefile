@@ -2,6 +2,10 @@
 # Roberto Sosa Cano
 # Copyright 2013
 #
+
+# Check the environment
+UNAME=$(shell uname)
+
 # Mac OS alternate cmdline link options
 ifeq ($(UNAME), Darwin)
 LDFLAGS+= -L../lib -lengine -lglew -lglfw -framework OpenGL
