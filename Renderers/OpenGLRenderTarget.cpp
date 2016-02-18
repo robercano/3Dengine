@@ -9,6 +9,7 @@
 
 #include "OpenGLRenderTarget.hpp"
 #include "Renderer.hpp"
+#include <sys/time.h>
 #ifdef __linux
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -19,7 +20,7 @@
 
 bool OpenGLRenderTarget::init(uint32_t width, uint32_t height)
 {
-    //glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE0);
 
     /* Texture buffer */
     glGenTextures(1, &_colorBuffer);
@@ -52,17 +53,22 @@ bool OpenGLRenderTarget::init(uint32_t width, uint32_t height)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     /* Generate the render target surface */
-    GLfloat verticesData[] = {
+    GLfloat verticesData[8] = {
         -1, -1,
         1, -1,
         -1,  1,
         1,  1,
     };
 
-    glGenBuffers(1, &_renderTargetVertices);
-    glBindBuffer(GL_ARRAY_BUFFER, _renderTargetVertices);
+	glGenVertexArrays(1, &_vertexArray);
+	glBindVertexArray(_vertexArray);
+
+    glGenBuffers(1, &_vertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof verticesData, verticesData, GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glBindVertexArray(0);
 
     /* Create the shader */
     _shader = Renderer::GetRenderer()->getShader();
@@ -91,16 +97,26 @@ bool OpenGLRenderTarget::render()
     glBindTexture(GL_TEXTURE_2D, _colorBuffer);
 
     /* Tell the shader which texture unit to use */
+    _shader->attach();
     _shader->setUniformTexture2D("fbo_texture", 0);
 
     uint32_t vCoord;
-    if (_shader->getUniformID("v_coord", &vCoord) == false) {
+    if (_shader->getAttributeID("v_coord", &vCoord) == false) {
         printf("ERROR retrieving v_coord attribute\n");
         return false;
     }
 
+static uint32_t counter = 0;
+    float offset = counter++;
+    if (_shader->setUniformFloat("offset", offset) == false) {
+        printf("ERROR setting offset uniform\n");
+        return false;
+    }
+
+    glBindVertexArray(_vertexArray);
+
     glEnableVertexAttribArray(vCoord);
-    glBindBuffer(GL_ARRAY_BUFFER, _renderTargetVertices);
+    glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
     glVertexAttribPointer(
             vCoord,   // attribute
             2,        // number of elements per vertex, here (x,y)
@@ -111,6 +127,10 @@ bool OpenGLRenderTarget::render()
             );
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glDisableVertexAttribArray(vCoord);
+
+    glBindVertexArray(0);
+
+    _shader->detach();
 
     return true;
 }

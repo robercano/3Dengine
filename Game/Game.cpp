@@ -41,7 +41,7 @@ Game::~Game()
 bool Game::init(std::string &gameName)
 {
 	/* TODO: Get the settings from a config file */
-    int width = 1440, height = 900;
+    int width = 320, height = 200;
 
 	_windowManager = WindowManager::GetWindowManager(WindowManager::WINDOW_MANAGER_GLFW);
 	if (_windowManager == NULL) {
@@ -68,8 +68,6 @@ bool Game::init(std::string &gameName)
 		return false;
 	}
 
-    _renderTarget->init(width, height);
-
 	/* Init the window manager and the render*/
 	_windowManager->init();
 
@@ -78,6 +76,8 @@ bool Game::init(std::string &gameName)
     _windowManager->getWindowSize(&width, &height);
 
 	_renderer->init();	// only after creating the window
+    _renderTarget->init(width, height); // only after creating the window
+
 	_windowManager->setRenderer(_renderer);
 
 	/* Register the key and mouse listener */
@@ -164,7 +164,9 @@ bool Game::loop(void)
 		double render_ms = (now.tv_sec - lastRender.tv_sec)*1000.0 + (now.tv_usec - lastRender.tv_usec)/1000.0;
 		if (render_ms > (1000.0/fps)) {
 			renders++;
-			_renderer->render(_camera->getProjection(), _camera->getView(), *_renderTarget);
+			_renderer->render(_camera->getProjection(), _camera->getView(), _renderTarget);
+//_renderer->render(_camera->getProjection(), _camera->getView(), NULL);
+//_renderTarget->render();
 			_windowManager->swapBuffers();
 			gettimeofday(&lastRender, NULL);
 		}

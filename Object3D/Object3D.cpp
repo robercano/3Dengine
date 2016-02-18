@@ -91,7 +91,7 @@ bool Object3D::addShader(Shader *shader)
     return true;
 }
 
-bool Object3D::render(const glm::mat4 &projection, const glm::mat4 &view, RenderTarget &renderTarget)
+bool Object3D::render(const glm::mat4 &projection, const glm::mat4 &view, RenderTarget *renderTarget)
 {
 	/* Model matrix : an identity matrix (model will be at the origin) */
 	glm::mat4 model      = glm::mat4(1.0f);
@@ -100,7 +100,11 @@ bool Object3D::render(const glm::mat4 &projection, const glm::mat4 &view, Render
 	glm::mat4 MVP = projection * view * model; // Remember, matrix multiplication is the other way around
 
     /* Bind the render target */
-    glBindFramebuffer(GL_FRAMEBUFFER, renderTarget.getID());
+    if (renderTarget) {
+        glBindFramebuffer(GL_FRAMEBUFFER, renderTarget->getID());
+        glClearColor(0.0, 0.0, 0.0, 1.0);
+        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+    }
 
 	/* Bind program to upload the uniform */
 	_shader->attach();
@@ -115,7 +119,10 @@ bool Object3D::render(const glm::mat4 &projection, const glm::mat4 &view, Render
 
     /* Unbind */
 	_shader->detach();
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    if (renderTarget) {
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
 
     return true;
 };

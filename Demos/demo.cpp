@@ -6,6 +6,7 @@
 #include <string.h>
 #include "Game.hpp"
 #include "OBJFormat.hpp"
+#include "Shader.hpp"
 
 int main(int argc, char** argv)
 {

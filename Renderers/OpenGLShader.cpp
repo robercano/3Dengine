@@ -155,6 +155,12 @@ const bool OpenGLShader::getUniformID(const std::string &name, uint32_t *id)
     return true;
 }
 
+const bool OpenGLShader::getAttributeID(const std::string &name, uint32_t *id)
+{
+    *id = glGetAttribLocation( _programID, name.c_str());
+    return *id != -1 ? true : false;
+}
+
 bool OpenGLShader::setUniform(const std::string &name, glm::mat4 &value)
 {
 	std::map<std::string, uint32_t>::iterator it = _uniformNames.find(name);
@@ -177,6 +183,18 @@ bool OpenGLShader::setUniformTexture2D(const std::string &name, GLuint unitID)
 
     glUniform1i(it->second, GL_TEXTURE0 + unitID);
 	return true;
+}
+
+bool OpenGLShader::setUniformFloat(const std::string &name, GLfloat value)
+{
+	std::map<std::string, uint32_t>::iterator it = _uniformNames.find(name);
+
+	if (it == _uniformNames.end()) {
+		return false;
+	}
+
+    glUniform1f(it->second, value);
+    return true;
 }
 
 void OpenGLShader::_deleteShadersIDs(void)
@@ -208,6 +226,9 @@ void OpenGLShader::_buildUniformsMap(void)
 		uint32_t uniformID = glGetUniformLocation(_programID, uniformName);
 
 		/* Save in map */
+        printf("Found %s\n", uniformName);
+
 		_uniformNames[uniformName] = uniformID;
 	}
+    printf("---------------------\n");
 }

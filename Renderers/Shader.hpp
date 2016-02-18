@@ -75,6 +75,7 @@ class Shader
          *
          */
         virtual const bool getUniformID(const std::string &name, uint32_t *id) = 0;
+        virtual const bool getAttributeID(const std::string &name, uint32_t *id) = 0;
 
 		/**
 		 * Sets the value of a shader uniform as a mat4x4
@@ -93,5 +94,6 @@ class Shader
          * @param name       Name of the shader uniform
          * @param unitID     ID of the texture unit
          */
-        bool setUniformTexture2D(const std::string &name, GLuint unitID);
+        virtual bool setUniformTexture2D(const std::string &name, GLuint unitID) = 0;
+        virtual bool setUniformFloat(const std::string &name, GLfloat value) = 0;
 };

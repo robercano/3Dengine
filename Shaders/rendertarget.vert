@@ -1,5 +1,6 @@
 attribute vec2 v_coord;
 uniform sampler2D fbo_texture;
+
 varying vec2 f_texcoord;
 
 void main(void) {

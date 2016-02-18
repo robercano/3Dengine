@@ -56,7 +56,8 @@ class OpenGLRenderTarget : public RenderTarget
         /**
          * Render target vertices buffer
          */
-        GLuint _renderTargetVertices;
+        GLuint _vertexArray;
+        GLuint _vertexBuffer;
 
         /**
          * Shader for the target rendering to screen

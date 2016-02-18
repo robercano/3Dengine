@@ -51,7 +51,7 @@ Shader * OpenGLRenderer::getShader(void)
 	return new OpenGLShader();
 }
 
-bool OpenGLRenderer::render(const glm::mat4 &projection, const glm::mat4 &view, RenderTarget &renderTarget)
+bool OpenGLRenderer::render(const glm::mat4 &projection, const glm::mat4 &view, RenderTarget *renderTarget)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -60,7 +60,9 @@ bool OpenGLRenderer::render(const glm::mat4 &projection, const glm::mat4 &view, 
 		(*it)->render(projection, view, renderTarget);		// TODO: Not sure this should be like this
 	}
 
-    renderTarget.render();
+    if (renderTarget) {
+        renderTarget->render();
+    }
 
     return true;
 }

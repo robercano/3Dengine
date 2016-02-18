@@ -23,7 +23,7 @@ class OpenGLRenderer : public Renderer
 		 */
 		void init(void);
 		Shader * getShader(void);
-		bool render(const glm::mat4 &projection, const glm::mat4 &view, RenderTarget &renderTarget);
+		bool render(const glm::mat4 &projection, const glm::mat4 &view, RenderTarget *renderTarget);
 		bool resize(uint16_t width, uint16_t height);
 		bool addObject(Object3D *object);
 

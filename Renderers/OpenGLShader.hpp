@@ -81,6 +81,7 @@ class OpenGLShader : public Shader
          *
          */
         const bool getUniformID(const std::string &name, uint32_t *id);
+        const bool getAttributeID(const std::string &name, uint32_t *id);
 
 		/**
 		 * Sets the value of a shader uniform as a mat4x4
@@ -100,6 +101,7 @@ class OpenGLShader : public Shader
          * @param unitID     ID of the texture unit
          */
         bool setUniformTexture2D(const std::string &name, GLuint unitID);
+        bool setUniformFloat(const std::string &name, GLfloat value);
 
 	private:
 		/**
