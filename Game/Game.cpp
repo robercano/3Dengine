@@ -4,9 +4,8 @@
  *
  * @author	Roberto Sosa Cano
  */
-#include <GL/glew.h>
-#include <GL/glfw.h>
 #include <sys/time.h>
+#include "OpenGL.h"
 #include "Game.hpp"
 #include "OpenGLRenderer.hpp"
 #include "OpenGLRenderTarget.hpp"

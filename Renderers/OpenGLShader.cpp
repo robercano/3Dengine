@@ -8,11 +8,7 @@
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
-#ifdef __linux
-#include <GL/glew.h>
-#else
-#include <OpenGL/gl.h>
-#endif
+#include "OpenGL.h"
 #include "OpenGLShader.hpp"
 
 OpenGLShader::OpenGLShader(void) : _programID(0)
@@ -22,19 +18,23 @@ OpenGLShader::OpenGLShader(void) : _programID(0)
 OpenGLShader::~OpenGLShader(void)
 {
 	_deleteShadersIDs();
-	glDeleteProgram(_programID);
+	GL( glDeleteProgram(_programID) );
 }
 
 bool OpenGLShader::loadVertexShader(const std::string &filename, std::string &error)
 {
-	GLuint shaderObjectID   = glCreateShader(GL_VERTEX_SHADER);
+	GLuint shaderObjectID;
+
+    GL( shaderObjectID = glCreateShader(GL_VERTEX_SHADER) );
 
 	return _loadShader(shaderObjectID, filename, error);
 }
 
 bool OpenGLShader::loadFragmentShader(const std::string &filename, std::string &error)
 {
-	GLuint shaderObjectID   = glCreateShader(GL_FRAGMENT_SHADER);
+	GLuint shaderObjectID;
+
+    GL( shaderObjectID = glCreateShader(GL_FRAGMENT_SHADER) );
 
 	return _loadShader(shaderObjectID, filename, error);
 }
@@ -70,19 +70,19 @@ bool OpenGLShader::_loadShader(uint32_t shaderObjectID, const std::string &filen
 	shaderText[size] = 0;
 	fclose(shader);
 
-	glShaderSource(shaderObjectID, 1, (const GLchar **)&shaderText, NULL);
-	glCompileShader(shaderObjectID);
+	GL( glShaderSource(shaderObjectID, 1, (const GLchar **)&shaderText, NULL) );
+	GL( glCompileShader(shaderObjectID) );
 
 	delete shaderText;
 
 	/* Get compilation status */
-	glGetShaderiv(shaderObjectID, GL_COMPILE_STATUS, &result);
+	GL( glGetShaderiv(shaderObjectID, GL_COMPILE_STATUS, &result) );
 	if (result == GL_FALSE) {
 		int32_t infoLogLength;
-		glGetShaderiv(shaderObjectID, GL_INFO_LOG_LENGTH, &infoLogLength);
+		GL( glGetShaderiv(shaderObjectID, GL_INFO_LOG_LENGTH, &infoLogLength) );
 
 		char errorMessage[infoLogLength + 1];
-		glGetShaderInfoLog(shaderObjectID, infoLogLength, NULL, errorMessage);
+		GL( glGetShaderInfoLog(shaderObjectID, infoLogLength, NULL, errorMessage) );
 
 		error = errorMessage;
 		return false;
@@ -96,23 +96,23 @@ bool OpenGLShader::linkProgram(std::string &error)
 {
 	GLint result = GL_FALSE;
 
-	_programID = glCreateProgram();
+	GL( _programID = glCreateProgram() );
 
 	std::vector<uint32_t>::iterator it;
 	for (it=_shadersIDs.begin(); it != _shadersIDs.end(); ++it) {
-		glAttachShader(_programID, *it);
+		GL( glAttachShader(_programID, *it) );
 	}
 
 	/* Link the program */
-	glLinkProgram(_programID);
-	glGetProgramiv(_programID, GL_LINK_STATUS, &result);
+	GL( glLinkProgram(_programID) );
+	GL( glGetProgramiv(_programID, GL_LINK_STATUS, &result) );
 
 	if (result == GL_FALSE) {
 		int32_t infoLogLength;
-		glGetProgramiv(_programID, GL_INFO_LOG_LENGTH, &infoLogLength);
+		GL( glGetProgramiv(_programID, GL_INFO_LOG_LENGTH, &infoLogLength) );
 
 		char errorMessage[infoLogLength + 1];
-		glGetProgramInfoLog(_programID, infoLogLength, NULL, errorMessage);
+		GL( glGetProgramInfoLog(_programID, infoLogLength, NULL, errorMessage) );
 
 		error = errorMessage;
 		return false;
@@ -128,13 +128,13 @@ bool OpenGLShader::linkProgram(std::string &error)
 
 bool OpenGLShader::attach(void)
 {
-	glUseProgram(_programID);
+	GL( glUseProgram(_programID) );
     return true;
 }
 
 bool OpenGLShader::detach(void)
 {
-	glUseProgram(0);
+	GL( glUseProgram(0) );
     return true;
 }
 
@@ -157,7 +157,7 @@ const bool OpenGLShader::getUniformID(const std::string &name, uint32_t *id)
 
 const bool OpenGLShader::getAttributeID(const std::string &name, uint32_t *id)
 {
-    *id = glGetAttribLocation( _programID, name.c_str());
+    GL( *id = glGetAttribLocation( _programID, name.c_str()) );
     return *id != -1 ? true : false;
 }
 
@@ -169,7 +169,7 @@ bool OpenGLShader::setUniform(const std::string &name, glm::mat4 &value)
 		return false;
 	}
 
-	glUniformMatrix4fv(it->second, 1, GL_FALSE, &value[0][0]);
+	GL( glUniformMatrix4fv(it->second, 1, GL_FALSE, &value[0][0]) );
 	return true;
 }
 
@@ -181,7 +181,7 @@ bool OpenGLShader::setUniformTexture2D(const std::string &name, GLuint unitID)
 		return false;
 	}
 
-    glUniform1i(it->second, GL_TEXTURE0 + unitID);
+    GL( glUniform1i(it->second, unitID) );
 	return true;
 }
 
@@ -193,7 +193,7 @@ bool OpenGLShader::setUniformFloat(const std::string &name, GLfloat value)
 		return false;
 	}
 
-    glUniform1f(it->second, value);
+    GL( glUniform1f(it->second, value) );
     return true;
 }
 
@@ -201,7 +201,7 @@ void OpenGLShader::_deleteShadersIDs(void)
 {
 	std::vector<uint32_t>::iterator it;
 	for (it=_shadersIDs.begin(); it != _shadersIDs.end(); ++it) {
-		glDeleteShader(*it);
+		GL( glDeleteShader(*it) );
 	}
 	_shadersIDs.clear();
 }
@@ -211,7 +211,7 @@ void OpenGLShader::_buildUniformsMap(void)
 	_uniformNames.clear();
 
 	int32_t count, i;
-	glGetProgramiv(_programID, GL_ACTIVE_UNIFORMS, &count);
+	GL( glGetProgramiv(_programID, GL_ACTIVE_UNIFORMS, &count) );
 
 	for (i=0; i<count; ++i) {
 		char uniformName[128];
@@ -220,10 +220,12 @@ void OpenGLShader::_buildUniformsMap(void)
         GLenum type;
 
 		/* Get uniform name */
-		glGetActiveUniform(_programID, i, sizeof uniformName, NULL, &size, &type, uniformName);
+		GL( glGetActiveUniform(_programID, i, sizeof uniformName, NULL, &size, &type, uniformName) );
 
 		/* Get location */
-		uint32_t uniformID = glGetUniformLocation(_programID, uniformName);
+		uint32_t uniformID;
+
+        GL( uniformID = glGetUniformLocation(_programID, uniformName) );
 
 		/* Save in map */
 		_uniformNames[uniformName] = uniformID;

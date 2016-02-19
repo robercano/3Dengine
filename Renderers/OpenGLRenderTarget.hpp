@@ -8,8 +8,7 @@
  */
 #pragma once
 
-#include <GL/glew.h>
-#include <GL/glfw.h>
+#include "OpenGL.h"
 #include "Shader.hpp"
 #include "RenderTarget.hpp"
 

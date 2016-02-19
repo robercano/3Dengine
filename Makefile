@@ -45,7 +45,7 @@ endif
 #
 # Compilation flags
 #
-CXXFLAGS= -MMD -fPIC -IWindowManagers -IRenderers -IObject3D -I Game -I Input -I Camera -I Procedural -I/opt/X11/include -I ./Libraries -g
+CXXFLAGS= -MMD -fPIC -IWindowManagers -IRenderers -IObject3D -I Game -I Input -I Camera -I Procedural -I Common -I/opt/X11/include -I ./Libraries -g -DDEBUG_OPENGL_PIPELINE
 
 #
 # Main rules

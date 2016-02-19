@@ -6,51 +6,48 @@
  *
  * @author	Roberto Sosa Cano (http://www.robertocano.es)
  */
-
+#include "OpenGL.h"
 #include "OpenGLRenderTarget.hpp"
 #include "Renderer.hpp"
-#include <sys/time.h>
-#ifdef __linux
-#include <GL/gl.h>
-#include <GL/glu.h>
-#else
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#endif
 
 bool OpenGLRenderTarget::init(uint32_t width, uint32_t height)
 {
     glActiveTexture(GL_TEXTURE0);
 
     /* Texture buffer */
-    glGenTextures(1, &_colorBuffer);
-    glBindTexture(GL_TEXTURE_2D, _colorBuffer);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-    glBindTexture(GL_TEXTURE_2D, 0);
+    GL( glGenTextures(1, &_colorBuffer) );
+    GL( glBindTexture(GL_TEXTURE_2D, _colorBuffer) );
+    {
+        GL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR) );
+        GL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR) );
+        GL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE) );
+        GL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE) );
+        GL( glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL) );
+    }
+    GL( glBindTexture(GL_TEXTURE_2D, 0) );
 
     /* Depth buffer */
-    glGenRenderbuffers(1, &_depthBuffer);
-    glBindRenderbuffer(GL_RENDERBUFFER, _depthBuffer);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height);
-    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    GL( glGenRenderbuffers(1, &_depthBuffer) );
+    GL( glBindRenderbuffer(GL_RENDERBUFFER, _depthBuffer) );
+    {
+        GL( glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height) );
+    }
+    GL( glBindRenderbuffer(GL_RENDERBUFFER, 0) );
 
     /* Framebuffer to link everything together */
-    glGenFramebuffers(1, &_frameBuffer);
-    glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _colorBuffer, 0);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthBuffer);
+    GL( glGenFramebuffers(1, &_frameBuffer) );
+    GL( glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer) );
+    {
+        GL( glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _colorBuffer, 0) );
+        GL( glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthBuffer) );
 
-    GLenum status;
-    if ((status = glCheckFramebufferStatus(GL_FRAMEBUFFER)) != GL_FRAMEBUFFER_COMPLETE) {
-        printf("ERROR OpenGLRenderTarget::init %d\n", status);
-        return false;
+        GLenum status;
+        if ((status = glCheckFramebufferStatus(GL_FRAMEBUFFER)) != GL_FRAMEBUFFER_COMPLETE) {
+            printf("ERROR OpenGLRenderTarget::init %d\n", status);
+            return false;
+        }
     }
-
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    GL( glBindFramebuffer(GL_FRAMEBUFFER, 0) );
 
     /* Generate the render target surface */
     GLfloat verticesData[8] = {
@@ -60,15 +57,27 @@ bool OpenGLRenderTarget::init(uint32_t width, uint32_t height)
         1,  1,
     };
 
-	glGenVertexArrays(1, &_vertexArray);
-	glBindVertexArray(_vertexArray);
+	GL( glGenVertexArrays(1, &_vertexArray) );
+	GL( glBindVertexArray(_vertexArray) );
+    {
+        GL( glGenBuffers(1, &_vertexBuffer) );
+        GL( glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer) );
+        {
+            GL( glBufferData(GL_ARRAY_BUFFER, sizeof verticesData, verticesData, GL_STATIC_DRAW) );
 
-    glGenBuffers(1, &_vertexBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof verticesData, verticesData, GL_STATIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    glBindVertexArray(0);
+            GL( glEnableVertexAttribArray(0) );
+            GL( glVertexAttribPointer(
+                    0,   // attribute
+                    2,        // number of elements per vertex, here (x,y)
+                    GL_FLOAT, // the type of each element
+                    GL_FALSE, // take our values as-is
+                    0,        // no extra data between each position
+                    0         // offset of first element
+                    ) );
+        }
+//        GL( glBindBuffer(GL_ARRAY_BUFFER, 0) );
+    }
+//    GL( glBindVertexArray(0) );
 
     /* Create the shader */
     _shader = Renderer::GetRenderer()->getShader();
@@ -93,18 +102,12 @@ bool OpenGLRenderTarget::init(uint32_t width, uint32_t height)
 bool OpenGLRenderTarget::render()
 {
     /* Bind the target texture */
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, _colorBuffer);
+    GL( glActiveTexture(GL_TEXTURE0) );
+    GL( glBindTexture(GL_TEXTURE_2D, _colorBuffer) );
 
     /* Tell the shader which texture unit to use */
     _shader->attach();
     _shader->setUniformTexture2D("fbo_texture", 0);
-
-    uint32_t vCoord;
-    if (_shader->getAttributeID("v_coord", &vCoord) == false) {
-        printf("ERROR retrieving v_coord attribute\n");
-        return false;
-    }
 
 static uint32_t counter = 0;
     float offset = counter++;
@@ -113,22 +116,11 @@ static uint32_t counter = 0;
         return false;
     }
 
-    glBindVertexArray(_vertexArray);
-
-    glEnableVertexAttribArray(vCoord);
-    glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
-    glVertexAttribPointer(
-            vCoord,   // attribute
-            2,        // number of elements per vertex, here (x,y)
-            GL_FLOAT, // the type of each element
-            GL_FALSE, // take our values as-is
-            0,        // no extra data between each position
-            0         // offset of first element
-            );
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    glDisableVertexAttribArray(vCoord);
-
-    glBindVertexArray(0);
+    GL( glBindVertexArray(_vertexArray) );
+    {
+        GL( glDrawArrays(GL_TRIANGLE_STRIP, 0, 4) );
+    }
+    GL( glBindVertexArray(0) );
 
     _shader->detach();
 

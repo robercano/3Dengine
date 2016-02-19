@@ -4,16 +4,7 @@
  *
  * @author	Roberto Sosa Cano
  */
-
-#include <GL/glew.h>
-#include <GL/glfw.h>
-#ifdef __linux
-#include <GL/gl.h>
-#include <GL/glu.h>
-#else
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#endif
+#include "OpenGL.h"
 #include "OpenGLRenderer.hpp"
 #include "OpenGLShader.hpp"
 
@@ -28,20 +19,17 @@ OpenGLRenderer::~OpenGLRenderer()
 void OpenGLRenderer::init()
 {
 	//glClearColor(1.0, 1.0, 1.0, 1.0);
-	glClearColor(0.0, 0.0, 0.0, 1.0);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
+	GL( glClearColor(0.0, 0.0, 0.0, 1.0) );
+	GL( glEnable(GL_DEPTH_TEST) );
+	GL( glEnable(GL_CULL_FACE) );
+	GL( glCullFace(GL_BACK) );
 
-    glDisable(GL_DITHER);
-    glDisable(GL_POINT_SMOOTH);
-    glDisable(GL_LINE_SMOOTH);
-    glDisable(GL_POLYGON_SMOOTH);
-    glHint(GL_POINT_SMOOTH, GL_DONT_CARE);
-    glHint(GL_LINE_SMOOTH, GL_DONT_CARE);
-    glHint(GL_POLYGON_SMOOTH_HINT, GL_DONT_CARE);
+    GL( glDisable(GL_DITHER) );
+    GL( glDisable(GL_LINE_SMOOTH) );
+    GL( glDisable(GL_POLYGON_SMOOTH) );
+    GL( glHint(GL_POLYGON_SMOOTH_HINT, GL_DONT_CARE) );
 #define GL_MULTISAMPLE_ARB 0x809D
-    glDisable( GL_MULTISAMPLE_ARB) ;
+    GL( glDisable( GL_MULTISAMPLE_ARB)  );
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
@@ -53,7 +41,7 @@ Shader * OpenGLRenderer::getShader(void)
 
 bool OpenGLRenderer::render(const glm::mat4 &projection, const glm::mat4 &view, RenderTarget *renderTarget)
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	GL( glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) );
 
 	std::vector<Object3D*>::iterator it = _objects.begin();
 	for (; it != _objects.end(); ++it) {

@@ -1,7 +1,10 @@
-attribute vec2 v_coord;
-uniform sampler2D fbo_texture;
+#version 330 core
 
-varying vec2 f_texcoord;
+// Input parameters
+layout(location = 0) in vec2 v_coord;
+
+// Output parameters for the fragment shader
+out vec2 f_texcoord;
 
 void main(void) {
   gl_Position = vec4(v_coord, 0.0, 1.0);
