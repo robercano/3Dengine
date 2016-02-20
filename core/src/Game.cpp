@@ -99,6 +99,15 @@ bool Game::init(std::string &gameName)
     return true;
 }
 
+bool Game::addObject3D(Object3D *object, Shader *shader)
+{
+    RendererObject3D *renderObject = _renderer->prepareObject3D(*object);
+
+    _objects.push_back(renderObject);
+    _shaders.push_back(shader);
+    return true;
+}
+
 bool Game::loop(void)
 {
 	const uint32_t fps=60;
@@ -163,7 +172,14 @@ bool Game::loop(void)
 		double render_ms = (now.tv_sec - lastRender.tv_sec)*1000.0 + (now.tv_usec - lastRender.tv_usec)/1000.0;
 		if (render_ms > (1000.0/fps)) {
 			renders++;
-			_renderer->render(_camera->getProjection(), _camera->getView(), *_renderTarget);
+
+            /* Render all objects */
+            uint32_t i;
+            for (i=0; i<_objects.size(); ++i) {
+                _renderer->renderObject3D(*_objects[i], *_shaders[i],
+                                          _camera->getProjection(), _camera->getView(),
+                                          *_renderTarget);
+            }
 
             _renderTarget->render();
 

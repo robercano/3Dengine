@@ -1,12 +1,14 @@
 /**
- * @class	Object3D
- * @brief	Basic object 3D representation
+ * @class	OpenGLObject3D
+ * @brief	OpengGL object 3D representation
  *
- * @author	Roberto Sosa Cano
+ * @author	Roberto Cano
  */
-#include "Object3D.hpp"
 
-bool Object3D::init()
+#include "OpenGLObject3D.hpp"
+#include "OpenGL.h"
+
+bool OpenGLObject3D::init(const Object3D &object)
 {
 	/* Generate a vertex array to reference the attributes */
 	GL( glGenVertexArrays(1, &_gVAO) );
@@ -17,7 +19,7 @@ bool Object3D::init()
         GL( glBindBuffer(GL_ARRAY_BUFFER, _verticesVBO) );
         {
             /* Upload the data for this buffer */
-            GL( glBufferData(GL_ARRAY_BUFFER, getVerticesArrayLen() * sizeof(GLfloat), getVerticesArray(), GL_STATIC_DRAW) );
+            GL( glBufferData(GL_ARRAY_BUFFER, object.getVerticesArrayLen() * sizeof(GLfloat), object.getVerticesArray(), GL_STATIC_DRAW) );
 
             /* Link the data with the first shader attribute */
             GL( glEnableVertexAttribArray(0) );
@@ -36,7 +38,7 @@ bool Object3D::init()
         GL( glBindBuffer(GL_ARRAY_BUFFER, _colorsVBO) );
         {
             /* Upload the data for this buffer */
-            GL( glBufferData(GL_ARRAY_BUFFER, getColorsArrayLen() * sizeof (GLfloat), getColorsArray(), GL_STATIC_DRAW) );
+            GL( glBufferData(GL_ARRAY_BUFFER, object.getColorsArrayLen() * sizeof (GLfloat), object.getColorsArray(), GL_STATIC_DRAW) );
 
             /* Link the data with the second shader attribute */
             GL( glEnableVertexAttribArray(1) );
@@ -55,7 +57,7 @@ bool Object3D::init()
         GL( glBindBuffer(GL_ARRAY_BUFFER, _normalsVBO) );
         {
             /* Upload the data for this buffer */
-            GL( glBufferData(GL_ARRAY_BUFFER, getNormalsArrayLen() * sizeof (GLfloat), getNormalsArray(), GL_STATIC_DRAW) );
+            GL( glBufferData(GL_ARRAY_BUFFER, object.getNormalsArrayLen() * sizeof (GLfloat), object.getNormalsArray(), GL_STATIC_DRAW) );
 
             /* Link the data with the second shader attribute */
             GL( glEnableVertexAttribArray(2) );
@@ -74,16 +76,18 @@ bool Object3D::init()
         GL( glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indicesVBO) );
         {
             /* Upload the data */
-            GL( glBufferData(GL_ELEMENT_ARRAY_BUFFER, getIndicesArrayLen() * sizeof(GLuint), getIndicesArray(), GL_STATIC_DRAW) );
+            GL( glBufferData(GL_ELEMENT_ARRAY_BUFFER, object.getIndicesArrayLen() * sizeof(GLuint), object.getIndicesArray(), GL_STATIC_DRAW) );
         }
 
     }
     GL( glBindVertexArray(0) );
 
+    _indicesLen = object.getIndicesArrayLen();
+
     return true;
 }
 
-bool Object3D::destroy()
+bool OpenGLObject3D::destroy()
 {
 	GL( glDeleteBuffers(1, &_colorsVBO) );
 	GL( glDeleteBuffers(1, &_verticesVBO) );
@@ -91,45 +95,3 @@ bool Object3D::destroy()
 	GL( glDeleteVertexArrays(1, &_gVAO) );
     return true;
 }
-
-bool Object3D::addShader(Shader *shader)
-{
-    /* TODO: allow for a list of shaders */
-    _shader = shader;
-    return true;
-}
-
-bool Object3D::render(const glm::mat4 &projection, const glm::mat4 &view, RenderTarget &renderTarget)
-{
-	/* Model matrix : an identity matrix (model will be at the origin) */
-	glm::mat4 model      = glm::mat4(1.0f);
-
-	/* Our ModelViewProjection : multiplication of our 3 matrices */
-	glm::mat4 MVP = projection * view * model; // Remember, matrix multiplication is the other way around
-
-    /* Bind the render target */
-    GL( glBindFramebuffer(GL_FRAMEBUFFER, renderTarget.getID()) );
-    {
-        GL( glClearColor(0.0, 0.0, 0.0, 1.0) );
-        GL( glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT) );
-
-        /* Bind program to upload the uniform */
-        _shader->attach();
-
-        /* Send our transformation to the currently bound shader, in the "MVP" uniform */
-        _shader->setUniform("MVP", MVP);
-
-        /* Draw the object */
-        GL( glBindVertexArray(_gVAO) );
-        {
-            GL( glDrawElements(GL_TRIANGLES, getIndicesArrayLen(), GL_UNSIGNED_INT, NULL) );
-        }
-        GL( glBindVertexArray(0) );
-
-        /* Unbind */
-        _shader->detach();
-    }
-    GL( glBindFramebuffer(GL_FRAMEBUFFER, 0) );
-
-    return true;
-};

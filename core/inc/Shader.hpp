@@ -94,6 +94,6 @@ class Shader
          * @param name       Name of the shader uniform
          * @param unitID     ID of the texture unit
          */
-        virtual bool setUniformTexture2D(const std::string &name, GLuint unitID) = 0;
-        virtual bool setUniformFloat(const std::string &name, GLfloat value) = 0;
+        virtual bool setUniformTexture2D(const std::string &name, uint32_t unitID) = 0;
+        virtual bool setUniformFloat(const std::string &name, float value) = 0;
 };

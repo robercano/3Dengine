@@ -109,42 +109,42 @@ error_exit:
     return ret;
 }
 
-const GLfloat *OBJFormat::getVerticesArray()
+const float *OBJFormat::getVerticesArray() const
 {
-    return (GLfloat*)&_vertices[0];
+    return (float*)&_vertices[0];
 }
 
-uint32_t OBJFormat::getVerticesArrayLen()
+uint32_t OBJFormat::getVerticesArrayLen() const
 {
     return _vertices.size() * sizeof(glm::vec3);
 }
 
-const GLfloat *OBJFormat::getColorsArray()
+const float *OBJFormat::getColorsArray() const
 {
-    return (GLfloat*)&_colors[0];
+    return (float*)&_colors[0];
 }
 
-uint32_t OBJFormat::getColorsArrayLen()
+uint32_t OBJFormat::getColorsArrayLen() const
 {
     return _colors.size() * sizeof(glm::vec3);
 }
 
-const GLfloat *OBJFormat::getNormalsArray()
+const float *OBJFormat::getNormalsArray() const
 {
-    return (GLfloat*)&_normals[0];
+    return (float*)&_normals[0];
 }
 
-uint32_t OBJFormat::getNormalsArrayLen()
+uint32_t OBJFormat::getNormalsArrayLen() const
 {
     return _normals.size() * sizeof(glm::vec3);
 }
 
-const GLuint *OBJFormat::getIndicesArray()
+const uint32_t *OBJFormat::getIndicesArray() const
 {
-    return (GLuint*)&_vertexIndices[0];
+    return (uint32_t*)&_vertexIndices[0];
 }
 
-uint32_t OBJFormat::getIndicesArrayLen()
+uint32_t OBJFormat::getIndicesArrayLen() const
 {
     return _vertexIndices.size();
 }

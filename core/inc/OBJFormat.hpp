@@ -16,14 +16,14 @@ class OBJFormat : public Object3D
 {
     public:
         /** Object3D methods */
-        const GLfloat *getVerticesArray();
-        uint32_t getVerticesArrayLen();
-        const GLfloat *getColorsArray();
-        uint32_t getColorsArrayLen();
-        const GLfloat *getNormalsArray();
-        uint32_t getNormalsArrayLen();
-        const GLuint *getIndicesArray();
-        uint32_t getIndicesArrayLen();
+        const float *getVerticesArray() const;
+        uint32_t getVerticesArrayLen() const;
+        const float *getColorsArray() const;
+        uint32_t getColorsArrayLen() const;
+        const float *getNormalsArray() const;
+        uint32_t getNormalsArrayLen() const;
+        const uint32_t *getIndicesArray() const;
+        uint32_t getIndicesArrayLen() const;
 
         /**
          * Static method that given a .obj filename loads its contents

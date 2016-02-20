@@ -12,20 +12,16 @@
 class OpenGLRenderer : public Renderer
 {
 	public:
-
-		/**
-		 * Destructor
-		 */
-		~OpenGLRenderer();
-
 		/**
 		 * Renderer methods
 		 */
 		void init(void);
 		Shader * getShader(void);
-		bool render(const glm::mat4 &projection, const glm::mat4 &view, RenderTarget &renderTarget);
+        RendererObject3D *prepareObject3D(const Object3D &object);
+		bool renderObject3D(RendererObject3D &object, Shader &shader,
+                            const glm::mat4 &projection, const glm::mat4 &view,
+                            RenderTarget &renderTarget);
 		bool resize(uint16_t width, uint16_t height);
-		bool addObject(Object3D *object);
 
 	private:
 		/**
@@ -37,9 +33,4 @@ class OpenGLRenderer : public Renderer
 		 * Height of the display
 		 */
 		uint16_t _height;
-
-		/**
-		 * List of 3D objects to be rendered
-		 */
-		std::vector<Object3D*> _objects;
 };

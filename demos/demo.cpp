@@ -43,11 +43,8 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    /* Add the shader to the geometry */
-    lego.addShader(shader);
-
 	/* Add the geometry */
-	game->getRenderer()->addObject(&lego);
+	game->addObject3D(&lego, shader);
 
     /* Start */
 	game->loop();

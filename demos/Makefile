@@ -13,7 +13,7 @@ else
 LDFLAGS+= -L../lib -lengine -lGL -lGLEW -lglfw -fPIC
 endif
 
-CXXFLAGS= -I../core/inc -I../core/opengl/inc -I../core/prcedural/inc -I../3rdparty -g
+CXXFLAGS= -I../core/inc -I../core/opengl/inc -I../core/procedural/inc -I../3rdparty -g
 
 FILES=$(shell \ls *.cpp)
 TARGETS=$(FILES:.cpp=)

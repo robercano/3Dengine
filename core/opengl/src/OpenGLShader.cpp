@@ -173,7 +173,7 @@ bool OpenGLShader::setUniform(const std::string &name, glm::mat4 &value)
 	return true;
 }
 
-bool OpenGLShader::setUniformTexture2D(const std::string &name, GLuint unitID)
+bool OpenGLShader::setUniformTexture2D(const std::string &name, uint32_t unitID)
 {
 	std::map<std::string, uint32_t>::iterator it = _uniformNames.find(name);
 
@@ -185,7 +185,7 @@ bool OpenGLShader::setUniformTexture2D(const std::string &name, GLuint unitID)
 	return true;
 }
 
-bool OpenGLShader::setUniformFloat(const std::string &name, GLfloat value)
+bool OpenGLShader::setUniformFloat(const std::string &name, float value)
 {
 	std::map<std::string, uint32_t>::iterator it = _uniformNames.find(name);
 

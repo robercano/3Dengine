@@ -43,6 +43,16 @@ class Game
 		 */
 		bool init(std::string &gameName);
 
+        /**
+         * Add objects to the scene. Upon addition
+         * the objects are prepared for the renderer
+         * and cached
+         *
+         * @param object  Object 3D to be added to the scene
+         * @param shader  Shader associated with the object
+         */
+        bool addObject3D(Object3D *object, Shader *shader);
+
 		/**
 		 * Main game loop
 		 */
@@ -83,4 +93,10 @@ class Game
 		 * Camera
 		 */
 		Camera *_camera;
+
+		/**
+		 * List of 3D objects and shaders to be rendered
+		 */
+		std::vector<RendererObject3D*> _objects;
+		std::vector<Shader*> _shaders;
 };
