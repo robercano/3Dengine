@@ -163,9 +163,10 @@ bool Game::loop(void)
 		double render_ms = (now.tv_sec - lastRender.tv_sec)*1000.0 + (now.tv_usec - lastRender.tv_usec)/1000.0;
 		if (render_ms > (1000.0/fps)) {
 			renders++;
-			_renderer->render(_camera->getProjection(), _camera->getView(), _renderTarget);
-//_renderer->render(_camera->getProjection(), _camera->getView(), NULL);
-//_renderTarget->render();
+			_renderer->render(_camera->getProjection(), _camera->getView(), *_renderTarget);
+
+            _renderTarget->render();
+
 			_windowManager->swapBuffers();
 			gettimeofday(&lastRender, NULL);
 		}

@@ -39,18 +39,12 @@ Shader * OpenGLRenderer::getShader(void)
 	return new OpenGLShader();
 }
 
-bool OpenGLRenderer::render(const glm::mat4 &projection, const glm::mat4 &view, RenderTarget *renderTarget)
+bool OpenGLRenderer::render(const glm::mat4 &projection, const glm::mat4 &view, RenderTarget &renderTarget)
 {
-	GL( glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) );
-
 	std::vector<Object3D*>::iterator it = _objects.begin();
 	for (; it != _objects.end(); ++it) {
 		(*it)->render(projection, view, renderTarget);		// TODO: Not sure this should be like this
 	}
-
-    if (renderTarget) {
-        renderTarget->render();
-    }
 
     return true;
 }

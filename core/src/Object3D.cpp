@@ -99,7 +99,7 @@ bool Object3D::addShader(Shader *shader)
     return true;
 }
 
-bool Object3D::render(const glm::mat4 &projection, const glm::mat4 &view, RenderTarget *renderTarget)
+bool Object3D::render(const glm::mat4 &projection, const glm::mat4 &view, RenderTarget &renderTarget)
 {
 	/* Model matrix : an identity matrix (model will be at the origin) */
 	glm::mat4 model      = glm::mat4(1.0f);
@@ -108,31 +108,28 @@ bool Object3D::render(const glm::mat4 &projection, const glm::mat4 &view, Render
 	glm::mat4 MVP = projection * view * model; // Remember, matrix multiplication is the other way around
 
     /* Bind the render target */
-    if (renderTarget) {
-        GL( glBindFramebuffer(GL_FRAMEBUFFER, renderTarget->getID()) );
+    GL( glBindFramebuffer(GL_FRAMEBUFFER, renderTarget.getID()) );
+    {
         GL( glClearColor(0.0, 0.0, 0.0, 1.0) );
         GL( glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT) );
+
+        /* Bind program to upload the uniform */
+        _shader->attach();
+
+        /* Send our transformation to the currently bound shader, in the "MVP" uniform */
+        _shader->setUniform("MVP", MVP);
+
+        /* Draw the object */
+        GL( glBindVertexArray(_gVAO) );
+        {
+            GL( glDrawElements(GL_TRIANGLES, getIndicesArrayLen(), GL_UNSIGNED_INT, NULL) );
+        }
+        GL( glBindVertexArray(0) );
+
+        /* Unbind */
+        _shader->detach();
     }
-
-	/* Bind program to upload the uniform */
-	_shader->attach();
-
-	/* Send our transformation to the currently bound shader, in the "MVP" uniform */
-	_shader->setUniform("MVP", MVP);
-
-	/* Draw the object */
-	GL( glBindVertexArray(_gVAO) );
-    {
-        GL( glDrawElements(GL_TRIANGLES, getIndicesArrayLen(), GL_UNSIGNED_INT, NULL) );
-    }
-	GL( glBindVertexArray(0) );
-
-    /* Unbind */
-	_shader->detach();
-
-    if (renderTarget) {
-        GL( glBindFramebuffer(GL_FRAMEBUFFER, 0) );
-    }
+    GL( glBindFramebuffer(GL_FRAMEBUFFER, 0) );
 
     return true;
 };

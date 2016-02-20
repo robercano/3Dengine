@@ -116,11 +116,15 @@ bool OpenGLRenderTarget::render()
         return false;
     }
 
+    /* Disable the depth test as the render target should
+     * be always rendered */
+    glDisable(GL_DEPTH_TEST);
     GL( glBindVertexArray(_vertexArray) );
     {
         GL( glDrawArrays(GL_TRIANGLE_STRIP, 0, 4) );
     }
     GL( glBindVertexArray(0) );
+    glEnable(GL_DEPTH_TEST);
 
     _shader->detach();
 

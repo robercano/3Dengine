@@ -75,7 +75,7 @@ class Object3D
 		 *
 		 * @returns	true if the object was rendered or false otherwise
 		 */
-		virtual bool render(const glm::mat4 &projection, const glm::mat4 &view, RenderTarget *renderTarget);
+		virtual bool render(const glm::mat4 &projection, const glm::mat4 &view, RenderTarget &renderTarget);
 
     private:
         /**

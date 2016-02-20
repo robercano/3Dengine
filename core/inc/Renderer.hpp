@@ -41,7 +41,7 @@ class Renderer
 		 * @param projection	Projection matrix
 		 * @param view			View matrix
 		 */
-		virtual bool render(const glm::mat4 &projection, const glm::mat4 &view, RenderTarget *renderTarget) = 0;
+		virtual bool render(const glm::mat4 &projection, const glm::mat4 &view, RenderTarget &renderTarget) = 0;
 
 		/**
 		 * Adjusts the renderer's display size
