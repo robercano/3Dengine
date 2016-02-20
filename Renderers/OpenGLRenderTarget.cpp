@@ -67,7 +67,7 @@ bool OpenGLRenderTarget::init(uint32_t width, uint32_t height)
 
             GL( glEnableVertexAttribArray(0) );
             GL( glVertexAttribPointer(
-                    0,   // attribute
+                    0,        // attribute
                     2,        // number of elements per vertex, here (x,y)
                     GL_FLOAT, // the type of each element
                     GL_FALSE, // take our values as-is
@@ -75,19 +75,19 @@ bool OpenGLRenderTarget::init(uint32_t width, uint32_t height)
                     0         // offset of first element
                     ) );
         }
-//        GL( glBindBuffer(GL_ARRAY_BUFFER, 0) );
+        GL( glBindBuffer(GL_ARRAY_BUFFER, 0) );
     }
-//    GL( glBindVertexArray(0) );
+    GL( glBindVertexArray(0) );
 
     /* Create the shader */
     _shader = Renderer::GetRenderer()->getShader();
 
 	std::string error;
-	if (_shader->loadVertexShader("Shaders/rendertarget.vert", error) == false) {
+	if (_shader->loadVertexShader("Shaders/effects/waves.vert", error) == false) {
 		printf("ERROR compiling vertex shader: %s\n", error.c_str());
 		return 1;
 	}
-	if (_shader->loadFragmentShader("Shaders/rendertarget.frag", error) == false) {
+	if (_shader->loadFragmentShader("Shaders/effects/waves.frag", error) == false) {
 		printf("ERROR compiling fragment shader: %s\n", error.c_str());
 		return 1;
 	}
@@ -109,7 +109,7 @@ bool OpenGLRenderTarget::render()
     _shader->attach();
     _shader->setUniformTexture2D("fbo_texture", 0);
 
-static uint32_t counter = 0;
+    static uint32_t counter = 0;
     float offset = counter++;
     if (_shader->setUniformFloat("offset", offset) == false) {
         printf("ERROR setting offset uniform\n");

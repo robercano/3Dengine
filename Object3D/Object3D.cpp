@@ -9,78 +9,86 @@
 bool Object3D::init()
 {
 	/* Generate a vertex array to reference the attributes */
-	glGenVertexArrays(1, &_gVAO);
-	glBindVertexArray(_gVAO);
+	GL( glGenVertexArrays(1, &_gVAO) );
+	GL( glBindVertexArray(_gVAO) );
+    {
+        /* Generate a buffer object for the vertices positions */
+        GL( glGenBuffers(1, &_verticesVBO) );
+        GL( glBindBuffer(GL_ARRAY_BUFFER, _verticesVBO) );
+        {
+            /* Upload the data for this buffer */
+            GL( glBufferData(GL_ARRAY_BUFFER, getVerticesArrayLen() * sizeof(GLfloat), getVerticesArray(), GL_STATIC_DRAW) );
 
-	/* Generate a buffer object for the vertices positions */
-	glGenBuffers(1, &_verticesVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, _verticesVBO);
+            /* Link the data with the first shader attribute */
+            GL( glEnableVertexAttribArray(0) );
+            GL( glVertexAttribPointer(
+                    0,                  // attribute. No particular reason for 0, but must match the layout in the shader.
+                    3,                  // size
+                    GL_FLOAT,           // type
+                    GL_FALSE,           // normalized?
+                    0,                  // stride
+                    (void*)0            // array buffer offset
+                    ) );
+        }
 
-	/* Upload the data for this buffer */
-	glBufferData(GL_ARRAY_BUFFER, getVerticesArrayLen() * sizeof(GLfloat), getVerticesArray(), GL_STATIC_DRAW);
+        /* Generate a buffer for the vertices colors */
+        GL( glGenBuffers(1, &_colorsVBO) );
+        GL( glBindBuffer(GL_ARRAY_BUFFER, _colorsVBO) );
+        {
+            /* Upload the data for this buffer */
+            GL( glBufferData(GL_ARRAY_BUFFER, getColorsArrayLen() * sizeof (GLfloat), getColorsArray(), GL_STATIC_DRAW) );
 
-	/* Link the data with the first shader attribute */
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(
-			0,                  // attribute. No particular reason for 0, but must match the layout in the shader.
-			3,                  // size
-			GL_FLOAT,           // type
-			GL_FALSE,           // normalized?
-			0,                  // stride
-			(void*)0            // array buffer offset
-			);
+            /* Link the data with the second shader attribute */
+            GL( glEnableVertexAttribArray(1) );
+            GL( glVertexAttribPointer(
+                    1,                  // attribute
+                    3,                  // size
+                    GL_FLOAT,           // type
+                    GL_FALSE,           // normalized?
+                    0,                  // stride
+                    (void*)0            // array buffer offset
+                    ) );
+        }
 
-	/* Generate a buffer for the vertices colors */
-	glGenBuffers(1, &_colorsVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, _colorsVBO);
+        /* Generate a buffer for the vertices colors */
+        GL( glGenBuffers(1, &_normalsVBO) );
+        GL( glBindBuffer(GL_ARRAY_BUFFER, _normalsVBO) );
+        {
+            /* Upload the data for this buffer */
+            GL( glBufferData(GL_ARRAY_BUFFER, getNormalsArrayLen() * sizeof (GLfloat), getNormalsArray(), GL_STATIC_DRAW) );
 
-	/* Upload the data for this buffer */
-	glBufferData(GL_ARRAY_BUFFER, getColorsArrayLen() * sizeof (GLfloat), getColorsArray(), GL_STATIC_DRAW);
+            /* Link the data with the second shader attribute */
+            GL( glEnableVertexAttribArray(2) );
+            GL( glVertexAttribPointer(
+                    2,                  // attribute
+                    3,                  // size
+                    GL_FLOAT,           // type
+                    GL_FALSE,           // normalized?
+                    0,                  // stride
+                    (void*)0            // array buffer offset
+                    ) );
+        }
 
-	/* Link the data with the second shader attribute */
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(
-			1,                  // attribute
-			3,                  // size
-			GL_FLOAT,           // type
-			GL_FALSE,           // normalized?
-			0,                  // stride
-			(void*)0            // array buffer offset
-			);
+        /* Generate the buffer for the indices */
+        GL( glGenBuffers(1, &_indicesVBO) );
+        GL( glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indicesVBO) );
+        {
+            /* Upload the data */
+            GL( glBufferData(GL_ELEMENT_ARRAY_BUFFER, getIndicesArrayLen() * sizeof(GLuint), getIndicesArray(), GL_STATIC_DRAW) );
+        }
 
-	/* Generate a buffer for the vertices colors */
-	glGenBuffers(1, &_normalsVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, _normalsVBO);
+    }
+    GL( glBindVertexArray(0) );
 
-	/* Upload the data for this buffer */
-	glBufferData(GL_ARRAY_BUFFER, getNormalsArrayLen() * sizeof (GLfloat), getNormalsArray(), GL_STATIC_DRAW);
-
-	/* Link the data with the second shader attribute */
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(
-			2,                  // attribute
-			3,                  // size
-			GL_FLOAT,           // type
-			GL_FALSE,           // normalized?
-			0,                  // stride
-			(void*)0            // array buffer offset
-			);
-
-	/* Generate the buffer for the indices */
-	glGenBuffers(1, &_indicesVBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indicesVBO);
-
-	/* Upload the data */
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, getIndicesArrayLen() * sizeof(GLuint), getIndicesArray(), GL_STATIC_DRAW);
     return true;
 }
 
 bool Object3D::destroy()
 {
-	glDeleteBuffers(1, &_colorsVBO);
-	glDeleteBuffers(1, &_verticesVBO);
-	glDeleteBuffers(1, &_normalsVBO);
-	glDeleteVertexArrays(1, &_gVAO);
+	GL( glDeleteBuffers(1, &_colorsVBO) );
+	GL( glDeleteBuffers(1, &_verticesVBO) );
+	GL( glDeleteBuffers(1, &_normalsVBO) );
+	GL( glDeleteVertexArrays(1, &_gVAO) );
     return true;
 }
 
@@ -101,9 +109,9 @@ bool Object3D::render(const glm::mat4 &projection, const glm::mat4 &view, Render
 
     /* Bind the render target */
     if (renderTarget) {
-        glBindFramebuffer(GL_FRAMEBUFFER, renderTarget->getID());
-        glClearColor(0.0, 0.0, 0.0, 1.0);
-        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+        GL( glBindFramebuffer(GL_FRAMEBUFFER, renderTarget->getID()) );
+        GL( glClearColor(0.0, 0.0, 0.0, 1.0) );
+        GL( glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT) );
     }
 
 	/* Bind program to upload the uniform */
@@ -113,15 +121,17 @@ bool Object3D::render(const glm::mat4 &projection, const glm::mat4 &view, Render
 	_shader->setUniform("MVP", MVP);
 
 	/* Draw the object */
-	glBindVertexArray(_gVAO);
-	glDrawElements(GL_TRIANGLES, getIndicesArrayLen(), GL_UNSIGNED_INT, NULL);
-	glBindVertexArray(0);
+	GL( glBindVertexArray(_gVAO) );
+    {
+        GL( glDrawElements(GL_TRIANGLES, getIndicesArrayLen(), GL_UNSIGNED_INT, NULL) );
+    }
+	GL( glBindVertexArray(0) );
 
     /* Unbind */
 	_shader->detach();
 
     if (renderTarget) {
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        GL( glBindFramebuffer(GL_FRAMEBUFFER, 0) );
     }
 
     return true;

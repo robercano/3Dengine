@@ -40,7 +40,7 @@ Game::~Game()
 bool Game::init(std::string &gameName)
 {
 	/* TODO: Get the settings from a config file */
-    int width = 320, height = 200;
+    int width = 1440, height = 900;
 
 	_windowManager = WindowManager::GetWindowManager(WindowManager::WINDOW_MANAGER_GLFW);
 	if (_windowManager == NULL) {

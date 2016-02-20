@@ -9,5 +9,5 @@ out vec4 fragColor;
 void main(void) {
     vec2 texcoord = f_texcoord;
     texcoord.x += sin(texcoord.y * 4.0*2.0*3.14159 + offset/10.0) / 100.0;
-    fragColor = texture2D(fbo_texture, texcoord);
+    fragColor = texture(fbo_texture, texcoord);
 }
