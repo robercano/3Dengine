@@ -15,10 +15,14 @@ CC=gcc
 #
 # Files to be compiled
 #
-VPATH=WindowManagers:Renderers:Object3D:Game:Input:Camera:Procedural
-FILES=OpenGLRenderer.cpp WindowManager.cpp GLFWWindowManager.cpp GLFWKeyManager.cpp \
-	  Cube.cpp GLFWMouseManager.cpp Game.cpp InputManager.cpp Camera.cpp OpenGLShader.cpp Renderer.cpp \
-	  Object3D.cpp OBJFormat.cpp OpenGLRenderTarget.cpp
+VPATH=core/src:core/opengl/src:core/procedural/src
+
+CORE_FILES=Camera.cpp Game.cpp InputManager.cpp OBJFormat.cpp Object3D.cpp Renderer.cpp WindowManager.cpp
+OPENGL_FILES=GLFWKeyManager.cpp GLFWMouseManager.cpp GLFWWindowManager.cpp OpenGLRenderTarget.cpp \
+             OpenGLRenderer.cpp OpenGLShader.cpp
+#PROCEDURAL_FILES=Cube.cpp Icosahedron.cpp Plane.cpp Sphere.cpp
+
+FILES=$(CORE_FILES) $(OPENGL_FILES) $(PROCEDURAL_FILES)
 
 OBJDIR=obj
 OBJECTS=$(patsubst %.cpp,$(OBJDIR)/%.o,$(FILES))
@@ -26,7 +30,7 @@ OBJECTS=$(patsubst %.cpp,$(OBJDIR)/%.o,$(FILES))
 LIBDIR=lib
 LIBNAME=lib$(PROJECT).$(SHAREDEXT)
 
-DEMODIR=Demos
+DEMODIR=demos
 
 # Mac OS alternate cmdline link options
 ifeq ($(UNAME), Darwin)
@@ -41,11 +45,10 @@ SHAREDEXT=so
 PREFIX=/usr/local/lib
 endif
 
-
 #
 # Compilation flags
 #
-CXXFLAGS= -MMD -fPIC -IWindowManagers -IRenderers -IObject3D -I Game -I Input -I Camera -I Procedural -I Common -I/opt/X11/include -I ./Libraries -g -DDEBUG_OPENGL_PIPELINE
+CXXFLAGS= -MMD -fPIC -Icore/inc -Icore/opengl/inc -Icore/procedural/inc -I/opt/X11/include -I3rdparty -g -DDEBUG_OPENGL_PIPELINE
 
 #
 # Main rules

@@ -22,11 +22,11 @@ int main(int argc, char** argv)
 
 	/* Basic shaders with only position and color attributes, with no camera */
 	std::string error;
-	if (shader->loadVertexShader("Shaders/phong/mvp.vert", error) == false) {
+	if (shader->loadVertexShader("data/shaders/phong/mvp.vert", error) == false) {
 		printf("ERROR compiling vertex shader: %s\n", error.c_str());
 		return 1;
 	}
-	if (shader->loadFragmentShader("Shaders/phong/phong.frag", error) == false) {
+	if (shader->loadFragmentShader("data/shaders/phong/phong.frag", error) == false) {
 		printf("ERROR compiling fragment shader: %s\n", error.c_str());
 		return 1;
 	}
@@ -36,7 +36,7 @@ int main(int argc, char** argv)
 	}
 
     /* Load the geometry */
-    std::string legoobj = "Samples/lego.obj";
+    std::string legoobj = "data/objects/lego.obj";
 
     if (lego.load(legoobj) == false) {
         printf("ERROR loading OBJ file\n");

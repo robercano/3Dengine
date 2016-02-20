@@ -83,11 +83,11 @@ bool OpenGLRenderTarget::init(uint32_t width, uint32_t height)
     _shader = Renderer::GetRenderer()->getShader();
 
 	std::string error;
-	if (_shader->loadVertexShader("Shaders/effects/waves.vert", error) == false) {
+	if (_shader->loadVertexShader("data/shaders/effects/waves.vert", error) == false) {
 		printf("ERROR compiling vertex shader: %s\n", error.c_str());
 		return 1;
 	}
-	if (_shader->loadFragmentShader("Shaders/effects/waves.frag", error) == false) {
+	if (_shader->loadFragmentShader("data/shaders/effects/waves.frag", error) == false) {
 		printf("ERROR compiling fragment shader: %s\n", error.c_str());
 		return 1;
 	}
