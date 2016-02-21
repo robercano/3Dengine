@@ -57,10 +57,11 @@ bool OpenGLRenderer::renderObject3D(RendererObject3D &object, Shader &shader,
     OpenGLObject3D &glObject = dynamic_cast<OpenGLObject3D&>(object);
 
     /* Bind the render target */
-    GL( glBindFramebuffer(GL_FRAMEBUFFER, renderTarget.getID()) );
+    renderTarget.bind();
     {
         GL( glClearColor(0.0, 0.0, 0.0, 1.0) );
         GL( glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT) );
+        GL( glEnable(GL_MULTISAMPLE) );
 
         /* Bind program to upload the uniform */
         shader.attach();
@@ -79,7 +80,7 @@ bool OpenGLRenderer::renderObject3D(RendererObject3D &object, Shader &shader,
         /* Unbind */
         shader.detach();
     }
-    GL( glBindFramebuffer(GL_FRAMEBUFFER, 0) );
+    renderTarget.unbind();
 
     return true;
 }

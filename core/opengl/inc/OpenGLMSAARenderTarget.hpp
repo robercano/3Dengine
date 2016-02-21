@@ -1,8 +1,10 @@
 /**
- * @class	OpenGLRenderTarget
+ * @class	OpenGLNOAARenderTarget
  * @brief	Render target for OpenGL. A render target allows to render objects to it
  *          instead of to the main screen. Then the target can be rendered to the main screen as
  *          a texture
+ *
+ *          The NOAA render target applies no anti-aliasing
  *
  * @author	Roberto Sosa Cano (http://www.robertocano.es)
  */
@@ -12,28 +14,15 @@
 #include "Shader.hpp"
 #include "RenderTarget.hpp"
 
-class OpenGLRenderTarget : public RenderTarget
+class OpenGLMSAARenderTarget : public RenderTarget
 {
 	public:
-        /**
-         * Initializes the target with the given size
-         *
-         * @param width  Width of the render target
-         * @param height Height of the render target
-         */
-        bool init(uint32_t width, uint32_t height);
-
-       /**
-        * Returns the render target ID that will be used by the renderer
-        * to render the objects into the target
-        *
-        */
-        const uint32_t getID();
-
-        /**
-         * Renders the target to screen
-         */
+        bool init(uint32_t width, uint32_t height, uint32_t samples);
+        void bind();
+        void unbind();
         bool render();
+
+        static uint32_t getMaxSamples();
 
     private:
         /**
@@ -62,4 +51,6 @@ class OpenGLRenderTarget : public RenderTarget
          * Shader for the target rendering to screen
          */
         Shader *_shader;
+
+        uint32_t _samples;
 };

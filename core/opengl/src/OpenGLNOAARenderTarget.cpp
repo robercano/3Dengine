@@ -1,16 +1,18 @@
 /**
- * @class	OpenGLRenderTarget
+ * @class	OpenGLNOAARenderTarget
  * @brief	Render target for OpenGL. A render target allows to render objects to it
  *          instead of to the main screen. Then the target can be rendered to the main screen as
  *          a texture
  *
+ *          The NOAA render target applies no anti-alising to the rendering
+ *
  * @author	Roberto Sosa Cano (http://www.robertocano.es)
  */
 #include "OpenGL.h"
-#include "OpenGLRenderTarget.hpp"
+#include "OpenGLNOAARenderTarget.hpp"
 #include "Renderer.hpp"
 
-bool OpenGLRenderTarget::init(uint32_t width, uint32_t height)
+bool OpenGLNOAARenderTarget::init(uint32_t width, uint32_t height)
 {
     glActiveTexture(GL_TEXTURE0);
 
@@ -99,8 +101,9 @@ bool OpenGLRenderTarget::init(uint32_t width, uint32_t height)
     return true;
 }
 
-bool OpenGLRenderTarget::render()
+bool OpenGLNOAARenderTarget::render()
 {
+#if 0
     /* Bind the target texture */
     GL( glActiveTexture(GL_TEXTURE0) );
     GL( glBindTexture(GL_TEXTURE_2D, _colorBuffer) );
@@ -127,11 +130,21 @@ bool OpenGLRenderTarget::render()
     glEnable(GL_DEPTH_TEST);
 
     _shader->detach();
-
+#endif
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, _frameBuffer);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    glBlitFramebuffer(0, 0, 1440, 900, 0, 0, 1440, 900, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+    glBlitFramebuffer(0, 0, 1440, 900, 0, 0, 1440, 900, GL_DEPTH_BUFFER_BIT, GL_LINEAR);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
     return true;
 }
 
-const uint32_t OpenGLRenderTarget::getID()
+void OpenGLNOAARenderTarget::bind()
 {
-    return _frameBuffer;
+    GL( glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer) );
+}
+
+void OpenGLNOAARenderTarget::unbind()
+{
+    GL( glBindFramebuffer(GL_FRAMEBUFFER, 0) );
 }

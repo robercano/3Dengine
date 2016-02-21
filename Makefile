@@ -18,7 +18,8 @@ CC=gcc
 VPATH=core/src:core/opengl/src:core/procedural/src
 
 CORE_FILES=Camera.cpp Game.cpp InputManager.cpp OBJFormat.cpp Renderer.cpp WindowManager.cpp
-OPENGL_FILES=GLFWKeyManager.cpp GLFWMouseManager.cpp GLFWWindowManager.cpp OpenGLRenderTarget.cpp \
+OPENGL_FILES=GLFWKeyManager.cpp GLFWMouseManager.cpp GLFWWindowManager.cpp \
+			 OpenGLNOAARenderTarget.cpp OpenGLMSAARenderTarget.cpp \
              OpenGLRenderer.cpp OpenGLShader.cpp OpenGLObject3D.cpp
 #PROCEDURAL_FILES=Cube.cpp Icosahedron.cpp Plane.cpp Sphere.cpp
 

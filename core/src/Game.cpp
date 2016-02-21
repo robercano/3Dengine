@@ -8,7 +8,8 @@
 #include "OpenGL.h"
 #include "Game.hpp"
 #include "OpenGLRenderer.hpp"
-#include "OpenGLRenderTarget.hpp"
+#include "OpenGLNOAARenderTarget.hpp"
+#include "OpenGLMSAARenderTarget.hpp"
 #include "WalkingCamera.hpp"
 
 Game *Game::_game = NULL;
@@ -58,9 +59,17 @@ bool Game::init(std::string &gameName)
 	}
 
     /* Create a render target to allow post-processing */
-    _renderTarget = new OpenGLRenderTarget();
-	if (_renderer == NULL) {
-		fprintf(stderr, "ERROR allocating renderer\n");
+    OpenGLNOAARenderTarget *renderTargetNOAA = new OpenGLNOAARenderTarget();
+	if (renderTargetNOAA == NULL) {
+		fprintf(stderr, "ERROR allocating render target\n");
+        delete _renderer;
+		WindowManager::DisposeWindowManager(_windowManager);
+		_windowManager = NULL;
+		return false;
+	}
+    OpenGLMSAARenderTarget *renderTargetMSAA = new OpenGLMSAARenderTarget();
+	if (renderTargetMSAA == NULL) {
+		fprintf(stderr, "ERROR allocating render target\n");
         delete _renderer;
 		WindowManager::DisposeWindowManager(_windowManager);
 		_windowManager = NULL;
@@ -75,7 +84,11 @@ bool Game::init(std::string &gameName)
     _windowManager->getWindowSize(&width, &height);
 
 	_renderer->init();	// only after creating the window
-    _renderTarget->init(width, height); // only after creating the window
+    renderTargetNOAA->init(width, height);
+    renderTargetMSAA->init(width, height, OpenGLMSAARenderTarget::getMaxSamples());
+
+    /* Set the render target that we want to use */
+    _renderTarget = renderTargetMSAA;
 
 	_windowManager->setRenderer(_renderer);
 
@@ -170,7 +183,7 @@ bool Game::loop(void)
 
 		/* If frame is due, render it */
 		double render_ms = (now.tv_sec - lastRender.tv_sec)*1000.0 + (now.tv_usec - lastRender.tv_usec)/1000.0;
-		if (render_ms > (1000.0/fps)) {
+		//if (render_ms > (1000.0/fps)) {
 			renders++;
 
             /* Render all objects */
@@ -183,6 +196,7 @@ bool Game::loop(void)
 
             _renderTarget->render();
 
+		if (render_ms > (1000.0/fps)) {
 			_windowManager->swapBuffers();
 			gettimeofday(&lastRender, NULL);
 		}
