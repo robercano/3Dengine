@@ -1,15 +1,16 @@
 #version 330 core
 
+layout(location = 0) in vec3 vertex;
+layout(location = 1) in vec3 color;
+layout(location = 2) in vec3 normal;
+
+uniform mat4 MVP;
 uniform struct Light {
     vec3 position;
     vec3 intensities;
 } light;
 
-in vec3 fragment_vertex;
-in vec3 fragment_color;
-in vec3 fragment_normal;
-
-out vec3 color;
+out vec3 fragment_color;
 
 void main()
 {
@@ -22,13 +23,12 @@ void main()
 
     /* And now calculate the final normal */
     //vec3 normal = normalize(fragment_normal * normalMatrix);
-    vec3 normal = fragment_normal;
 
     /* Calculate fragment position in world coordinates */
-    vec3 fragmentPos = vec3(model*vec4(fragment_vertex, 1));
+    vec3 vertexPos = vec3(model*vec4(vertex, 1));
 
     /* Light vector to fragment */
-    vec3 surfaceToLight = lightPos - fragmentPos;
+    vec3 surfaceToLight = lightPos - vertexPos;
 
     /* Calculate the brightness */
     float brightness = dot(normal, surfaceToLight) / (length(normal) * length(surfaceToLight));
@@ -39,8 +39,10 @@ void main()
     vec3 baseColor = vec3(1);
 
     /* 1.0 / (1.0 + a*dist + b*dist*dist)) */
-    float dist = distance(fragment_vertex, lightPos);
+    float dist = distance(vertex, lightPos);
     float att = 1.0 / (1.0 + 0*dist + 0.1*dist*dist);
 
-    color = vec3(brightness * lightColor * baseColor.rgb * att);
+	fragment_color = vec3(brightness * lightColor * baseColor.rgb * att);
+
+	gl_Position    = MVP * vec4(vertex, 1);
 }

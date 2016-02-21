@@ -22,7 +22,7 @@ int main(int argc, char** argv)
 
 	/* Basic shaders with only position and color attributes, with no camera */
 	std::string error;
-	if (shader->loadVertexShader("data/shaders/phong/mvp.vert", error) == false) {
+	if (shader->loadVertexShader("data/shaders/phong/phong.vert", error) == false) {
 		printf("ERROR compiling vertex shader: %s\n", error.c_str());
 		return 1;
 	}

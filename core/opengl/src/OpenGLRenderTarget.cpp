@@ -83,11 +83,11 @@ bool OpenGLRenderTarget::init(uint32_t width, uint32_t height)
     _shader = Renderer::GetRenderer()->getShader();
 
 	std::string error;
-	if (_shader->loadVertexShader("data/shaders/effects/waves.vert", error) == false) {
+	if (_shader->loadVertexShader("data/shaders/effects/noeffect.vert", error) == false) {
 		printf("ERROR compiling vertex shader: %s\n", error.c_str());
 		return 1;
 	}
-	if (_shader->loadFragmentShader("data/shaders/effects/waves.frag", error) == false) {
+	if (_shader->loadFragmentShader("data/shaders/effects/noeffect.frag", error) == false) {
 		printf("ERROR compiling fragment shader: %s\n", error.c_str());
 		return 1;
 	}
@@ -109,12 +109,12 @@ bool OpenGLRenderTarget::render()
     _shader->attach();
     _shader->setUniformTexture2D("fbo_texture", 0);
 
-    static uint32_t counter = 0;
-    float offset = counter++;
-    if (_shader->setUniformFloat("offset", offset) == false) {
-        printf("ERROR setting offset uniform\n");
-        return false;
-    }
+    //static uint32_t counter = 0;
+    //float offset = counter++;
+    //if (_shader->setUniformFloat("offset", offset) == false) {
+    //    printf("ERROR setting offset uniform\n");
+    //    return false;
+    //}
 
     /* Disable the depth test as the render target should
      * be always rendered */
