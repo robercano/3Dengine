@@ -22,11 +22,11 @@ int main(int argc, char** argv)
 
 	/* Basic shaders with only position and color attributes, with no camera */
 	std::string error;
-	if (shader->loadVertexShader("data/shaders/phong_reflection/phong_reflection.vert", error) == false) {
+	if (shader->loadVertexShader("data/shaders/lighting/blinnphong_reflection.vert", error) == false) {
 		printf("ERROR compiling vertex shader: %s\n", error.c_str());
 		return 1;
 	}
-	if (shader->loadFragmentShader("data/shaders/phong_reflection/phong_reflection.frag", error) == false) {
+	if (shader->loadFragmentShader("data/shaders/lighting/blinnphong_reflection.frag", error) == false) {
 		printf("ERROR compiling fragment shader: %s\n", error.c_str());
 		return 1;
 	}

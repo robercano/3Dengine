@@ -58,9 +58,6 @@ void main()
     /* TODO: this must be done in the vertex shader */
     vec3 N = normalize(fragment_normal);
 
-    /* Reflection of the light on the point of the fragment */
-    vec3 Rm = reflect(L, N); // reflect returns normalize vector if L and N are normalized
-
     /* Vector to the camera */
     mat3 rotMatView = mat3(view);
     vec3 tmpCameraPos = vec3(view[3]);
@@ -68,10 +65,13 @@ void main()
 
     vec3 V = normalize(cameraPos - fragmentPos);
 
+    /* Normalized half vector for Blinn-Phong */
+    vec3 H = normalize(L + V);
+
     /*      Ambient + Diffuse          + Specular */
     Ia = clamp(ambientK, 0.0, 1.0);
     Id = clamp(dot(L, N), 0.0, 1.0);
-    Is = clamp(pow(dot(Rm, V), shininess), 0.0, 1.0);
+    Is = clamp(pow(dot(N, H), shininess), 0.0, 1.0);
 
     colorAmbient  = lightAmbient*materialAmbient*Ia;
     colorDiffuse  = lightDiffuse*materialDiffuse*Id;
