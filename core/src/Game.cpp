@@ -38,10 +38,13 @@ Game::~Game()
 	delete _renderer;
 }
 
-bool Game::init(std::string &gameName)
+bool Game::init(std::string &gameName, uint32_t targetFPS, bool unboundFPS)
 {
 	/* TODO: Get the settings from a config file */
     int width = 1440, height = 900;
+
+    _targetFPS = targetFPS;
+    _unboundFPS = unboundFPS;
 
 	_windowManager = WindowManager::GetWindowManager(WindowManager::WINDOW_MANAGER_GLFW);
 	if (_windowManager == NULL) {
@@ -123,7 +126,6 @@ bool Game::addObject3D(Object3D *object, Shader *shader)
 
 bool Game::loop(void)
 {
-	const uint32_t fps=60;
 	const float MouseSensibility = 5.0;
 	const float InvertMouse = 1.0;
 	static int32_t _prevX = 0xFFFFFF, _prevY = 0xFFFFFF;
@@ -183,7 +185,7 @@ bool Game::loop(void)
 
 		/* If frame is due, render it */
 		double render_ms = (now.tv_sec - lastRender.tv_sec)*1000.0 + (now.tv_usec - lastRender.tv_usec)/1000.0;
-		//if (render_ms > (1000.0/fps)) {
+		if (_unboundFPS == true || render_ms > (1000.0/_targetFPS)) {
 			renders++;
 
             /* Render all objects */
@@ -195,8 +197,9 @@ bool Game::loop(void)
             }
 
             _renderTarget->render();
+        }
 
-		if (render_ms > (1000.0/fps)) {
+		if (render_ms > (1000.0/_targetFPS)) {
 			_windowManager->swapBuffers();
 			gettimeofday(&lastRender, NULL);
 		}

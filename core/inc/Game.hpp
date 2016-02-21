@@ -41,7 +41,7 @@ class Game
 		 *
 		 * @param	gameName	Name of the game, used for the window title
 		 */
-		bool init(std::string &gameName);
+		bool init(std::string &gameName, uint32_t targetFPS, bool unboundFPS);
 
         /**
          * Add objects to the scene. Upon addition
@@ -99,4 +99,7 @@ class Game
 		 */
 		std::vector<RendererObject3D*> _objects;
 		std::vector<Shader*> _shaders;
+
+        uint32_t _targetFPS;
+        bool _unboundFPS;
 };

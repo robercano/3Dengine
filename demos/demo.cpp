@@ -15,7 +15,7 @@ int main(int argc, char** argv)
 	Game *game = Game::GetGame();
 
 	std::string title("Cube Test");
-	game->init(title);
+	game->init(title, 60, true);
 
 	/* Request a new shader */
 	Shader *shader = Renderer::GetRenderer()->getShader();
