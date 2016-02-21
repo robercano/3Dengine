@@ -92,7 +92,7 @@ class OpenGLShader : public Shader
 		 * @return true if the value was set or false if the
 		 *         attribute cannot be found
 		 */
-		bool setUniform(const std::string &name, glm::mat4 &value);
+		bool setUniformMat4(const std::string &name, const glm::mat4 &value);
 
         /**
          * Sets the value of a uniform as a 2D texture

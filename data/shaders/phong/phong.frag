@@ -5,6 +5,8 @@ uniform struct Light {
     vec3 intensities;
 } light;
 
+uniform mat4 view;
+
 in vec3 fragment_vertex;
 in vec3 fragment_color;
 in vec3 fragment_normal;

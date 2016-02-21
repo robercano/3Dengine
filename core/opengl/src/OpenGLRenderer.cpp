@@ -11,10 +11,12 @@
 
 void OpenGLRenderer::init()
 {
-	//glClearColor(1.0, 1.0, 1.0, 1.0);
 	GL( glClearColor(0.0, 0.0, 0.0, 1.0) );
 	GL( glEnable(GL_DEPTH_TEST) );
 	GL( glEnable(GL_CULL_FACE) );
+	GL( glEnable(GL_BLEND) );
+    GL( glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA) );
+
 	GL( glCullFace(GL_BACK) );
 
     GL( glDisable(GL_DITHER) );
@@ -64,7 +66,8 @@ bool OpenGLRenderer::renderObject3D(RendererObject3D &object, Shader &shader,
         shader.attach();
 
         /* Send our transformation to the currently bound shader, in the "MVP" uniform */
-        shader.setUniform("MVP", MVP);
+        shader.setUniformMat4("MVP", MVP);
+        shader.setUniformMat4("view", view);
 
         /* Draw the object */
         GL( glBindVertexArray(glObject.getVertexArrayID()) );

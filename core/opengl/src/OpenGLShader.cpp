@@ -161,7 +161,7 @@ const bool OpenGLShader::getAttributeID(const std::string &name, uint32_t *id)
     return *id != -1 ? true : false;
 }
 
-bool OpenGLShader::setUniform(const std::string &name, glm::mat4 &value)
+bool OpenGLShader::setUniformMat4(const std::string &name, const glm::mat4 &value)
 {
 	std::map<std::string, uint32_t>::iterator it = _uniformNames.find(name);
 
