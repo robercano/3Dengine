@@ -84,6 +84,7 @@ class Game
          */
         RenderTarget *_renderTargetNOAA;
         RenderTarget *_renderTargetMSAA;
+        RenderTarget *_renderTargetSSAA;
 
 		/**
 		 * Input manager

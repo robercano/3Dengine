@@ -10,6 +10,7 @@
 #include "OpenGLRenderer.hpp"
 #include "OpenGLNOAARenderTarget.hpp"
 #include "OpenGLMSAARenderTarget.hpp"
+#include "OpenGLSSAARenderTarget.hpp"
 #include "WalkingCamera.hpp"
 
 Game *Game::_game = NULL;
@@ -79,6 +80,14 @@ bool Game::init(std::string &gameName, uint32_t targetFPS, bool unboundFPS)
 		_windowManager = NULL;
 		return false;
 	}
+    OpenGLSSAARenderTarget *renderTargetSSAA = new OpenGLSSAARenderTarget();
+	if (renderTargetSSAA == NULL) {
+		fprintf(stderr, "ERROR allocating render target\n");
+        delete _renderer;
+		WindowManager::DisposeWindowManager(_windowManager);
+		_windowManager = NULL;
+		return false;
+	}
 
 	/* Init the window manager and the render*/
 	_windowManager->init();
@@ -90,9 +99,11 @@ bool Game::init(std::string &gameName, uint32_t targetFPS, bool unboundFPS)
 	_renderer->init();	// only after creating the window
     renderTargetNOAA->init(_width/2, _height);
     renderTargetMSAA->init(_width/2, _height, OpenGLMSAARenderTarget::getMaxSamples());
+    renderTargetSSAA->init(_width/2, _height, 8);
 
     _renderTargetNOAA = renderTargetNOAA;
     _renderTargetMSAA = renderTargetMSAA;
+    _renderTargetSSAA = renderTargetSSAA;
 
 	_windowManager->setRenderer(_renderer);
 
@@ -198,10 +209,14 @@ bool Game::loop(void)
                 _renderer->renderObject3D(*_objects[i], *_shaders[i],
                                           _camera->getProjection(), _camera->getView(),
                                           *_renderTargetMSAA);
+                _renderer->renderObject3D(*_objects[i], *_shaders[i],
+                                          _camera->getProjection(), _camera->getView(),
+                                          *_renderTargetSSAA);
             }
 
             _renderTargetNOAA->blit(0, 0, _width/2, _height);
-            _renderTargetMSAA->blit(_width/2, 0, _width, _height);
+            //_renderTargetMSAA->blit(_width/2, 0, _width, _height);
+            _renderTargetSSAA->blit(_width/2, 0, _width, _height);
         }
 
 		if (render_ms > (1000.0/_targetFPS)) {
