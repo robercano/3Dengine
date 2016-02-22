@@ -88,7 +88,7 @@ class GLFWWindowManager : public WindowManager
          *
          * @return true or false
          */
-        bool getWindowSize(int *width, int *height);
+        bool getWindowSize(uint32_t *width, uint32_t *height);
 
 		/**
 		 * Swaps the double buffer

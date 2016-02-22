@@ -13,5 +13,5 @@ class RenderTarget
 	public:
         virtual void bind() = 0;
         virtual void unbind() = 0;
-        virtual bool render() = 0;
+        virtual bool blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height) = 0;
 };

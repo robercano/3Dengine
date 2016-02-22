@@ -112,7 +112,7 @@ class WindowManager
          *
          * @return true or false
          */
-        virtual bool getWindowSize(int *width, int *height) = 0;
+        virtual bool getWindowSize(uint32_t *width, uint32_t *height) = 0;
 
 		/**
 		 * Swaps the double buffer

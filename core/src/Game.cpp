@@ -41,7 +41,8 @@ Game::~Game()
 bool Game::init(std::string &gameName, uint32_t targetFPS, bool unboundFPS)
 {
 	/* TODO: Get the settings from a config file */
-    int width = 1440, height = 900;
+    _width = 1440;
+    _height = 900;
 
     _targetFPS = targetFPS;
     _unboundFPS = unboundFPS;
@@ -83,15 +84,15 @@ bool Game::init(std::string &gameName, uint32_t targetFPS, bool unboundFPS)
 	_windowManager->init();
 
 	/* Set the window size */
-	_windowManager->createWindow(gameName, width, height, false);
-    _windowManager->getWindowSize(&width, &height);
+	_windowManager->createWindow(gameName, _width, _height, false);
+    _windowManager->getWindowSize(&_width, &_height);
 
 	_renderer->init();	// only after creating the window
-    renderTargetNOAA->init(width, height);
-    renderTargetMSAA->init(width, height, OpenGLMSAARenderTarget::getMaxSamples());
+    renderTargetNOAA->init(_width/2, _height);
+    renderTargetMSAA->init(_width/2, _height, OpenGLMSAARenderTarget::getMaxSamples());
 
-    /* Set the render target that we want to use */
-    _renderTarget = renderTargetMSAA;
+    _renderTargetNOAA = renderTargetNOAA;
+    _renderTargetMSAA = renderTargetMSAA;
 
 	_windowManager->setRenderer(_renderer);
 
@@ -110,7 +111,7 @@ bool Game::init(std::string &gameName, uint32_t targetFPS, bool unboundFPS)
 	/* Create the game camera */
 	//_camera = new WalkingCamera();
 	_camera = new Camera();
-	_camera->setProjection(45, width/(float)height, 0.1, 100.0);
+	_camera->setProjection(45, _width/2/(float)_height, 0.1, 100.0);
 
     return true;
 }
@@ -172,10 +173,10 @@ bool Game::loop(void)
 		int32_t diffMouseY = InvertMouse*(_inputManager._yMouse - _prevY);
 
 		if (diffMouseX) {
-			_camera->rotateYaw(MouseSensibility*M_PI*diffMouseX/1440.0);
+			_camera->rotateYaw(MouseSensibility*M_PI*diffMouseX/_width);
 		}
 		if (diffMouseY) {
-			_camera->rotatePitch(MouseSensibility*M_PI*diffMouseY/900.0);
+			_camera->rotatePitch(MouseSensibility*M_PI*diffMouseY/_height);
 		}
 
 		_prevX = _inputManager._xMouse;
@@ -193,10 +194,14 @@ bool Game::loop(void)
             for (i=0; i<_objects.size(); ++i) {
                 _renderer->renderObject3D(*_objects[i], *_shaders[i],
                                           _camera->getProjection(), _camera->getView(),
-                                          *_renderTarget);
+                                          *_renderTargetNOAA);
+                _renderer->renderObject3D(*_objects[i], *_shaders[i],
+                                          _camera->getProjection(), _camera->getView(),
+                                          *_renderTargetMSAA);
             }
 
-            _renderTarget->render();
+            _renderTargetNOAA->blit(0, 0, _width/2, _height);
+            _renderTargetMSAA->blit(_width/2, 0, _width, _height);
         }
 
 		if (render_ms > (1000.0/_targetFPS)) {

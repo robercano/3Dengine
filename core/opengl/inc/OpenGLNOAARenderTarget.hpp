@@ -20,7 +20,7 @@ class OpenGLNOAARenderTarget : public RenderTarget
         bool init(uint32_t width, uint32_t height);
         void bind();
         void unbind();
-        bool render();
+        bool blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height);
 
     private:
         /**
@@ -49,4 +49,7 @@ class OpenGLNOAARenderTarget : public RenderTarget
          * Shader for the target rendering to screen
          */
         Shader *_shader;
+
+        uint32_t _width;
+        uint32_t _height;
 };

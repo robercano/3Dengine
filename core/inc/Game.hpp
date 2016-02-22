@@ -82,7 +82,8 @@ class Game
         /**
          * Render target
          */
-        RenderTarget *_renderTarget;
+        RenderTarget *_renderTargetNOAA;
+        RenderTarget *_renderTargetMSAA;
 
 		/**
 		 * Input manager
@@ -102,4 +103,6 @@ class Game
 
         uint32_t _targetFPS;
         bool _unboundFPS;
+        uint32_t _width;
+        uint32_t _height;
 };

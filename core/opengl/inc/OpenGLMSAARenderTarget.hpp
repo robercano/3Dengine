@@ -20,7 +20,7 @@ class OpenGLMSAARenderTarget : public RenderTarget
         bool init(uint32_t width, uint32_t height, uint32_t samples);
         void bind();
         void unbind();
-        bool render();
+        bool blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height);
 
         static uint32_t getMaxSamples();
 
@@ -53,4 +53,5 @@ class OpenGLMSAARenderTarget : public RenderTarget
         Shader *_shader;
 
         uint32_t _samples;
+        uint32_t _width, _height;
 };

@@ -92,44 +92,8 @@ bool OpenGLMSAARenderTarget::init(uint32_t width, uint32_t height, uint32_t samp
 		return 1;
 	}
 
-    return true;
-}
-
-bool OpenGLMSAARenderTarget::render()
-{
-#if 0
-    /* Bind the target texture */
-    GL( glActiveTexture(GL_TEXTURE0) );
-    GL( glBindTexture(GL_TEXTURE_2D, _colorBuffer) );
-
-    /* Tell the shader which texture unit to use */
-    _shader->attach();
-    _shader->setUniformTexture2D("fbo_texture", 0);
-
-    //static uint32_t counter = 0;
-    //float offset = counter++;
-    //if (_shader->setUniformFloat("offset", offset) == false) {
-    //    printf("ERROR setting offset uniform\n");
-    //    return false;
-    //}
-
-    /* Disable the depth test as the render target should
-     * be always rendered */
-    glDisable(GL_DEPTH_TEST);
-    GL( glBindVertexArray(_vertexArray) );
-    {
-        GL( glDrawArrays(GL_TRIANGLE_STRIP, 0, 4) );
-    }
-    GL( glBindVertexArray(0) );
-    glEnable(GL_DEPTH_TEST);
-
-    _shader->detach();
-#endif
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, _frameBuffer);
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-    glBlitFramebuffer(0, 0, 1440, 900, 0, 0, 1440, 900, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-    glBlitFramebuffer(0, 0, 1440, 900, 0, 0, 1440, 900, GL_DEPTH_BUFFER_BIT, GL_LINEAR);
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+    _width = width;
+    _height = height;
     return true;
 }
 
@@ -137,6 +101,7 @@ void OpenGLMSAARenderTarget::bind()
 {
     GL( glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer) );
     GL( glEnable(GL_MULTISAMPLE) );
+    GL( glViewport(0, 0, _width, _height) );
 }
 
 void OpenGLMSAARenderTarget::unbind()
@@ -150,4 +115,19 @@ uint32_t OpenGLMSAARenderTarget::getMaxSamples()
     GLint samples;
     GL( glGetIntegerv(GL_MAX_SAMPLES, &samples) );
     return (uint32_t)samples;
+}
+
+bool OpenGLMSAARenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height)
+{
+    if ((width-dstX) != _width || (height-dstY) != _height) {
+        fprintf(stderr, "ERROR in OpenGLMSAARenderTarget::blit() different size for src and dest\n");
+        return false;
+    }
+    GL( glBindFramebuffer(GL_READ_FRAMEBUFFER, _frameBuffer) );
+    GL( glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0) );
+    /* As this is a multi-sample buffer source and destination rectangles must be of
+     * the same size, thus we always use GL_NEAREST and blit color and depth at the same time */
+    GL( glBlitFramebuffer(0, 0, _width, _height, dstX, dstY, width, height, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST) );
+    GL( glBindFramebuffer(GL_READ_FRAMEBUFFER, 0) );
+    return true;
 }

@@ -98,10 +98,24 @@ bool OpenGLNOAARenderTarget::init(uint32_t width, uint32_t height)
 		return 1;
 	}
 
+    _width = width;
+    _height = height;
+
     return true;
 }
 
-bool OpenGLNOAARenderTarget::render()
+void OpenGLNOAARenderTarget::bind()
+{
+    GL( glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer) );
+    GL( glViewport(0, 0, _width, _height) );
+}
+
+void OpenGLNOAARenderTarget::unbind()
+{
+    GL( glBindFramebuffer(GL_FRAMEBUFFER, 0) );
+}
+
+bool OpenGLNOAARenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height)
 {
 #if 0
     /* Bind the target texture */
@@ -133,18 +147,16 @@ bool OpenGLNOAARenderTarget::render()
 #endif
     glBindFramebuffer(GL_READ_FRAMEBUFFER, _frameBuffer);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-    glBlitFramebuffer(0, 0, 1440, 900, 0, 0, 1440, 900, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-    glBlitFramebuffer(0, 0, 1440, 900, 0, 0, 1440, 900, GL_DEPTH_BUFFER_BIT, GL_LINEAR);
+//#define RENDERTARGET_SINGLE_BLIT
+#ifdef RENDERTARGET_SINGLE_BLIT
+    GL( glBlitFramebuffer(0, 0, _width, _height, dstX, dstY, width, height, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST) );
+#else
+    // If linear interpolation is needed we need to blit the color buffer first with
+    // linear interpolation and then the depth buffer (and stencil if present)
+    // with nearest
+    glBlitFramebuffer(0, 0, _width, _height, dstX, dstY, width, height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+    glBlitFramebuffer(0, 0, _width, _height, dstX, dstY, width, height, GL_DEPTH_BUFFER_BIT, GL_LINEAR);
+#endif
     glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
     return true;
-}
-
-void OpenGLNOAARenderTarget::bind()
-{
-    GL( glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer) );
-}
-
-void OpenGLNOAARenderTarget::unbind()
-{
-    GL( glBindFramebuffer(GL_FRAMEBUFFER, 0) );
 }

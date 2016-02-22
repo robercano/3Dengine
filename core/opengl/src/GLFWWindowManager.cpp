@@ -72,9 +72,12 @@ bool GLFWWindowManager::setRenderer(Renderer *renderer)
 	return true;
 }
 
-bool GLFWWindowManager::getWindowSize(int *width, int *height)
+bool GLFWWindowManager::getWindowSize(uint32_t *width, uint32_t *height)
 {
-    glfwGetWindowSize(width, height);
+    int w, h;
+    glfwGetWindowSize(&w, &h);
+    *width = w;
+    *height = h;
     return true;
 }
 
