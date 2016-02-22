@@ -209,14 +209,16 @@ bool Game::loop(void)
                 _renderer->renderObject3D(*_objects[i], *_shaders[i],
                                           _camera->getProjection(), _camera->getView(),
                                           *_renderTargetMSAA);
+#if 0
                 _renderer->renderObject3D(*_objects[i], *_shaders[i],
                                           _camera->getProjection(), _camera->getView(),
                                           *_renderTargetSSAA);
+#endif
             }
 
             _renderTargetNOAA->blit(0, 0, _width/2, _height);
-            //_renderTargetMSAA->blit(_width/2, 0, _width, _height);
-            _renderTargetSSAA->blit(_width/2, 0, _width, _height);
+            _renderTargetMSAA->blit(_width/2, 0, _width, _height);
+            //_renderTargetSSAA->blit(_width/2, 0, _width, _height);
         }
 
 		if (render_ms > (1000.0/_targetFPS)) {
