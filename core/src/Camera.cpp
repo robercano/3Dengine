@@ -100,6 +100,7 @@ const glm::mat4 & Camera::getView(void)
 		glm::vec4 right   =   _right * rotation;
 
 		_position += _mask*(_forwardAmount*forward + _rightAmount*right + _upAmount*up);
+//        printf("%f, %f, %f, %f, %f, %f\n", _position.x, _position.y, _position.z, _pitch, _yaw, _roll);
 
 		_forwardAmount = _upAmount = _rightAmount = 0;
 

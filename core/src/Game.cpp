@@ -123,8 +123,9 @@ bool Game::init(std::string &gameName, uint32_t targetFPS, bool unboundFPS)
 	//_camera = new WalkingCamera();
 	_camera = new Camera();
 	_camera->setProjection(45, _width/(float)_height, 0.1, 1000.0);
-    glm::vec4 pos(0, 150, 200, 1.0);
+    glm::vec4 pos( 220, 135, -1, 1);
     _camera->setPosition(pos);
+    _camera->rotateYaw(-90);
 
     return true;
 }
