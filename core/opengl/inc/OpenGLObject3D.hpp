@@ -30,22 +30,11 @@ class OpenGLObject3D : public RendererObject3D
         /**
          * Vertex buffer object for vertices
          */
-        uint32_t _verticesVBO;
-
-        /**
-         * Vertex buffer object for colors
-         */
-        uint32_t _colorsVBO;
-
-        /**
-         * Vertex buffer object for normals
-         */
-        uint32_t _normalsVBO;
+        uint32_t _vertexDataVBO;
 
         /**
          * Vertex buffer object for indices
          */
         uint32_t _indicesVBO;
-
         uint32_t _indicesLen;
 };

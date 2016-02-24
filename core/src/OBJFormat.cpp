@@ -14,8 +14,12 @@ using namespace std;
 
 bool OBJFormat::load(const string &filename)
 {
-    vector< glm::vec3 > temp_normals;
+    std::vector< glm::vec3 > vertices;
+    std::vector< glm::vec3 > normals;
+    std::vector< glm::vec2 > uvcoords;
     bool ret = true;
+    uint32_t i;
+
     FILE *file = fopen(filename.c_str(), "r");
     if (file == NULL)  {
         printf("ERROR cannot open file %s\n", filename.c_str());
@@ -32,23 +36,11 @@ bool OBJFormat::load(const string &filename)
         /* vertices */
         if (line[0] == 'v' && line[1]==' ') {
             glm::vec3 vertex;
-            glm::vec3 color;
             res = sscanf(line + 2, "%f %f %f", &vertex.x, &vertex.y, &vertex.z);
             if (res != 3) {
                 printf("ERROR reading v format from OBJ file\n");
             }
-            _vertices.push_back(vertex);
-/* HACK TODO! */
-color = glm::normalize(vertex);
-_colors.push_back(color);
-        } else if (line[0] == 'v' && line[1] == 't' && line[2] == ' ') {
-            /* Texture coordinates */
-            glm::vec2 uv;
-            res = sscanf(line + 3, "%f %f", &uv.x, &uv.y);
-            if (res != 2) {
-                printf("ERROR reading vt format from OBJ file\n");
-            }
-            _uvs.push_back(uv);
+            vertices.push_back(vertex);
         } else if (line[0] == 'v' && line[1] == 'n' && line[2] == ' ') {
             /* Normals */
             glm::vec3 normal;
@@ -56,15 +48,23 @@ _colors.push_back(color);
             if (res != 3) {
                 printf("ERROR reading vt format from OBJ file\n");
             }
-            temp_normals.push_back(normal);
+            normals.push_back(normal);
+        } else if (line[0] == 'v' && line[1] == 't' && line[2] == ' ') {
+            /* Texture coordinates */
+            glm::vec2 uv;
+            res = sscanf(line + 3, "%f %f", &uv.x, &uv.y);
+            if (res != 2) {
+                printf("ERROR reading vt format from OBJ file\n");
+            }
+            uvcoords.push_back(uv);
         }
     }
 
     /* Rewind the file */
     fseek(file, SEEK_SET, 0);
 
-    /* Resize the vector for the normals */
-    _normals.resize(_vertices.size());
+    /* Allocate size for the final data */
+    _objectData.resize(vertices.size());
 
     /* Now parse the faces */
     for (;;) {
@@ -76,7 +76,6 @@ _colors.push_back(color);
 
         /* Faces */
         if (line[0] == 'f' && line[1] == ' ') {
-            string vertex1, vertex2, vertex3;
             unsigned int vertexIndex[3], uvIndex[3], normalIndex[3];
             int matches = sscanf(line + 2, "%d/%d/%d %d/%d/%d %d/%d/%d",
                                  &vertexIndex[0], &uvIndex[0], &normalIndex[0],
@@ -88,19 +87,18 @@ _colors.push_back(color);
                 goto error_exit;
             }
 
-            _vertexIndices.push_back(vertexIndex[0] - 1);
-            _vertexIndices.push_back(vertexIndex[1] - 1);
-            _vertexIndices.push_back(vertexIndex[2] - 1);
-            _normals[vertexIndex[0] - 1] = temp_normals[normalIndex[0] - 1];
-            _normals[vertexIndex[1] - 1] = temp_normals[normalIndex[1] - 1];
-            _normals[vertexIndex[2] - 1] = temp_normals[normalIndex[2] - 1];
+            /* Fill the indices for each triangle */
+            for (i=0; i<3; ++i) {
+                uint32_t vertexIdx = vertexIndex[i] - 1;
+                uint32_t normalIdx = normalIndex[i] - 1;
+                uint32_t uvIdx     = uvIndex[i] - 1;
 
-            _uvIndices    .push_back(uvIndex[0]);
-            _uvIndices    .push_back(uvIndex[1]);
-            _uvIndices    .push_back(uvIndex[2]);
-            _normalIndices.push_back(normalIndex[0]);
-            _normalIndices.push_back(normalIndex[1]);
-            _normalIndices.push_back(normalIndex[2]);
+                _indices.push_back(vertexIdx);
+
+                _objectData[vertexIdx].vertex  = vertices[vertexIdx];
+                _objectData[vertexIdx].normal  = normals[normalIdx];
+                _objectData[vertexIdx].uvcoord = uvcoords[uvIdx];
+            }
         }
     }
 
@@ -109,42 +107,32 @@ error_exit:
     return ret;
 }
 
-const float *OBJFormat::getVerticesArray() const
+const Object3D::VertexData *OBJFormat::getVertexData() const
 {
-    return (float*)&_vertices[0];
+    return (Object3D::VertexData*)&_objectData[0];
 }
 
-uint32_t OBJFormat::getVerticesArrayLen() const
+uint32_t OBJFormat::getVertexDataLen() const
 {
-    return _vertices.size() * sizeof(glm::vec3);
+    return _objectData.size();
 }
 
-const float *OBJFormat::getColorsArray() const
+uint32_t OBJFormat::getVertexDataSize() const
 {
-    return (float*)&_colors[0];
-}
-
-uint32_t OBJFormat::getColorsArrayLen() const
-{
-    return _colors.size() * sizeof(glm::vec3);
-}
-
-const float *OBJFormat::getNormalsArray() const
-{
-    return (float*)&_normals[0];
-}
-
-uint32_t OBJFormat::getNormalsArrayLen() const
-{
-    return _normals.size() * sizeof(glm::vec3);
+    return _objectData.size() * sizeof(Object3D::VertexData);
 }
 
 const uint32_t *OBJFormat::getIndicesArray() const
 {
-    return (uint32_t*)&_vertexIndices[0];
+    return (uint32_t*)&_indices[0];
 }
 
 uint32_t OBJFormat::getIndicesArrayLen() const
 {
-    return _vertexIndices.size();
+    return _indices.size();
+}
+
+uint32_t OBJFormat::getIndicesArraySize() const
+{
+    return _indices.size() * sizeof(uint32_t);
 }

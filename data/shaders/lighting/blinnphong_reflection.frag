@@ -1,6 +1,6 @@
 #version 330 core
 
-/* Phong reflection model implemented follwoing the explanation
+/* Phong reflection model implemented following the explanation
    at https://en.wikipedia.org/wiki/Phong_reflection_model and
    http://sunandblackcat.com/tipFullView.php?l=eng&topicid=30&topic=Phong-Lighting
 
@@ -18,8 +18,8 @@ uniform struct Light {
 uniform mat4 view;
 
 in vec3 fragment_vertex;
-in vec3 fragment_color;
 in vec3 fragment_normal;
+in vec2 fragment_uvcoord;
 
 out vec4 color;
 

@@ -10,64 +10,52 @@
 
 bool OpenGLObject3D::init(const Object3D &object)
 {
+    uint32_t offset;
+
 	/* Generate a vertex array to reference the attributes */
 	GL( glGenVertexArrays(1, &_gVAO) );
 	GL( glBindVertexArray(_gVAO) );
     {
         /* Generate a buffer object for the vertices positions */
-        GL( glGenBuffers(1, &_verticesVBO) );
-        GL( glBindBuffer(GL_ARRAY_BUFFER, _verticesVBO) );
+        GL( glGenBuffers(1, &_vertexDataVBO) );
+        GL( glBindBuffer(GL_ARRAY_BUFFER, _vertexDataVBO) );
         {
             /* Upload the data for this buffer */
-            GL( glBufferData(GL_ARRAY_BUFFER, object.getVerticesArrayLen() * sizeof(GLfloat), object.getVerticesArray(), GL_STATIC_DRAW) );
+            GL( glBufferData(GL_ARRAY_BUFFER, object.getVertexDataSize(), object.getVertexData(), GL_STATIC_DRAW) );
 
-            /* Link the data with the first shader attribute */
+            /* First attribute contains the vertex coordinates */
             GL( glEnableVertexAttribArray(0) );
             GL( glVertexAttribPointer(
-                    0,                  // attribute. No particular reason for 0, but must match the layout in the shader.
-                    3,                  // size
-                    GL_FLOAT,           // type
-                    GL_FALSE,           // normalized?
-                    0,                  // stride
-                    (void*)0            // array buffer offset
+                    0,                             // attribute. No particular reason for 0, but must match the layout in the shader.
+                    3,                             // size
+                    GL_FLOAT,                      // type
+                    GL_FALSE,                      // normalized?
+                    sizeof(Object3D::VertexData),// stride
+                    (void*)0                       // array buffer offset
                     ) );
-        }
 
-        /* Generate a buffer for the vertices colors */
-        GL( glGenBuffers(1, &_colorsVBO) );
-        GL( glBindBuffer(GL_ARRAY_BUFFER, _colorsVBO) );
-        {
-            /* Upload the data for this buffer */
-            GL( glBufferData(GL_ARRAY_BUFFER, object.getColorsArrayLen() * sizeof (GLfloat), object.getColorsArray(), GL_STATIC_DRAW) );
-
-            /* Link the data with the second shader attribute */
+            /* Second attibute contains the normals */
+            offset = 12;
             GL( glEnableVertexAttribArray(1) );
             GL( glVertexAttribPointer(
-                    1,                  // attribute
-                    3,                  // size
-                    GL_FLOAT,           // type
-                    GL_FALSE,           // normalized?
-                    0,                  // stride
-                    (void*)0            // array buffer offset
+                    1,                             // attribute
+                    3,                             // size
+                    GL_FLOAT,                      // type
+                    GL_FALSE,                      // normalized?
+                    sizeof(Object3D::VertexData),  // stride
+                    reinterpret_cast<void*>(offset)                  // array buffer offset
                     ) );
-        }
 
-        /* Generate a buffer for the vertices colors */
-        GL( glGenBuffers(1, &_normalsVBO) );
-        GL( glBindBuffer(GL_ARRAY_BUFFER, _normalsVBO) );
-        {
-            /* Upload the data for this buffer */
-            GL( glBufferData(GL_ARRAY_BUFFER, object.getNormalsArrayLen() * sizeof (GLfloat), object.getNormalsArray(), GL_STATIC_DRAW) );
-
-            /* Link the data with the second shader attribute */
+            /* Third attribute contains the UV coordinates */
+            offset = 24;
             GL( glEnableVertexAttribArray(2) );
             GL( glVertexAttribPointer(
-                    2,                  // attribute
-                    3,                  // size
-                    GL_FLOAT,           // type
-                    GL_FALSE,           // normalized?
-                    0,                  // stride
-                    (void*)0            // array buffer offset
+                    2,                             // attribute
+                    2,                             // size
+                    GL_FLOAT,                      // type
+                    GL_FALSE,                      // normalized?
+                    sizeof(Object3D::VertexData),// stride
+                    reinterpret_cast<void*>(offset)                  // array buffer offset
                     ) );
         }
 
@@ -89,9 +77,7 @@ bool OpenGLObject3D::init(const Object3D &object)
 
 bool OpenGLObject3D::destroy()
 {
-	GL( glDeleteBuffers(1, &_colorsVBO) );
-	GL( glDeleteBuffers(1, &_verticesVBO) );
-	GL( glDeleteBuffers(1, &_normalsVBO) );
+	GL( glDeleteBuffers(1, &_vertexDataVBO) );
 	GL( glDeleteVertexArrays(1, &_gVAO) );
     return true;
 }
