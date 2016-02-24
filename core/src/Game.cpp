@@ -97,13 +97,13 @@ bool Game::init(std::string &gameName, uint32_t targetFPS, bool unboundFPS)
     _windowManager->getWindowSize(&_width, &_height);
 
 	_renderer->init();	// only after creating the window
-    renderTargetNOAA->init(_width/2, _height);
-    renderTargetMSAA->init(_width/2, _height, OpenGLMSAARenderTarget::getMaxSamples());
-    renderTargetSSAA->init(_width/2, _height, 8);
+    renderTargetNOAA->init(_width, _height);
+    //renderTargetMSAA->init(_width/2, _height, OpenGLMSAARenderTarget::getMaxSamples());
+    //renderTargetSSAA->init(_width/2, _height, 8);
 
     _renderTargetNOAA = renderTargetNOAA;
-    _renderTargetMSAA = renderTargetMSAA;
-    _renderTargetSSAA = renderTargetSSAA;
+    //_renderTargetMSAA = renderTargetMSAA;
+    //_renderTargetSSAA = renderTargetSSAA;
 
 	_windowManager->setRenderer(_renderer);
 
@@ -122,7 +122,9 @@ bool Game::init(std::string &gameName, uint32_t targetFPS, bool unboundFPS)
 	/* Create the game camera */
 	//_camera = new WalkingCamera();
 	_camera = new Camera();
-	_camera->setProjection(45, _width/2/(float)_height, 0.1, 100.0);
+	_camera->setProjection(45, _width/(float)_height, 0.1, 1000.0);
+    glm::vec4 pos(0, 150, 200, 1.0);
+    _camera->setPosition(pos);
 
     return true;
 }
@@ -138,7 +140,7 @@ bool Game::addObject3D(Object3D *object, Shader *shader)
 
 bool Game::loop(void)
 {
-	const float MouseSensibility = 5.0;
+	const float MouseSensibility = 10.0;
 	const float InvertMouse = 1.0;
 	static int32_t _prevX = 0xFFFFFF, _prevY = 0xFFFFFF;
 	struct timeval lastRender, now, previous;
@@ -165,13 +167,13 @@ bool Game::loop(void)
 
 		/* Dispatch input to geometry */
 		if (_inputManager._keys['W']) {
-			_camera->forward(0.01*elapsed_ms);
+			_camera->forward(0.1*elapsed_ms);
 		} else if (_inputManager._keys['S']) {
-			_camera->forward(-0.01*elapsed_ms);
+			_camera->forward(-0.1*elapsed_ms);
 		} else if (_inputManager._keys['A']) {
-			_camera->right(-0.01*elapsed_ms);
+			_camera->right(-0.1*elapsed_ms);
 		} else if (_inputManager._keys['D']) {
-			_camera->right(0.01*elapsed_ms);
+			_camera->right(0.1*elapsed_ms);
 		}
 
 		if (_prevX == 0xFFFFFF) {
@@ -206,18 +208,18 @@ bool Game::loop(void)
                 _renderer->renderObject3D(*_objects[i], *_shaders[i],
                                           _camera->getProjection(), _camera->getView(),
                                           *_renderTargetNOAA);
+#if 0
                 _renderer->renderObject3D(*_objects[i], *_shaders[i],
                                           _camera->getProjection(), _camera->getView(),
                                           *_renderTargetMSAA);
-#if 0
                 _renderer->renderObject3D(*_objects[i], *_shaders[i],
                                           _camera->getProjection(), _camera->getView(),
                                           *_renderTargetSSAA);
 #endif
             }
 
-            _renderTargetNOAA->blit(0, 0, _width/2, _height);
-            _renderTargetMSAA->blit(_width/2, 0, _width, _height);
+            _renderTargetNOAA->blit(0, 0, _width, _height);
+            //_renderTargetMSAA->blit(_width/2, 0, _width, _height);
             //_renderTargetSSAA->blit(_width/2, 0, _width, _height);
         }
 

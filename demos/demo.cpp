@@ -36,7 +36,7 @@ int main(int argc, char** argv)
 	}
 
     /* Load the geometry */
-    std::string legoobj = "data/objects/lego.obj";
+    std::string legoobj = "data/objects/deadpool.obj";
 
     if (lego.load(legoobj) == false) {
         printf("ERROR loading OBJ file\n");

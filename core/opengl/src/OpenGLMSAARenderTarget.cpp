@@ -26,7 +26,7 @@ bool OpenGLMSAARenderTarget::init(uint32_t width, uint32_t height, uint32_t samp
     GL( glGenRenderbuffers(1, &_depthBuffer) );
     GL( glBindRenderbuffer(GL_RENDERBUFFER, _depthBuffer) );
     {
-        GL( glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, GL_DEPTH_COMPONENT16, width, height) );
+        GL( glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, GL_DEPTH_COMPONENT32, width, height) );
     }
     GL( glBindRenderbuffer(GL_RENDERBUFFER, 0) );
 

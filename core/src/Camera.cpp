@@ -28,6 +28,10 @@ void Camera::setPosition(glm::vec4 &position)
 	_position = position;
 }
 
+void Camera::lookAt(glm::vec4 &at)
+{
+}
+
 void Camera::setMask(glm::mat4 &mask)
 {
 	_mask = mask;

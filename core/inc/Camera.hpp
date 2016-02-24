@@ -27,6 +27,7 @@ class Camera
 		 * @param position  The new position of the camera
 		 */
 		void setPosition(glm::vec4 &position);
+        void lookAt(glm::vec4 &at);
 
 		/**
 		 * Sets the mask to restrict camera movement

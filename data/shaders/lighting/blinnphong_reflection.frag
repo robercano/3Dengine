@@ -30,7 +30,7 @@ void main()
     mat4 model = mat4(1.0);
 
     /* Light source */
-    vec3 lightPos = vec3(3, 3, 3);
+    vec3 lightPos = vec3(200, 150, 100);
     vec3 lightAmbient = vec3(1.0);
     vec3 lightDiffuse = vec3(1.0);
     vec3 lightSpecular = vec3(1.0);
