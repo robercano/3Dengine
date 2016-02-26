@@ -85,7 +85,7 @@ bool OpenGLSSAARenderTarget::init(uint32_t width, uint32_t height, uint32_t fact
     GL( glBindVertexArray(0) );
 
     /* Create the shader */
-    _shader = Renderer::GetRenderer()->getShader();
+    _shader = Renderer::GetRenderer()->newShader();
 
 	std::string error;
 	if (_shader->loadVertexShader("data/shaders/effects/noeffect.vert", error) == false) {

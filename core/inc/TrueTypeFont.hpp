@@ -1,0 +1,23 @@
+/**
+ * @class TrueTypeFont
+ * @brief Allows to load and render to a bitmap a true type font
+ *        It also implements a cache of pre-renderered letters for
+ *        later use. The cache is empty upon construction
+ *
+ * @author Roberto Cano
+ */
+#pragma once
+
+#include <string>
+#include <stdint.h>
+
+class TrueTypeFont
+{
+    public:
+        static TrueTypeFont *NewFont();
+        static void DeleteFont(TrueTypeFont *font);
+
+        virtual ~TrueTypeFont() {};
+        virtual bool init(const std::string &font_path, uint32_t size) = 0;
+        virtual const uint8_t *getBitmap(char letter, uint32_t &width, uint32_t &height) = 0;
+};

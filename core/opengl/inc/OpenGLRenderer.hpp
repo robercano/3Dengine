@@ -16,7 +16,7 @@ class OpenGLRenderer : public Renderer
 		 * Renderer methods
 		 */
 		void init(void);
-		Shader * getShader(void);
+		Shader * newShader(void);
         RendererObject3D *prepareObject3D(const Object3D &object);
 		bool renderObject3D(RendererObject3D &object, Shader &shader,
                             const glm::mat4 &projection, const glm::mat4 &view,

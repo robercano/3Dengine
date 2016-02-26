@@ -24,7 +24,7 @@ class Renderer
 		/**
 		 * Shader factory
 		 */
-		virtual Shader * getShader(void) = 0;
+		virtual Shader *newShader(void) = 0;
 
 		/**
 		 * Destructor

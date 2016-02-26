@@ -102,6 +102,8 @@ bool OBJFormat::load(const string &filename)
         }
     }
 
+    printf("Loaded %s with %zu vertices and %zu faces\n", filename.c_str(), _objectData.size(), _indices.size()/3);
+
 error_exit:
     fclose(file);
     return ret;

@@ -29,7 +29,7 @@ void OpenGLRenderer::init()
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
-Shader * OpenGLRenderer::getShader(void)
+Shader * OpenGLRenderer::newShader(void)
 {
 	return new OpenGLShader();
 }

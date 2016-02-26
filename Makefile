@@ -15,18 +15,21 @@ CC=gcc
 #
 # Files to be compiled
 #
-VPATH=core/src:core/opengl/src:core/procedural/src
+VPATH=core/src:core/opengl/src:core/procedural/src:utils/src
 
-CORE_FILES=Camera.cpp Game.cpp InputManager.cpp OBJFormat.cpp Renderer.cpp WindowManager.cpp
+CORE_FILES=Camera.cpp Game.cpp InputManager.cpp OBJFormat.cpp Renderer.cpp WindowManager.cpp TrueTypeFont.cpp FreeTypeFont.cpp \
+		   FontRenderer.cpp
+UTILS_FILES=MathUtils.c
 OPENGL_FILES=GLFWKeyManager.cpp GLFWMouseManager.cpp GLFWWindowManager.cpp \
 			 OpenGLNOAARenderTarget.cpp OpenGLMSAARenderTarget.cpp OpenGLSSAARenderTarget.cpp \
-             OpenGLRenderer.cpp OpenGLShader.cpp OpenGLObject3D.cpp
+             OpenGLRenderer.cpp OpenGLShader.cpp OpenGLObject3D.cpp OpenGLFontRenderer.cpp
 #PROCEDURAL_FILES=Cube.cpp Icosahedron.cpp Plane.cpp Sphere.cpp
 
-FILES=$(CORE_FILES) $(OPENGL_FILES) $(PROCEDURAL_FILES)
+FILES=$(CORE_FILES) $(OPENGL_FILES) $(PROCEDURAL_FILES) $(UTILS_FILES)
 
 OBJDIR=obj
-OBJECTS=$(patsubst %.cpp,$(OBJDIR)/%.o,$(FILES))
+CPP_OBJECTS=$(patsubst %.cpp,$(OBJDIR)/%.o,$(FILES))
+OBJECTS=$(patsubst %.c,$(OBJDIR)/%.o,$(CPP_OBJECTS))
 
 LIBDIR=lib
 LIBNAME=lib$(PROJECT).$(SHAREDEXT)
@@ -35,12 +38,12 @@ DEMODIR=demos
 
 # Mac OS alternate cmdline link options
 ifeq ($(UNAME), Darwin)
-LDFLAGS= -L/opt/X11/lib -lglew -lglfw -framework Cocoa -framework OpenGL -framework IOKit -fPIC
+LDFLAGS= -L/opt/X11/lib -lfreetype -lglew -lglfw -framework Cocoa -framework OpenGL -framework IOKit -fPIC
 SHAREDGEN= -dynamiclib -Wl,-headerpad_max_install_names,-undefined,dynamic_lookup,-compatibility_version,1.0,-current_version,1.0,-install_name,$(LIBNAME)
 SHAREDEXT=dylib
 PREFIX=/usr/local/lib
 else
-LDFLAGS= -lGL -lGLEW -lglfw -fPIC
+LDFLAGS= -lGL -lGLEW -lglfw -lfreetype -fPIC
 SHAREDGEN= -shared
 SHAREDEXT=so
 PREFIX=/usr/local/lib
@@ -49,7 +52,8 @@ endif
 #
 # Compilation flags
 #
-CXXFLAGS= -MMD -fPIC -Icore/inc -Icore/opengl/inc -Icore/procedural/inc -I/opt/X11/include -I3rdparty -g -DDEBUG_OPENGL_PIPELINE
+CXXFLAGS= -MMD -fPIC -Icore/inc -Icore/opengl/inc -Icore/procedural/inc -Iutils/inc -I/opt/X11/include -I/opt/X11/include/freetype2 -I3rdparty -g -DDEBUG_OPENGL_PIPELINE
+CFLAGS=$(CXXFLAGS)
 
 #
 # Main rules
@@ -87,6 +91,11 @@ $(LIBDIR)/$(LIBNAME): $(OBJECTS)
 $(OBJDIR)/%.o: %.cpp
 	@echo "- Compiling $<...\c"
 	@$(CXX) $(CXXFLAGS) -c -o $@ $<
+	@echo "done"
+
+$(OBJDIR)/%.o: %.c
+	@echo "- Compiling $<...\c"
+	@$(CC) $(CFLAGS) -c -o $@ $<
 	@echo "done"
 
 clean:
