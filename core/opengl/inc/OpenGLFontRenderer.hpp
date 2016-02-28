@@ -8,8 +8,10 @@
 
 #include <string>
 #include <stdint.h>
+#include <glm/glm.hpp>
 #include "FontRenderer.hpp"
 #include "OpenGL.h"
+#include "Shader.hpp"
 
 class OpenGLFontRenderer : public FontRenderer
 {
@@ -19,9 +21,12 @@ class OpenGLFontRenderer : public FontRenderer
         ~OpenGLFontRenderer();
 
         bool setFont(TrueTypeFont *font);
-        bool renderText(std::string &text, RenderTarget &target);
+        bool renderText(uint32_t x, uint32_t y, std::string &text, glm::vec4 &color, RenderTarget &target);
 
 	private:
         GLuint _glyphTextures[GL_FONT_RENDERER_NUM_GLYPHS];
+        GLuint _glyphVAOs[GL_FONT_RENDERER_NUM_GLYPHS];
+        GLuint _glyphBuffers[GL_FONT_RENDERER_NUM_GLYPHS];
         TrueTypeFont *_font;
+        Shader *_shader;
 };

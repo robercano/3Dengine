@@ -12,9 +12,20 @@
 #include "OpenGLNOAARenderTarget.hpp"
 #include "Renderer.hpp"
 
+OpenGLNOAARenderTarget::~OpenGLNOAARenderTarget()
+{
+    delete _shader;
+
+    GL( glDeleteBuffers(1, &_vertexBuffer) );
+    GL( glDeleteVertexArrays(1, &_vertexArray) );
+    GL( glDeleteTextures(1, &_colorBuffer) );
+    GL( glDeleteRenderbuffers(1, &_depthBuffer) );
+    GL( glDeleteFramebuffers(1, &_frameBuffer) );
+}
+
 bool OpenGLNOAARenderTarget::init(uint32_t width, uint32_t height)
 {
-    glActiveTexture(GL_TEXTURE0);
+    /* Frame buffer objects do not care which texture unit is used */
 
     /* Texture buffer */
     GL( glGenTextures(1, &_colorBuffer) );

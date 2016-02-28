@@ -12,6 +12,8 @@
 #include "OpenGLMSAARenderTarget.hpp"
 #include "OpenGLSSAARenderTarget.hpp"
 #include "WalkingCamera.hpp"
+#include "TrueTypeFont.hpp"
+#include "FontRenderer.hpp"
 
 Game *Game::_game = NULL;
 
@@ -106,6 +108,22 @@ bool Game::init(std::string &gameName, uint32_t targetFPS, bool unboundFPS)
     //_renderTargetSSAA = renderTargetSSAA;
 
 	_windowManager->setRenderer(_renderer);
+
+    /* Setup the font renderer */
+    TrueTypeFont *font = TrueTypeFont::NewFont();
+
+    if (font->init("data/fonts/Arial.ttf", 14) == false) {
+        printf("ERROR loading font\n");
+        return 1;
+    }
+
+    FontRenderer *fontRenderer = FontRenderer::GetFontRenderer();
+    if (fontRenderer == NULL) {
+        printf("ERROR getting font renderer\n");
+        return 1;
+    }
+
+    fontRenderer->setFont(font);
 
 	/* Register the key and mouse listener */
 	std::vector<uint32_t> keys; // The keys should be read from a config file
@@ -219,9 +237,14 @@ bool Game::loop(void)
 #endif
             }
 
+            std::string text("Testing string!");
+            glm::vec4 color(1.0, 0.5, 0.2, 1.0);
+            FontRenderer::GetFontRenderer()->renderText(5, 5, text, color, *_renderTargetNOAA);
+
             _renderTargetNOAA->blit(0, 0, _width, _height);
             //_renderTargetMSAA->blit(_width/2, 0, _width, _height);
             //_renderTargetSSAA->blit(_width/2, 0, _width, _height);
+
         }
 
 		if (render_ms > (1000.0/_targetFPS)) {

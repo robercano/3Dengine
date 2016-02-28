@@ -7,8 +7,6 @@
 #include "Game.hpp"
 #include "OBJFormat.hpp"
 #include "Shader.hpp"
-#include "TrueTypeFont.hpp"
-#include "FontRenderer.hpp"
 
 int main(int argc, char** argv)
 {
@@ -21,22 +19,6 @@ int main(int argc, char** argv)
 
 	/* Request a new shader */
 	Shader *shader = Renderer::GetRenderer()->newShader();
-
-    /* Setup the font renderer */
-    TrueTypeFont *font = TrueTypeFont::NewFont();
-
-    if (font->init("/Library/Fonts/Courier New.ttf", 20) == false) {
-        printf("ERROR loading font\n");
-        return 1;
-    }
-
-    FontRenderer *fontRenderer = FontRenderer::GetFontRenderer();
-    if (fontRenderer == NULL) {
-        printf("ERROR getting font renderer\n");
-        return 1;
-    }
-
-    fontRenderer->setFont(font);
 
 	/* Basic shaders with only position and color attributes, with no camera */
 	std::string error;

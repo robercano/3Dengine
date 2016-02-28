@@ -10,10 +10,19 @@
 #include "OpenGLMSAARenderTarget.hpp"
 #include "Renderer.hpp"
 
+OpenGLMSAARenderTarget::~OpenGLMSAARenderTarget()
+{
+    delete _shader;
+
+    GL( glDeleteBuffers(1, &_vertexBuffer) );
+    GL( glDeleteVertexArrays(1, &_vertexArray) );
+    GL( glDeleteTextures(1, &_colorBuffer) );
+    GL( glDeleteRenderbuffers(1, &_depthBuffer) );
+    GL( glDeleteFramebuffers(1, &_frameBuffer) );
+}
+
 bool OpenGLMSAARenderTarget::init(uint32_t width, uint32_t height, uint32_t samples)
 {
-    glActiveTexture(GL_TEXTURE0);
-
     /* Texture buffer */
     GL( glGenTextures(1, &_colorBuffer) );
     GL( glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, _colorBuffer) );

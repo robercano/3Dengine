@@ -12,10 +12,19 @@
 #include "OpenGLSSAARenderTarget.hpp"
 #include "Renderer.hpp"
 
+OpenGLSSAARenderTarget::~OpenGLSSAARenderTarget()
+{
+    delete _shader;
+
+    GL( glDeleteBuffers(1, &_vertexBuffer) );
+    GL( glDeleteVertexArrays(1, &_vertexArray) );
+    GL( glDeleteTextures(1, &_colorBuffer) );
+    GL( glDeleteRenderbuffers(1, &_depthBuffer) );
+    GL( glDeleteFramebuffers(1, &_frameBuffer) );
+}
+
 bool OpenGLSSAARenderTarget::init(uint32_t width, uint32_t height, uint32_t factor)
 {
-    glActiveTexture(GL_TEXTURE0);
-
     width *= factor;
     height *= factor;
 

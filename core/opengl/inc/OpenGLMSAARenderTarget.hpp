@@ -17,6 +17,7 @@
 class OpenGLMSAARenderTarget : public RenderTarget
 {
 	public:
+        ~OpenGLMSAARenderTarget();
         bool init(uint32_t width, uint32_t height, uint32_t samples);
         void bind();
         void unbind();
@@ -53,5 +54,4 @@ class OpenGLMSAARenderTarget : public RenderTarget
         Shader *_shader;
 
         uint32_t _samples;
-        uint32_t _width, _height;
 };

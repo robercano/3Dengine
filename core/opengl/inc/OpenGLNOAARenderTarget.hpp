@@ -17,6 +17,7 @@
 class OpenGLNOAARenderTarget : public RenderTarget
 {
 	public:
+        ~OpenGLNOAARenderTarget();
         bool init(uint32_t width, uint32_t height);
         void bind();
         void unbind();
@@ -49,7 +50,4 @@ class OpenGLNOAARenderTarget : public RenderTarget
          * Shader for the target rendering to screen
          */
         Shader *_shader;
-
-        uint32_t _width;
-        uint32_t _height;
 };

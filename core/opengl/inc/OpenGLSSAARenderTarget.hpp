@@ -17,6 +17,7 @@
 class OpenGLSSAARenderTarget : public RenderTarget
 {
 	public:
+        ~OpenGLSSAARenderTarget();
         bool init(uint32_t width, uint32_t height, uint32_t factor);
         void bind();
         void unbind();
@@ -50,7 +51,5 @@ class OpenGLSSAARenderTarget : public RenderTarget
          */
         Shader *_shader;
 
-        uint32_t _width;
-        uint32_t _height;
         uint32_t _factor;
 };

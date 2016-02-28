@@ -28,10 +28,13 @@ class FreeTypeFont : public TrueTypeFont
         FreeTypeFont();
         ~FreeTypeFont();
         bool init(const std::string &font_path, uint32_t size);
-        const uint8_t *getBitmap(char letter, uint32_t &width, uint32_t &height);
+        const uint8_t *getBitmap(char letter, uint32_t &width, uint32_t &height,
+                                 uint32_t &offsetLeft, uint32_t &offsetTop, uint32_t &advance);
 
     private:
+        uint32_t                    _size;
         FT_Library                  _ftLibrary;
         FT_Face                     _ftFace;
         std::vector<FT_BitmapGlyph> _ftGlyphCache;
+        std::vector<uint32_t>       _advanceCache;
 };

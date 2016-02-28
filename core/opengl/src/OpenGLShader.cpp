@@ -197,6 +197,19 @@ bool OpenGLShader::setUniformFloat(const std::string &name, float value)
     return true;
 }
 
+bool OpenGLShader::setUniformVec4(const std::string &name, glm::vec4 &value)
+{
+	std::map<std::string, uint32_t>::iterator it = _uniformNames.find(name);
+
+	if (it == _uniformNames.end()) {
+		return false;
+	}
+
+    GL( glUniform4fv(it->second, 1, &value[0]) );
+    return true;
+}
+
+
 void OpenGLShader::_deleteShadersIDs(void)
 {
 	std::vector<uint32_t>::iterator it;
