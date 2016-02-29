@@ -89,6 +89,8 @@ class Game
         NOAARenderTarget *_renderTargetNOAA;
         MSAARenderTarget *_renderTargetMSAA;
         SSAARenderTarget *_renderTargetSSAA;
+        RenderTarget     *_selectedRenderTarget;
+        std::string      _renderTargetName;
 
 		/**
 		 * Input manager

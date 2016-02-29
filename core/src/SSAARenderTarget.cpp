@@ -4,7 +4,7 @@
  *          to the main screen. The target can then be blitted onto the
  *          screen
  *
- *          The SSAA render target applies no anti-aliasing
+ *          The SSAA render target applies no super sampling antialising
  *
  * @author	Roberto Sosa Cano (http://www.robertocano.es)
  */
@@ -14,7 +14,7 @@
 
 SSAARenderTarget *SSAARenderTarget::NewSSAARenderTarget(void)
 {
-    new OpenGLSSAARenderTarget();
+    return new OpenGLSSAARenderTarget();
 }
 
 void SSAARenderTarget::DeleteSSAARenderTarget(SSAARenderTarget *target)

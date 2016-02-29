@@ -12,9 +12,9 @@
 
 #include "OpenGL.h"
 #include "Shader.hpp"
-#include "RenderTarget.hpp"
+#include "MSAARenderTarget.hpp"
 
-class OpenGLMSAARenderTarget : public RenderTarget
+class OpenGLMSAARenderTarget : public MSAARenderTarget
 {
 	public:
         ~OpenGLMSAARenderTarget();
@@ -22,6 +22,8 @@ class OpenGLMSAARenderTarget : public RenderTarget
         void bind();
         void unbind();
         bool blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height);
+        void clear();
+        void clear(float r, float g, float b, float a);
 
         static uint32_t getMaxSamples();
 

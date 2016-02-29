@@ -15,7 +15,7 @@
 #include <stdint.h>
 
 // FreeType Headers
-#include <freetype2/ft2build.h>
+#include <ft2build.h>
 #include <freetype2/freetype.h>
 #include <freetype2/ftglyph.h>
 #include <freetype2/ftoutln.h>

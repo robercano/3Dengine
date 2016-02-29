@@ -18,8 +18,11 @@ class NOAARenderTarget : public RenderTarget
         static NOAARenderTarget *NewNOAARenderTarget();
         static void DeleteNOAARenderTarget(NOAARenderTarget *target);
 
+        virtual ~NOAARenderTarget() {}
+
         virtual bool init(uint32_t width, uint32_t height) = 0;
         virtual void bind() = 0;
         virtual void unbind() = 0;
+        virtual void clear(float r, float g, float b, float a) = 0;
         virtual bool blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height) = 0;
 };

@@ -12,22 +12,36 @@
 #include "TextConsole.hpp"
 #include "NOAARenderTarget.hpp"
 
-bool TextConsole::init(std::string &fontPath, uint32_t fontSize, glm::vec4 &color)
+bool TextConsole::init(std::string &fontPath, uint32_t fontSize, glm::vec4 &color,
+                       uint32_t width, uint32_t height)
 {
+    NOAARenderTarget *target = NOAARenderTarget::NewNOAARenderTarget();
+	if (target == NULL) {
+		return false;
+	}
+
+    if (target->init(width, height) != true) {
+        NOAARenderTarget::DeleteNOAARenderTarget(target);
+        return false;
+    }
+
     /* Setup the font renderer */
     _font = TrueTypeFont::NewFont();
 
     if (_font->init(fontPath, fontSize) == false) {
         delete _font;
+        NOAARenderTarget::DeleteNOAARenderTarget(target);
         return false;
     }
 
     _fontRenderer = FontRenderer::NewFontRenderer();
     if (_fontRenderer == NULL) {
-        printf("ERROR getting font renderer\n");
+        delete _font;
+        NOAARenderTarget::DeleteNOAARenderTarget(target);
         return false;
     }
 
+    _renderTarget = target;
     _fontRenderer->setFont(_font);
     _fontColor = color;
     _fontSize = fontSize;
@@ -39,11 +53,13 @@ bool TextConsole::init(std::string &fontPath, uint32_t fontSize, glm::vec4 &colo
 
 void TextConsole::clear()
 {
-    _xPos = 0;
-    _yPos = 0;
+    _xPos = 5;
+    _yPos = 5;
+
+    _renderTarget->clear(0.0, 0.0, 0.0, 0.0);
 }
 
-int TextConsole::gprintf(RenderTarget &target, const char *format, ...)
+int TextConsole::gprintf(const char *format, ...)
 {
     char buffer[256];
     va_list args;
@@ -53,9 +69,14 @@ int TextConsole::gprintf(RenderTarget &target, const char *format, ...)
 
     /* TODO: add support for new lines and to wrap text around the
      * end of the render target */
-    _fontRenderer->renderText(_xPos, _yPos, buffer, _fontColor, target);
+    _fontRenderer->renderText(_xPos, _yPos, buffer, _fontColor, *_renderTarget);
 
     _yPos += _fontSize+4; // TODO: grab this information from the font renderer
 
     return 0;
+}
+
+void TextConsole::blit()
+{
+    _renderTarget->blit();
 }

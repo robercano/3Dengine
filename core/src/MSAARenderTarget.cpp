@@ -4,7 +4,7 @@
  *          to the main screen. The target can then be blitted onto the
  *          screen
  *
- *          The MSAA render target applies no anti-aliasing
+ *          The MSAA render target applies multi-sampling antialising
  *
  * @author	Roberto Sosa Cano (http://www.robertocano.es)
  */
@@ -12,9 +12,14 @@
 #include "MSAARenderTarget.hpp"
 #include "OpenGLMSAARenderTarget.hpp"
 
+uint32_t MSAARenderTarget::getMaxSamples()
+{
+    return OpenGLMSAARenderTarget::getMaxSamples();
+}
+
 MSAARenderTarget *MSAARenderTarget::NewMSAARenderTarget(void)
 {
-    new OpenGLMSAARenderTarget();
+    return new OpenGLMSAARenderTarget();
 }
 
 void MSAARenderTarget::DeleteMSAARenderTarget(MSAARenderTarget *target)

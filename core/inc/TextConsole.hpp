@@ -16,10 +16,12 @@
 class TextConsole
 {
 	public:
-        bool init(std::string &fontPath, uint32_t fontSize, glm::vec4 &color);
+        bool init(std::string &fontPath, uint32_t fontSize, glm::vec4 &color,
+                  uint32_t width, uint32_t height);
 
         void clear();
-        int gprintf(RenderTarget &target, const char *format, ...);
+        int gprintf(const char *format, ...);
+        void blit();
 
     private:
         uint32_t     _consoleWidth;
@@ -27,6 +29,7 @@ class TextConsole
         uint32_t     _fontSize;
         uint32_t     _xPos, _yPos;
         glm::vec4    _fontColor;
+        RenderTarget *_renderTarget;
         TrueTypeFont *_font;
         FontRenderer *_fontRenderer;
 };

@@ -14,7 +14,7 @@
 
 NOAARenderTarget *NOAARenderTarget::NewNOAARenderTarget(void)
 {
-    new OpenGLNOAARenderTarget();
+    return new OpenGLNOAARenderTarget();
 }
 
 void NOAARenderTarget::DeleteNOAARenderTarget(NOAARenderTarget *target)

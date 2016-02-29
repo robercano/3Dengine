@@ -128,7 +128,8 @@ void OpenGLNOAARenderTarget::unbind()
 
 bool OpenGLNOAARenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height)
 {
-#if 0
+#define RENDER_TARGET_ENABLE_BLEND
+#ifdef RENDER_TARGET_ENABLE_BLEND
     /* Bind the target texture */
     GL( glActiveTexture(GL_TEXTURE0) );
     GL( glBindTexture(GL_TEXTURE_2D, _colorBuffer) );
@@ -137,27 +138,28 @@ bool OpenGLNOAARenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, 
     _shader->attach();
     _shader->setUniformTexture2D("fbo_texture", 0);
 
-    //static uint32_t counter = 0;
-    //float offset = counter++;
-    //if (_shader->setUniformFloat("offset", offset) == false) {
-    //    printf("ERROR setting offset uniform\n");
-    //    return false;
-    //}
-
     /* Disable the depth test as the render target should
      * be always rendered */
     glDisable(GL_DEPTH_TEST);
+    GL( glEnable(GL_BLEND) );
+    GL( glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA) );
+
     GL( glBindVertexArray(_vertexArray) );
     {
         GL( glDrawArrays(GL_TRIANGLE_STRIP, 0, 4) );
     }
     GL( glBindVertexArray(0) );
+
+    GL( glDisable(GL_BLEND) );
     glEnable(GL_DEPTH_TEST);
 
     _shader->detach();
-#endif
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, _frameBuffer);
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+#else // RENDER_TARGET_ENABLE_BLEND
+    GL( glBindFramebuffer(GL_READ_FRAMEBUFFER, _frameBuffer) );
+    GL( glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0) );
+    GL( glEnable(GL_BLEND) );
+    GL( glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA) );
+
 //#define RENDERTARGET_SINGLE_BLIT
 #ifdef RENDERTARGET_SINGLE_BLIT
     GL( glBlitFramebuffer(0, 0, _width, _height, dstX, dstY, width, height, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST) );
@@ -168,6 +170,19 @@ bool OpenGLNOAARenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, 
     glBlitFramebuffer(0, 0, _width, _height, dstX, dstY, width, height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
     glBlitFramebuffer(0, 0, _width, _height, dstX, dstY, width, height, GL_DEPTH_BUFFER_BIT, GL_LINEAR);
 #endif
+    GL( glDisable(GL_BLEND) );
+    GL( glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA) );
     glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+#endif
     return true;
+}
+
+void OpenGLNOAARenderTarget::clear(float r, float g, float b, float a)
+{
+    GL( glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer) );
+    GL( glClearColor(r, g, b, a) );
+    GL( glClear(GL_COLOR_BUFFER_BIT) );
+    GL( glClearColor(0.0, 0.0, 0.0, 0.0) );
+    GL( glClear(GL_DEPTH_BUFFER_BIT) );
+    GL( glBindFramebuffer(GL_FRAMEBUFFER, 0) );
 }

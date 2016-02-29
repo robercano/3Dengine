@@ -67,15 +67,15 @@ bool Game::init(std::string &gameName, uint32_t targetFPS, bool unboundFPS)
 		_windowManager = NULL;
 		return false;
 	}
-    MSAARenderTarget *renderTargetMSAA = MSAARenderTarget::NewMSAARenderTarget();
-	if (renderTargetMSAA == NULL) {
+    _renderTargetMSAA = MSAARenderTarget::NewMSAARenderTarget();
+	if (_renderTargetMSAA == NULL) {
 		fprintf(stderr, "ERROR allocating render target\n");
 		WindowManager::DisposeWindowManager(_windowManager);
 		_windowManager = NULL;
 		return false;
 	}
-    SSAARenderTarget *renderTargetSSAA = SSAARenderTarget::NewSSAARenderTarget();
-	if (renderTargetSSAA == NULL) {
+    _renderTargetSSAA = SSAARenderTarget::NewSSAARenderTarget();
+	if (_renderTargetSSAA == NULL) {
 		fprintf(stderr, "ERROR allocating render target\n");
 		WindowManager::DisposeWindowManager(_windowManager);
 		_windowManager = NULL;
@@ -92,8 +92,12 @@ bool Game::init(std::string &gameName, uint32_t targetFPS, bool unboundFPS)
 
 	_renderer->init();	// only after creating the window
     _renderTargetNOAA->init(_width, _height);
-    //renderTargetMSAA->init(_width/2, _height, MSAARenderTarget::getMaxSamples());
-    //renderTargetSSAA->init(_width/2, _height, 8);
+    _renderTargetMSAA->init(_width, _height, MSAARenderTarget::getMaxSamples());
+    _renderTargetSSAA->init(_width, _height, 2);
+
+    /* Choose the render target here */
+    _selectedRenderTarget = _renderTargetNOAA;
+    _renderTargetName = "NOAA";
 
 	_windowManager->setRenderer(_renderer);
 
@@ -101,7 +105,7 @@ bool Game::init(std::string &gameName, uint32_t targetFPS, bool unboundFPS)
     glm::vec4 color(1.0, 0.5, 0.2, 1.0);
     std::string fontPath = "data/fonts/Arial.ttf";
 
-    if (_console.init(fontPath, 14, color) == false) {
+    if (_console.init(fontPath, 14, color, _width, _height) == false) {
         printf("ERROR creating text console\n");
         return 1;
     }
@@ -113,6 +117,9 @@ bool Game::init(std::string &gameName, uint32_t targetFPS, bool unboundFPS)
 	keys.push_back('S');
 	keys.push_back('A');
 	keys.push_back('D');
+	keys.push_back('1');
+	keys.push_back('2');
+	keys.push_back('3');
 	keys.push_back(GLFW_KEY_ESC);
 
 	_windowManager->getKeyManager()->registerListener(_inputManager, keys);
@@ -142,17 +149,19 @@ bool Game::loop(void)
 {
 	const float MouseSensibility = 10.0;
 	const float InvertMouse = 1.0;
+    float FPS = 0.0;
 	static int32_t _prevX = 0xFFFFFF, _prevY = 0xFFFFFF;
 	struct timeval lastRender, now, previous;
 	gettimeofday(&now, NULL);
 	lastRender = previous = now;
 
 	struct timeval fps_start, fps_end;
-	gettimeofday(&fps_start, NULL);
+    gettimeofday(&fps_start, NULL);
 
 	uint32_t passes = 0, renders = 0;
 	while (true)
 	{
+
 		/* Read input */
 		_windowManager->poll();
 		if (_inputManager._keys[GLFW_KEY_ESC]) {
@@ -175,6 +184,16 @@ bool Game::loop(void)
 		} else if (_inputManager._keys['D']) {
 			_camera->right(0.1*elapsed_ms);
 		}
+        if (_inputManager._keys['1']) {
+            _selectedRenderTarget = _renderTargetNOAA;
+            _renderTargetName = "NOAA";
+        } else if (_inputManager._keys['2']) {
+            _selectedRenderTarget = _renderTargetMSAA;
+            _renderTargetName = "MSAA";
+        } else if (_inputManager._keys['3']) {
+            _selectedRenderTarget = _renderTargetSSAA;
+            _renderTargetName = "SSAA";
+        }
 
 		if (_prevX == 0xFFFFFF) {
 			_prevX = _inputManager._xMouse;
@@ -195,7 +214,7 @@ bool Game::loop(void)
 		_prevX = _inputManager._xMouse;
 		_prevY = _inputManager._yMouse;
 
-		//usleep(2000);
+		//usleep(20000);
 
 		/* If frame is due, render it */
 		double render_ms = (now.tv_sec - lastRender.tv_sec)*1000.0 + (now.tv_usec - lastRender.tv_usec)/1000.0;
@@ -207,36 +226,29 @@ bool Game::loop(void)
             for (i=0; i<_objects.size(); ++i) {
                 _renderer->renderObject3D(*_objects[i], *_shaders[i],
                                           _camera->getProjection(), _camera->getView(),
-                                          *_renderTargetNOAA);
-#if 0
-                _renderer->renderObject3D(*_objects[i], *_shaders[i],
-                                          _camera->getProjection(), _camera->getView(),
-                                          *_renderTargetMSAA);
-                _renderer->renderObject3D(*_objects[i], *_shaders[i],
-                                          _camera->getProjection(), _camera->getView(),
-                                          *_renderTargetSSAA);
-#endif
+                                          *_selectedRenderTarget);
             }
 
             _console.clear();
-            _console.gprintf(*_renderTargetNOAA, "Title: %s\n", _gameName.c_str());
-            gettimeofday(&fps_end, NULL);
-            _console.gprintf(*_renderTargetNOAA, "Passes: %d, Renders: %d, Ratio: %.2f, FPS: %.2f\n",
-                             passes, renders, passes/(float)renders,
-                             renders/(fps_end.tv_sec-fps_start.tv_sec + (fps_end.tv_usec - fps_start.tv_usec)/1000000.0));
+            _console.gprintf("Title: %s", _gameName.c_str());
+            _console.gprintf("Anti-aliasing: %s", _renderTargetName.c_str());
+            _console.gprintf("FPS: %.2f", FPS);
 
-            _renderTargetNOAA->blit(0, 0, _width, _height);
-            //_renderTargetMSAA->blit(_width/2, 0, _width, _height);
-            //_renderTargetSSAA->blit(_width/2, 0, _width, _height);
+            _selectedRenderTarget->blit(0, 0, _width, _height);
+            _console.blit();
         }
 
-		if (render_ms > (1000.0/_targetFPS)) {
+		if (render_ms >= (1000.0/_targetFPS)) {
 			_windowManager->swapBuffers();
 			gettimeofday(&lastRender, NULL);
+
+            /* Calculate FPS */
+            FPS = 1000.0*renders/render_ms;
+            renders = 0;
 		}
 	}
 
-	gettimeofday(&fps_end, NULL);
+    gettimeofday(&fps_end, NULL);
 	fprintf(stderr, "Passes: %d, Renders: %d, Ratio: %f, FPS: %.2f\n", passes, renders, passes/(float)renders,
 			renders/(fps_end.tv_sec-fps_start.tv_sec + (fps_end.tv_usec - fps_start.tv_usec)/1000000.0));
 	return true;

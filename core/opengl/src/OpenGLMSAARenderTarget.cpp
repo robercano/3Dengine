@@ -140,3 +140,13 @@ bool OpenGLMSAARenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, 
     GL( glBindFramebuffer(GL_READ_FRAMEBUFFER, 0) );
     return true;
 }
+
+void OpenGLMSAARenderTarget::clear(float r, float g, float b, float a)
+{
+    GL( glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer) );
+    GL( glClearColor(r, g, b, a) );
+    GL( glClear(GL_COLOR_BUFFER_BIT) );
+    GL( glClearColor(0.0, 0.0, 0.0, 1.0) );
+    GL( glClear(GL_DEPTH_BUFFER_BIT) );
+    GL( glBindFramebuffer(GL_FRAMEBUFFER, 0) );
+}

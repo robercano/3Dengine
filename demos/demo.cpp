@@ -10,7 +10,7 @@
 
 int main(int argc, char** argv)
 {
-    OBJFormat lego;
+    OBJFormat obj3D;
 
 	Game *game = Game::GetGame();
 
@@ -36,15 +36,15 @@ int main(int argc, char** argv)
 	}
 
     /* Load the geometry */
-    std::string legoobj = "data/objects/deadpool.obj";
+    std::string meshPath = "data/objects/deadpool.obj";
 
-    if (lego.load(legoobj) == false) {
+    if (obj3D.load(meshPath) == false) {
         printf("ERROR loading OBJ file\n");
         return 1;
     }
 
 	/* Add the geometry */
-	game->addObject3D(&lego, shader);
+	game->addObject3D(&obj3D, shader);
 
     /* Start */
 	game->loop();
