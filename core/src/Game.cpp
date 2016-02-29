@@ -93,7 +93,7 @@ bool Game::init(std::string &gameName, uint32_t targetFPS, bool unboundFPS)
 	_renderer->init();	// only after creating the window
     _renderTargetNOAA->init(_width, _height);
     _renderTargetMSAA->init(_width, _height, MSAARenderTarget::getMaxSamples());
-    _renderTargetSSAA->init(_width, _height, 2);
+    _renderTargetSSAA->init(_width, _height, 4);
 
     /* Choose the render target here */
     _selectedRenderTarget = _renderTargetNOAA;
