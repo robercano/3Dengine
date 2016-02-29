@@ -96,6 +96,7 @@ class OpenGLShader : public Shader
         bool setUniformTexture2D(const std::string &name, uint32_t unitID);
         bool setUniformFloat(const std::string &name, float value);
         bool setUniformVec4(const std::string &name, glm::vec4 &value);
+        bool setUniformVec2(const std::string &name, glm::vec2 &value);
 
 	private:
 		/**

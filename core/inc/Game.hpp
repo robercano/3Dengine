@@ -12,6 +12,10 @@
 #include "Renderer.hpp"
 #include "Camera.hpp"
 #include "RenderTarget.hpp"
+#include "TextConsole.hpp"
+#include "NOAARenderTarget.hpp"
+#include "MSAARenderTarget.hpp"
+#include "SSAARenderTarget.hpp"
 
 class Game
 {
@@ -82,9 +86,9 @@ class Game
         /**
          * Render target
          */
-        RenderTarget *_renderTargetNOAA;
-        RenderTarget *_renderTargetMSAA;
-        RenderTarget *_renderTargetSSAA;
+        NOAARenderTarget *_renderTargetNOAA;
+        MSAARenderTarget *_renderTargetMSAA;
+        SSAARenderTarget *_renderTargetSSAA;
 
 		/**
 		 * Input manager
@@ -101,6 +105,11 @@ class Game
 		 */
 		std::vector<RendererObject3D*> _objects;
 		std::vector<Shader*> _shaders;
+
+        std::string _gameName;
+
+        /* Text console */
+        TextConsole _console;
 
         uint32_t _targetFPS;
         bool _unboundFPS;

@@ -16,10 +16,12 @@ class FontRenderer
 {
     public:
         /* Singleton */
-        static FontRenderer *GetFontRenderer();
+        static FontRenderer *NewFontRenderer();
+        static void DeleteFontRenderer(FontRenderer *fontRenderer);
 
         virtual bool setFont(TrueTypeFont *font) = 0;
         virtual bool renderText(uint32_t x, uint32_t y, std::string &text, glm::vec4 &color, RenderTarget &target) = 0;
+        virtual bool renderText(uint32_t x, uint32_t y, const char *text, glm::vec4 &color, RenderTarget &target) = 0;
 
 	private:
 		/**

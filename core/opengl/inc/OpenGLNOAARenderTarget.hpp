@@ -12,9 +12,9 @@
 
 #include "OpenGL.h"
 #include "Shader.hpp"
-#include "RenderTarget.hpp"
+#include "NOAARenderTarget.hpp"
 
-class OpenGLNOAARenderTarget : public RenderTarget
+class OpenGLNOAARenderTarget : public NOAARenderTarget
 {
 	public:
         ~OpenGLNOAARenderTarget();

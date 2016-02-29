@@ -4,6 +4,7 @@
  *
  * @author Roberto Cano
  */
+#include <string.h>
 #include "OpenGLFontRenderer.hpp"
 #include "OpenGL.h"
 #include "MathUtils.h"
@@ -111,6 +112,11 @@ bool OpenGLFontRenderer::setFont(TrueTypeFont *font)
 
 bool OpenGLFontRenderer::renderText(uint32_t x, uint32_t y, std::string &text, glm::vec4 &color, RenderTarget &target)
 {
+    return renderText(x, y, text.c_str(), color, target);
+}
+
+bool OpenGLFontRenderer::renderText(uint32_t x, uint32_t y, const char *text, glm::vec4 &color, RenderTarget &target)
+{
     int i;
 
     GL( glEnable(GL_BLEND) );
@@ -126,7 +132,13 @@ bool OpenGLFontRenderer::renderText(uint32_t x, uint32_t y, std::string &text, g
     /* Setup the constant values for the shader */
     _shader->attach();
 
-    glm::mat4 glyphTransform = glm::translate(-1.0f, 1.0f, 0.0f)*glm::scale(2.0f/renderWidth, -2.0f/renderHeight, 1.0f);
+    /* The glyphs are created in window coordinates so we don't
+     * need the glyphs width and height here. This matrix scales
+     * to (0.0, 1.0) on x and y, then transforms into NDC */
+    glm::mat4 glyphTransform( 2.0f/renderWidth, 0.0f, 0.0f, 0.0f,
+                              0.0f, -2.0f/renderHeight, 0.0f, 0.0f,
+                              0.0f, 0.0f, 1.0f, 0.0f,
+                              -1.0f, 1.0f, 0.0f, 1.0f);
 
     _shader->setUniformMat4("glyphTransform", glyphTransform);
     _shader->setUniformTexture2D("glyph", 0);
@@ -134,15 +146,16 @@ bool OpenGLFontRenderer::renderText(uint32_t x, uint32_t y, std::string &text, g
 
     GL( glDisable(GL_DEPTH_TEST) );
 
-    for (i=0; i<text.length(); ++i) {
+    uint32_t textLength = strlen(text);
+    for (i=0; i<textLength; ++i) {
         /* Get the size of the glyph */
         uint32_t glyphWidth, glyphHeight, offsetLeft, offsetTop, advance;
 
         _font->getBitmap(text[i], glyphWidth, glyphHeight, offsetLeft, offsetTop, advance);
 
         /* Adjust the coordinates to take into account the bearings */
-        glm::vec4 glyphPos = glm::vec4((float)(x + offsetLeft), float(y + offsetTop), 0.0f, 1.0f);
-        _shader->setUniformVec4("glyphPos", glyphPos);
+        glm::vec2 glyphPos = glm::vec2((float)(x + offsetLeft), float(y + offsetTop));
+        _shader->setUniformVec2("glyphPos", glyphPos);
 
         /* Bind the target texture */
         GL( glBindTexture(GL_TEXTURE_2D, _glyphTextures[text[i]]) );

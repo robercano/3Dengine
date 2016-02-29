@@ -5,15 +5,9 @@
  * @author	Roberto Sosa Cano
  */
 #include <sys/time.h>
-#include "OpenGL.h"
+#include "OpenGL.h" // For GLFW_KEY_ESC
 #include "Game.hpp"
-#include "OpenGLRenderer.hpp"
-#include "OpenGLNOAARenderTarget.hpp"
-#include "OpenGLMSAARenderTarget.hpp"
-#include "OpenGLSSAARenderTarget.hpp"
 #include "WalkingCamera.hpp"
-#include "TrueTypeFont.hpp"
-#include "FontRenderer.hpp"
 
 Game *Game::_game = NULL;
 
@@ -56,8 +50,8 @@ bool Game::init(std::string &gameName, uint32_t targetFPS, bool unboundFPS)
 		return false;
 	}
 
-	/* Use our Open GL renderer */
-	_renderer = new OpenGLRenderer();
+	/* Use our system renderer. This only supports OpenGL for now */
+	_renderer = Renderer::GetRenderer();
 	if (_renderer == NULL) {
 		fprintf(stderr, "ERROR allocating renderer\n");
 		WindowManager::DisposeWindowManager(_windowManager);
@@ -66,26 +60,23 @@ bool Game::init(std::string &gameName, uint32_t targetFPS, bool unboundFPS)
 	}
 
     /* Create a render target to allow post-processing */
-    OpenGLNOAARenderTarget *renderTargetNOAA = new OpenGLNOAARenderTarget();
-	if (renderTargetNOAA == NULL) {
+    _renderTargetNOAA = NOAARenderTarget::NewNOAARenderTarget();
+	if (_renderTargetNOAA == NULL) {
 		fprintf(stderr, "ERROR allocating render target\n");
-        delete _renderer;
 		WindowManager::DisposeWindowManager(_windowManager);
 		_windowManager = NULL;
 		return false;
 	}
-    OpenGLMSAARenderTarget *renderTargetMSAA = new OpenGLMSAARenderTarget();
+    MSAARenderTarget *renderTargetMSAA = MSAARenderTarget::NewMSAARenderTarget();
 	if (renderTargetMSAA == NULL) {
 		fprintf(stderr, "ERROR allocating render target\n");
-        delete _renderer;
 		WindowManager::DisposeWindowManager(_windowManager);
 		_windowManager = NULL;
 		return false;
 	}
-    OpenGLSSAARenderTarget *renderTargetSSAA = new OpenGLSSAARenderTarget();
+    SSAARenderTarget *renderTargetSSAA = SSAARenderTarget::NewSSAARenderTarget();
 	if (renderTargetSSAA == NULL) {
 		fprintf(stderr, "ERROR allocating render target\n");
-        delete _renderer;
 		WindowManager::DisposeWindowManager(_windowManager);
 		_windowManager = NULL;
 		return false;
@@ -95,35 +86,25 @@ bool Game::init(std::string &gameName, uint32_t targetFPS, bool unboundFPS)
 	_windowManager->init();
 
 	/* Set the window size */
-	_windowManager->createWindow(gameName, _width, _height, false);
+    _gameName = gameName;
+	_windowManager->createWindow(_gameName, _width, _height, false);
     _windowManager->getWindowSize(&_width, &_height);
 
 	_renderer->init();	// only after creating the window
-    renderTargetNOAA->init(_width, _height);
-    //renderTargetMSAA->init(_width/2, _height, OpenGLMSAARenderTarget::getMaxSamples());
+    _renderTargetNOAA->init(_width, _height);
+    //renderTargetMSAA->init(_width/2, _height, MSAARenderTarget::getMaxSamples());
     //renderTargetSSAA->init(_width/2, _height, 8);
-
-    _renderTargetNOAA = renderTargetNOAA;
-    //_renderTargetMSAA = renderTargetMSAA;
-    //_renderTargetSSAA = renderTargetSSAA;
 
 	_windowManager->setRenderer(_renderer);
 
-    /* Setup the font renderer */
-    TrueTypeFont *font = TrueTypeFont::NewFont();
+    /* Setup the text console */
+    glm::vec4 color(1.0, 0.5, 0.2, 1.0);
+    std::string fontPath = "data/fonts/Arial.ttf";
 
-    if (font->init("data/fonts/Arial.ttf", 14) == false) {
-        printf("ERROR loading font\n");
+    if (_console.init(fontPath, 14, color) == false) {
+        printf("ERROR creating text console\n");
         return 1;
     }
-
-    FontRenderer *fontRenderer = FontRenderer::GetFontRenderer();
-    if (fontRenderer == NULL) {
-        printf("ERROR getting font renderer\n");
-        return 1;
-    }
-
-    fontRenderer->setFont(font);
 
 	/* Register the key and mouse listener */
 	std::vector<uint32_t> keys; // The keys should be read from a config file
@@ -237,14 +218,16 @@ bool Game::loop(void)
 #endif
             }
 
-            std::string text("Testing string!");
-            glm::vec4 color(1.0, 0.5, 0.2, 1.0);
-            FontRenderer::GetFontRenderer()->renderText(5, 5, text, color, *_renderTargetNOAA);
+            _console.clear();
+            _console.gprintf(*_renderTargetNOAA, "Title: %s\n", _gameName.c_str());
+            gettimeofday(&fps_end, NULL);
+            _console.gprintf(*_renderTargetNOAA, "Passes: %d, Renders: %d, Ratio: %.2f, FPS: %.2f\n",
+                             passes, renders, passes/(float)renders,
+                             renders/(fps_end.tv_sec-fps_start.tv_sec + (fps_end.tv_usec - fps_start.tv_usec)/1000000.0));
 
             _renderTargetNOAA->blit(0, 0, _width, _height);
             //_renderTargetMSAA->blit(_width/2, 0, _width, _height);
             //_renderTargetSSAA->blit(_width/2, 0, _width, _height);
-
         }
 
 		if (render_ms > (1000.0/_targetFPS)) {

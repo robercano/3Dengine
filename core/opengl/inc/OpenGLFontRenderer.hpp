@@ -22,6 +22,7 @@ class OpenGLFontRenderer : public FontRenderer
 
         bool setFont(TrueTypeFont *font);
         bool renderText(uint32_t x, uint32_t y, std::string &text, glm::vec4 &color, RenderTarget &target);
+        bool renderText(uint32_t x, uint32_t y, const char *text, glm::vec4 &color, RenderTarget &target);
 
 	private:
         GLuint _glyphTextures[GL_FONT_RENDERER_NUM_GLYPHS];

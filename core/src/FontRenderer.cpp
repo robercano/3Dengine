@@ -7,12 +7,12 @@
 #include "FontRenderer.hpp"
 #include "OpenGLFontRenderer.hpp"
 
-FontRenderer *FontRenderer::_fontRenderer = NULL;
-
-FontRenderer *FontRenderer::GetFontRenderer()
+FontRenderer *FontRenderer::NewFontRenderer()
 {
-    if (_fontRenderer == NULL) {
-        _fontRenderer = new OpenGLFontRenderer();
-    }
-    return _fontRenderer;
+    return new OpenGLFontRenderer();
+}
+
+void FontRenderer::DeleteFontRenderer(FontRenderer *fontRenderer)
+{
+    delete fontRenderer;
 }
