@@ -161,16 +161,18 @@ bool Game::loop(void)
     struct timeval inputNow, inputPrevious;
     bool resetStats = false;
 
-#define NUM_AVG_FPS 500
+#define NUM_AVG_FPS 30
     float avgFPS[NUM_AVG_FPS] = {0};
     uint32_t avgFPSIdx = 0;
     float minFPS = 10000000.0f;
     float maxFPS = 0.0f;
     float totalAvgFPS = 0;
 	uint32_t  renders=0;
+    float renderAdjustment = 0;
+    float dueTime = 1000.0/_targetFPS;
 
 	gettimeofday(&inputNow, NULL);
-	gettimeofday(&renderNow, NULL);
+    renderNow = renderPrevious = inputNow;
 
 	while (true)
 	{
@@ -248,11 +250,11 @@ bool Game::loop(void)
         }
 
         _console.clear();
-        _console.gprintf("Title: %s\n", _gameName.c_str());
+        //_console.gprintf("Title: %s\n", _gameName.c_str());
         _console.gprintf("Anti-aliasing: %s\n", _renderTargetName.c_str());
-        _console.gprintf("Avg. FPS: %.2f\n", totalAvgFPS);
-        _console.gprintf("Min. FPS: %.2f\n", minFPS);
-        _console.gprintf("Max. FPS: %.2f\n", maxFPS);
+        _console.gprintf("Avg. FPS: %d\n", (int)totalAvgFPS);
+        //_console.gprintf("Min. FPS: %d\n", (int)minFPS);
+        //_console.gprintf("Max. FPS: %d\n", (int)maxFPS);
 
         _selectedRenderTarget->blit(0, 0, _width, _height);
         _console.blit();
@@ -279,9 +281,21 @@ bool Game::loop(void)
 		gettimeofday(&renderNow, NULL);
 		double renderElapsedMs = (renderNow.tv_sec - renderPrevious.tv_sec)*1000.0 +
                                  (renderNow.tv_usec - renderPrevious.tv_usec)/1000.0;
-		if (renderElapsedMs >= (1000.0/_targetFPS)) {
+
+        /* Render time! */
+		if ((renderAdjustment + renderElapsedMs) >= dueTime) {
 			_windowManager->swapBuffers();
             renderPrevious = renderNow;
+
+            /* Check if we are really late, that means we are dropping
+             * frames. In this case re-adjust the render adjustment and
+             * the elapsed time. Have to check how costly that fmod is... */
+            if ((renderAdjustment + renderElapsedMs) > 2*dueTime) {
+                renderElapsedMs = fmod(renderElapsedMs, dueTime) + dueTime;
+                renderAdjustment = fmod(renderAdjustment, dueTime);
+                fprintf(stderr, "Droping frames...\n");
+            }
+            renderAdjustment = renderAdjustment + renderElapsedMs - (1000.0/_targetFPS);
 
             /* Calculate FPS now */
             FPS = 1000.0*renders/renderElapsedMs;
@@ -306,8 +320,8 @@ bool Game::loop(void)
         }
 	}
 
-    fprintf(stderr, "Average FPS: %.2f\n", totalAvgFPS);
-    fprintf(stderr, "Minimum FPS: %.2f\n", minFPS);
-    fprintf(stderr, "Maximum FPS: %.2f\n", maxFPS);
+    fprintf(stderr, "Average FPS: %d\n", (int)totalAvgFPS);
+    fprintf(stderr, "Minimum FPS: %d\n", (int)minFPS);
+    fprintf(stderr, "Maximum FPS: %d\n", (int)maxFPS);
 	return true;
 }
