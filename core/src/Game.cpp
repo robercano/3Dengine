@@ -107,10 +107,13 @@ bool Game::init(std::string &gameName, uint32_t targetFPS, bool unboundFPS)
     glm::vec4 color(1.0, 0.5, 0.2, 1.0);
     std::string fontPath = "data/fonts/Arial.ttf";
 
-    if (_console.init(fontPath, 14, color, _width, _height) == false) {
+    if (_console.init(fontPath, 14, _width, _height) == false) {
         printf("ERROR creating text console\n");
         return 1;
     }
+
+    _console.setForegroundColor(1.0, 0.5, 0.2, 1.0);
+    _console.setBackgroundColor(0.0, 0.0, 0.0, 0.0);
 
 	/* Register the key and mouse listener */
 	std::vector<uint32_t> keys; // The keys should be read from a config file

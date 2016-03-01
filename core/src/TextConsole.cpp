@@ -16,8 +16,7 @@
 #define SCREEN_TOP_MARGIN  5
 #define SCREEN_LEFT_MARGIN 5
 
-bool TextConsole::init(std::string &fontPath, uint32_t fontSize, glm::vec4 &color,
-                       uint32_t width, uint32_t height)
+bool TextConsole::init(std::string &fontPath, uint32_t fontSize, uint32_t width, uint32_t height)
 {
     NOAARenderTarget *target = NOAARenderTarget::NewNOAARenderTarget();
 	if (target == NULL) {
@@ -47,12 +46,24 @@ bool TextConsole::init(std::string &fontPath, uint32_t fontSize, glm::vec4 &colo
 
     _renderTarget = target;
     _fontRenderer->setFont(_font);
-    _fontColor = color;
     _fontSize = fontSize;
+
+    _foreground = glm::vec4(1.0);
+    _background = glm::vec4(0.0);
 
     clear();
 
     return true;
+}
+
+void TextConsole::setForegroundColor(float r, float g, float b, float a)
+{
+    _foreground = glm::vec4(r, g, b, a);
+}
+
+void TextConsole::setBackgroundColor(float r, float g, float b, float a)
+{
+    _background = glm::vec4(r, g, b, a);
 }
 
 void TextConsole::clear()
@@ -60,7 +71,7 @@ void TextConsole::clear()
     _xPos = SCREEN_TOP_MARGIN;
     _yPos = SCREEN_LEFT_MARGIN;
 
-    _renderTarget->clear(0.0, 0.0, 0.0, 0.0);
+    _renderTarget->clear(_background.r, _background.g, _background.b, _background.a);
 }
 
 int TextConsole::gprintf(const char *format, ...)
@@ -83,7 +94,7 @@ int TextConsole::gprintf(const char *format, ...)
 
         if (buffer[i] == '\t') {
             line[linePos] = '\0';
-            _fontRenderer->renderText(_xPos, _yPos, line, _fontColor, *_renderTarget);
+            _fontRenderer->renderText(_xPos, _yPos, line, _foreground, *_renderTarget);
             linePos = 0;
 
             _font->getBitmap(' ', dummy, dummy, dummy, dummy, advance);
@@ -96,7 +107,7 @@ int TextConsole::gprintf(const char *format, ...)
             /* Weird formula to adjust interline space.
              * Just to make it around 4 pixels for a 14 pixels
              * font */
-            _fontRenderer->renderText(_xPos, _yPos, line, _fontColor, *_renderTarget);
+            _fontRenderer->renderText(_xPos, _yPos, line, _foreground, *_renderTarget);
             _yPos += 4*_fontSize/3;
             linePos = 0;
             xSize = SCREEN_LEFT_MARGIN;
@@ -109,7 +120,7 @@ int TextConsole::gprintf(const char *format, ...)
     }
     if (linePos != 0) {
         line[linePos] = '\0';
-        _fontRenderer->renderText(_xPos, _yPos, line, _fontColor, *_renderTarget);
+        _fontRenderer->renderText(_xPos, _yPos, line, _foreground, *_renderTarget);
         linePos = 0;
         _xPos = xSize;
     }
