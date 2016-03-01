@@ -68,6 +68,7 @@ class Renderer
 		 * Adjusts the renderer's display size
 		 */
 		virtual bool resize(uint16_t width, uint16_t height) = 0;
+        virtual void flush() = 0;
 	private:
 		/**
 		 * Singleton instance

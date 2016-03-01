@@ -5,6 +5,7 @@
  * @author	Roberto Sosa Cano
  */
 #include <sys/time.h>
+#include <unistd.h>
 #include "OpenGL.h" // For GLFW_KEY_ESC
 #include "Game.hpp"
 #include "WalkingCamera.hpp"
@@ -92,7 +93,8 @@ bool Game::init(std::string &gameName, uint32_t targetFPS, bool unboundFPS)
 
 	_renderer->init();	// only after creating the window
     _renderTargetNOAA->init(_width, _height);
-    _renderTargetMSAA->init(_width, _height, MSAARenderTarget::getMaxSamples());
+    _renderTargetMSAA->init(_width, _height, MSAARenderTarget::getMaxSamples() < 4 ?
+                                             MSAARenderTarget::getMaxSamples() : 4);
     _renderTargetSSAA->init(_width, _height, 4);
 
     /* Choose the render target here */
@@ -120,13 +122,13 @@ bool Game::init(std::string &gameName, uint32_t targetFPS, bool unboundFPS)
 	keys.push_back('1');
 	keys.push_back('2');
 	keys.push_back('3');
+	keys.push_back('R');
 	keys.push_back(GLFW_KEY_ESC);
 
 	_windowManager->getKeyManager()->registerListener(_inputManager, keys);
 	_windowManager->getMouseManager()->registerListener(_inputManager);
 
 	/* Create the game camera */
-	//_camera = new WalkingCamera();
 	_camera = new Camera();
 	_camera->setProjection(45, _width/(float)_height, 0.1, 1000.0);
     glm::vec4 pos( 220, 135, -1, 1);
@@ -147,21 +149,28 @@ bool Game::addObject3D(Object3D *object, Shader *shader)
 
 bool Game::loop(void)
 {
+    uint32_t i;
 	const float MouseSensibility = 10.0;
 	const float InvertMouse = 1.0;
     float FPS = 0.0;
 	static int32_t _prevX = 0xFFFFFF, _prevY = 0xFFFFFF;
-	struct timeval lastRender, now, previous;
-	gettimeofday(&now, NULL);
-	lastRender = previous = now;
+	struct timeval renderNow, renderPrevious;
+    struct timeval inputNow, inputPrevious;
+    bool resetStats = false;
 
-	struct timeval fps_start, fps_end;
-    gettimeofday(&fps_start, NULL);
+#define NUM_AVG_FPS 500
+    float avgFPS[NUM_AVG_FPS] = {0};
+    uint32_t avgFPSIdx = 0;
+    float minFPS = 10000000.0f;
+    float maxFPS = 0.0f;
+    float totalAvgFPS = 0;
+	uint32_t  renders=0;
 
-	uint32_t passes = 0, renders = 0;
+	gettimeofday(&inputNow, NULL);
+	gettimeofday(&renderNow, NULL);
+
 	while (true)
 	{
-
 		/* Read input */
 		_windowManager->poll();
 		if (_inputManager._keys[GLFW_KEY_ESC]) {
@@ -169,30 +178,44 @@ bool Game::loop(void)
 		}
 
 		/* Get elapsed time */
-		previous = now;
-		gettimeofday(&now, NULL);
-		double elapsed_ms = (now.tv_sec - previous.tv_sec)*1000.0 + (now.tv_usec - previous.tv_usec)/1000.0;
-		passes++;
+		inputPrevious = inputNow;
+		gettimeofday(&inputNow, NULL);
+		double inputElapsedMs = (inputNow.tv_sec - inputPrevious.tv_sec)*1000.0 +
+                                (inputNow.tv_usec - inputPrevious.tv_usec)/1000.0;
 
 		/* Dispatch input to geometry */
 		if (_inputManager._keys['W']) {
-			_camera->forward(0.1*elapsed_ms);
+			_camera->forward(0.1*inputElapsedMs);
 		} else if (_inputManager._keys['S']) {
-			_camera->forward(-0.1*elapsed_ms);
+			_camera->forward(-0.1*inputElapsedMs);
 		} else if (_inputManager._keys['A']) {
-			_camera->right(-0.1*elapsed_ms);
+			_camera->right(-0.1*inputElapsedMs);
 		} else if (_inputManager._keys['D']) {
-			_camera->right(0.1*elapsed_ms);
+			_camera->right(0.1*inputElapsedMs);
 		}
         if (_inputManager._keys['1']) {
             _selectedRenderTarget = _renderTargetNOAA;
             _renderTargetName = "NOAA";
+            resetStats = true;
         } else if (_inputManager._keys['2']) {
             _selectedRenderTarget = _renderTargetMSAA;
             _renderTargetName = "MSAA";
+            resetStats = true;
         } else if (_inputManager._keys['3']) {
             _selectedRenderTarget = _renderTargetSSAA;
             _renderTargetName = "SSAA";
+            resetStats = true;
+        }
+        if (_inputManager._keys['R']) {
+            resetStats = true;
+        }
+        if (resetStats) {
+            minFPS = 1000000.0f;
+            maxFPS = 0.0f;
+            for (i=0; i<NUM_AVG_FPS; ++i) {
+                avgFPS[i] = FPS;
+            }
+            resetStats = false;
         }
 
 		if (_prevX == 0xFFFFFF) {
@@ -214,42 +237,74 @@ bool Game::loop(void)
 		_prevX = _inputManager._xMouse;
 		_prevY = _inputManager._yMouse;
 
-		//usleep(20000);
-
-		/* If frame is due, render it */
-		double render_ms = (now.tv_sec - lastRender.tv_sec)*1000.0 + (now.tv_usec - lastRender.tv_usec)/1000.0;
-		if (_unboundFPS == true || render_ms > (1000.0/_targetFPS)) {
-			renders++;
-
-            /* Render all objects */
-            uint32_t i;
-            for (i=0; i<_objects.size(); ++i) {
-                _renderer->renderObject3D(*_objects[i], *_shaders[i],
-                                          _camera->getProjection(), _camera->getView(),
-                                          *_selectedRenderTarget);
-            }
-
-            _console.clear();
-            _console.gprintf("Title: %s", _gameName.c_str());
-            _console.gprintf("Anti-aliasing: %s", _renderTargetName.c_str());
-            _console.gprintf("FPS: %.2f", FPS);
-
-            _selectedRenderTarget->blit(0, 0, _width, _height);
-            _console.blit();
+        /* Render all objects */
+        for (i=0; i<_objects.size(); ++i) {
+            _renderer->renderObject3D(*_objects[i], *_shaders[i],
+                    _camera->getProjection(), _camera->getView(),
+                    *_selectedRenderTarget);
         }
 
-		if (render_ms >= (1000.0/_targetFPS)) {
-			_windowManager->swapBuffers();
-			gettimeofday(&lastRender, NULL);
+        _console.clear();
+        _console.gprintf("Title: %s", _gameName.c_str());
+        _console.gprintf("Anti-aliasing: %s", _renderTargetName.c_str());
+        _console.gprintf("Avg. FPS: %.2f", totalAvgFPS);
+        _console.gprintf("Min. FPS: %.2f", minFPS);
+        _console.gprintf("Max. FPS: %.2f", maxFPS);
 
-            /* Calculate FPS */
-            FPS = 1000.0*renders/render_ms;
+        _selectedRenderTarget->blit(0, 0, _width, _height);
+        _console.blit();
+
+        /* Flush all operations so we can have a good measure
+         * of the time it takes to render the scene. Otherwise this
+         * will only happen when swapBuffers() is called. In a proper
+         * engine you want to accumulate operations and have a measurement
+         * of how long the card will take to render the scene, so you can
+         * maximimize the number of operations you can issue before running
+         * out of time:
+         *
+         *  |------------------------------ framerate time ----------------------------|
+         *  |__________________________________________________________________________|
+         *  |- process input -|- prepare scene -|- send rendering commands -|- render -|
+         *  |--------------------------------------------------------------------------|
+         *
+         *  Obviously not at scale. Rendering takes much longer than the rest.
+         */
+        _renderer->flush();
+        renders++;
+
+		/* If frame is due, blit it */
+		gettimeofday(&renderNow, NULL);
+		double renderElapsedMs = (renderNow.tv_sec - renderPrevious.tv_sec)*1000.0 +
+                                 (renderNow.tv_usec - renderPrevious.tv_usec)/1000.0;
+		if (renderElapsedMs >= (1000.0/_targetFPS)) {
+			_windowManager->swapBuffers();
+            renderPrevious = renderNow;
+
+            /* Calculate FPS now */
+            FPS = 1000.0*renders/renderElapsedMs;
+
+            if (FPS > maxFPS) {
+                maxFPS = FPS;
+            }
+            if (FPS < minFPS) {
+                minFPS = FPS;
+            }
+
+            avgFPS[avgFPSIdx] = FPS;
+            avgFPSIdx = (avgFPSIdx + 1)%NUM_AVG_FPS;
+
+            /* Calculate the average FPS */
+            for (i=0; i<NUM_AVG_FPS; ++i) {
+                totalAvgFPS += avgFPS[i];
+            }
+            totalAvgFPS /= NUM_AVG_FPS;
+
             renders = 0;
-		}
+        }
 	}
 
-    gettimeofday(&fps_end, NULL);
-	fprintf(stderr, "Passes: %d, Renders: %d, Ratio: %f, FPS: %.2f\n", passes, renders, passes/(float)renders,
-			renders/(fps_end.tv_sec-fps_start.tv_sec + (fps_end.tv_usec - fps_start.tv_usec)/1000000.0));
+    fprintf(stderr, "Average FPS: %.2f\n", totalAvgFPS);
+    fprintf(stderr, "Minimum FPS: %.2f\n", minFPS);
+    fprintf(stderr, "Maximum FPS: %.2f\n", maxFPS);
 	return true;
 }

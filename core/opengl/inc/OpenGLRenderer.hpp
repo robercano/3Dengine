@@ -22,6 +22,7 @@ class OpenGLRenderer : public Renderer
                             const glm::mat4 &projection, const glm::mat4 &view,
                             RenderTarget &renderTarget);
 		bool resize(uint16_t width, uint16_t height);
+        void flush();
 
 	private:
 		/**

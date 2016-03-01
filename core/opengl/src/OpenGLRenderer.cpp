@@ -91,3 +91,8 @@ bool OpenGLRenderer::resize(uint16_t width, uint16_t height)
 	_height = height;
     return true;
 }
+
+void OpenGLRenderer::flush()
+{
+    glFinish();
+}
