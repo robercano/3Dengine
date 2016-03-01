@@ -12,6 +12,10 @@
 #include "TextConsole.hpp"
 #include "NOAARenderTarget.hpp"
 
+#define FONT_INTERLINE_DISTANCE 4
+#define SCREEN_TOP_MARGIN  5
+#define SCREEN_LEFT_MARGIN 5
+
 bool TextConsole::init(std::string &fontPath, uint32_t fontSize, glm::vec4 &color,
                        uint32_t width, uint32_t height)
 {
@@ -53,8 +57,8 @@ bool TextConsole::init(std::string &fontPath, uint32_t fontSize, glm::vec4 &colo
 
 void TextConsole::clear()
 {
-    _xPos = 5;
-    _yPos = 5;
+    _xPos = SCREEN_TOP_MARGIN;
+    _yPos = SCREEN_LEFT_MARGIN;
 
     _renderTarget->clear(0.0, 0.0, 0.0, 0.0);
 }
@@ -64,15 +68,51 @@ int TextConsole::gprintf(const char *format, ...)
     char buffer[256];
     va_list args;
     va_start (args, format);
-    vsprintf (buffer, format, args);
+    vsnprintf (buffer, sizeof buffer, format, args);
     va_end (args);
 
-    /* TODO: add support for new lines and to wrap text around the
-     * end of the render target */
-    _fontRenderer->renderText(_xPos, _yPos, buffer, _fontColor, *_renderTarget);
+    char line[256];
+    uint32_t linePos = 0;
+    char tab[] = "    ";
+    uint32_t xSize = _xPos, i;
 
-    _yPos += _fontSize+4; // TODO: grab this information from the font renderer
+    for (i=0; buffer[i] != '\0'; ++i) {
+        /* Parse the lines */
+        uint32_t dummy, advance;
+        _font->getBitmap(buffer[i], dummy, dummy, dummy, dummy, advance);
 
+        if (buffer[i] == '\t') {
+            line[linePos] = '\0';
+            _fontRenderer->renderText(_xPos, _yPos, line, _fontColor, *_renderTarget);
+            linePos = 0;
+
+            _font->getBitmap(' ', dummy, dummy, dummy, dummy, advance);
+            xSize += (sizeof tab - 1) * advance;
+            _xPos = xSize;
+        }
+        if (buffer[i] == '\n' ||
+            (xSize + advance) > _renderTarget->getWidth()) {
+            line[linePos] = '\0';
+            /* Weird formula to adjust interline space.
+             * Just to make it around 4 pixels for a 14 pixels
+             * font */
+            _fontRenderer->renderText(_xPos, _yPos, line, _fontColor, *_renderTarget);
+            _yPos += 4*_fontSize/3;
+            linePos = 0;
+            xSize = SCREEN_LEFT_MARGIN;
+            _xPos = SCREEN_LEFT_MARGIN;
+        }
+        if (buffer[i] != '\n' && buffer[i] != '\t') {
+            line[linePos++] = buffer[i];
+            xSize += advance;
+        }
+    }
+    if (linePos != 0) {
+        line[linePos] = '\0';
+        _fontRenderer->renderText(_xPos, _yPos, line, _fontColor, *_renderTarget);
+        linePos = 0;
+        _xPos = xSize;
+    }
     return 0;
 }
 

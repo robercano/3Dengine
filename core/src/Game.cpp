@@ -245,11 +245,11 @@ bool Game::loop(void)
         }
 
         _console.clear();
-        _console.gprintf("Title: %s", _gameName.c_str());
-        _console.gprintf("Anti-aliasing: %s", _renderTargetName.c_str());
-        _console.gprintf("Avg. FPS: %.2f", totalAvgFPS);
-        _console.gprintf("Min. FPS: %.2f", minFPS);
-        _console.gprintf("Max. FPS: %.2f", maxFPS);
+        _console.gprintf("Title: %s\n", _gameName.c_str());
+        _console.gprintf("Anti-aliasing: %s\n", _renderTargetName.c_str());
+        _console.gprintf("Avg. FPS: %.2f\n", totalAvgFPS);
+        _console.gprintf("Min. FPS: %.2f\n", minFPS);
+        _console.gprintf("Max. FPS: %.2f\n", maxFPS);
 
         _selectedRenderTarget->blit(0, 0, _width, _height);
         _console.blit();
