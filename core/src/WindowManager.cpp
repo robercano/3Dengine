@@ -2,7 +2,7 @@
  * @class	WindowManager
  * @brief	Interface for window manager management
  *
- * @author	Roberto Sosa Cano
+ * @author	Roberto Cano (http://www.robertocano.es)
  */
 
 #include "WindowManager.hpp"

@@ -6,7 +6,7 @@
  *          OpenGL it would generate the VBO specific to the object 3D and cache
  *          that value so it can be used later on
  *
- * @author	Roberto Sosa Cano
+ * @author	Roberto Cano (http://www.robertocano.es)
  */
 #pragma once
 

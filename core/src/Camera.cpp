@@ -2,7 +2,7 @@
  * @class	Camera
  * @brief	Camera object
  *
- * @author	Roberto Sosa Cano
+ * @author	Roberto Cano (http://www.robertocano.es)
  */
 
 #include <glm/glm.hpp>

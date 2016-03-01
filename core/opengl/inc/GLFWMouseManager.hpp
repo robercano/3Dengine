@@ -2,7 +2,7 @@
  * @class	GLFWMouseManager
  * @brief	GLFW based mouse manager
  *
- * @author	Roberto Sosa Cano
+ * @author	Roberto Sosa Cano (http://www.robertocano.es)
  */
 #pragma once
 

@@ -2,7 +2,7 @@
  * @class	GLFWWindowManager
  * @brief	GLFW based window manager
  *
- * @author	Roberto Sosa Cano
+ * @author	Roberto Cano (http://www.robertocano.es)
  * @todo	Standarize the interface to make a generic Window Manager
  */
 #pragma once

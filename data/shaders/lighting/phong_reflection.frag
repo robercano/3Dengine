@@ -1,3 +1,6 @@
+//
+// Roberto Cano (http://www.robertocano.es)
+//
 #version 330 core
 
 /* Phong reflection model implemented follwoing the explanation

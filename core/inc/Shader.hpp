@@ -2,7 +2,7 @@
  * @class	Shader
  * @brief	Class to abstract shader functionality
  *
- * @author	Roberto Sosa Cano
+ * @author	Roberto Cano (http://www.robertocano.es)
  */
 #pragma once
 

@@ -2,7 +2,7 @@
  * @class	Game
  * @brief	Main game components aggregator
  *
- * @author	Roberto Sosa Cano
+ * @author	Roberto Cano (http://www.robertocano.es)
  */
 #pragma once
 

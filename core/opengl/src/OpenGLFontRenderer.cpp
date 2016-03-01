@@ -2,7 +2,7 @@
  * @class FontRenderer
  * @brief Uses a TrueType font to render text on a RenderTarget
  *
- * @author Roberto Cano
+ * @author	Roberto Cano (http://www.robertocano.es)
  */
 #include <string.h>
 #include "OpenGLFontRenderer.hpp"

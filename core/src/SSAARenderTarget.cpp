@@ -6,7 +6,7 @@
  *
  *          The SSAA render target applies no super sampling antialising
  *
- * @author	Roberto Sosa Cano (http://www.robertocano.es)
+ * @author	Roberto Cano (http://www.robertocano.es)
  */
 
 #include "SSAARenderTarget.hpp"

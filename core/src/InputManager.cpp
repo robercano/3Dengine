@@ -4,7 +4,7 @@
  *
  * @todo	The first version is just a basic keyboard and mouse handler
  *
- * @author	Roberto Sosa Cano
+ * @author	Roberto Cano (http://www.robertocano.es)
  */
 #include <string.h>
 #include "InputManager.hpp"

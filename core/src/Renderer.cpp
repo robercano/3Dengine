@@ -2,7 +2,7 @@
  * @class	Renderer
  * @brief	Interface for software/hardware renderers
  *
- * @author	Roberto Sosa Cano
+ * @author	Roberto Cano (http://www.robertocano.es)
  */
 
 #include "Renderer.hpp"

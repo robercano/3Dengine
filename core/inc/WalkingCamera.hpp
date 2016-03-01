@@ -3,7 +3,7 @@
  * @brief	Specialization of the camera object for a walking camera
  *			(Y coord is always the same)
  *
- * @author	Roberto Sosa Cano
+ * @author	Roberto Cano (http://www.robertocano.es)
  */
 #pragma once
 

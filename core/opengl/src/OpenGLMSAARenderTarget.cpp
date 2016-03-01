@@ -4,7 +4,7 @@
  *          instead of to the main screen. Then the target can be rendered to the main screen as
  *          a texture
  *
- * @author	Roberto Sosa Cano (http://www.robertocano.es)
+ * @author	Roberto Cano (http://www.robertocano.es)
  */
 #include "OpenGL.h"
 #include "OpenGLMSAARenderTarget.hpp"

@@ -2,7 +2,7 @@
  * @module  Plane
  * @brief	Plane procedural generation
  *
- * @author	Roberto Sosa Cano
+ * @author	Roberto Cano (http://www.robertocano.es)
  */
 #pragma once
 

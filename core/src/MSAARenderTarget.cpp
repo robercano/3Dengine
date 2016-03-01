@@ -6,7 +6,7 @@
  *
  *          The MSAA render target applies multi-sampling antialising
  *
- * @author	Roberto Sosa Cano (http://www.robertocano.es)
+ * @author	Roberto Cano (http://www.robertocano.es)
  */
 
 #include "MSAARenderTarget.hpp"

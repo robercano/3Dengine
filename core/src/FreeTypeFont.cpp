@@ -4,7 +4,7 @@
  *        It also implements a cache of pre-renderered letters for
  *        later use. The cache is empty upon construction
  *
- * @author Roberto Cano
+ * @author	Roberto Cano (http://www.robertocano.es)
  */
 #include "FreeTypeFont.hpp"
 

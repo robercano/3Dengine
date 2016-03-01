@@ -2,7 +2,7 @@
  * @class	Object3D
  * @brief	Basic object 3D representation
  *
- * @author	Roberto Sosa Cano
+ * @author	Roberto Cano (http://www.robertocano.es)
  */
 #pragma once
 

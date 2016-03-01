@@ -6,7 +6,7 @@
  *
  *          The NOAA render target applies no anti-alising to the rendering
  *
- * @author	Roberto Sosa Cano (http://www.robertocano.es)
+ * @author	Roberto Cano (http://www.robertocano.es)
  */
 #include "OpenGL.h"
 #include "OpenGLNOAARenderTarget.hpp"

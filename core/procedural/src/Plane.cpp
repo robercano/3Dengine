@@ -2,7 +2,7 @@
  * @module  Procedural
  * @brief	Procedural objects generation library
  *
- * @author	Roberto Sosa Cano
+ * @author	Roberto Cano (http://www.robertocano.es)
  */
 #include "Plane.hpp"
 #include <glm/glm.hpp>

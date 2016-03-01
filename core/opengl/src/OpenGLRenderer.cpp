@@ -2,7 +2,7 @@
  * @class	OpenGLRenderer
  * @brief	OpenGL based 3D renderer
  *
- * @author	Roberto Sosa Cano
+ * @author	Roberto Cano (http://www.robertocano.es)
  */
 #include "OpenGL.h"
 #include "OpenGLRenderer.hpp"

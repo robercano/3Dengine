@@ -2,7 +2,7 @@
  * @class	OpenGLShader
  * @brief   OpenGL shader implementation
  *
- * @author	Roberto Sosa Cano
+ * @author	Roberto Cano (http://www.robertocano.es)
  */
 #pragma once
 

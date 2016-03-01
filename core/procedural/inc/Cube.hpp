@@ -2,7 +2,7 @@
  * @class	Cube
  * @brief   Procedural cube
  *
- * @author	Roberto Sosa Cano
+ * @author	Roberto Cano (http://www.robertocano.es)
  */
 #pragma once
 

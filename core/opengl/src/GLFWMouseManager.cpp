@@ -2,7 +2,7 @@
  * @class	GLFWMouseManager
  * @brief	GLFW based mouse manager
  *
- * @author	Roberto Sosa Cano
+ * @author	Roberto Cano (http://www.robertocano.es)
  */
 #include <GL/glfw.h>
 #include "GLFWMouseManager.hpp"

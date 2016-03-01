@@ -4,7 +4,7 @@
  *          to print text to a render target. It allows to choose the color, the font type
  *          and the font size.
  *
- * @author	Roberto Sosa Cano
+ * @author	Roberto Cano (http://www.robertocano.es)
  */
 #include <stdio.h>
 #include <stdarg.h>

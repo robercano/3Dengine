@@ -2,7 +2,7 @@
  * @class	OpenGLObject3D
  * @brief	OpengGL object 3D representation
  *
- * @author	Roberto Cano
+ * @author	Roberto Cano (http://www.robertocano.es)
  */
 
 #include "OpenGLObject3D.hpp"

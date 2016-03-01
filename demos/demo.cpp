@@ -1,7 +1,7 @@
 /*
  * Vertex Buffer Objects demo
  *
- * @author	Roberto Sosa Cano
+ * @author	Roberto Cano (http://www.robertocano.es)
  */
 #include <string.h>
 #include "Game.hpp"

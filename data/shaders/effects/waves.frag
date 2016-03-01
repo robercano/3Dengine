@@ -1,3 +1,6 @@
+//
+// Roberto Cano (http://www.robertocano.es)
+//
 #version 330 core
 
 in vec2 f_texcoord;

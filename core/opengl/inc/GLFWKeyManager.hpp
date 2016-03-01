@@ -2,7 +2,7 @@
  * @class	GLFWKeyManager
  * @brief	GLFW based key manager
  *
- * @author	Roberto Sosa Cano
+ * @author	Roberto Cano (http://www.robertocano.es)
  */
 #pragma once
 

@@ -6,7 +6,7 @@
  *
  *          The NOAA render target applies no anti-aliasing
  *
- * @author	Roberto Sosa Cano (http://www.robertocano.es)
+ * @author	Roberto Cano (http://www.robertocano.es)
  */
 #pragma once
 
