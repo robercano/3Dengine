@@ -18,6 +18,15 @@ uniform struct Light {
     vec3 intensities;
 } light;
 
+/* Material definition for this geometry */
+uniform struct Material {
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+    float alpha;
+    float shininess;
+};
+
 uniform mat4 view;
 
 in vec3 fragment_vertex;
