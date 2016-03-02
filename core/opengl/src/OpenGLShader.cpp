@@ -10,8 +10,9 @@
 #include <stdio.h>
 #include "OpenGL.h"
 #include "OpenGLShader.hpp"
+#include "OpenGLMaterial.hpp"
 
-OpenGLShader::OpenGLShader(void) : _programID(0)
+OpenGLShader::OpenGLShader(void) : _programID(0), _material(NULL)
 {
 }
 
@@ -124,6 +125,22 @@ bool OpenGLShader::linkProgram(std::string &error)
 	_deleteShadersIDs();
 
 	return true;
+}
+
+Material *OpenGLShader::getMaterial()
+{
+    if (_material != NULL) {
+        return _material;
+    }
+
+    _material = new OpenGLMaterial();
+
+    if (_material->bindToShader(_programID) == false) {
+        delete _material;
+        _material = NULL;
+    }
+
+    return _material;
 }
 
 bool OpenGLShader::attach(void)
@@ -252,6 +269,5 @@ void OpenGLShader::_buildUniformsMap(void)
         GL( uniformID = glGetUniformLocation(_programID, uniformName) );
 
 		/* Save in map */
-		_uniformNames[uniformName] = uniformID;
-	}
+		_uniformNames[uniformName] = uniformID; }
 }

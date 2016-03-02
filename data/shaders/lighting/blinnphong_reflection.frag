@@ -13,19 +13,19 @@
    @author Roberto Cano
 */
 
-uniform struct Light {
-    vec3 position;
-    vec3 intensities;
-} light;
+//uniform struct Light {
+//    vec3 position;
+//    vec3 intensities;
+//} light;
 
 /* Material definition for this geometry */
-uniform struct Material {
+layout (std140) uniform Material {
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
     float alpha;
     float shininess;
-};
+} material;
 
 uniform mat4 view;
 
@@ -51,11 +51,11 @@ void main()
     float ambientK = 0.1;
 
     /* Material properties */
-    vec3 materialAmbient = vec3(0.24725, 0.2245, 0.0645);
-    vec3 materialDiffuse = vec3(0.34615, 0.3143, 0.0903);
-    vec3 materialSpecular = vec3(0.797357, 0.723991, 0.208006);
-    float materialAlpha = 1.0;
-    float shininess = 83.2;
+    vec3 materialAmbient = material.ambient;
+    vec3 materialDiffuse = material.diffuse;
+    vec3 materialSpecular = material.specular;
+    float materialAlpha = material.alpha;
+    float shininess = material.shininess;
 
     /* Calculate fragment position in world coordinates */
     vec3 fragmentPos = vec3(model*vec4(fragment_vertex, 1));
