@@ -50,13 +50,6 @@ void main()
     /* Ambient light constant */
     float ambientK = 0.1;
 
-    /* Material properties */
-    vec3 materialAmbient = material.ambient;
-    vec3 materialDiffuse = material.diffuse;
-    vec3 materialSpecular = material.specular;
-    float materialAlpha = material.alpha;
-    float shininess = material.shininess;
-
     /* Calculate fragment position in world coordinates */
     vec3 fragmentPos = vec3(model*vec4(fragment_vertex, 1));
 
@@ -83,11 +76,11 @@ void main()
     /*      Ambient + Diffuse          + Specular */
     Ia = clamp(ambientK, 0.0, 1.0);
     Id = clamp(dot(L, N), 0.0, 1.0);
-    Is = clamp(pow(dot(N, H), shininess), 0.0, 1.0);
+    Is = clamp(pow(dot(N, H), material.shininess), 0.0, 1.0);
 
-    colorAmbient  = lightAmbient*materialAmbient*Ia;
-    colorDiffuse  = lightDiffuse*materialDiffuse*Id;
-    colorSpecular  = lightSpecular*materialSpecular*Is;
+    colorAmbient  = lightAmbient*material.ambient*Ia;
+    colorDiffuse  = lightDiffuse*material.diffuse*Id;
+    colorSpecular  = lightSpecular*material.specular*Is;
 
     if (dot(L, N) <= 0) {
         colorSpecular = vec3(0.0);
@@ -96,6 +89,6 @@ void main()
     /* Attenuation */
     float attenuation = 1.0 / (1.0 + 0.00001 * pow(length(lightPos - fragmentPos), 2));
 
-    color = vec4(colorAmbient + attenuation*(colorDiffuse + colorSpecular), materialAlpha);
+    color = vec4(colorAmbient + attenuation*(colorDiffuse + colorSpecular), material.alpha);
 }
 
