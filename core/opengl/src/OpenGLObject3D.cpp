@@ -72,6 +72,9 @@ bool OpenGLObject3D::init(const Object3D &object)
                              &(object.getIndexData()[0]),
                              GL_STATIC_DRAW) );
         }
+
+        /* TODO: Upload the textures */
+        const std::vector< Texture > &textures = object.getTextures();
     }
     GL( glBindVertexArray(0) );
 

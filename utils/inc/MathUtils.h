@@ -1,7 +1,7 @@
 /**
  * Misc funtions to aid different parts of the engine
  *
- * @author Roberto Cano
+ * @author Roberto Cano (http://www.robertocano.es)
  */
 #pragma once
 

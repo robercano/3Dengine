@@ -10,6 +10,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include "Material.hpp"
+#include "Texture.hpp"
 
 class Object3D
 {
@@ -37,6 +38,10 @@ class Object3D
         {
             return _materials;
         }
+        const std::vector< Texture > &getTextures() const
+        {
+            return _textures;
+        }
         const std::vector< uint32_t > &getIndicesOffsets() const
         {
             return _indicesOffsets;
@@ -55,6 +60,7 @@ class Object3D
         std::vector<Object3D::VertexData> _objectData;
         std::vector<uint32_t>             _objectIndices;
         std::vector<Material>             _materials;
+        std::vector<Texture>              _textures;
         std::vector<uint32_t>             _indicesOffsets;
         std::vector<uint32_t>             _indicesCount;
 };

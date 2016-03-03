@@ -14,6 +14,7 @@
 
 #include "Object3D.hpp"
 #include "Material.hpp"
+#include "Texture.hpp"
 
 class OBJFormat : public Object3D
 {

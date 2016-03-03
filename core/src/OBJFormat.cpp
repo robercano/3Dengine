@@ -10,6 +10,7 @@
 #include <string.h>
 #include <glm/glm.hpp>
 #include "OBJFormat.hpp"
+#include "JPEGLoader.h"
 
 using namespace std;
 
@@ -22,14 +23,17 @@ bool OBJFormat::load(const string &filename)
     bool ret = true;
     uint32_t i;
     uint32_t numFaces = 0;
+    uint8_t *texture = NULL;
+    uint32_t texWidth, texHeight, texBytesPerPixel;
 
     std::map< std::string, std::vector<uint32_t> > indices;
     std::map< std::string, Material >              materials;
+    std::map< std::string, Texture >               textures;
 
     std::vector<uint32_t> *activeIndices = NULL;
 
-    std::string matFile = filename + ".mtl";
-    std::string geoFile = filename + ".obj";
+    std::string matFile = filename + "/material.mtl";
+    std::string geoFile = filename + "/geometry.obj";
 
     /* Open the materials file */
     FILE *file = fopen(matFile.c_str(), "r");
@@ -92,13 +96,33 @@ bool OBJFormat::load(const string &filename)
                     if (res != 1) {
                         printf("ERROR reading Ns format from OBJ file\n");
                     }
+                    continue;
+                }
+                /* map_Kd */
+                if (strncmp(line, "map_Kd ", 7) == 0) {
+                    std::string texname = filename + std::string("/") + std::string(line+7);
+
+                    if (strcmp(line+7, "null") != 0) {
+                        /* Load the texture */
+                        if (loadJPEG(texname.c_str(), &texture, &texWidth, &texHeight, &texBytesPerPixel) != 0) {
+                            printf("ERROR loading texture %s\n", texname.c_str());
+                            ret = false;
+                            goto error_exit;
+                        }
+                    } else {
+                        texture = NULL;
+                    }
                     break;
                 }
+
             } /* Material components read */
 
             /* Add the new material */
             indices[matName] = std::vector<uint32_t>();
             materials[matName] = Material(ambient, diffuse, specular, 1.0, shininess);
+            textures[matName]  = Texture(texture, texWidth, texHeight, texBytesPerPixel);
+
+            free(texture);
         }
     }
 
@@ -207,6 +231,7 @@ bool OBJFormat::load(const string &filename)
     /* Now consolidate the data */
     for (it=materials.begin(); it!=materials.end(); ++it) {
         _materials.push_back(it->second);
+        _textures.push_back(textures[it->first]);
 
         std::vector<uint32_t> *idx = &indices[it->first];
 

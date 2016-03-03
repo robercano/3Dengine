@@ -19,7 +19,7 @@ VPATH=core/src:core/opengl/src:core/procedural/src:utils/src
 
 CORE_FILES=Camera.cpp Game.cpp InputManager.cpp OBJFormat.cpp Renderer.cpp WindowManager.cpp TrueTypeFont.cpp FreeTypeFont.cpp \
 		   FontRenderer.cpp NOAARenderTarget.cpp MSAARenderTarget.cpp SSAARenderTarget.cpp TextConsole.cpp
-UTILS_FILES=MathUtils.c
+UTILS_FILES=MathUtils.c JPEGLoader.c
 OPENGL_FILES=GLFWKeyManager.cpp GLFWMouseManager.cpp GLFWWindowManager.cpp \
 			 OpenGLNOAARenderTarget.cpp OpenGLMSAARenderTarget.cpp OpenGLSSAARenderTarget.cpp \
              OpenGLRenderer.cpp OpenGLShader.cpp OpenGLObject3D.cpp OpenGLFontRenderer.cpp OpenGLShaderMaterial.cpp \
@@ -39,13 +39,13 @@ DEMODIR=demos
 
 # Mac OS alternate cmdline link options
 ifeq ($(UNAME), Darwin)
-LDFLAGS= -L/opt/X11/lib -lfreetype -lglew -lglfw -framework Cocoa -framework OpenGL -framework IOKit -fPIC
+LDFLAGS= -L/opt/X11/lib -lfreetype -lglew -lglfw -ljpeg -framework Cocoa -framework OpenGL -framework IOKit -fPIC
 CXXFLAGS=-I/opt/X11/include -I/opt/X11/include/freetype2/
 SHAREDGEN= -dynamiclib -Wl,-headerpad_max_install_names,-undefined,dynamic_lookup,-compatibility_version,1.0,-current_version,1.0,-install_name,$(LIBNAME)
 SHAREDEXT=dylib
 PREFIX=/usr/local/lib
 else
-LDFLAGS= -lGL -lGLEW -lglfw -lfreetype -fPIC
+LDFLAGS= -lGL -lGLEW -lglfw -lfreetype -ljpeg -fPIC
 CXXFLAGS=-I/usr/include -I/usr/include/freetype2
 SHAREDGEN= -shared
 SHAREDEXT=so
