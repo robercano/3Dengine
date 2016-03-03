@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include "OpenGL.h"
 #include "OpenGLShader.hpp"
-#include "OpenGLMaterial.hpp"
+#include "OpenGLShaderMaterial.hpp"
 
 OpenGLShader::OpenGLShader(void) : _programID(0), _material(NULL)
 {
@@ -127,13 +127,13 @@ bool OpenGLShader::linkProgram(std::string &error)
 	return true;
 }
 
-Material *OpenGLShader::getMaterial()
+ShaderMaterial *OpenGLShader::getMaterial()
 {
     if (_material != NULL) {
         return _material;
     }
 
-    _material = new OpenGLMaterial();
+    _material = new OpenGLShaderMaterial();
 
     if (_material->prepareForShader(_programID) == false) {
         delete _material;

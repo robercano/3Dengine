@@ -64,6 +64,8 @@ bool OpenGLRenderer::renderObject3D(RendererObject3D &object, Shader &shader,
         GL( glEnable(GL_MULTISAMPLE) );
 
         /* Bind program to upload the uniform */
+        ShaderMaterial *shaderMaterial = shader.getMaterial();
+
         shader.attach();
 
         /* Send our transformation to the currently bound shader, in the "MVP" uniform */
@@ -73,7 +75,14 @@ bool OpenGLRenderer::renderObject3D(RendererObject3D &object, Shader &shader,
         /* Draw the object */
         GL( glBindVertexArray(glObject.getVertexArrayID()) );
         {
-            GL( glDrawElements(GL_TRIANGLES, glObject.getIndicesArrayLen(), GL_UNSIGNED_INT, NULL) );
+            std::vector<Material> materials = glObject.getMaterials();
+            std::vector<uint32_t> offset    = glObject.getIndicesOffsets();
+            std::vector<uint32_t> count     = glObject.getIndicesCount();
+
+            for (int i=0; i<materials.size(); ++i) {
+                shaderMaterial->copyMaterial(materials[i]);
+                GL( glDrawElements(GL_TRIANGLES, count[i], GL_UNSIGNED_INT, (void*)(offset[i] * sizeof(GLuint))) );
+            }
         }
         GL( glBindVertexArray(0) );
 

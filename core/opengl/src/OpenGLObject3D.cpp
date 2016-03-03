@@ -21,7 +21,10 @@ bool OpenGLObject3D::init(const Object3D &object)
         GL( glBindBuffer(GL_ARRAY_BUFFER, _vertexDataVBO) );
         {
             /* Upload the data for this buffer */
-            GL( glBufferData(GL_ARRAY_BUFFER, object.getVertexDataSize(), object.getVertexData(), GL_STATIC_DRAW) );
+            GL( glBufferData(GL_ARRAY_BUFFER,
+                             object.getVertexData().size() * sizeof object.getVertexData()[0],
+                             &(object.getVertexData()[0]),
+                             GL_STATIC_DRAW) );
 
             /* First attribute contains the vertex coordinates */
             GL( glEnableVertexAttribArray(0) );
@@ -59,18 +62,22 @@ bool OpenGLObject3D::init(const Object3D &object)
                     ) );
         }
 
-        /* Generate the buffer for the indices */
-        GL( glGenBuffers(1, &_indicesVBO) );
-        GL( glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indicesVBO) );
+        /* Generate the buffer objects for the indices */
+        GL( glGenBuffers(1, &_indicesBO) );
+        GL( glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indicesBO) );
         {
             /* Upload the data */
-            GL( glBufferData(GL_ELEMENT_ARRAY_BUFFER, object.getIndicesArrayLen() * sizeof(GLuint), object.getIndicesArray(), GL_STATIC_DRAW) );
+            GL( glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+                             object.getIndexData().size() * sizeof(object.getIndexData()[0]),
+                             &(object.getIndexData()[0]),
+                             GL_STATIC_DRAW) );
         }
-
     }
     GL( glBindVertexArray(0) );
 
-    _indicesLen = object.getIndicesArrayLen();
+    _materials = object.getMaterials();
+    _indicesOffsets = object.getIndicesOffsets();
+    _indicesCount = object.getIndicesCount();
 
     return true;
 }

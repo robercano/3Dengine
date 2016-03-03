@@ -1,5 +1,5 @@
 /**
- * @class	OpenGLMaterial
+ * @class	OpenGLShaderMaterial
  * @brief	OpenGL material implemented as a block uniform to be used in
  *          a shader. Contains ambient, diffuse, specular, alpha and shininess
  *          components
@@ -8,13 +8,13 @@
  */
 #pragma once
 
-#include "Material.hpp"
 #include "OpenGL.h"
+#include "ShaderMaterial.hpp"
 #include "OpenGLUniformBlock.hpp"
 
-class OpenGLMaterial : public OpenGLUniformBlock, public Material
+class OpenGLShaderMaterial : public OpenGLUniformBlock, public ShaderMaterial
 {
 	public:
-        OpenGLMaterial();
-        bool setValues(glm::vec3 &ambient, glm::vec3 &diffuse, glm::vec3 &specular, float alpha, float shininess);
+        OpenGLShaderMaterial();
+        bool copyMaterial(Material &material);
 };

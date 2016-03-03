@@ -10,7 +10,7 @@
 #include <vector>
 #include <string>
 #include "Shader.hpp"
-#include "OpenGLMaterial.hpp"
+#include "OpenGLShaderMaterial.hpp"
 
 class OpenGLShader : public Shader
 {
@@ -57,7 +57,7 @@ class OpenGLShader : public Shader
 		 */
 		bool linkProgram(std::string &error);
 
-        Material *getMaterial();
+        ShaderMaterial *getMaterial();
 
 		/**
 		 * Makes the shader active
@@ -100,7 +100,6 @@ class OpenGLShader : public Shader
         bool setUniformFloat(const std::string &name, float value);
         bool setUniformVec4(const std::string &name, glm::vec4 &value);
         bool setUniformVec2(const std::string &name, glm::vec2 &value);
-        bool setMaterial(const Material &material);
 
 	private:
 		/**
@@ -141,5 +140,5 @@ class OpenGLShader : public Shader
 		 */
 		uint32_t _programID;
 
-        OpenGLMaterial *_material;
+        OpenGLShaderMaterial *_material;
 };

@@ -9,7 +9,7 @@
 #include <string>
 #include <map>
 #include <glm/glm.hpp>
-#include "Material.hpp"
+#include "ShaderMaterial.hpp"
 
 class Shader
 {
@@ -51,7 +51,7 @@ class Shader
 		 */
 		virtual bool linkProgram(std::string &error) = 0;
 
-        virtual Material *getMaterial() = 0;
+        virtual ShaderMaterial *getMaterial() = 0;
 
 		/**
 		 * Makes the shader active

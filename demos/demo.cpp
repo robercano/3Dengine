@@ -7,7 +7,7 @@
 #include "Game.hpp"
 #include "OBJFormat.hpp"
 #include "Shader.hpp"
-#include "Material.hpp"
+#include "ShaderMaterial.hpp"
 
 int main(int argc, char** argv)
 {
@@ -36,8 +36,8 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    Material *material = shader->getMaterial();
-    if (material == NULL) {
+    ShaderMaterial *shaderMaterial = shader->getMaterial();
+    if (shaderMaterial == NULL) {
         printf("ERROR shader does not have material\n");
         return 1;
     }
@@ -47,11 +47,12 @@ int main(int argc, char** argv)
     glm::vec3 specular = glm::vec3(0.797357, 0.723991, 0.208006);
     float alpha = 1.0f;
     float shininess = 83.2f;
+    Material material(ambient, diffuse, specular, alpha, shininess);
 
-    material->setValues(ambient, diffuse, specular, alpha, shininess);
+    shaderMaterial->copyMaterial(material);
 
     /* Load the geometry */
-    std::string meshPath = "data/objects/deadpool.obj";
+    std::string meshPath = "data/objects/deadpool";
 
     if (obj3D.load(meshPath) == false) {
         printf("ERROR loading OBJ file\n");

@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <vector>
 #include <string>
+#include <string.h>
 #include <glm/glm.hpp>
 #include "OBJFormat.hpp"
 
@@ -17,18 +18,104 @@ bool OBJFormat::load(const string &filename)
     std::vector< glm::vec3 > vertices;
     std::vector< glm::vec3 > normals;
     std::vector< glm::vec2 > uvcoords;
+    std::map< std::string, Material >::iterator it;
     bool ret = true;
     uint32_t i;
+    uint32_t numFaces = 0;
 
-    FILE *file = fopen(filename.c_str(), "r");
+    std::map< std::string, std::vector<uint32_t> > indices;
+    std::map< std::string, Material >              materials;
+
+    std::vector<uint32_t> *activeIndices = NULL;
+
+    std::string matFile = filename + ".mtl";
+    std::string geoFile = filename + ".obj";
+
+    /* Open the materials file */
+    FILE *file = fopen(matFile.c_str(), "r");
     if (file == NULL)  {
-        printf("ERROR cannot open file %s\n", filename.c_str());
+        printf("ERROR cannot open file %s\n", matFile.c_str());
+        return false;
+    }
+
+    /* Set the default group in case the OBJ file does not
+     * contain materials */
+    indices["Default"] = std::vector<uint32_t>();
+    materials["Default"] = Material();
+
+    for (;;) {
+        char line[512];
+        int res = fscanf(file, "%[^\r\n]\r\n", line);
+        if (res == EOF) {
+            break;
+        }
+
+        if (strncmp(line, "newmtl ", 7) == 0) {
+            std::string matName = line + 7;
+            glm::vec3 ambient, diffuse, specular;
+            float shininess;
+
+            /* Read the components */
+            for (;;) {
+                int res = fscanf(file, "%[^\r\n]\r\n", line);
+                if (res == EOF) {
+                    break;
+                }
+
+                /* Ka */
+                if (line[0] == 'K' && line[1] == 'a') {
+                    res = sscanf(line + 2, "%f %f %f", &ambient.r, &ambient.g, &ambient.b);
+                    if (res != 3) {
+                        printf("ERROR reading Ka format from OBJ file\n");
+                    }
+                    continue;
+                }
+                /* Kd */
+                if (line[0] == 'K' && line[1] == 'd') {
+                    res = sscanf(line + 2, "%f %f %f", &diffuse.r, &diffuse.g, &diffuse.b);
+                    if (res != 3) {
+                        printf("ERROR reading Kd format from OBJ file\n");
+                    }
+                    continue;
+                }
+                /* Ks */
+                if (line[0] == 'K' && line[1] == 's') {
+                    res = sscanf(line + 2, "%f %f %f", &specular.r, &specular.g, &specular.b);
+                    if (res != 3) {
+                        printf("ERROR reading Ks format from OBJ file\n");
+                    }
+                    continue;
+                }
+                /* Ns */
+                if (line[0] == 'N' && line[1] == 's') {
+                    res = sscanf(line + 2, "%f", &shininess);
+                    if (res != 1) {
+                        printf("ERROR reading Ns format from OBJ file\n");
+                    }
+                    break;
+                }
+            } /* Material components read */
+
+            /* Add the new material */
+            indices[matName] = std::vector<uint32_t>();
+            materials[matName] = Material(ambient, diffuse, specular, 1.0, shininess);
+        }
+    }
+
+    fclose(file);
+
+    activeIndices = &indices["Default"];
+
+    /* Open the geometry file */
+    file = fopen(geoFile.c_str(), "r");
+    if (file == NULL)  {
+        printf("ERROR cannot open file %s\n", geoFile.c_str());
         return false;
     }
 
     for (;;) {
         char line[512];
-        int res = fscanf(file, "%[^\n]\n", line);
+        int res = fscanf(file, "%[^\r\n]\r\n", line);
         if (res == EOF) {
             break;
         }
@@ -66,12 +153,23 @@ bool OBJFormat::load(const string &filename)
     /* Allocate size for the final data */
     _objectData.resize(vertices.size());
 
-    /* Now parse the faces */
+    /* Now parse the groups and the faces */
     for (;;) {
         char line[512];
-        int res = fscanf(file, "%[^\n]\n", line);
+        int res = fscanf(file, "%[^\r\n]\r\n", line);
         if (res == EOF) {
             break;
+        }
+
+        /* Material group */
+        if (strncmp(line, "usemtl ", 7) == 0) {
+            std::string materialName = line + 7;
+            if (materials.find(materialName) == materials.end()) {
+                printf("ERROR referenced material %s not found in material list\n", materialName.c_str());
+                break;
+            }
+
+            activeIndices = &indices[materialName];
         }
 
         /* Faces */
@@ -93,48 +191,37 @@ bool OBJFormat::load(const string &filename)
                 uint32_t normalIdx = normalIndex[i] - 1;
                 uint32_t uvIdx     = uvIndex[i] - 1;
 
-                _indices.push_back(vertexIdx);
+                /* Push the index to the geometry group and
+                 * the data to the global data buffer */
+                activeIndices->push_back(vertexIdx);
 
                 _objectData[vertexIdx].vertex  = vertices[vertexIdx];
                 _objectData[vertexIdx].normal  = normals[normalIdx];
                 _objectData[vertexIdx].uvcoord = uvcoords[uvIdx];
             }
+
+            numFaces++;
         }
     }
 
-    printf("Loaded %s with %zu vertices and %zu faces\n", filename.c_str(), _objectData.size(), _indices.size()/3);
+    /* Now consolidate the data */
+    for (it=materials.begin(); it!=materials.end(); ++it) {
+        _materials.push_back(it->second);
+
+        std::vector<uint32_t> *idx = &indices[it->first];
+
+        _indicesOffsets.push_back(_objectIndices.size());
+
+        /* Append to the final indices vector */
+        _objectIndices.reserve(_objectIndices.size() + idx->size());
+        _objectIndices.insert(_objectIndices.end(), idx->begin(), idx->end());
+
+        _indicesCount.push_back(idx->size());
+    }
+
+    printf("Loaded %s with %zu vertices and %zu faces\n", filename.c_str(), _objectData.size(), _objectIndices.size()/3);
 
 error_exit:
     fclose(file);
     return ret;
-}
-
-const Object3D::VertexData *OBJFormat::getVertexData() const
-{
-    return (Object3D::VertexData*)&_objectData[0];
-}
-
-uint32_t OBJFormat::getVertexDataLen() const
-{
-    return _objectData.size();
-}
-
-uint32_t OBJFormat::getVertexDataSize() const
-{
-    return _objectData.size() * sizeof(Object3D::VertexData);
-}
-
-const uint32_t *OBJFormat::getIndicesArray() const
-{
-    return (uint32_t*)&_indices[0];
-}
-
-uint32_t OBJFormat::getIndicesArrayLen() const
-{
-    return _indices.size();
-}
-
-uint32_t OBJFormat::getIndicesArraySize() const
-{
-    return _indices.size() * sizeof(uint32_t);
 }

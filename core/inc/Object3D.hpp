@@ -8,6 +8,8 @@
 
 #include <stdint.h>
 #include <glm/glm.hpp>
+#include <vector>
+#include "Material.hpp"
 
 class Object3D
 {
@@ -23,10 +25,36 @@ class Object3D
 		 */
 		virtual ~Object3D() {}
 
-        virtual const VertexData *getVertexData() const = 0;
-        virtual uint32_t getVertexDataLen() const = 0;
-        virtual uint32_t getVertexDataSize() const = 0;
-        virtual const uint32_t *getIndicesArray() const = 0;
-        virtual uint32_t getIndicesArrayLen() const = 0;
-        virtual uint32_t getIndicesArraySize() const = 0;
+        const std::vector< Object3D::VertexData > &getVertexData() const
+        {
+            return _objectData;
+        }
+        const std::vector< uint32_t > &getIndexData() const
+        {
+            return _objectIndices;
+        }
+        const std::vector< Material > &getMaterials() const
+        {
+            return _materials;
+        }
+        const std::vector< uint32_t > &getIndicesOffsets() const
+        {
+            return _indicesOffsets;
+        }
+        const std::vector< uint32_t > &getIndicesCount() const
+        {
+            return _indicesCount;
+        }
+
+    protected:
+        Object3D() {}
+
+        /**
+         * Object data
+         */
+        std::vector<Object3D::VertexData> _objectData;
+        std::vector<uint32_t>             _objectIndices;
+        std::vector<Material>             _materials;
+        std::vector<uint32_t>             _indicesOffsets;
+        std::vector<uint32_t>             _indicesCount;
 };

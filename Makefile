@@ -22,7 +22,7 @@ CORE_FILES=Camera.cpp Game.cpp InputManager.cpp OBJFormat.cpp Renderer.cpp Windo
 UTILS_FILES=MathUtils.c
 OPENGL_FILES=GLFWKeyManager.cpp GLFWMouseManager.cpp GLFWWindowManager.cpp \
 			 OpenGLNOAARenderTarget.cpp OpenGLMSAARenderTarget.cpp OpenGLSSAARenderTarget.cpp \
-             OpenGLRenderer.cpp OpenGLShader.cpp OpenGLObject3D.cpp OpenGLFontRenderer.cpp OpenGLMaterial.cpp \
+             OpenGLRenderer.cpp OpenGLShader.cpp OpenGLObject3D.cpp OpenGLFontRenderer.cpp OpenGLShaderMaterial.cpp \
 			 OpenGLUniformBlock.cpp
 #PROCEDURAL_FILES=Cube.cpp Icosahedron.cpp Plane.cpp Sphere.cpp
 

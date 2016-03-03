@@ -10,31 +10,26 @@
  */
 #pragma once
 
-#include "RendererObject3D.hpp"
 #include <stdint.h>
+#include "RendererObject3D.hpp"
+#include "OpenGL.h"
 
 class OpenGLObject3D : public RendererObject3D
 {
 	public:
         bool init(const Object3D &object);
         bool destroy();
-        const uint32_t getVertexArrayID() { return _gVAO; }
-        const uint32_t getIndicesArrayLen() { return _indicesLen; }
+        uint32_t getVertexArrayID() { return _gVAO; }
+        uint32_t getIndicesArrayID() { return _indicesBO; }
+        const std::vector<Material> &getMaterials() { return _materials; }
+        const std::vector<uint32_t> &getIndicesOffsets() { return _indicesOffsets; }
+        const std::vector< uint32_t > &getIndicesCount() const { return _indicesCount; }
 
     private:
-        /**
-         * Vertex array object ID
-         */
-        uint32_t _gVAO;
-
-        /**
-         * Vertex buffer object for vertices
-         */
-        uint32_t _vertexDataVBO;
-
-        /**
-         * Vertex buffer object for indices
-         */
-        uint32_t _indicesVBO;
-        uint32_t _indicesLen;
+        GLuint _gVAO;
+        GLuint _vertexDataVBO;
+        GLuint _indicesBO;
+        std::vector<Material> _materials;
+        std::vector<uint32_t> _indicesOffsets;
+        std::vector<uint32_t> _indicesCount;
 };
