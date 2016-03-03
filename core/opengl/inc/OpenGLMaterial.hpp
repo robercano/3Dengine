@@ -10,20 +10,11 @@
 
 #include "Material.hpp"
 #include "OpenGL.h"
+#include "OpenGLUniformBlock.hpp"
 
-class OpenGLMaterial : public Material
+class OpenGLMaterial : public OpenGLUniformBlock, public Material
 {
 	public:
-        OpenGLMaterial() : _paramsBuffer(NULL) {}
-        ~OpenGLMaterial();
-
-        bool bindToShader(GLuint programID);
+        OpenGLMaterial();
         bool setValues(glm::vec3 &ambient, glm::vec3 &diffuse, glm::vec3 &specular, float alpha, float shininess);
-
-    private:
-        GLuint _uniformBO;
-        GLubyte *_paramsBuffer;
-        GLint _paramsOffset[5];
-        GLuint _blockIndex;
-        GLint _blockSize;
 };

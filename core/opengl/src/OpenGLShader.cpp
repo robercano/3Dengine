@@ -135,7 +135,7 @@ Material *OpenGLShader::getMaterial()
 
     _material = new OpenGLMaterial();
 
-    if (_material->bindToShader(_programID) == false) {
+    if (_material->prepareForShader(_programID) == false) {
         delete _material;
         _material = NULL;
     }
