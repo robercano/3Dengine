@@ -84,8 +84,8 @@ bool OpenGLRenderer::renderObject3D(RendererObject3D &object, Shader &shader,
 
             for (int i=0; i<materials.size(); ++i) {
                 GL( glBindTexture(GL_TEXTURE_2D, texturesIDs[i]) );
-
                 shaderMaterial->copyMaterial(materials[i]);
+
                 GL( glDrawElements(GL_TRIANGLES, count[i], GL_UNSIGNED_INT, (void*)(offset[i] * sizeof(GLuint))) );
             }
         }

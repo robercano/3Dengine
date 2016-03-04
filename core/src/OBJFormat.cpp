@@ -25,6 +25,7 @@ bool OBJFormat::load(const string &filename)
     uint32_t numFaces = 0;
     uint8_t *texture = NULL;
     uint32_t texWidth, texHeight, texBytesPerPixel;
+    std::vector<bool> positionSet;
 int t=0;
 
     std::map< std::string, std::vector<uint32_t> > indices;
@@ -160,7 +161,7 @@ int t=0;
             glm::vec3 normal;
             res = sscanf(line + 3, "%f %f %f", &normal.x, &normal.y, &normal.z);
             if (res != 3) {
-                printf("ERROR reading vt format from OBJ file\n");
+                printf("ERROR reading vn format from OBJ file\n");
             }
             normals.push_back(normal);
         } else if (line[0] == 'v' && line[1] == 't' && line[2] == ' ') {
@@ -170,6 +171,10 @@ int t=0;
             if (res != 2) {
                 printf("ERROR reading vt format from OBJ file\n");
             }
+            /* Adjust uv.y as OBJ defines (0,0) to be top-left corner while
+             * OpenGL uses (0,0) for bottom left corner. No idea what DirectX
+             * interpretation is. For now just fix it for OpenGL */
+            uv.y = 1.0f - uv.y;
             uvcoords.push_back(uv);
         }
     }
@@ -179,6 +184,7 @@ int t=0;
 
     /* Allocate size for the final data */
     _objectData.resize(vertices.size());
+    positionSet.resize(vertices.size(), false);
 
     /* Now parse the groups and the faces */
     for (;;) {
@@ -217,14 +223,29 @@ int t=0;
                 uint32_t vertexIdx = vertexIndex[i] - 1;
                 uint32_t normalIdx = normalIndex[i] - 1;
                 uint32_t uvIdx     = uvIndex[i] - 1;
+                uint32_t dataIdx   = vertexIdx;
+
+                if (positionSet[dataIdx] == true) {
+                    if (_objectData[dataIdx].normal != normals[normalIdx] ||
+                        _objectData[dataIdx].uvcoord != uvcoords[uvIdx]) {
+
+                        dataIdx = _objectData.size();
+                        _objectData.resize(_objectData.size() + 1);
+                        positionSet.resize(positionSet.size() + 1, false);
+                    }
+                }
+
+                if (positionSet[dataIdx] == false) {
+                    _objectData[dataIdx].vertex  = vertices[vertexIdx];
+                    _objectData[dataIdx].normal  = normals[normalIdx];
+                    _objectData[dataIdx].uvcoord = uvcoords[uvIdx];
+
+                    positionSet[vertexIdx] = true;
+                }
 
                 /* Push the index to the geometry group and
                  * the data to the global data buffer */
-                activeIndices->push_back(vertexIdx);
-
-                _objectData[vertexIdx].vertex  = vertices[vertexIdx];
-                _objectData[vertexIdx].normal  = normals[normalIdx];
-                _objectData[vertexIdx].uvcoord = uvcoords[uvIdx];
+                activeIndices->push_back(dataIdx);
             }
 
             numFaces++;

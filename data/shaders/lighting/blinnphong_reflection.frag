@@ -45,9 +45,9 @@ void main()
 
     /* Light source */
 vec3 lightPos = vec3(200, 150, 100);
-vec3 lightAmbient  = vec3(1.0, 1.0, 0.984313);
-vec3 lightDiffuse  = vec3(1.0, 1.0, 0.984313);
-vec3 lightSpecular = vec3(1.0, 1.0, 0.984313);
+vec3 lightAmbient  = vec3(1.0, 1.0, 1.0);
+vec3 lightDiffuse  = vec3(1.0, 1.0, 1.0);
+vec3 lightSpecular = vec3(1.0, 1.0, 1.0);
 
     /* Texel color */
     vec4 texel = texture(diffuseMap, fragment_uvcoord);
