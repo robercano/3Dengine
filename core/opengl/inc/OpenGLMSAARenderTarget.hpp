@@ -50,10 +50,5 @@ class OpenGLMSAARenderTarget : public MSAARenderTarget
         GLuint _vertexArray;
         GLuint _vertexBuffer;
 
-        /**
-         * Shader for the target rendering to screen
-         */
-        Shader *_shader;
-
         uint32_t _samples;
 };

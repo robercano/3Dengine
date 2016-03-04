@@ -21,8 +21,8 @@ void main(void) {
     /* sRGB to linear conversion, OpenGL does not support
        the shader outputting sRGB when GL_FRAMEBUFFER_SRGB is
        enabled  */
-    fragColor.rgba = vec4(sRGB2Linear(fragColor.r),
-                          sRGB2Linear(fragColor.g),
-                          sRGB2Linear(fragColor.b),
-                          fragColor.a);
+    fragColor= vec4(sRGB2Linear(fragColor.r),
+                    sRGB2Linear(fragColor.g),
+                    sRGB2Linear(fragColor.b),
+                    fragColor.a);
 }

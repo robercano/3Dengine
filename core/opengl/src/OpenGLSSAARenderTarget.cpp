@@ -14,8 +14,6 @@
 
 OpenGLSSAARenderTarget::~OpenGLSSAARenderTarget()
 {
-    delete _shader;
-
     GL( glDeleteBuffers(1, &_vertexBuffer) );
     GL( glDeleteVertexArrays(1, &_vertexArray) );
     GL( glDeleteTextures(1, &_colorBuffer) );
@@ -92,23 +90,6 @@ bool OpenGLSSAARenderTarget::init(uint32_t width, uint32_t height, uint32_t fact
         GL( glBindBuffer(GL_ARRAY_BUFFER, 0) );
     }
     GL( glBindVertexArray(0) );
-
-    /* Create the shader */
-    _shader = Renderer::GetRenderer()->newShader();
-
-	std::string error;
-	if (_shader->loadVertexShader("data/shaders/effects/noeffect.vert", error) == false) {
-		printf("ERROR compiling vertex shader: %s\n", error.c_str());
-		return 1;
-	}
-	if (_shader->loadFragmentShader("data/shaders/effects/noeffect.frag", error) == false) {
-		printf("ERROR compiling fragment shader: %s\n", error.c_str());
-		return 1;
-	}
-	if (_shader->linkProgram(error) == false) {
-		printf("ERROR linking shader: %s\n", error.c_str());
-		return 1;
-	}
 
     _width = width;
     _height = height;

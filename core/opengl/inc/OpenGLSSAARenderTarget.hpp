@@ -47,10 +47,5 @@ class OpenGLSSAARenderTarget : public SSAARenderTarget
         GLuint _vertexArray;
         GLuint _vertexBuffer;
 
-        /**
-         * Shader for the target rendering to screen
-         */
-        Shader *_shader;
-
         uint32_t _factor;
 };
