@@ -36,21 +36,6 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    ShaderMaterial *shaderMaterial = shader->getMaterial();
-    if (shaderMaterial == NULL) {
-        printf("ERROR shader does not have material\n");
-        return 1;
-    }
-
-    glm::vec3 ambient = glm::vec3(0.24725, 0.2245, 0.0645);
-    glm::vec3 diffuse = glm::vec3(0.34615, 0.3143, 0.0903);
-    glm::vec3 specular = glm::vec3(0.797357, 0.723991, 0.208006);
-    float alpha = 1.0f;
-    float shininess = 83.2f;
-    Material material(ambient, diffuse, specular, alpha, shininess);
-
-    shaderMaterial->copyMaterial(material);
-
     /* Load the geometry */
     std::string meshPath = "data/objects/deadpool";
 
