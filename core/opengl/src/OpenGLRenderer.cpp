@@ -62,6 +62,7 @@ bool OpenGLRenderer::renderObject3D(RendererObject3D &object, Shader &shader,
         GL( glClearColor(0.0, 0.0, 0.0, 1.0) );
         GL( glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT) );
         GL( glEnable(GL_MULTISAMPLE) );
+        GL( glActiveTexture(GL_TEXTURE0) );
 
         /* Bind program to upload the uniform */
         ShaderMaterial *shaderMaterial = shader.getMaterial();
@@ -71,15 +72,19 @@ bool OpenGLRenderer::renderObject3D(RendererObject3D &object, Shader &shader,
         /* Send our transformation to the currently bound shader, in the "MVP" uniform */
         shader.setUniformMat4("MVP", MVP);
         shader.setUniformMat4("view", view);
+        shader.setUniformTexture2D("diffuseMap", 0);
 
         /* Draw the object */
         GL( glBindVertexArray(glObject.getVertexArrayID()) );
         {
-            std::vector<Material> materials = glObject.getMaterials();
-            std::vector<uint32_t> offset    = glObject.getIndicesOffsets();
-            std::vector<uint32_t> count     = glObject.getIndicesCount();
+            std::vector<Material> materials   = glObject.getMaterials();
+            std::vector<uint32_t> texturesIDs = glObject.getTextures();
+            std::vector<uint32_t> offset      = glObject.getIndicesOffsets();
+            std::vector<uint32_t> count       = glObject.getIndicesCount();
 
             for (int i=0; i<materials.size(); ++i) {
+                GL( glBindTexture(GL_TEXTURE_2D, texturesIDs[i]) );
+
                 shaderMaterial->copyMaterial(materials[i]);
                 GL( glDrawElements(GL_TRIANGLES, count[i], GL_UNSIGNED_INT, (void*)(offset[i] * sizeof(GLuint))) );
             }

@@ -29,7 +29,6 @@ class Texture
             }
         }
 
-    private:
         uint8_t *_texture;
         uint32_t _width;
         uint32_t _height;

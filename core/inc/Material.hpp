@@ -16,12 +16,21 @@ class Material
         /* The default constructor sets some wierd material
          * to identify it visually if some materials are not
          * set properly */
-        Material() :
+        Material(bool strange=false) :
             _ambient(glm::vec3(0.2f, 0.2f, 0.2f)),
             _diffuse(glm::vec3(1.0f, 1.0f, 1.0f)),
             _specular(glm::vec3(0.0f, 0.0f, 0.0f)),
             _alpha(1.0),
-            _shininess(0.0f) {}
+            _shininess(0.0f)
+        {
+            if (strange) {
+                _ambient  = glm::vec3(0.0f, 1.0f, 0.0f);
+                _diffuse  = glm::vec3(0.0f, 1.0f, 0.0f);
+                _specular = glm::vec3(0.0f, 1.0f, 0.0f);
+                _alpha = 1.0;
+                _shininess = 0.5f;
+            }
+        }
 
         Material(glm::vec3 &ambient, glm::vec3 &diffuse, glm::vec3 &specular, float alpha, float shininess) :
             _ambient(ambient),
@@ -35,7 +44,7 @@ class Material
         glm::vec3 getSpecular() { return _specular; }
         float     getAlpha()    { return _alpha; }
         float     getShininess(){ return _shininess; }
-    private:
+//    private:
         glm::vec3 _ambient;
         glm::vec3 _diffuse;
         glm::vec3 _specular;

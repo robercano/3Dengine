@@ -18,6 +18,8 @@
 //    vec3 intensities;
 //} light;
 
+uniform mat4 view;
+
 /* Material definition for this geometry */
 layout (std140) uniform Material {
     vec3 ambient;
@@ -27,7 +29,7 @@ layout (std140) uniform Material {
     float shininess;
 } material;
 
-uniform mat4 view;
+uniform sampler2D diffuseMap;
 
 in vec3 fragment_vertex;
 in vec3 fragment_normal;
@@ -42,16 +44,22 @@ void main()
     mat4 model = mat4(1.0);
 
     /* Light source */
-    vec3 lightPos = vec3(200, 150, 100);
-    vec3 lightAmbient = vec3(1.0);
-    vec3 lightDiffuse = vec3(1.0);
-    vec3 lightSpecular = vec3(1.0);
+vec3 lightPos = vec3(200, 150, 100);
+vec3 lightAmbient  = vec3(1.0, 1.0, 0.984313);
+vec3 lightDiffuse  = vec3(1.0, 1.0, 0.984313);
+vec3 lightSpecular = vec3(1.0, 1.0, 0.984313);
 
-    /* Ambient light constant */
-    float ambientK = 0.1;
+    /* Texel color */
+    vec4 texel = texture(diffuseMap, fragment_uvcoord);
 
     /* Calculate fragment position in world coordinates */
     vec3 fragmentPos = vec3(model*vec4(fragment_vertex, 1));
+
+    /* Attenuation */
+    float attenuation = 1.0 / (1.0 + 0.00001 * pow(length(lightPos - fragmentPos), 2));
+
+    /* Ambient light constant */
+float ambientK = attenuation*(lightAmbient.r + lightAmbient.g + lightAmbient.b)/3.0;
 
     /* Light vector to fragment */
     vec3 L = normalize(lightPos - fragmentPos);
@@ -73,7 +81,7 @@ void main()
     /* Normalized half vector for Blinn-Phong */
     vec3 H = normalize(L + V);
 
-    /*      Ambient + Diffuse          + Specular */
+    /* Ambient + Diffuse + Specular */
     Ia = clamp(ambientK, 0.0, 1.0);
     Id = clamp(dot(L, N), 0.0, 1.0);
     Is = clamp(pow(dot(N, H), material.shininess), 0.0, 1.0);
@@ -86,9 +94,6 @@ void main()
         colorSpecular = vec3(0.0);
     }
 
-    /* Attenuation */
-    float attenuation = 1.0 / (1.0 + 0.00001 * pow(length(lightPos - fragmentPos), 2));
-
-    color = vec4(colorAmbient + attenuation*(colorDiffuse + colorSpecular), material.alpha);
+    color = texel * vec4(colorAmbient + attenuation*(colorDiffuse + colorSpecular), material.alpha);
 }
 

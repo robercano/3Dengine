@@ -22,6 +22,7 @@ class OpenGLObject3D : public RendererObject3D
         uint32_t getVertexArrayID() { return _gVAO; }
         uint32_t getIndicesArrayID() { return _indicesBO; }
         const std::vector<Material> &getMaterials() { return _materials; }
+        const std::vector<uint32_t> &getTextures() { return _texturesIDs; }
         const std::vector<uint32_t> &getIndicesOffsets() { return _indicesOffsets; }
         const std::vector< uint32_t > &getIndicesCount() const { return _indicesCount; }
 
@@ -30,6 +31,7 @@ class OpenGLObject3D : public RendererObject3D
         GLuint _vertexDataVBO;
         GLuint _indicesBO;
         std::vector<Material> _materials;
+        std::vector<uint32_t>   _texturesIDs;
         std::vector<uint32_t> _indicesOffsets;
         std::vector<uint32_t> _indicesCount;
 };

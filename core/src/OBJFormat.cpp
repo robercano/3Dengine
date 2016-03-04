@@ -25,6 +25,7 @@ bool OBJFormat::load(const string &filename)
     uint32_t numFaces = 0;
     uint8_t *texture = NULL;
     uint32_t texWidth, texHeight, texBytesPerPixel;
+int t=0;
 
     std::map< std::string, std::vector<uint32_t> > indices;
     std::map< std::string, Material >              materials;
@@ -111,6 +112,8 @@ bool OBJFormat::load(const string &filename)
                         }
                     } else {
                         texture = NULL;
+                        texWidth = 0;
+                        texHeight = 0;
                     }
                     break;
                 }

@@ -72,11 +72,34 @@ bool OpenGLObject3D::init(const Object3D &object)
                              &(object.getIndexData()[0]),
                              GL_STATIC_DRAW) );
         }
-
-        /* TODO: Upload the textures */
-        const std::vector< Texture > &textures = object.getTextures();
     }
     GL( glBindVertexArray(0) );
+
+    /* TODO: Upload the textures */
+    const std::vector< Texture > &textures = object.getTextures();
+
+    _texturesIDs.resize(textures.size());
+    GL( glGenTextures(textures.size(), &_texturesIDs[0]) );
+
+    for(int i = 0; i < textures.size(); ++i) {
+        /* TODO: Once we use our own format, this should not
+         * be needed */
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        GL( glBindTexture(GL_TEXTURE_2D, _texturesIDs[i]) );
+        {
+            GL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR) );
+            GL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR) );
+            GL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE) );
+            GL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE) );
+            GL( glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+                             textures[i]._width,
+                             textures[i]._height,
+                             0, GL_RGB, GL_UNSIGNED_BYTE,
+                             textures[i]._texture) );
+        }
+
+    }
+    GL( glBindTexture(GL_TEXTURE_2D, 0) );
 
     _materials = object.getMaterials();
     _indicesOffsets = object.getIndicesOffsets();
