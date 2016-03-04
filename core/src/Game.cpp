@@ -82,6 +82,13 @@ bool Game::init(std::string &gameName, uint32_t targetFPS, bool unboundFPS)
 		_windowManager = NULL;
 		return false;
 	}
+    _renderTargetFXAA = FXAARenderTarget::NewFXAARenderTarget();
+	if (_renderTargetFXAA == NULL) {
+		fprintf(stderr, "ERROR allocating render target\n");
+		WindowManager::DisposeWindowManager(_windowManager);
+		_windowManager = NULL;
+		return false;
+	}
 
 	/* Init the window manager and the render*/
 	_windowManager->init();
@@ -96,6 +103,7 @@ bool Game::init(std::string &gameName, uint32_t targetFPS, bool unboundFPS)
     _renderTargetMSAA->init(_width, _height, MSAARenderTarget::getMaxSamples() < 4 ?
                                              MSAARenderTarget::getMaxSamples() : 4);
     _renderTargetSSAA->init(_width, _height, 4);
+    _renderTargetFXAA->init(_width, _height);
 
     /* Choose the render target here */
     _selectedRenderTarget = _renderTargetNOAA;
@@ -125,6 +133,7 @@ bool Game::init(std::string &gameName, uint32_t targetFPS, bool unboundFPS)
 	keys.push_back('1');
 	keys.push_back('2');
 	keys.push_back('3');
+	keys.push_back('4');
 	keys.push_back('R');
 	keys.push_back(GLFW_KEY_ESC);
 
@@ -209,6 +218,10 @@ bool Game::loop(void)
         } else if (_inputManager._keys['3']) {
             _selectedRenderTarget = _renderTargetSSAA;
             _renderTargetName = "SSAA";
+            resetStats = true;
+        } else if (_inputManager._keys['4']) {
+            _selectedRenderTarget = _renderTargetFXAA;
+            _renderTargetName = "FXAA";
             resetStats = true;
         }
         if (_inputManager._keys['R']) {
