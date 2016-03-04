@@ -9,7 +9,7 @@
 
 #include <stdint.h>
 #include <GL/glew.h>
-#include <GL/glfw.h>
+#include <GLFW/glfw3.h>
 #include "WindowManager.hpp"
 
 class GLFWWindowManager : public WindowManager
@@ -104,7 +104,9 @@ class GLFWWindowManager : public WindowManager
 		/**
 		 * Static callback for resize of the window
 		 */
-		static void GLFWCALL handle_resize(int width,int height);
+        static void handle_resize(GLFWwindow *w, int width,int height);
+
+        GLFWwindow *_window;
 
 		/**
 		 * Width of the created window

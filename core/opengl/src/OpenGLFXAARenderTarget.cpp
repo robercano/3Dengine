@@ -36,6 +36,7 @@ bool OpenGLFXAARenderTarget::init(uint32_t width, uint32_t height)
         GL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR) );
         GL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE) );
         GL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE) );
+        //GL( glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8_ALPHA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL) );
         GL( glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL) );
     }
     GL( glBindTexture(GL_TEXTURE_2D, 0) );
@@ -129,7 +130,7 @@ void OpenGLFXAARenderTarget::unbind()
 
 bool OpenGLFXAARenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height)
 {
-    /* Bind the target texture */
+   /* Bind the target texture */
     GL( glActiveTexture(GL_TEXTURE0) );
     GL( glBindTexture(GL_TEXTURE_2D, _colorBuffer) );
 
@@ -159,5 +160,7 @@ void OpenGLFXAARenderTarget::clear(float r, float g, float b, float a)
     GL( glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer) );
     GL( glClearColor(r, g, b, a) );
     GL( glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) );
+//GL( glDisable(GL_FRAMEBUFFER_SRGB) );
+//GL( glEnable(GL_FRAMEBUFFER_SRGB) );
     GL( glBindFramebuffer(GL_FRAMEBUFFER, 0) );
 }

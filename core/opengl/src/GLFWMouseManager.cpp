@@ -4,7 +4,7 @@
  *
  * @author	Roberto Cano (http://www.robertocano.es)
  */
-#include <GL/glfw.h>
+#include "OpenGL.h"
 #include "GLFWMouseManager.hpp"
 
 GLFWMouseManager *GLFWMouseManager::_mouseManager = NULL;
@@ -28,7 +28,7 @@ GLFWMouseManager::GLFWMouseManager(void)
 
 GLFWMouseManager::~GLFWMouseManager(void)
 {
-	glfwSetMousePosCallback(NULL);
+	glfwSetCursorPosCallback(glfwGetCurrentContext(), NULL);
 }
 
 bool GLFWMouseManager::registerListener(MouseListener &listener)
@@ -43,7 +43,7 @@ bool GLFWMouseManager::registerListener(MouseListener &listener)
 		 * to an infinite loop because setting the callback calls back and
 		 * the _mouseManager field is still not set when the callback is called,
 		 * leading to another object being created and so on */
-		glfwSetMousePosCallback(mouseCallback);
+		glfwSetCursorPosCallback(glfwGetCurrentContext(), mouseCallback);
 	}
     return true;
 }
@@ -56,7 +56,7 @@ void GLFWMouseManager::processMouse(int32_t x, int32_t y)
 	}
 }
 
-void GLFWMouseManager::mouseCallback(int x, int y)
+void GLFWMouseManager::mouseCallback(GLFWwindow *w, double x, double y)
 {
 	GLFWMouseManager::GetMouseManager()->processMouse(x, y);
 }

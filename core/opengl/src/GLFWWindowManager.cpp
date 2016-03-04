@@ -33,7 +33,10 @@ MouseManager *GLFWWindowManager::getMouseManager()
 
 bool GLFWWindowManager::init()
 {
-	glfwInit();
+    if (!glfwInit()) {
+		fprintf(stderr, "Failed to initialize GLFW\n");
+		return false;
+	}
 	return true;
 }
 
@@ -43,26 +46,28 @@ bool GLFWWindowManager::createWindow(std::string &name, uint16_t width, uint16_t
 	_height = height;
 
 	/* Request OpenGL 3.2 */
-	//glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 4);
-	glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, 3);
-	glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, 2);
-	glfwOpenWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	//glfwWindowHint(GLFW_FSAA_SAMPLES, 4);
+	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    //glfwWindowHint(GLFW_SRGB_CAPABLE, GL_TRUE);
+    glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
 
-	glfwOpenWindow(_width, _height, 8, 8, 8, 8, 32, 8, fullscreen ? GLFW_FULLSCREEN : GLFW_WINDOW);
+	_window = glfwCreateWindow(_width, _height, name.c_str(), fullscreen ? glfwGetPrimaryMonitor() : NULL, NULL);
+    glfwMakeContextCurrent(_window); // Initialize GLEW
 
 	/* Initialize GLEW */
 	glewExperimental = true; // Needed for core profile
-	if (glewInit() != GLEW_OK) {
+    if (glewInit() != GLEW_OK) {
 		fprintf(stderr, "Failed to initialize GLEW\n");
 		return false;
 	}
 
-	glfwSetWindowTitle(name.c_str());
-    glfwSetWindowSizeCallback(handle_resize);
-	glfwDisable(GLFW_MOUSE_CURSOR);
+    glfwSetWindowSizeCallback(_window, handle_resize);
+    glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-	/* Poll for events explicitly */
-	glfwDisable(GLFW_AUTO_POLL_EVENTS);
 	return true;
 }
 
@@ -75,7 +80,7 @@ bool GLFWWindowManager::setRenderer(Renderer *renderer)
 bool GLFWWindowManager::getWindowSize(uint32_t *width, uint32_t *height)
 {
     int w, h;
-    glfwGetWindowSize(&w, &h);
+    glfwGetWindowSize(_window, &w, &h);
     *width = w;
     *height = h;
     return true;
@@ -83,10 +88,10 @@ bool GLFWWindowManager::getWindowSize(uint32_t *width, uint32_t *height)
 
 void GLFWWindowManager::swapBuffers(void)
 {
-	glfwSwapBuffers();
+	glfwSwapBuffers(_window);
 }
 
-void GLFWCALL GLFWWindowManager::handle_resize(int width,int height)
+void GLFWWindowManager::handle_resize(GLFWwindow *w, int width,int height)
 {
 	WindowManager *windowManager = WindowManager::GetCurrentManager();
 

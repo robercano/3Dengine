@@ -9,6 +9,7 @@
 #include <stdint.h>
 #include <map>
 #include <vector>
+#include <GLFW/glfw3.h>
 #include "KeyManager.hpp"
 
 class GLFWKeyManager: public KeyManager
@@ -51,7 +52,7 @@ class GLFWKeyManager: public KeyManager
 		 * @param	key		Key being pressed or release
 		 * @param	state	Either GLFW_PRESS or GLFW_RELEASE
 		 */
-		static void keyCallback(int key, int state);
+        static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 		/**
 		 * Object wrapper callback

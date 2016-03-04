@@ -17,6 +17,8 @@ void OpenGLRenderer::init()
 	GL( glEnable(GL_BLEND) );
     GL( glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA) );
 
+//GL( glEnable(GL_FRAMEBUFFER_SRGB) );
+
 	GL( glCullFace(GL_BACK) );
 
     GL( glDisable(GL_DITHER) );

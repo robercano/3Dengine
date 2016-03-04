@@ -4,7 +4,6 @@
  *
  * @author	Roberto Cano (http://www.robertocano.es)
  */
-#include <GL/glfw.h>
 #include "GLFWKeyManager.hpp"
 
 GLFWKeyManager *GLFWKeyManager::_keyManager = NULL;
@@ -24,13 +23,12 @@ void GLFWKeyManager::DisposeKeyManager(void)
 
 GLFWKeyManager::GLFWKeyManager(void)
 {
-	glfwSetKeyCallback(keyCallback);
-	glfwEnable(GLFW_KEY_REPEAT);
+	glfwSetKeyCallback(glfwGetCurrentContext(), keyCallback);
 }
 
 GLFWKeyManager::~GLFWKeyManager(void)
 {
-	glfwSetKeyCallback(NULL);
+	glfwSetKeyCallback(glfwGetCurrentContext(), NULL);
 }
 
 bool GLFWKeyManager::registerListener(KeyListener &listener, std::vector<uint32_t> &keys)
@@ -54,7 +52,7 @@ void GLFWKeyManager::processKey(uint32_t key, bool state)
 	}
 }
 
-void GLFWKeyManager::keyCallback(int key, int state)
+void GLFWKeyManager::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	GLFWKeyManager::GetKeyManager()->processKey(key, state == GLFW_PRESS);
+	GLFWKeyManager::GetKeyManager()->processKey(key, action == GLFW_PRESS || action == GLFW_REPEAT);
 }

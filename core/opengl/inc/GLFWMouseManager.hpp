@@ -49,7 +49,7 @@ class GLFWMouseManager: public MouseManager
 		 * @param	x	X coordinate of the mouse
 		 * @param	y	Y coordinate of the mouse
 		 */
-		static void mouseCallback(int x, int y);
+        static void mouseCallback(GLFWwindow *w, double x, double y);
 
 		/**
 		 * Object wrapper callback

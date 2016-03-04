@@ -10,7 +10,7 @@
 
 #include <stdio.h>
 #include <GL/glew.h>
-#include <GL/glfw.h>
+#include <GLFW/glfw3.h>
 
 #if defined (__linux__)
 #include <GL/gl.h>

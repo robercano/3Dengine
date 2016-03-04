@@ -6,7 +6,7 @@
  */
 #include <sys/time.h>
 #include <unistd.h>
-#include "OpenGL.h" // For GLFW_KEY_ESC
+#include "OpenGL.h" // For GLFW_KEY_ESCAPE
 #include "Game.hpp"
 #include "WalkingCamera.hpp"
 
@@ -135,7 +135,7 @@ bool Game::init(std::string &gameName, uint32_t targetFPS, bool unboundFPS)
 	keys.push_back('3');
 	keys.push_back('4');
 	keys.push_back('R');
-	keys.push_back(GLFW_KEY_ESC);
+	keys.push_back(GLFW_KEY_ESCAPE);
 
 	_windowManager->getKeyManager()->registerListener(_inputManager, keys);
 	_windowManager->getMouseManager()->registerListener(_inputManager);
@@ -187,7 +187,7 @@ bool Game::loop(void)
 	{
 		/* Read input */
 		_windowManager->poll();
-		if (_inputManager._keys[GLFW_KEY_ESC]) {
+		if (_inputManager._keys[GLFW_KEY_ESCAPE]) {
 			break;
 		}
 
