@@ -8,7 +8,8 @@ uniform sampler2D fbo_texture;
 
 out vec4 fragColor;
 
-#define DEBUG_LOCAL_CONTRAST
+//#define DEBUG_LOCAL_CONTRAST
+#define DEBUG_VERTHOR_TEST
 
 /*
     The minimum amount of local contrast required to apply algorithm.
@@ -26,6 +27,9 @@ float FXAA_EDGE_THRESHOLD = 1.0/3.0;
         1/12 – upper limit (start of visible unfiltered edges)
 */
 float FXAA_EDGE_THRESHOLD_MIN = 1.0/32.0;
+
+float FXAA_SEARCH_STEPS = 5;
+float FXAA_SEARCH_ACCELERATION = 1;
 
 float sRGB2Linear(float c) {
     if (c <= 0.04045) {
@@ -64,6 +68,39 @@ vec3 FxaaFilter() {
 #ifdef DEBUG_LOCAL_CONTRAST
     return vec3(1.0, 0.0, 0.0);
 #endif
+
+    /* Vertical/horizontal edge test */
+    vec3 rgbNW = textureOffset(fbo_texture, f_texcoord, ivec2( -1, -1)).rgb;
+    vec3 rgbNE = textureOffset(fbo_texture, f_texcoord, ivec2(  1, -1)).rgb;
+    vec3 rgbSW = textureOffset(fbo_texture, f_texcoord, ivec2( -1,  1)).rgb;
+    vec3 rgbSE = textureOffset(fbo_texture, f_texcoord, ivec2(  1,  1)).rgb;
+
+    float lumaNW = FxaaLuma(rgbNW);
+    float lumaNE = FxaaLuma(rgbNE);
+    float lumaSW = FxaaLuma(rgbSW);
+    float lumaSE = FxaaLuma(rgbSE);
+
+    float edgeVert =
+        abs((0.25 * lumaNW) + (-0.5 * lumaN) + (0.25 * lumaNE)) +
+        abs((0.50 * lumaW ) + (-1.0 * lumaM) + (0.50 * lumaE )) +
+        abs((0.25 * lumaSW) + (-0.5 * lumaS) + (0.25 * lumaSE));
+    float edgeHorz =
+        abs((0.25 * lumaNW) + (-0.5 * lumaW) + (0.25 * lumaSW)) +
+        abs((0.50 * lumaN ) + (-1.0 * lumaM) + (0.50 * lumaS )) +
+        abs((0.25 * lumaNE) + (-0.5 * lumaE) + (0.25 * lumaSE));
+    bool horzSpan = edgeHorz >= edgeVert;
+
+#ifdef DEBUG_VERTHOR_TEST
+    if (horzSpan) {
+        return vec3(1.0f, 0.75f, 0.0f);
+    } else {
+        return vec3(0.0f, 0.5f, 1.0f);
+    }
+#endif
+
+    /* End-of-edge search */
+    for (int i=0; i<FXAA_SEARCH_STEPS; ++i) {
+    }
 
 }
 
