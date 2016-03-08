@@ -130,6 +130,8 @@ void OpenGLFXAARenderTarget::unbind()
 
 bool OpenGLFXAARenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height)
 {
+    glm::vec2 rpcFrame(1.0f/_width, 1.0f/_height);
+
    /* Bind the target texture */
     GL( glActiveTexture(GL_TEXTURE0) );
     GL( glBindTexture(GL_TEXTURE_2D, _colorBuffer) );
@@ -137,6 +139,7 @@ bool OpenGLFXAARenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, 
     /* Tell the shader which texture unit to use */
     _shader->attach();
     _shader->setUniformTexture2D("fbo_texture", 0);
+    _shader->setUniformVec2("f_rpcFrame", rpcFrame);
 
     /* Disable the depth test as the render target should
      * be always rendered */

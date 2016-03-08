@@ -5,11 +5,15 @@
 
 in vec2 f_texcoord;
 uniform sampler2D fbo_texture;
+uniform vec2 f_rpcFrame;
 
 out vec4 fragColor;
 
 //#define DEBUG_LOCAL_CONTRAST
-#define DEBUG_VERTHOR_TEST
+//#define DEBUG_VERTHOR_TEST
+//#define DEBUG_PIXEL_PAIR
+//#define FXAA_DEBUG_NEGPOS
+//#define FXAA_DEBUG_OFFSET
 
 /*
     The minimum amount of local contrast required to apply algorithm.
@@ -30,6 +34,7 @@ float FXAA_EDGE_THRESHOLD_MIN = 1.0/32.0;
 
 float FXAA_SEARCH_STEPS = 5;
 float FXAA_SEARCH_ACCELERATION = 1;
+float FXAA_SEARCH_THRESHOLD = 1.0f/4.0f;
 
 float sRGB2Linear(float c) {
     if (c <= 0.04045) {
@@ -41,6 +46,9 @@ float sRGB2Linear(float c) {
 float FxaaLuma(vec3 rgb) {
     return rgb.y * (0.587/0.299) + rgb.x;
 }
+vec3 FxaaLerp3(vec3 a, vec3 b, float amountOfA) {
+    return (vec3(-amountOfA) * b) + ((a * vec3(amountOfA)) + b);
+} 
 
 vec3 FxaaFilter() {
     /* Local contrast check */
@@ -98,10 +106,121 @@ vec3 FxaaFilter() {
     }
 #endif
 
-    /* End-of-edge search */
-    for (int i=0; i<FXAA_SEARCH_STEPS; ++i) {
+    /* Check if span is horizontal or vertical and then
+       reassign the variables so we don't have to worry
+       about names */
+    if (!horzSpan) {
+        lumaN = lumaW;
+        lumaS = lumaE;
     }
 
+    /* Calculate the gradient */
+    float gradientN = abs(lumaN - lumaM);
+    float gradientS = abs(lumaS - lumaM);
+
+    bool pairN = gradientN >= gradientS;
+
+#ifdef DEBUG_PIXEL_PAIR
+    if (pairN) {
+        return vec3(0.0f, 0.0f, 1.0f);
+    } else {
+        return vec3(0.0f, 1.0f, 0.0f);
+    }
+#endif
+
+    /* Assume advancing on the N or W direction */
+    float lengthSign = horzSpan ? -f_rpcFrame.y : -f_rpcFrame.x;
+
+    /* Now pick only the pixel with the highest gradient */
+    if (!pairN) {
+        lumaN = lumaS;
+        gradientN = gradientS;
+        lengthSign *= -1.0f;
+    }
+
+    /* Calculate the next position to check */
+    vec2 posN, posP;
+    posN.x = f_texcoord.x + (horzSpan ? 0.0f : lengthSign * 0.5f);
+    posN.y = f_texcoord.y + (horzSpan ? lengthSign * 0.5f : 0.0f);
+    posP = posN;
+
+#if 0
+    if (posN.x < f_texcoord.x) return vec3(1.0, 0.0, 0.0);
+    if (posN.x > f_texcoord.x) return vec3(0.0, 1.0, 0.0);
+    if (posN.y < f_texcoord.y) return vec3(0.0, 0.0, 1.0);
+    if (posN.y > f_texcoord.y) return vec3(1.0, 0.0, 1.0);
+    return vec3(1.0, 1.0, 1.0);
+#endif
+
+    /* Search limit: we stop searching when the gradient is
+       greater than this meaning the edge ends there */
+    gradientN *= FXAA_SEARCH_THRESHOLD;
+
+    /* Calculate the advance in the negative and positive
+       directions along the edge */
+    vec2 offNP = horzSpan ? vec2(f_rpcFrame.x, 0.0f) : vec2(0.0f, f_rpcFrame.y);
+    
+    /* End-of-edge search */
+    float lumaEndN = lumaN;
+    float lumaEndP = lumaN;
+    bool doneN = false;
+    bool doneP = false;
+
+    for (int i=0; i<FXAA_SEARCH_STEPS; ++i) {
+        if (!doneN) {
+            posN -= offNP;
+            lumaEndN = FxaaLuma(texture(fbo_texture, posN).rgb);
+            doneN = (lumaEndN - lumaN) >= gradientN;
+        }
+        if (!doneP) {
+            posP += offNP;
+            lumaEndP = FxaaLuma(texture(fbo_texture, posP).rgb);
+            doneP = (lumaEndP - lumaN) >= gradientN;
+        }
+        if (doneN && doneP) {
+            break;
+        }
+    }
+
+    /* Calculate whether the center is in negative or in positive
+       side of the search span */
+    float dstN = horzSpan ? f_texcoord.x - posN.x : f_texcoord.y - posN.y;
+    float dstP = horzSpan ? posP.x - f_texcoord.x : posP.y - f_texcoord.y;
+    bool directionN = dstN < dstP;
+#ifdef FXAA_DEBUG_NEGPOS
+    if (directionN) return vec3(1.0f, 0.0f, 0.0f);
+    else            return vec3(0.0f, 0.0f, 1.0f);
+#endif
+
+    lumaEndN = directionN ? lumaEndN : lumaEndP;
+
+    /* Avoid filtering undesired cases */
+    if (((lumaM - lumaN) < 0.0) == ((lumaEndN - lumaN) < 0.0)) {
+        lengthSign = 0.0;
+    }
+
+    float spanLength = dstP + dstN;
+    dstN = directionN ? dstN : dstP;
+
+    /* Had to use 1.0 instead of 0.5 in the equation below, otherwise
+       the antialiasing does not work properly. Maybe we need anisotropic
+       filtering support? */
+    float subPixelOffset = (1.0 + (dstN * (-1.0/spanLength))) * lengthSign;
+
+#ifdef FXAA_DEBUG_OFFSET
+    float ox = horzSpan ? 0.0 : subPixelOffset*2.0/f_rpcFrame.x;
+    float oy = horzSpan ? subPixelOffset*2.0/f_rpcFrame.y : 0.0;
+    float lumaO = lumaM/(1.0f + (0.587f/0.299f));
+    if (ox < 0.0) return FxaaLerp3(vec3(lumaO), vec3(1.0f, 0.0f, 0.0f), -ox);
+    if (ox > 0.0) return FxaaLerp3(vec3(lumaO), vec3(0.0f, 0.0f, 1.0f), ox);
+    if (oy < 0.0) return FxaaLerp3(vec3(lumaO), vec3(1.0f, 0.6f, 0.2f), -oy);
+    if (oy > 0.0) return FxaaLerp3(vec3(lumaO), vec3(0.2f, 0.6f, 1.0f), oy);
+    return vec3(lumaO);
+#endif
+
+    vec3 rgbF = texture(fbo_texture, vec2(f_texcoord.x + (horzSpan ? 0.0f : subPixelOffset),
+                                          f_texcoord.y + (horzSpan ? subPixelOffset : 0.0f))).rgb;
+    return rgbF;
 }
 
 void main(void) {

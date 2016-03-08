@@ -39,8 +39,8 @@ Game::~Game()
 bool Game::init(std::string &gameName, uint32_t targetFPS, bool unboundFPS)
 {
 	/* TODO: Get the settings from a config file */
-    _width = 1440;
-    _height = 900;
+    _width = 1280;
+    _height = 720;
 
     _targetFPS = targetFPS;
     _unboundFPS = unboundFPS;
