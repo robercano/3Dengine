@@ -36,8 +36,14 @@ bool OpenGLFXAARenderTarget::init(uint32_t width, uint32_t height)
         GL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR) );
         GL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE) );
         GL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE) );
+        /* Because we cannot enable GL_FRAMEBUFFER_SRGB we will use a normal
+         * RGBA texture here and do the conversion in the fragment shader */
+#if 0
         GL( glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8_ALPHA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL) );
-        //GL( glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL) );
+#else
+        GL( glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL) );
+#endif
+
     }
     GL( glBindTexture(GL_TEXTURE_2D, 0) );
 
@@ -98,11 +104,11 @@ bool OpenGLFXAARenderTarget::init(uint32_t width, uint32_t height)
     _shader = Renderer::GetRenderer()->newShader();
 
 	std::string error;
-	if (_shader->loadVertexShader("data/shaders/anti-aliasing/fxaa.vert", error) == false) {
+	if (_shader->loadVertexShader("data/shaders/anti-aliasing/fxaa_lottes.vert", error) == false) {
 		printf("ERROR compiling vertex shader: %s\n", error.c_str());
 		return false;
 	}
-	if (_shader->loadFragmentShader("data/shaders/anti-aliasing/fxaa.frag", error) == false) {
+	if (_shader->loadFragmentShader("data/shaders/anti-aliasing/fxaa_lottes.frag", error) == false) {
 		printf("ERROR compiling fragment shader: %s\n", error.c_str());
 		return false;
 	}

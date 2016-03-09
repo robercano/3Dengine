@@ -37,6 +37,13 @@ in vec2 fragment_uvcoord;
 
 out vec4 color;
 
+float sRGB2Linear(float c) {
+    if (c <= 0.04045) {
+        return c/12.92;
+    }
+    return pow((c + 0.055)/1.055, 2.4);
+}
+
 void main()
 {
     float Ia, Id, Is;
@@ -44,13 +51,15 @@ void main()
     mat4 model = mat4(1.0);
 
     /* Light source */
-vec3 lightPos = vec3(200, 150, 100);
-vec3 lightAmbient  = vec3(1.0, 1.0, 1.0);
-vec3 lightDiffuse  = vec3(1.0, 1.0, 1.0);
-vec3 lightSpecular = vec3(1.0, 1.0, 1.0);
+vec3 lightPos = vec3(50, 100, 50);
+float lightIntensity = 5.0/255.0;
+vec3 lightAmbient  = vec3(255.0, 255.0, 251.0) * lightIntensity;
+vec3 lightDiffuse  = vec3(255.0, 255.0, 251.0) * lightIntensity;
+vec3 lightSpecular = vec3(255.0, 255.0, 251.0) * lightIntensity;
 
     /* Texel color */
     vec4 texel = texture(diffuseMap, fragment_uvcoord);
+    //texel = vec4(sRGB2Linear(texel.r),sRGB2Linear(texel.g),sRGB2Linear(texel.b), texel.a);
 
     /* Calculate fragment position in world coordinates */
     vec3 fragmentPos = vec3(model*vec4(fragment_vertex, 1));
@@ -59,7 +68,8 @@ vec3 lightSpecular = vec3(1.0, 1.0, 1.0);
     float attenuation = 1.0 / (1.0 + 0.00001 * pow(length(lightPos - fragmentPos), 2));
 
     /* Ambient light constant */
-float ambientK = attenuation*(lightAmbient.r + lightAmbient.g + lightAmbient.b)/3.0;
+//float ambientK = attenuation*(lightAmbient.r + lightAmbient.g + lightAmbient.b)/3.0;
+float ambientK = 0.1;
 
     /* Light vector to fragment */
     vec3 L = normalize(lightPos - fragmentPos);
@@ -95,5 +105,7 @@ float ambientK = attenuation*(lightAmbient.r + lightAmbient.g + lightAmbient.b)/
     }
 
     color = texel * vec4(colorAmbient + attenuation*(colorDiffuse + colorSpecular), material.alpha);
+//    color = vec4(sRGB2Linear(color.r),sRGB2Linear(color.g),sRGB2Linear(color.b), color.a);
+//color = texel;
 }
 

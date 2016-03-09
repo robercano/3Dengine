@@ -16,16 +16,44 @@ void OpenGLRenderer::init()
 	GL( glEnable(GL_CULL_FACE) );
 	GL( glEnable(GL_BLEND) );
     GL( glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA) );
-    GL( glEnable(GL_FRAMEBUFFER_SRGB) );
+    /* There seems to be a bug with sRGB default framebuffer, as
+     * the buffer is always linear, but if we enable this the
+     * drivers are doing the linear->sRGB conversion anyway!
+     * So don't enable it for now, we will have to compensate
+     * in the shaders */
+    //GL( glEnable(GL_FRAMEBUFFER_SRGB) );
 	GL( glCullFace(GL_BACK) );
     GL( glDisable(GL_DITHER) );
     GL( glDisable(GL_LINE_SMOOTH) );
     GL( glDisable(GL_POLYGON_SMOOTH) );
     GL( glHint(GL_POLYGON_SMOOTH_HINT, GL_DONT_CARE) );
 #define GL_MULTISAMPLE_ARB 0x809D
-    GL( glDisable( GL_MULTISAMPLE_ARB)  );
+    GL( glDisable(GL_MULTISAMPLE_ARB)  );
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+   GL( glBindFramebuffer(GL_FRAMEBUFFER, 0) );
+   GLint value;
+   GL( glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER,
+                                         GL_FRONT_LEFT,
+                                         GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING,
+                                         &value) );
+   printf("Query: %x\n", value);
+   GL( glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER,
+                                         GL_BACK_LEFT,
+                                         GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING,
+                                         &value) );
+   printf("Query: %x\n", value);
+   GL( glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER,
+                                         GL_FRONT_RIGHT,
+                                         GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING,
+                                         &value) );
+   printf("Query: %x\n", value);
+   GL( glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER,
+                                         GL_BACK_RIGHT,
+                                         GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING,
+                                         &value) );
+   printf("Query: %x\n", value);
+
 }
 
 Shader * OpenGLRenderer::newShader(void)

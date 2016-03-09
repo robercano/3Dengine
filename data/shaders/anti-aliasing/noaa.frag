@@ -18,6 +18,7 @@ float sRGB2Linear(float c) {
 void main(void) {
     fragColor = texture(fbo_texture, f_texcoord);
 
+#if 0
     /* sRGB to linear conversion, OpenGL does not support
        the shader outputting sRGB when GL_FRAMEBUFFER_SRGB is
        enabled  */
@@ -25,4 +26,5 @@ void main(void) {
                     sRGB2Linear(fragColor.g),
                     sRGB2Linear(fragColor.b),
                     fragColor.a);
+#endif
 }

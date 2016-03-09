@@ -1,28 +1,3 @@
-Shader "Hidden/FXAA Preset 3" {
-Properties {
-    _MainTex ("Base (RGB)", 2D) = "white" {}
-}
-
-SubShader {
-    Pass {
-        ZTest Always Cull Off ZWrite Off
-        Fog { Mode off }
-
-CGPROGRAM
-#pragma vertex vert
-#pragma fragment frag
-#include "UnityCG.cginc"
-#pragma target 3.0
-#pragma glsl
-#pragma exclude_renderers d3d11_9x
-
-// Not very practical on consoles/mobile, and PS3 Cg takes ages to compile this :(
-#pragma exclude_renderers xbox360 ps3 gles
-
-#define FXAA_HLSL_3 1
-#define FXAA_PRESET 3
-
-
 // Copyright (c) 2010 NVIDIA Corporation. All rights reserved.
 //
 // TO  THE MAXIMUM  EXTENT PERMITTED  BY APPLICABLE  LAW, THIS SOFTWARE  IS PROVIDED
@@ -34,6 +9,11 @@ CGPROGRAM
 // BUSINESS INTERRUPTION, LOSS OF BUSINESS INFORMATION, OR ANY OTHER PECUNIARY LOSS)
 // ARISING OUT OF THE  USE OF OR INABILITY  TO USE THIS SOFTWARE, EVEN IF NVIDIA HAS
 // BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+#version 330 core
+
+//#define FXAA_HLSL_3 1
+#define FXAA_GLSL_130 1
+#define FXAA_PRESET 0
 
 /*============================================================================
  
@@ -116,6 +96,14 @@ CGPROGRAM
     struct FxaaTex { SamplerState smpl; Texture2D tex; };
 #endif
 /*--------------------------------------------------------------------------*/
+float4 FxxaLinear2SRGB(float4 c) {
+    return float4(
+            FxaaSel3(float3(c) * FxaaFloat3(12.92),
+                    FxaaFloat3(1.055) * FxaaPow3(float3(c), FxaaFloat3(0.41666)) - FxaaFloat3(0.055),
+                    greaterThanEqual(float3(c), FxaaFloat3(0.0031308))),
+            1.0);
+}
+/*--------------------------------------------------------------------------*/
 #define FxaaToFloat3(a) FxaaFloat3((a), (a), (a))
 /*--------------------------------------------------------------------------*/
 float4 FxaaTexLod0(FxaaTex tex, float2 pos) {
@@ -123,7 +111,7 @@ float4 FxaaTexLod0(FxaaTex tex, float2 pos) {
         return texture2DLod(tex, pos.xy, 0.0);
     #endif
     #if FXAA_GLSL_130
-        return textureLod(tex, pos.xy, 0.0);
+        return FxxaLinear2SRGB(textureLod(tex, pos.xy, 0.0));
     #endif
     #if FXAA_HLSL_3
         return tex2Dlod(tex, float4(pos.xy, 0.0, 0.0)); 
@@ -138,7 +126,7 @@ float4 FxaaTexGrad(FxaaTex tex, float2 pos, float2 grad) {
         return texture2DGrad(tex, pos.xy, grad, grad);
     #endif
     #if FXAA_GLSL_130
-        return textureGrad(tex, pos.xy, grad, grad);
+        return FxxaLinear2SRGB(textureGrad(tex, pos.xy, grad, grad));
     #endif
     #if FXAA_HLSL_3
         return tex2Dgrad(tex, pos.xy, grad, grad); 
@@ -153,7 +141,7 @@ float4 FxaaTexOff(FxaaTex tex, float2 pos, int2 off, float2 rcpFrame) {
         return texture2DLodOffset(tex, pos.xy, 0.0, off.xy);
     #endif
     #if FXAA_GLSL_130
-        return textureLodOffset(tex, pos.xy, 0.0, off.xy);
+        return FxxaLinear2SRGB(textureLodOffset(tex, pos.xy, 0.0, off.xy));
     #endif
     #if FXAA_HLSL_3
         return tex2Dlod(tex, float4(pos.xy + (off * rcpFrame), 0, 0)); 
@@ -171,7 +159,7 @@ FXAA_SRGB_ROP - Set to 1 when applying FXAA to an sRGB back buffer (DX10/11).
                 as ROP will expect linear color from this shader,
                 and this shader works in non-linear color.
 ============================================================================*/
-#define FXAA_SRGB_ROP 0
+#define FXAA_SRGB_ROP 1
 
 /*============================================================================
                                 DEBUG KNOBS
@@ -363,7 +351,7 @@ float3 FxaaFilterReturn(float3 rgb) {
             FxaaPow3(
                 rgb * FxaaToFloat3(1.0/1.055) + FxaaToFloat3(0.055/1.055), 
                 FxaaToFloat3(2.4)),
-            rgb > FxaaToFloat3(0.04045)); 
+            greaterThan(rgb, FxaaToFloat3(0.04045)));
     #else
         return rgb;
     #endif
@@ -798,32 +786,20 @@ Position on span is used to compute sub-pixel filter offset using simple ramp,
     #endif
 }
 
+in vec2 f_texcoord;
+uniform sampler2D fbo_texture;
+uniform vec2 f_rpcFrame;
 
+out vec4 fragColor;
 
-struct v2f {
-    float4 pos : SV_POSITION;
-    float2 uv : TEXCOORD0;
-};
-
-v2f vert (appdata_img v)
-{
-    v2f o;
-    o.pos = mul (UNITY_MATRIX_MVP, v.vertex);
-    o.uv = v.texcoord.xy;
-    return o;
-}
-
-sampler2D _MainTex;
-float4 _MainTex_TexelSize;
-
-float4 frag (v2f i) : COLOR0
-{
-    return float4(FxaaPixelShader(i.uv.xy, _MainTex, _MainTex_TexelSize.xy).xyz, 0.0f);
-}
-    
-ENDCG
-    }
-}
-
-Fallback "Hidden/FXAA II"
+void main (void) {
+    fragColor = float4(FxaaPixelShader(f_texcoord, fbo_texture, f_rpcFrame).xyz, 1.0f);
+#if 0
+    fragColor = float4(
+                    sRGB2Linear(fragColor.x),
+                    sRGB2Linear(fragColor.y),
+                    sRGB2Linear(fragColor.z),
+                    1.0f);
+#endif
+                
 }

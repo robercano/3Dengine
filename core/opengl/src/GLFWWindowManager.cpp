@@ -52,7 +52,7 @@ bool GLFWWindowManager::createWindow(std::string &name, uint16_t width, uint16_t
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    glfwWindowHint(GLFW_SRGB_CAPABLE, GL_TRUE);
+    glfwWindowHint(GLFW_SRGB_CAPABLE, GL_FALSE);
     glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
 
 	_window = glfwCreateWindow(_width, _height, name.c_str(), fullscreen ? glfwGetPrimaryMonitor() : NULL, NULL);
