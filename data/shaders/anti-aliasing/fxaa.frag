@@ -11,7 +11,7 @@ out vec4 fragColor;
 
 //#define DEBUG_LOCAL_CONTRAST
 //#define DEBUG_VERTHOR_TEST
-//#define DEBUG_PIXEL_PAIR
+#define DEBUG_PIXEL_PAIR
 //#define FXAA_DEBUG_NEGPOS
 //#define FXAA_DEBUG_OFFSET
 
@@ -50,13 +50,20 @@ vec3 FxaaLerp3(vec3 a, vec3 b, float amountOfA) {
     return (vec3(-amountOfA) * b) + ((a * vec3(amountOfA)) + b);
 } 
 
+vec3 Linear2SRGB(vec3 c) {
+    return mix(c * vec3(12.92, 12.92, 12.92),
+                vec3(1.055, 1.055, 1.055) * pow(c, vec3(0.41666, 0.41666, 0.41666)) -
+                vec3(0.055, 0.055, 0.055),
+                greaterThanEqual(c, vec3(0.0031308, 0.0031308, 0.0031308)));
+}
+
 vec3 FxaaFilter() {
     /* Local contrast check */
-    vec3 rgbN = textureOffset(fbo_texture, f_texcoord, ivec2( 0, -1)).rgb;
-    vec3 rgbW = textureOffset(fbo_texture, f_texcoord, ivec2(-1,  0)).rgb;
-    vec3 rgbM = textureOffset(fbo_texture, f_texcoord, ivec2( 0,  0)).rgb;
-    vec3 rgbE = textureOffset(fbo_texture, f_texcoord, ivec2( 1,  0)).rgb;
-    vec3 rgbS = textureOffset(fbo_texture, f_texcoord, ivec2( 0,  1)).rgb;
+    vec3 rgbN = Linear2SRGB(textureOffset(fbo_texture, f_texcoord, ivec2( 0, -1)).rgb);
+    vec3 rgbW = Linear2SRGB(textureOffset(fbo_texture, f_texcoord, ivec2(-1,  0)).rgb);
+    vec3 rgbM = Linear2SRGB(textureOffset(fbo_texture, f_texcoord, ivec2( 0,  0)).rgb);
+    vec3 rgbE = Linear2SRGB(textureOffset(fbo_texture, f_texcoord, ivec2( 1,  0)).rgb);
+    vec3 rgbS = Linear2SRGB(textureOffset(fbo_texture, f_texcoord, ivec2( 0,  1)).rgb);
 
     float lumaN = FxaaLuma(rgbN);
     float lumaW = FxaaLuma(rgbW);
@@ -78,10 +85,10 @@ vec3 FxaaFilter() {
 #endif
 
     /* Vertical/horizontal edge test */
-    vec3 rgbNW = textureOffset(fbo_texture, f_texcoord, ivec2( -1, -1)).rgb;
-    vec3 rgbNE = textureOffset(fbo_texture, f_texcoord, ivec2(  1, -1)).rgb;
-    vec3 rgbSW = textureOffset(fbo_texture, f_texcoord, ivec2( -1,  1)).rgb;
-    vec3 rgbSE = textureOffset(fbo_texture, f_texcoord, ivec2(  1,  1)).rgb;
+    vec3 rgbNW = Linear2SRGB(textureOffset(fbo_texture, f_texcoord, ivec2( -1, -1)).rgb);
+    vec3 rgbNE = Linear2SRGB(textureOffset(fbo_texture, f_texcoord, ivec2(  1, -1)).rgb);
+    vec3 rgbSW = Linear2SRGB(textureOffset(fbo_texture, f_texcoord, ivec2( -1,  1)).rgb);
+    vec3 rgbSE = Linear2SRGB(textureOffset(fbo_texture, f_texcoord, ivec2(  1,  1)).rgb);
 
     float lumaNW = FxaaLuma(rgbNW);
     float lumaNE = FxaaLuma(rgbNE);
@@ -205,7 +212,7 @@ vec3 FxaaFilter() {
     /* Had to use 1.0 instead of 0.5 in the equation below, otherwise
        the antialiasing does not work properly. Maybe we need anisotropic
        filtering support? */
-    float subPixelOffset = (1.0 + (dstN * (-1.0/spanLength))) * lengthSign;
+    float subPixelOffset = (0.5 + (dstN * (-1.0/spanLength))) * lengthSign;
 
 #ifdef FXAA_DEBUG_OFFSET
     float ox = horzSpan ? 0.0 : subPixelOffset*2.0/f_rpcFrame.x;
@@ -218,8 +225,8 @@ vec3 FxaaFilter() {
     return vec3(lumaO);
 #endif
 
-    vec3 rgbF = texture(fbo_texture, vec2(f_texcoord.x + (horzSpan ? 0.0f : subPixelOffset),
-                                          f_texcoord.y + (horzSpan ? subPixelOffset : 0.0f))).rgb;
+    vec3 rgbF = Linear2SRGB(texture(fbo_texture, vec2(f_texcoord.x + (horzSpan ? 0.0f : subPixelOffset),
+                                                      f_texcoord.y + (horzSpan ? subPixelOffset : 0.0f))).rgb);
     return rgbF;
 }
 

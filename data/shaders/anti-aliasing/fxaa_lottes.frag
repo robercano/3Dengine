@@ -11,9 +11,8 @@
 // BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 #version 330 core
 
-//#define FXAA_HLSL_3 1
 #define FXAA_GLSL_130 1
-#define FXAA_PRESET 0
+#define FXAA_PRESET 3
 
 /*============================================================================
  
@@ -180,7 +179,7 @@ FXAA_DEBUG_OFFSET      - Red/blue for -/+ x, gold/skyblue for -/+ y.
     #define FXAA_DEBUG_HORZVERT    0
 #endif    
 #ifndef     FXAA_DEBUG_PAIR   
-    #define FXAA_DEBUG_PAIR        0
+    #define FXAA_DEBUG_PAIR        1
 #endif    
 #ifndef     FXAA_DEBUG_NEGPOS
     #define FXAA_DEBUG_NEGPOS      0

@@ -1,19 +1,19 @@
 /**
- * @class	OpenGLFXAARenderTarget
+ * @class	OpenGLFXAA2RenderTarget
  * @brief	Render target for OpenGL. A render target allows to render objects to it
  *          instead of to the main screen. Then the target can be rendered to the main screen as
  *          a texture
  *
- *          The FXAA render target applies Fast Approximate Anti-Aliasing from
+ *          The FXAA2 render target applies Fast Approximate Anti-Aliasing from
  *          Timothy Lottes paper t Nvidia
  *
  * @author	Roberto Cano (http://www.robertocano.es)
  */
 #include "OpenGL.h"
-#include "OpenGLFXAARenderTarget.hpp"
+#include "OpenGLFXAA2RenderTarget.hpp"
 #include "Renderer.hpp"
 
-OpenGLFXAARenderTarget::~OpenGLFXAARenderTarget()
+OpenGLFXAA2RenderTarget::~OpenGLFXAA2RenderTarget()
 {
     delete _shader;
 
@@ -24,7 +24,7 @@ OpenGLFXAARenderTarget::~OpenGLFXAARenderTarget()
     GL( glDeleteFramebuffers(1, &_frameBuffer) );
 }
 
-bool OpenGLFXAARenderTarget::init(uint32_t width, uint32_t height)
+bool OpenGLFXAA2RenderTarget::init(uint32_t width, uint32_t height)
 {
     /* Frame buffer objects do not care which texture unit is used */
 
@@ -35,7 +35,7 @@ bool OpenGLFXAARenderTarget::init(uint32_t width, uint32_t height)
         GLfloat fLargest;
         glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &fLargest);
 
-        /* FXAA requires a 4x anisotropic filter */
+        /* FXAA2 requires a 4x anisotropic filter */
         if (fLargest > 4.0) {
             fLargest = 4.0;
         }
@@ -114,11 +114,11 @@ bool OpenGLFXAARenderTarget::init(uint32_t width, uint32_t height)
     _shader = Renderer::GetRenderer()->newShader();
 
 	std::string error;
-	if (_shader->loadVertexShader("data/shaders/anti-aliasing/fxaa_lottes.vert", error) == false) {
+	if (_shader->loadVertexShader("data/shaders/anti-aliasing/fxaa.vert", error) == false) {
 		printf("ERROR compiling vertex shader: %s\n", error.c_str());
 		return false;
 	}
-	if (_shader->loadFragmentShader("data/shaders/anti-aliasing/fxaa_lottes.frag", error) == false) {
+	if (_shader->loadFragmentShader("data/shaders/anti-aliasing/fxaa.frag", error) == false) {
 		printf("ERROR compiling fragment shader: %s\n", error.c_str());
 		return false;
 	}
@@ -133,18 +133,18 @@ bool OpenGLFXAARenderTarget::init(uint32_t width, uint32_t height)
     return true;
 }
 
-void OpenGLFXAARenderTarget::bind()
+void OpenGLFXAA2RenderTarget::bind()
 {
     GL( glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer) );
     GL( glViewport(0, 0, _width, _height) );
 }
 
-void OpenGLFXAARenderTarget::unbind()
+void OpenGLFXAA2RenderTarget::unbind()
 {
     GL( glBindFramebuffer(GL_FRAMEBUFFER, 0) );
 }
 
-bool OpenGLFXAARenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height)
+bool OpenGLFXAA2RenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height)
 {
     glm::vec2 rpcFrame(1.0f/_width, 1.0f/_height);
 
@@ -174,7 +174,7 @@ bool OpenGLFXAARenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, 
     return true;
 }
 
-void OpenGLFXAARenderTarget::clear(float r, float g, float b, float a)
+void OpenGLFXAA2RenderTarget::clear(float r, float g, float b, float a)
 {
     GL( glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer) );
     GL( glClearColor(r, g, b, a) );

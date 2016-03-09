@@ -17,6 +17,7 @@
 #include "MSAARenderTarget.hpp"
 #include "SSAARenderTarget.hpp"
 #include "FXAARenderTarget.hpp"
+#include "FXAA2RenderTarget.hpp"
 
 class Game
 {
@@ -91,6 +92,7 @@ class Game
         MSAARenderTarget *_renderTargetMSAA;
         SSAARenderTarget *_renderTargetSSAA;
         FXAARenderTarget *_renderTargetFXAA;
+        FXAA2RenderTarget *_renderTargetFXAA2;
         RenderTarget     *_selectedRenderTarget;
         std::string      _renderTargetName;
 
