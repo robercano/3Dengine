@@ -17,7 +17,7 @@ CC=gcc
 #
 VPATH=core/src:core/opengl/src:core/procedural/src:utils/src
 
-CORE_FILES=Camera.cpp Game.cpp InputManager.cpp OBJFormat.cpp Renderer.cpp WindowManager.cpp TrueTypeFont.cpp FreeTypeFont.cpp \
+CORE_FILES=Camera.cpp InputManager.cpp OBJFormat.cpp Renderer.cpp WindowManager.cpp TrueTypeFont.cpp FreeTypeFont.cpp \
 		   FontRenderer.cpp NOAARenderTarget.cpp MSAARenderTarget.cpp SSAARenderTarget.cpp TextConsole.cpp FXAARenderTarget.cpp \
 		   FXAA2RenderTarget.cpp Shader.cpp
 UTILS_FILES=MathUtils.c JPEGLoader.c

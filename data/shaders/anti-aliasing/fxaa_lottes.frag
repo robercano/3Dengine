@@ -179,7 +179,7 @@ FXAA_DEBUG_OFFSET      - Red/blue for -/+ x, gold/skyblue for -/+ y.
     #define FXAA_DEBUG_HORZVERT    0
 #endif    
 #ifndef     FXAA_DEBUG_PAIR   
-    #define FXAA_DEBUG_PAIR        1
+    #define FXAA_DEBUG_PAIR        0
 #endif    
 #ifndef     FXAA_DEBUG_NEGPOS
     #define FXAA_DEBUG_NEGPOS      0

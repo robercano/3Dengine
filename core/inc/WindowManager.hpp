@@ -16,20 +16,11 @@ class WindowManager
 {
 	public:
 		/**
-		 * Supported window managers
-		 */
-		enum WindowManagerType {
-			WINDOW_MANAGER_GLFW
-		};
-
-		/**
 		 * Window Manager factory
-		 *
-		 * @param	type		Type of window manager to be created
 		 *
 		 * @return Pointer to a the requested window manager or NULL
 		 */
-		static WindowManager *GetInstance(WindowManagerType type);
+		static WindowManager *GetInstance(void);
 
 		/**
 		 * Window Manager disposal

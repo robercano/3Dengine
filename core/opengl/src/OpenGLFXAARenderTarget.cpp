@@ -9,9 +9,11 @@
  *
  * @author	Roberto Cano (http://www.robertocano.es)
  */
+#include <glm/gtc/matrix_transform.hpp>
 #include "OpenGL.h"
 #include "OpenGLFXAARenderTarget.hpp"
 #include "Renderer.hpp"
+#include "WindowManager.hpp"
 
 OpenGLFXAARenderTarget::~OpenGLFXAARenderTarget()
 {
@@ -146,9 +148,17 @@ void OpenGLFXAARenderTarget::unbind()
 
 bool OpenGLFXAARenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height)
 {
+    uint32_t windowWidth, windowHeight;
+
     glm::vec2 rpcFrame(1.0f/_width, 1.0f/_height);
 
+    WindowManager::GetInstance()->getWindowSize(&windowWidth, &windowHeight);
+
+    glm::mat4 scaleMat = glm::scale(glm::mat4(1.0), glm::vec3(_width/(float)windowWidth, _height/(float)windowHeight, 1.0f));
+    glm::mat4 transMat = glm::translate(scaleMat, glm::vec3(dstX/(float)windowWidth, dstY/(float)windowHeight, 0.0f));
+
    /* Bind the target texture */
+    GL( glBindFramebuffer(GL_FRAMEBUFFER, 0) );
     GL( glActiveTexture(GL_TEXTURE0) );
     GL( glBindTexture(GL_TEXTURE_2D, _colorBuffer) );
 

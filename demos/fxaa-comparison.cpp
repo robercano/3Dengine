@@ -30,13 +30,8 @@ int main(int argc, char**argv)
 {
     WindowManager *windowManager = NULL;
     Renderer *renderer = NULL;
-    NOAARenderTarget *renderTargetNOAA = NULL;
-    MSAARenderTarget *renderTargetMSAA = NULL;
-    SSAARenderTarget *renderTargetSSAA = NULL;
     FXAARenderTarget *renderTargetFXAA = NULL;
     FXAA2RenderTarget *renderTargetFXAA2 = NULL;
-    RenderTarget *selectedRenderTarget = NULL;
-    std::string renderTargetName;
     InputManager inputManager;
     Camera *_camera;
     std::vector<RendererObject3D*> objects;
@@ -88,21 +83,6 @@ int main(int argc, char**argv)
 	}
 
     /* Create a render target to allow post-processing */
-    renderTargetNOAA = NOAARenderTarget::New();
-	if (renderTargetNOAA == NULL) {
-		fprintf(stderr, "ERROR allocating render target\n");
-		return 1;
-	}
-    renderTargetMSAA = MSAARenderTarget::New();
-	if (renderTargetMSAA == NULL) {
-		fprintf(stderr, "ERROR allocating render target\n");
-		return 1;
-	}
-    renderTargetSSAA = SSAARenderTarget::New();
-	if (renderTargetSSAA == NULL) {
-		fprintf(stderr, "ERROR allocating render target\n");
-		return 1;
-	}
     renderTargetFXAA = FXAARenderTarget::New();
 	if (renderTargetFXAA == NULL) {
 		fprintf(stderr, "ERROR allocating render target\n");
@@ -118,21 +98,13 @@ int main(int argc, char**argv)
 	windowManager->init();
 
 	/* Set the window size */
-    gameName = "Antia-aliasing comparison";
+    gameName = "FXAA comparison";
 	windowManager->createWindow(gameName, width, height, false);
     windowManager->getWindowSize(&width, &height);
 
 	renderer->init();	// only after creating the window
-    renderTargetNOAA->init(width, height);
-    renderTargetMSAA->init(width, height, MSAARenderTarget::getMaxSamples() < 4 ?
-                                             MSAARenderTarget::getMaxSamples() : 4);
-    renderTargetSSAA->init(width, height, 4);
-    renderTargetFXAA->init(width, height);
-    renderTargetFXAA2->init(width, height);
-
-    /* Choose the render target here */
-    selectedRenderTarget = renderTargetNOAA;
-    renderTargetName = "NOAA";
+    renderTargetFXAA->init(width/2, height);
+    renderTargetFXAA2->init(width/2, height);
 
 	windowManager->setRenderer(renderer);
 
@@ -155,11 +127,6 @@ int main(int argc, char**argv)
 	keys.push_back('S');
 	keys.push_back('A');
 	keys.push_back('D');
-	keys.push_back('1');
-	keys.push_back('2');
-	keys.push_back('3');
-	keys.push_back('4');
-	keys.push_back('5');
 	keys.push_back('R');
 	keys.push_back(GLFW_KEY_ESCAPE);
 
@@ -169,7 +136,7 @@ int main(int argc, char**argv)
 	/* Create the game camera */
 	_camera = new Camera();
 	_camera->setProjection(45, width/(float)height, 0.1, 1000.0);
-    glm::vec4 pos( 220, 135, -1, 1);
+    glm::vec4 pos(220, 135, -1, 1);
     _camera->setPosition(pos);
     _camera->rotateYaw(-90);
 
@@ -233,27 +200,6 @@ int main(int argc, char**argv)
 		} else if (inputManager._keys['D']) {
 			_camera->right(0.1*inputElapsedMs);
 		}
-        if (inputManager._keys['1']) {
-            selectedRenderTarget = renderTargetNOAA;
-            renderTargetName = "NOAA";
-            resetStats = true;
-        } else if (inputManager._keys['2']) {
-            selectedRenderTarget = renderTargetMSAA;
-            renderTargetName = "MSAA";
-            resetStats = true;
-        } else if (inputManager._keys['3']) {
-            selectedRenderTarget = renderTargetSSAA;
-            renderTargetName = "SSAA";
-            resetStats = true;
-        } else if (inputManager._keys['4']) {
-            selectedRenderTarget = renderTargetFXAA;
-            renderTargetName = "FXAA";
-            resetStats = true;
-        } else if (inputManager._keys['5']) {
-            selectedRenderTarget = renderTargetFXAA2;
-            renderTargetName = "FXAA2";
-            resetStats = true;
-        }
         if (inputManager._keys['R']) {
             resetStats = true;
         }
@@ -290,17 +236,18 @@ int main(int argc, char**argv)
         for (i=0; i<objects.size(); ++i) {
             renderer->renderObject3D(*objects[i], *shaders[i],
                     _camera->getProjection(), _camera->getView(),
-                    *selectedRenderTarget);
+                    *renderTargetFXAA);
+            renderer->renderObject3D(*objects[i], *shaders[i],
+                    _camera->getProjection(), _camera->getView(),
+                    *renderTargetFXAA2);
         }
 
         console.clear();
-        //console.gprintf("Title: %s\n", _gameName.c_str());
-        console.gprintf("Anti-aliasing: %s\n", renderTargetName.c_str());
+        console.gprintf("FXAA Left / FXAA2 Right\n");
         console.gprintf("Avg. FPS: %d\n", (int)totalAvgFPS);
-        //console.gprintf("Min. FPS: %d\n", (int)minFPS);
-        //console.gprintf("Max. FPS: %d\n", (int)maxFPS);
 
-        selectedRenderTarget->blit(0, 0, width, height);
+        renderTargetFXAA->blit(0, 0, width, height);
+        //renderTargetFXAA2->blit(width, 0, width/2, height);
         console.blit();
 
         /* Flush all operations so we can have a good measure

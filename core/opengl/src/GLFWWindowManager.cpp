@@ -93,7 +93,7 @@ void GLFWWindowManager::swapBuffers(void)
 
 void GLFWWindowManager::handle_resize(GLFWwindow *w, int width,int height)
 {
-	WindowManager::GetInstance(WindowManager::WINDOW_MANAGER_GLFW)->resize(width, height);
+	WindowManager::GetInstance()->resize(width, height);
 }
 
 bool GLFWWindowManager::resize(uint16_t width, uint16_t height)
