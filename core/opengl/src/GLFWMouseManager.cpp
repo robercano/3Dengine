@@ -44,6 +44,12 @@ bool GLFWMouseManager::registerListener(MouseListener &listener)
 		 * the _mouseManager field is still not set when the callback is called,
 		 * leading to another object being created and so on */
 		glfwSetCursorPosCallback(glfwGetCurrentContext(), mouseCallback);
+
+        double xPos, yPos;
+        glfwGetCursorPos(glfwGetCurrentContext(), &xPos, &yPos);
+
+        /* Call the callback manually to initialize the values */
+        listener.processMouse((int32_t)xPos, (int32_t)yPos);
 	}
     return true;
 }

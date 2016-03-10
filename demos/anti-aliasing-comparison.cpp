@@ -1,95 +1,124 @@
 /**
- * @class	Game
- * @brief	Main game components aggregator
+ * @class	Anti-aliasing comparison
+ * @brief	Demo to compare different aliasing methods like MSAA, SSAA and FXAA
  *
  * @author	Roberto Cano (http://www.robertocano.es)
  */
+#include <string>
 #include <sys/time.h>
 #include <unistd.h>
 #include "OpenGL.h" // For GLFW_KEY_ESCAPE
-#include "Game.hpp"
+#include "OBJFormat.hpp"
+#include "Shader.hpp"
+#include "ShaderMaterial.hpp"
 #include "WalkingCamera.hpp"
+#include "WindowManager.hpp"
+#include "InputManager.hpp"
+#include "Renderer.hpp"
+#include "Camera.hpp"
+#include "RenderTarget.hpp"
+#include "TextConsole.hpp"
+#include "NOAARenderTarget.hpp"
+#include "MSAARenderTarget.hpp"
+#include "SSAARenderTarget.hpp"
+#include "FXAARenderTarget.hpp"
+#include "FXAA2RenderTarget.hpp"
 
-Game *Game::_game = NULL;
-
-Game *Game::GetInstance(void)
+int main(int argc, char**argv)
 {
-	if (_game == NULL) {
-		_game = new Game();
-	}
-	return _game;
-}
+#define TARGET_FPS 60
 
-void Game::DisposeInstance(void)
-{
-	delete _game;
-	_game = NULL;
-}
+    WindowManager *_windowManager = NULL;
+    Renderer *_renderer = NULL;
+    NOAARenderTarget *_renderTargetNOAA = NULL;
+    MSAARenderTarget *_renderTargetMSAA = NULL;
+    SSAARenderTarget *_renderTargetSSAA = NULL;
+    FXAARenderTarget *_renderTargetFXAA = NULL;
+    FXAA2RenderTarget *_renderTargetFXAA2 = NULL;
+    RenderTarget *_selectedRenderTarget = NULL;
+    std::string _renderTargetName;
+    InputManager _inputManager;
+    Camera *_camera;
+    std::vector<RendererObject3D*> _objects;
+    std::vector<Shader*> _shaders;
+    std::string _gameName;
+    TextConsole _console;
+    OBJFormat obj3D;
+    Shader *shader = NULL;
 
-Game::Game() : _windowManager(NULL), _renderer(NULL), _camera(NULL)
-{
-}
+	const float MouseSensibility = 10.0;
+	const float InvertMouse = 1.0;
+    float FPS = 0.0;
+	int32_t _prevX = 0xFFFFFF, _prevY = 0xFFFFFF;
+	struct timeval renderNow, renderPrevious;
+    struct timeval inputNow, inputPrevious;
+    bool resetStats = false;
 
-Game::~Game()
-{
-	WindowManager::DisposeInstance();
-	delete _renderer;
-}
+    float avgFPS[TARGET_FPS] = {0};
+    uint32_t avgFPSIdx = 0;
+    float minFPS = 10000000.0f;
+    float maxFPS = 0.0f;
+    float totalAvgFPS = 0;
+	uint32_t renders=0;
+    float renderAdjustment = 0;
+    float dueTime;
+    bool _unboundFPS;
+    uint32_t _width;
+    uint32_t _height;
+    uint32_t i;
 
-bool Game::init(std::string &gameName, uint32_t targetFPS, bool unboundFPS)
-{
 	/* TODO: Get the settings from a config file */
     _width = 1280;
     _height = 720;
 
-    _targetFPS = targetFPS;
-    _unboundFPS = unboundFPS;
+    dueTime = 1000.0/TARGET_FPS;
+    _unboundFPS = true;
 
 	_windowManager = WindowManager::GetInstance(WindowManager::WINDOW_MANAGER_GLFW);
 	if (_windowManager == NULL) {
 		fprintf(stderr, "ERROR creating new window manager\n");
-		return false;
+		return 1;
 	}
 
 	/* Use our system renderer. This only supports OpenGL for now */
 	_renderer = Renderer::GetInstance();
 	if (_renderer == NULL) {
 		fprintf(stderr, "ERROR allocating renderer\n");
-		return false;
+		return 1;
 	}
 
     /* Create a render target to allow post-processing */
     _renderTargetNOAA = NOAARenderTarget::New();
 	if (_renderTargetNOAA == NULL) {
 		fprintf(stderr, "ERROR allocating render target\n");
-		return false;
+		return 1;
 	}
     _renderTargetMSAA = MSAARenderTarget::New();
 	if (_renderTargetMSAA == NULL) {
 		fprintf(stderr, "ERROR allocating render target\n");
-		return false;
+		return 1;
 	}
     _renderTargetSSAA = SSAARenderTarget::New();
 	if (_renderTargetSSAA == NULL) {
 		fprintf(stderr, "ERROR allocating render target\n");
-		return false;
+		return 1;
 	}
     _renderTargetFXAA = FXAARenderTarget::New();
 	if (_renderTargetFXAA == NULL) {
 		fprintf(stderr, "ERROR allocating render target\n");
-		return false;
+		return 1;
 	}
     _renderTargetFXAA2 = FXAA2RenderTarget::New();
 	if (_renderTargetFXAA2 == NULL) {
 		fprintf(stderr, "ERROR allocating render target\n");
-		return false;
+		return 1;
 	}
 
 	/* Init the window manager and the render*/
 	_windowManager->init();
 
 	/* Set the window size */
-    _gameName = gameName;
+    _gameName = "Antia-aliasing comparison";
 	_windowManager->createWindow(_gameName, _width, _height, false);
     _windowManager->getWindowSize(&_width, &_height);
 
@@ -144,39 +173,39 @@ bool Game::init(std::string &gameName, uint32_t targetFPS, bool unboundFPS)
     _camera->setPosition(pos);
     _camera->rotateYaw(-90);
 
-    return true;
-}
+	/* Create a Blinn-phong shader for the geometry */
+	shader = Shader::New();
 
-bool Game::addObject3D(Object3D *object, Shader *shader)
-{
-    RendererObject3D *renderObject = _renderer->prepareObject3D(*object);
+	std::string error;
+	if (shader->loadVertexShader("data/shaders/lighting/blinnphong_reflection.vert", error) == false) {
+		printf("ERROR compiling vertex shader: %s\n", error.c_str());
+		return 1;
+	}
+	if (shader->loadFragmentShader("data/shaders/lighting/blinnphong_reflection.frag", error) == false) {
+		printf("ERROR compiling fragment shader: %s\n", error.c_str());
+		return 1;
+	}
+	if (shader->linkProgram(error) == false) {
+		printf("ERROR linking shader: %s\n", error.c_str());
+        return 1;
+    }
+
+    /* Load the geometry */
+    std::string meshPath = "data/objects/deadpool";
+
+    if (obj3D.load(meshPath) == false) {
+        printf("ERROR loading OBJ file\n");
+        return 1;
+    }
+
+	/* Wrap the geometry for the renderer, this typically generates any
+     * renderer API specific structures and uploads data to the graphics card */
+    RendererObject3D *renderObject = _renderer->prepareObject3D(obj3D);
 
     _objects.push_back(renderObject);
     _shaders.push_back(shader);
-    return true;
-}
 
-bool Game::loop(void)
-{
-    uint32_t i;
-	const float MouseSensibility = 10.0;
-	const float InvertMouse = 1.0;
-    float FPS = 0.0;
-	static int32_t _prevX = 0xFFFFFF, _prevY = 0xFFFFFF;
-	struct timeval renderNow, renderPrevious;
-    struct timeval inputNow, inputPrevious;
-    bool resetStats = false;
-
-#define NUM_AVG_FPS 30
-    float avgFPS[NUM_AVG_FPS] = {0};
-    uint32_t avgFPSIdx = 0;
-    float minFPS = 10000000.0f;
-    float maxFPS = 0.0f;
-    float totalAvgFPS = 0;
-	uint32_t  renders=0;
-    float renderAdjustment = 0;
-    float dueTime = 1000.0/_targetFPS;
-
+    /* Main loop */
 	gettimeofday(&inputNow, NULL);
     renderNow = renderPrevious = inputNow;
 
@@ -231,7 +260,7 @@ bool Game::loop(void)
         if (resetStats) {
             minFPS = 1000000.0f;
             maxFPS = 0.0f;
-            for (i=0; i<NUM_AVG_FPS; ++i) {
+            for (i=0; i<TARGET_FPS; ++i) {
                 avgFPS[i] = FPS;
             }
             resetStats = false;
@@ -243,6 +272,7 @@ bool Game::loop(void)
 		if (_prevY == 0xFFFFFF) {
 			_prevY = _inputManager._yMouse;
 		}
+
 		int32_t diffMouseX = _inputManager._xMouse - _prevX;
 		int32_t diffMouseY = InvertMouse*(_inputManager._yMouse - _prevY);
 
@@ -309,7 +339,7 @@ bool Game::loop(void)
                 renderAdjustment = fmod(renderAdjustment, dueTime);
                 fprintf(stderr, "Droping frames...\n");
             }
-            renderAdjustment = renderAdjustment + renderElapsedMs - (1000.0/_targetFPS);
+            renderAdjustment = renderAdjustment + renderElapsedMs - dueTime;
 
             /* Calculate FPS now */
             FPS = 1000.0*renders/renderElapsedMs;
@@ -322,13 +352,13 @@ bool Game::loop(void)
             }
 
             avgFPS[avgFPSIdx] = FPS;
-            avgFPSIdx = (avgFPSIdx + 1)%NUM_AVG_FPS;
+            avgFPSIdx = (avgFPSIdx + 1)%TARGET_FPS;
 
             /* Calculate the average FPS */
-            for (i=0; i<NUM_AVG_FPS; ++i) {
+            for (i=0; i<TARGET_FPS; ++i) {
                 totalAvgFPS += avgFPS[i];
             }
-            totalAvgFPS /= NUM_AVG_FPS;
+            totalAvgFPS /= TARGET_FPS;
 
             renders = 0;
         }
@@ -337,5 +367,5 @@ bool Game::loop(void)
     fprintf(stderr, "Average FPS: %d\n", (int)totalAvgFPS);
     fprintf(stderr, "Minimum FPS: %d\n", (int)minFPS);
     fprintf(stderr, "Maximum FPS: %d\n", (int)maxFPS);
-	return true;
+	return 0;
 }
