@@ -10,7 +10,7 @@
 
 WindowManager *WindowManager::_windowManager = NULL;
 
-WindowManager *WindowManager::GetWindowManager(WindowManagerType type)
+WindowManager *WindowManager::GetInstance(WindowManagerType type)
 {
 	// TODO: Check here that the type of the already instantiated manager
 	//  is the same as the requested one
@@ -28,15 +28,8 @@ WindowManager *WindowManager::GetWindowManager(WindowManagerType type)
 	}
 }
 
-void WindowManager::DisposeWindowManager(WindowManager *wmanager)
+void WindowManager::DisposeInstance(void)
 {
-	if (wmanager == _windowManager) {
-		delete _windowManager;
-		_windowManager = NULL;
-	}
-}
-
-WindowManager *WindowManager::GetCurrentManager()
-{
-	return _windowManager;
+    delete _windowManager;
+    _windowManager = NULL;
 }

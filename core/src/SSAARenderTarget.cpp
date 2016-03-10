@@ -12,12 +12,12 @@
 #include "SSAARenderTarget.hpp"
 #include "OpenGLSSAARenderTarget.hpp"
 
-SSAARenderTarget *SSAARenderTarget::NewSSAARenderTarget(void)
+SSAARenderTarget *SSAARenderTarget::New(void)
 {
     return new OpenGLSSAARenderTarget();
 }
 
-void SSAARenderTarget::DeleteSSAARenderTarget(SSAARenderTarget *target)
+void SSAARenderTarget::Delete(SSAARenderTarget *target)
 {
     delete target;
 }

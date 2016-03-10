@@ -44,7 +44,7 @@ class Material
         glm::vec3 getSpecular() { return _specular; }
         float     getAlpha()    { return _alpha; }
         float     getShininess(){ return _shininess; }
-//    private:
+    private:
         glm::vec3 _ambient;
         glm::vec3 _diffuse;
         glm::vec3 _specular;

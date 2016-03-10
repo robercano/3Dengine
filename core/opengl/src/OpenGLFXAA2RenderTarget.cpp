@@ -111,7 +111,7 @@ bool OpenGLFXAA2RenderTarget::init(uint32_t width, uint32_t height)
     GL( glBindVertexArray(0) );
 
     /* Create the shader */
-    _shader = Renderer::GetRenderer()->newShader();
+    _shader = Shader::New();
 
 	std::string error;
 	if (_shader->loadVertexShader("data/shaders/anti-aliasing/fxaa.vert", error) == false) {

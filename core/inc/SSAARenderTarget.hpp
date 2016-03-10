@@ -15,8 +15,8 @@
 class SSAARenderTarget : public RenderTarget
 {
 	public:
-        static SSAARenderTarget *NewSSAARenderTarget();
-        static void DeleteSSAARenderTarget(SSAARenderTarget *target);
+        static SSAARenderTarget *New();
+        static void Delete(SSAARenderTarget *target);
 
         virtual ~SSAARenderTarget() {}
 

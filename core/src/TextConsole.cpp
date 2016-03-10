@@ -18,29 +18,29 @@
 
 bool TextConsole::init(std::string &fontPath, uint32_t fontSize, uint32_t width, uint32_t height)
 {
-    NOAARenderTarget *target = NOAARenderTarget::NewNOAARenderTarget();
+    NOAARenderTarget *target = NOAARenderTarget::New();
 	if (target == NULL) {
 		return false;
 	}
 
     if (target->init(width, height) != true) {
-        NOAARenderTarget::DeleteNOAARenderTarget(target);
+        NOAARenderTarget::Delete(target);
         return false;
     }
 
     /* Setup the font renderer */
-    _font = TrueTypeFont::NewFont();
+    _font = TrueTypeFont::New();
 
     if (_font->init(fontPath, fontSize) == false) {
         delete _font;
-        NOAARenderTarget::DeleteNOAARenderTarget(target);
+        NOAARenderTarget::Delete(target);
         return false;
     }
 
-    _fontRenderer = FontRenderer::NewFontRenderer();
+    _fontRenderer = FontRenderer::New();
     if (_fontRenderer == NULL) {
         delete _font;
-        NOAARenderTarget::DeleteNOAARenderTarget(target);
+        NOAARenderTarget::Delete(target);
         return false;
     }
 

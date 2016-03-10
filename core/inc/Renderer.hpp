@@ -19,12 +19,8 @@ class Renderer
 		/**
 		 * Singleton
 		 */
-		static Renderer *GetRenderer(void);
-
-		/**
-		 * Shader factory
-		 */
-		virtual Shader *newShader(void) = 0;
+		static Renderer *GetInstance(void);
+		static void DisposeInstance(void);
 
 		/**
 		 * Destructor

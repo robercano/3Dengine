@@ -9,11 +9,15 @@
 #include <string>
 #include <map>
 #include <glm/glm.hpp>
+#include <stdint.h>
 #include "ShaderMaterial.hpp"
 
 class Shader
 {
 	public:
+        static Shader *New(void);
+        static void Delete(Shader *shader);
+
 		/**
 		 * Destructor
 		 */

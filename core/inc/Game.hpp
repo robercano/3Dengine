@@ -25,12 +25,12 @@ class Game
 		/**
 		 * Singleton
 		 */
-		static Game *GetGame(void);
+		static Game *GetInstance(void);
 
 		/**
 		 * Singleton disposal
 		 */
-		static void DisposeGame();
+		static void DisposeInstance(void);
 
 		/**
 		 * Constructor

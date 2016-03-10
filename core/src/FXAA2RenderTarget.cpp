@@ -12,12 +12,12 @@
 #include "FXAA2RenderTarget.hpp"
 #include "OpenGLFXAA2RenderTarget.hpp"
 
-FXAA2RenderTarget *FXAA2RenderTarget::NewFXAA2RenderTarget(void)
+FXAA2RenderTarget *FXAA2RenderTarget::New(void)
 {
     return new OpenGLFXAA2RenderTarget();
 }
 
-void FXAA2RenderTarget::DeleteFXAA2RenderTarget(FXAA2RenderTarget *target)
+void FXAA2RenderTarget::Delete(FXAA2RenderTarget *target)
 {
     delete target;
 }

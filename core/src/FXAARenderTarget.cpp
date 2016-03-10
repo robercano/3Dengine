@@ -12,12 +12,12 @@
 #include "FXAARenderTarget.hpp"
 #include "OpenGLFXAARenderTarget.hpp"
 
-FXAARenderTarget *FXAARenderTarget::NewFXAARenderTarget(void)
+FXAARenderTarget *FXAARenderTarget::New(void)
 {
     return new OpenGLFXAARenderTarget();
 }
 
-void FXAARenderTarget::DeleteFXAARenderTarget(FXAARenderTarget *target)
+void FXAARenderTarget::Delete(FXAARenderTarget *target)
 {
     delete target;
 }

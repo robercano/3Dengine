@@ -10,7 +10,7 @@
 
 Renderer * Renderer::_renderer = NULL;
 
-Renderer *Renderer::GetRenderer(void)
+Renderer *Renderer::GetInstance(void)
 {
 	if(_renderer == NULL) {
 		_renderer = new OpenGLRenderer();
@@ -18,3 +18,8 @@ Renderer *Renderer::GetRenderer(void)
 	return _renderer;
 }
 
+void Renderer::DisposeInstance(void)
+{
+    delete _renderer;
+    _renderer = NULL;
+}

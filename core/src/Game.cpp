@@ -12,7 +12,7 @@
 
 Game *Game::_game = NULL;
 
-Game *Game::GetGame(void)
+Game *Game::GetInstance(void)
 {
 	if (_game == NULL) {
 		_game = new Game();
@@ -20,7 +20,7 @@ Game *Game::GetGame(void)
 	return _game;
 }
 
-void Game::DisposeGame()
+void Game::DisposeInstance(void)
 {
 	delete _game;
 	_game = NULL;
@@ -32,7 +32,7 @@ Game::Game() : _windowManager(NULL), _renderer(NULL), _camera(NULL)
 
 Game::~Game()
 {
-	WindowManager::DisposeWindowManager(_windowManager);
+	WindowManager::DisposeInstance();
 	delete _renderer;
 }
 
@@ -45,55 +45,43 @@ bool Game::init(std::string &gameName, uint32_t targetFPS, bool unboundFPS)
     _targetFPS = targetFPS;
     _unboundFPS = unboundFPS;
 
-	_windowManager = WindowManager::GetWindowManager(WindowManager::WINDOW_MANAGER_GLFW);
+	_windowManager = WindowManager::GetInstance(WindowManager::WINDOW_MANAGER_GLFW);
 	if (_windowManager == NULL) {
 		fprintf(stderr, "ERROR creating new window manager\n");
 		return false;
 	}
 
 	/* Use our system renderer. This only supports OpenGL for now */
-	_renderer = Renderer::GetRenderer();
+	_renderer = Renderer::GetInstance();
 	if (_renderer == NULL) {
 		fprintf(stderr, "ERROR allocating renderer\n");
-		WindowManager::DisposeWindowManager(_windowManager);
-		_windowManager = NULL;
 		return false;
 	}
 
     /* Create a render target to allow post-processing */
-    _renderTargetNOAA = NOAARenderTarget::NewNOAARenderTarget();
+    _renderTargetNOAA = NOAARenderTarget::New();
 	if (_renderTargetNOAA == NULL) {
 		fprintf(stderr, "ERROR allocating render target\n");
-		WindowManager::DisposeWindowManager(_windowManager);
-		_windowManager = NULL;
 		return false;
 	}
-    _renderTargetMSAA = MSAARenderTarget::NewMSAARenderTarget();
+    _renderTargetMSAA = MSAARenderTarget::New();
 	if (_renderTargetMSAA == NULL) {
 		fprintf(stderr, "ERROR allocating render target\n");
-		WindowManager::DisposeWindowManager(_windowManager);
-		_windowManager = NULL;
 		return false;
 	}
-    _renderTargetSSAA = SSAARenderTarget::NewSSAARenderTarget();
+    _renderTargetSSAA = SSAARenderTarget::New();
 	if (_renderTargetSSAA == NULL) {
 		fprintf(stderr, "ERROR allocating render target\n");
-		WindowManager::DisposeWindowManager(_windowManager);
-		_windowManager = NULL;
 		return false;
 	}
-    _renderTargetFXAA = FXAARenderTarget::NewFXAARenderTarget();
+    _renderTargetFXAA = FXAARenderTarget::New();
 	if (_renderTargetFXAA == NULL) {
 		fprintf(stderr, "ERROR allocating render target\n");
-		WindowManager::DisposeWindowManager(_windowManager);
-		_windowManager = NULL;
 		return false;
 	}
-    _renderTargetFXAA2 = FXAA2RenderTarget::NewFXAA2RenderTarget();
+    _renderTargetFXAA2 = FXAA2RenderTarget::New();
 	if (_renderTargetFXAA2 == NULL) {
 		fprintf(stderr, "ERROR allocating render target\n");
-		WindowManager::DisposeWindowManager(_windowManager);
-		_windowManager = NULL;
 		return false;
 	}
 

@@ -13,13 +13,13 @@ int main(int argc, char** argv)
 {
     OBJFormat obj3D;
 
-	Game *game = Game::GetGame();
+	Game *game = Game::GetInstance();
 
 	std::string title("OpenGL Test");
 	game->init(title, 60, true);
 
 	/* Request a new shader */
-	Shader *shader = Renderer::GetRenderer()->newShader();
+	Shader *shader = Shader::New();
 
 	/* Basic shaders with only position and color attributes, with no camera */
 	std::string error;

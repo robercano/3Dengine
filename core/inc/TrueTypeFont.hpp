@@ -14,8 +14,8 @@
 class TrueTypeFont
 {
     public:
-        static TrueTypeFont *NewFont();
-        static void DeleteFont(TrueTypeFont *font);
+        static TrueTypeFont *New();
+        static void Delete(TrueTypeFont *font);
 
         virtual ~TrueTypeFont() {};
         virtual bool init(const std::string &font_path, uint32_t size) = 0;

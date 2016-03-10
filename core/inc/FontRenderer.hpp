@@ -16,8 +16,8 @@ class FontRenderer
 {
     public:
         /* Singleton */
-        static FontRenderer *NewFontRenderer();
-        static void DeleteFontRenderer(FontRenderer *fontRenderer);
+        static FontRenderer *New();
+        static void Delete(FontRenderer *fontRenderer);
 
         virtual ~FontRenderer() {}
 

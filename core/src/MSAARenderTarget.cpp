@@ -12,17 +12,17 @@
 #include "MSAARenderTarget.hpp"
 #include "OpenGLMSAARenderTarget.hpp"
 
-uint32_t MSAARenderTarget::getMaxSamples()
+uint32_t MSAARenderTarget::getMaxSamples(void)
 {
     return OpenGLMSAARenderTarget::getMaxSamples();
 }
 
-MSAARenderTarget *MSAARenderTarget::NewMSAARenderTarget(void)
+MSAARenderTarget *MSAARenderTarget::New(void)
 {
     return new OpenGLMSAARenderTarget();
 }
 
-void MSAARenderTarget::DeleteMSAARenderTarget(MSAARenderTarget *target)
+void MSAARenderTarget::Delete(MSAARenderTarget *target)
 {
     delete target;
 }

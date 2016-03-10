@@ -29,21 +29,14 @@ class WindowManager
 		 *
 		 * @return Pointer to a the requested window manager or NULL
 		 */
-		static WindowManager *GetWindowManager(WindowManagerType type);
+		static WindowManager *GetInstance(WindowManagerType type);
 
 		/**
 		 * Window Manager disposal
 		 *
 		 * @param	wmanager	Window manager to be disposed
 		 */
-		static void DisposeWindowManager(WindowManager *wmanager);
-
-		/**
-		 * Gets the current manager
-		 *
-		 * @return The current manager or NULL if no manager is available
-		 */
-		static WindowManager *GetCurrentManager();
+		static void DisposeInstance();
 
 		/**
 		 * Gets the associated key manager

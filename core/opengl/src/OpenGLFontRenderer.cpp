@@ -89,7 +89,7 @@ bool OpenGLFontRenderer::setFont(TrueTypeFont *font)
     }
 
     /* Create the shader */
-    _shader = Renderer::GetRenderer()->newShader();
+    _shader = Shader::New();
 
 	std::string error;
 	if (_shader->loadVertexShader("data/shaders/text/glyph.vert", error) == false) {

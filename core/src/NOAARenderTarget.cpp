@@ -12,12 +12,12 @@
 #include "NOAARenderTarget.hpp"
 #include "OpenGLNOAARenderTarget.hpp"
 
-NOAARenderTarget *NOAARenderTarget::NewNOAARenderTarget(void)
+NOAARenderTarget *NOAARenderTarget::New(void)
 {
     return new OpenGLNOAARenderTarget();
 }
 
-void NOAARenderTarget::DeleteNOAARenderTarget(NOAARenderTarget *target)
+void NOAARenderTarget::Delete(NOAARenderTarget *target)
 {
     delete target;
 }
