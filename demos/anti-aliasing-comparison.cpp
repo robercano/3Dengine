@@ -68,8 +68,8 @@ int main(int argc, char**argv)
     uint32_t i;
 
 	/* TODO: Get the settings from a config file */
-    width = 1280;
-    height = 720;
+    width = 1920;
+    height = 1080;
 
     dueTime = 1000.0/TARGET_FPS;
     _unboundFPS = true;
@@ -119,7 +119,7 @@ int main(int argc, char**argv)
 
 	/* Set the window size */
     gameName = "Antia-aliasing comparison";
-	windowManager->createWindow(gameName, width, height, false);
+	windowManager->createWindow(gameName, width, height, true);
     windowManager->getWindowSize(&width, &height);
 
 	renderer->init();	// only after creating the window

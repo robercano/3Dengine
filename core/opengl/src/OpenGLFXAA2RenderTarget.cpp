@@ -9,9 +9,11 @@
  *
  * @author	Roberto Cano (http://www.robertocano.es)
  */
+#include <glm/gtc/matrix_transform.hpp>
 #include "OpenGL.h"
 #include "OpenGLFXAA2RenderTarget.hpp"
 #include "Renderer.hpp"
+#include "WindowManager.hpp"
 
 OpenGLFXAA2RenderTarget::~OpenGLFXAA2RenderTarget()
 {
@@ -146,7 +148,20 @@ void OpenGLFXAA2RenderTarget::unbind()
 
 bool OpenGLFXAA2RenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height)
 {
+    uint32_t windowWidth, windowHeight;
+
     glm::vec2 rpcFrame(1.0f/_width, 1.0f/_height);
+
+    WindowManager::GetInstance()->getWindowSize(&windowWidth, &windowHeight);
+
+    float ratioWidth = _width/(float)windowWidth;
+    float ratioHeight = _height/(float)windowHeight;
+
+    glm::mat4 targetMat(ratioWidth, 0.0f,        0.0f, 0.0f,
+                        0.0f,       ratioHeight, 0.0f, 0.0f,
+                        0.0f,       0.0f,        1.0f, 0.0f,
+                        ratioWidth + (2.0f*dstX/windowWidth) - 1.0f,
+                        ratioHeight + (2.0f*dstY/windowHeight) - 1.0f, 0.0f, 1.0f);
 
    /* Bind the target texture */
     GL( glActiveTexture(GL_TEXTURE0) );
@@ -156,6 +171,7 @@ bool OpenGLFXAA2RenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width,
     _shader->attach();
     _shader->setUniformTexture2D("fbo_texture", 0);
     _shader->setUniformVec2("f_rpcFrame", rpcFrame);
+    _shader->setUniformMat4("f_scale", targetMat);
 
     /* Disable the depth test as the render target should
      * be always rendered */

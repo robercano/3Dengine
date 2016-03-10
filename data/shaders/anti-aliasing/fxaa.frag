@@ -11,9 +11,15 @@ out vec4 fragColor;
 
 //#define DEBUG_LOCAL_CONTRAST
 //#define DEBUG_VERTHOR_TEST
-#define DEBUG_PIXEL_PAIR
+//#define DEBUG_PIXEL_PAIR
 //#define FXAA_DEBUG_NEGPOS
 //#define FXAA_DEBUG_OFFSET
+
+#if defined(DEBUG_LOCAL_CONTRAST)||defined(DEBUG_VERTHOR_TEST)||defined(DEBUG_PIXEL_PAIR)||defined(FXAA_DEBUG_NEGPOS)||defined(FXAA_DEBUG_OFFSET)
+#define FXAA_DEBUG 1
+#else
+#define FXAA_DEBUG 0
+#endif
 
 /*
     The minimum amount of local contrast required to apply algorithm.
@@ -22,7 +28,7 @@ out vec4 fragColor;
         1/8 – high quality
         1/16 – overkill
 */
-float FXAA_EDGE_THRESHOLD = 1.0/3.0;
+float FXAA_EDGE_THRESHOLD = 1.0/4.0;
 
 /*
     Trims the algorithm from processing darks.
@@ -30,7 +36,7 @@ float FXAA_EDGE_THRESHOLD = 1.0/3.0;
         1/16 – high quality
         1/12 – upper limit (start of visible unfiltered edges)
 */
-float FXAA_EDGE_THRESHOLD_MIN = 1.0/32.0;
+float FXAA_EDGE_THRESHOLD_MIN = 1.0/12.0;
 
 float FXAA_SEARCH_STEPS = 5;
 float FXAA_SEARCH_ACCELERATION = 1;
@@ -77,7 +83,12 @@ vec3 FxaaFilter() {
     float range = rangeMax - rangeMin;
 
     if (range < max(FXAA_EDGE_THRESHOLD_MIN, rangeMax * FXAA_EDGE_THRESHOLD)) {
+#if FXAA_DEBUG
+        float lumaO = lumaM / (1.0 + (0.587/0.299));
+        return vec3(lumaO, lumaO, lumaO);
+#else
         return rgbM;
+#endif
     }
 
 #ifdef DEBUG_LOCAL_CONTRAST

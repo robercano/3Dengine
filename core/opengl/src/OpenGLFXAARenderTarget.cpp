@@ -154,8 +154,14 @@ bool OpenGLFXAARenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, 
 
     WindowManager::GetInstance()->getWindowSize(&windowWidth, &windowHeight);
 
-    glm::mat4 scaleMat = glm::scale(glm::mat4(1.0), glm::vec3(_width/(float)windowWidth, _height/(float)windowHeight, 1.0f));
-    glm::mat4 transMat = glm::translate(scaleMat, glm::vec3(dstX/(float)windowWidth, dstY/(float)windowHeight, 0.0f));
+    float ratioWidth = _width/(float)windowWidth;
+    float ratioHeight = _height/(float)windowHeight;
+
+    glm::mat4 targetMat(ratioWidth, 0.0f,        0.0f, 0.0f,
+                        0.0f,       ratioHeight, 0.0f, 0.0f,
+                        0.0f,       0.0f,        1.0f, 0.0f,
+                        ratioWidth + (2.0f*dstX/windowWidth) - 1.0f,
+                        ratioHeight + (2.0f*dstY/windowHeight) - 1.0f, 0.0f, 1.0f);
 
    /* Bind the target texture */
     GL( glBindFramebuffer(GL_FRAMEBUFFER, 0) );
@@ -166,6 +172,7 @@ bool OpenGLFXAARenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, 
     _shader->attach();
     _shader->setUniformTexture2D("fbo_texture", 0);
     _shader->setUniformVec2("f_rpcFrame", rpcFrame);
+    _shader->setUniformMat4("f_scale", targetMat);
 
     /* Disable the depth test as the render target should
      * be always rendered */

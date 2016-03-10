@@ -63,8 +63,8 @@ int main(int argc, char**argv)
     uint32_t i;
 
 	/* TODO: Get the settings from a config file */
-    width = 1280;
-    height = 720;
+    width = 1920;
+    height = 1080;
 
     dueTime = 1000.0/TARGET_FPS;
     _unboundFPS = true;
@@ -99,7 +99,7 @@ int main(int argc, char**argv)
 
 	/* Set the window size */
     gameName = "FXAA comparison";
-	windowManager->createWindow(gameName, width, height, false);
+	windowManager->createWindow(gameName, width, height, true);
     windowManager->getWindowSize(&width, &height);
 
 	renderer->init();	// only after creating the window
@@ -135,7 +135,7 @@ int main(int argc, char**argv)
 
 	/* Create the game camera */
 	_camera = new Camera();
-	_camera->setProjection(45, width/(float)height, 0.1, 1000.0);
+	_camera->setProjection(45, width/(2.0*(float)height), 0.1, 1000.0);
     glm::vec4 pos(220, 135, -1, 1);
     _camera->setPosition(pos);
     _camera->rotateYaw(-90);
@@ -246,8 +246,8 @@ int main(int argc, char**argv)
         console.gprintf("FXAA Left / FXAA2 Right\n");
         console.gprintf("Avg. FPS: %d\n", (int)totalAvgFPS);
 
-        renderTargetFXAA->blit(0, 0, width, height);
-        //renderTargetFXAA2->blit(width, 0, width/2, height);
+        renderTargetFXAA->blit(0, 0, width/2, height);
+        renderTargetFXAA2->blit(width/2, 0, width/2, height);
         console.blit();
 
         /* Flush all operations so we can have a good measure

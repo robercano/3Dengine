@@ -12,7 +12,8 @@
 #version 330 core
 
 #define FXAA_GLSL_130 1
-#define FXAA_PRESET 3
+#define FXAA_PRESET 0
+#define FIX_LOD_OFFSET_CONSTANT 1
 
 /*============================================================================
  
@@ -95,7 +96,7 @@
     struct FxaaTex { SamplerState smpl; Texture2D tex; };
 #endif
 /*--------------------------------------------------------------------------*/
-float4 FxxaLinear2SRGB(float4 c) {
+float4 FxaaLinear2SRGB(float4 c) {
     return float4(
             FxaaSel3(float3(c) * FxaaFloat3(12.92),
                     FxaaFloat3(1.055) * FxaaPow3(float3(c), FxaaFloat3(0.41666)) - FxaaFloat3(0.055),
@@ -110,7 +111,7 @@ float4 FxaaTexLod0(FxaaTex tex, float2 pos) {
         return texture2DLod(tex, pos.xy, 0.0);
     #endif
     #if FXAA_GLSL_130
-        return FxxaLinear2SRGB(textureLod(tex, pos.xy, 0.0));
+        return FxaaLinear2SRGB(textureLod(tex, pos.xy, 0.0));
     #endif
     #if FXAA_HLSL_3
         return tex2Dlod(tex, float4(pos.xy, 0.0, 0.0)); 
@@ -125,7 +126,7 @@ float4 FxaaTexGrad(FxaaTex tex, float2 pos, float2 grad) {
         return texture2DGrad(tex, pos.xy, grad, grad);
     #endif
     #if FXAA_GLSL_130
-        return FxxaLinear2SRGB(textureGrad(tex, pos.xy, grad, grad));
+        return FxaaLinear2SRGB(textureGrad(tex, pos.xy, grad, grad));
     #endif
     #if FXAA_HLSL_3
         return tex2Dgrad(tex, pos.xy, grad, grad); 
@@ -135,12 +136,15 @@ float4 FxaaTexGrad(FxaaTex tex, float2 pos, float2 grad) {
     #endif
 }
 /*--------------------------------------------------------------------------*/
+#if FIX_LOD_OFFSET_CONSTANT 
+#define FxaaTexOff(t, p, o, r) FxaaLinear2SRGB(textureLodOffset(t, (p).xy, 0.0, (o).xy))
+#else
 float4 FxaaTexOff(FxaaTex tex, float2 pos, int2 off, float2 rcpFrame) {
     #if FXAA_GLSL_120
         return texture2DLodOffset(tex, pos.xy, 0.0, off.xy);
     #endif
     #if FXAA_GLSL_130
-        return FxxaLinear2SRGB(textureLodOffset(tex, pos.xy, 0.0, off.xy));
+        return FxaaLinear2SRGB(textureLodOffset(tex, pos.xy, 0.0, off.xy));
     #endif
     #if FXAA_HLSL_3
         return tex2Dlod(tex, float4(pos.xy + (off * rcpFrame), 0, 0)); 
@@ -149,6 +153,7 @@ float4 FxaaTexOff(FxaaTex tex, float2 pos, int2 off, float2 rcpFrame) {
         return tex.tex.SampleLevel(tex.smpl, pos.xy, 0.0, off.xy);
     #endif
 }
+#endif
 
 /*============================================================================
                                  SRGB KNOBS
@@ -259,7 +264,7 @@ FXAA_SUBPIX_CAP - Insures fine detail is not completely removed.
     #define FXAA_SEARCH_STEPS        2
     #define FXAA_SEARCH_ACCELERATION 4
     #define FXAA_SEARCH_THRESHOLD    (1.0/4.0)
-    #define FXAA_SUBPIX              1
+    #define FXAA_SUBPIX              0
     #define FXAA_SUBPIX_FASTER       1
     #define FXAA_SUBPIX_CAP          (2.0/3.0)
     #define FXAA_SUBPIX_TRIM         (1.0/4.0)
