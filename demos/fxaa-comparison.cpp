@@ -30,6 +30,9 @@ int main(int argc, char**argv)
 {
     WindowManager *windowManager = NULL;
     Renderer *renderer = NULL;
+    RenderTarget *selectedTargetLeft = NULL;
+    RenderTarget *selectedTargetRight = NULL;
+    NOAARenderTarget *renderTargetNOAA = NULL;
     FXAARenderTarget *renderTargetFXAA = NULL;
     FXAA2RenderTarget *renderTargetFXAA2 = NULL;
     InputManager inputManager;
@@ -37,6 +40,7 @@ int main(int argc, char**argv)
     std::vector<RendererObject3D*> objects;
     std::vector<Shader*> shaders;
     std::string gameName;
+    std::string targets = "NOAA Left / NOAA Right";
     TextConsole console;
     OBJFormat obj3D;
     Shader *shader = NULL;
@@ -83,6 +87,11 @@ int main(int argc, char**argv)
 	}
 
     /* Create a render target to allow post-processing */
+    renderTargetNOAA = NOAARenderTarget::New();
+	if (renderTargetNOAA == NULL) {
+		fprintf(stderr, "ERROR allocating render target\n");
+		return 1;
+	}
     renderTargetFXAA = FXAARenderTarget::New();
 	if (renderTargetFXAA == NULL) {
 		fprintf(stderr, "ERROR allocating render target\n");
@@ -103,8 +112,12 @@ int main(int argc, char**argv)
     windowManager->getWindowSize(&width, &height);
 
 	renderer->init();	// only after creating the window
+    renderTargetNOAA->init(width/2, height);
     renderTargetFXAA->init(width/2, height);
     renderTargetFXAA2->init(width/2, height);
+
+    selectedTargetLeft = renderTargetNOAA;
+    selectedTargetRight = renderTargetNOAA;
 
 	windowManager->setRenderer(renderer);
 
@@ -128,6 +141,8 @@ int main(int argc, char**argv)
 	keys.push_back('A');
 	keys.push_back('D');
 	keys.push_back('R');
+	keys.push_back('N');
+	keys.push_back('F');
 	keys.push_back(GLFW_KEY_ESCAPE);
 
 	windowManager->getKeyManager()->registerListener(inputManager, keys);
@@ -203,6 +218,16 @@ int main(int argc, char**argv)
         if (inputManager._keys['R']) {
             resetStats = true;
         }
+        if (inputManager._keys['F']) {
+            selectedTargetLeft = renderTargetFXAA;
+            selectedTargetRight = renderTargetFXAA2;
+            targets = "FXAA Left / FXAA2 Right";
+        }
+        if (inputManager._keys['N']) {
+            selectedTargetLeft = renderTargetNOAA;
+            selectedTargetRight = renderTargetNOAA;
+            targets = "NOAA Left / NOAA Right";
+        }
         if (resetStats) {
             minFPS = 1000000.0f;
             maxFPS = 0.0f;
@@ -236,18 +261,18 @@ int main(int argc, char**argv)
         for (i=0; i<objects.size(); ++i) {
             renderer->renderObject3D(*objects[i], *shaders[i],
                     _camera->getProjection(), _camera->getView(),
-                    *renderTargetFXAA);
+                    *selectedTargetLeft);
             renderer->renderObject3D(*objects[i], *shaders[i],
                     _camera->getProjection(), _camera->getView(),
-                    *renderTargetFXAA2);
+                    *selectedTargetRight);
         }
 
         console.clear();
-        console.gprintf("FXAA Left / FXAA2 Right\n");
+        console.gprintf("%s\n", targets.c_str());
         console.gprintf("Avg. FPS: %d\n", (int)totalAvgFPS);
 
-        renderTargetFXAA->blit(0, 0, width/2, height);
-        renderTargetFXAA2->blit(width/2, 0, width/2, height);
+        selectedTargetLeft->blit(0, 0, width/2, height);
+        selectedTargetRight->blit(width/2, 0, width/2, height);
         console.blit();
 
         /* Flush all operations so we can have a good measure

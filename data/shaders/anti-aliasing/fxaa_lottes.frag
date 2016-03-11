@@ -262,7 +262,7 @@ FXAA_SUBPIX_CAP - Insures fine detail is not completely removed.
     #define FXAA_EDGE_THRESHOLD      (1.0/4.0)
     #define FXAA_EDGE_THRESHOLD_MIN  (1.0/12.0)
     #define FXAA_SEARCH_STEPS        2
-    #define FXAA_SEARCH_ACCELERATION 4
+    #define FXAA_SEARCH_ACCELERATION 1
     #define FXAA_SEARCH_THRESHOLD    (1.0/4.0)
     #define FXAA_SUBPIX              0
     #define FXAA_SUBPIX_FASTER       1
@@ -596,7 +596,7 @@ via anisotropic filtering with specified texture gradients.
         posP += offNP * FxaaFloat2( 2.5,  2.5);
         offNP *= FxaaFloat2(4.0, 4.0);
     #endif
-    for(int i = 0; i < FXAA_SEARCH_STEPS; i++) {
+    for(int i=0; i<FXAA_SEARCH_STEPS; i++) {
         #if FXAA_SEARCH_ACCELERATION == 1
             if(!doneN) lumaEndN = 
                 FxaaLuma(FxaaTexLod0(tex, posN.xy).xyz);
