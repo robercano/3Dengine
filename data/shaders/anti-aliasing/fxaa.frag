@@ -9,13 +9,20 @@ uniform vec2 f_rpcFrame;
 
 out vec4 fragColor;
 
+/*
+   Defines to control the debug output of the shader
+*/
 //#define DEBUG_LOCAL_CONTRAST
 //#define DEBUG_VERTHOR_TEST
 //#define DEBUG_PIXEL_PAIR
 //#define DEBUG_NEGPOS
 //#define DEBUG_OFFSET
 
-#if defined(DEBUG_LOCAL_CONTRAST)||defined(DEBUG_VERTHOR_TEST)||defined(DEBUG_PIXEL_PAIR)||defined(DEBUG_NEGPOS)||defined(DEBUG_OFFSET)
+#if defined(DEBUG_LOCAL_CONTRAST) || \
+    defined(DEBUG_VERTHOR_TEST) || \
+    defined(DEBUG_PIXEL_PAIR) || \
+    defined(DEBUG_NEGPOS) || \
+    defined(DEBUG_OFFSET)
 #define DEBUG 1
 #else
 #define DEBUG 0
@@ -28,7 +35,7 @@ out vec4 fragColor;
         1/8 – high quality
         1/16 – overkill
 */
-#define FXAA_EDGE_THRESHOLD 1.0/4.0
+#define FXAA_EDGE_THRESHOLD 1.0/16.0
 
 /*
     Trims the algorithm from processing darks.
@@ -37,8 +44,16 @@ out vec4 fragColor;
         1/12 – upper limit (start of visible unfiltered edges)
 */
 #define FXAA_EDGE_THRESHOLD_MIN 1.0/12.0
+
+/*
+   Number of search steps for the end of edge
+*/
 #define FXAA_SEARCH_STEPS 3
-#define FXAA_SEARCH_ACCELERATION 1
+
+/*
+   Adjustment on the gradient for the end of
+   search
+*/
 #define FXAA_SEARCH_THRESHOLD 1.0/4.0
 
 float sRGB2Linear(float c) {
@@ -48,13 +63,9 @@ float sRGB2Linear(float c) {
     return pow((c + 0.055)/1.055, 2.4);
 }
 
-float FxaaLuma(vec3 rgb) {
+float Luma(vec3 rgb) {
     return rgb.y * (0.587/0.299) + rgb.x;
 }
-vec3 FxaaLerp3(vec3 a, vec3 b, float amountOfA) {
-    return (vec3(-amountOfA) * b) + ((a * vec3(amountOfA)) + b);
-} 
-
 vec3 Linear2SRGB(vec3 c) {
     return mix(c * vec3(12.92, 12.92, 12.92),
                 vec3(1.055, 1.055, 1.055) * pow(c, vec3(0.41666, 0.41666, 0.41666)) -
@@ -62,30 +73,30 @@ vec3 Linear2SRGB(vec3 c) {
                 greaterThanEqual(c, vec3(0.0031308, 0.0031308, 0.0031308)));
 }
 
-#define FxaaTextureOff(t, c, o) \
+#define TextureOff(t, c, o) \
     Linear2SRGB(textureLodOffset(t, c, 0.0, o).rgb)
 
-vec3 FxaaTextureGrad(sampler2D tex, vec2 pos, vec2 grad) {
+vec3 TextureGrad(sampler2D tex, vec2 pos, vec2 grad) {
     return Linear2SRGB(textureGrad(tex, pos.xy, grad, grad).rgb);
 }
 
-vec3 FxaaTextureLod0(sampler2D tex, vec2 pos) {
+vec3 TextureLod0(sampler2D tex, vec2 pos) {
     return Linear2SRGB(textureLod(tex, pos.xy, 0.0).rgb);
 }
 
-vec3 FxaaFilter() {
+vec3 FXAAFilter(sampler2D tex, vec2 coord) {
     /* Local contrast check */
-    vec3 rgbN = FxaaTextureOff(fbo_texture, f_texcoord, ivec2(0, -1));
-    vec3 rgbW = FxaaTextureOff(fbo_texture, f_texcoord, ivec2(-1,  0));
-    vec3 rgbM = FxaaTextureOff(fbo_texture, f_texcoord, ivec2( 0,  0));
-    vec3 rgbE = FxaaTextureOff(fbo_texture, f_texcoord, ivec2( 1,  0));
-    vec3 rgbS = FxaaTextureOff(fbo_texture, f_texcoord, ivec2( 0,  1));
+    vec3 rgbN = TextureOff(tex, coord, ivec2(0, -1));
+    vec3 rgbW = TextureOff(tex, coord, ivec2(-1,  0));
+    vec3 rgbM = TextureOff(tex, coord, ivec2( 0,  0));
+    vec3 rgbE = TextureOff(tex, coord, ivec2( 1,  0));
+    vec3 rgbS = TextureOff(tex, coord, ivec2( 0,  1));
 
-    float lumaN = FxaaLuma(rgbN);
-    float lumaW = FxaaLuma(rgbW);
-    float lumaM = FxaaLuma(rgbM);
-    float lumaE = FxaaLuma(rgbE);
-    float lumaS = FxaaLuma(rgbS);
+    float lumaN = Luma(rgbN);
+    float lumaW = Luma(rgbW);
+    float lumaM = Luma(rgbM);
+    float lumaE = Luma(rgbE);
+    float lumaS = Luma(rgbS);
 
     float rangeMin = min(lumaM, min(min(lumaN, lumaW), min(lumaS, lumaE)));
     float rangeMax = max(lumaM, max(max(lumaN, lumaW), max(lumaS, lumaE)));
@@ -106,15 +117,15 @@ vec3 FxaaFilter() {
 #endif
 
     /* Vertical/horizontal edge test */
-    vec3 rgbNW = FxaaTextureOff(fbo_texture, f_texcoord, ivec2( -1, -1));
-    vec3 rgbNE = FxaaTextureOff(fbo_texture, f_texcoord, ivec2(  1, -1));
-    vec3 rgbSW = FxaaTextureOff(fbo_texture, f_texcoord, ivec2( -1,  1));
-    vec3 rgbSE = FxaaTextureOff(fbo_texture, f_texcoord, ivec2(  1,  1));
+    vec3 rgbNW = TextureOff(tex, coord, ivec2( -1, -1));
+    vec3 rgbNE = TextureOff(tex, coord, ivec2(  1, -1));
+    vec3 rgbSW = TextureOff(tex, coord, ivec2( -1,  1));
+    vec3 rgbSE = TextureOff(tex, coord, ivec2(  1,  1));
 
-    float lumaNW = FxaaLuma(rgbNW);
-    float lumaNE = FxaaLuma(rgbNE);
-    float lumaSW = FxaaLuma(rgbSW);
-    float lumaSE = FxaaLuma(rgbSE);
+    float lumaNW = Luma(rgbNW);
+    float lumaNE = Luma(rgbNE);
+    float lumaSW = Luma(rgbSW);
+    float lumaSE = Luma(rgbSE);
 
     float edgeVert =
         abs((0.25 * lumaNW) + (-0.5 * lumaN) + (0.25 * lumaNE)) +
@@ -174,8 +185,8 @@ vec3 FxaaFilter() {
 
     /* Calculate the next position to check */
     vec2 posN, posP;
-    posN.x = f_texcoord.x + (horzSpan ? 0.0 : lengthSign * 0.5);
-    posN.y = f_texcoord.y + (horzSpan ? lengthSign * 0.5 : 0.0);
+    posN.x = coord.x + (horzSpan ? 0.0 : lengthSign * 0.5);
+    posN.y = coord.y + (horzSpan ? lengthSign * 0.5 : 0.0);
     posP = posN;
 
     /* Search limit: we stop searching when the gradient is
@@ -194,12 +205,12 @@ vec3 FxaaFilter() {
     for (int i=0; i<FXAA_SEARCH_STEPS; i++) {
         if (!doneN) {
             posN -= offNP;
-            lumaEndN = FxaaLuma(FxaaTextureLod0(fbo_texture, posN));
+            lumaEndN = Luma(TextureLod0(tex, posN));
             doneN = abs(lumaEndN - lumaN) >= gradientN;
         }
         if (!doneP) {
             posP += offNP;
-            lumaEndP = FxaaLuma(FxaaTextureLod0(fbo_texture, posP));
+            lumaEndP = Luma(TextureLod0(tex, posP));
             doneP = abs(lumaEndP - lumaN) >= gradientN;
         }
         if (doneN && doneP) {
@@ -209,8 +220,8 @@ vec3 FxaaFilter() {
 
     /* Calculate whether the center is in negative or in positive
        side of the search span */
-    float dstN = horzSpan ? f_texcoord.x - posN.x : f_texcoord.y - posN.y;
-    float dstP = horzSpan ? posP.x - f_texcoord.x : posP.y - f_texcoord.y;
+    float dstN = horzSpan ? coord.x - posN.x : coord.y - posN.y;
+    float dstP = horzSpan ? posP.x - coord.x : posP.y - coord.y;
     bool directionN = dstN < dstP;
 #ifdef DEBUG_NEGPOS
     if (directionN) return vec3(1.0f, 0.0f, 0.0f);
@@ -236,19 +247,19 @@ vec3 FxaaFilter() {
     float ox = horzSpan ? 0.0 : subPixelOffset*2.0/f_rpcFrame.x;
     float oy = horzSpan ? subPixelOffset*2.0/f_rpcFrame.y : 0.0;
     float lumaO = lumaM/(1.0f + (0.587f/0.299f));
-    if (ox < 0.0) return FxaaLerp3(vec3(lumaO, lumaO, lumaO), vec3(1.0f, 0.0f, 0.0f), -ox);
-    if (ox > 0.0) return FxaaLerp3(vec3(lumaO, lumaO, lumaO), vec3(0.0f, 0.0f, 1.0f), ox);
-    if (oy < 0.0) return FxaaLerp3(vec3(lumaO, lumaO, lumaO), vec3(1.0f, 0.6f, 0.2f), -oy);
-    if (oy > 0.0) return FxaaLerp3(vec3(lumaO, lumaO, lumaO), vec3(0.2f, 0.6f, 1.0f), oy);
+    if (ox < 0.0) return mix(vec3(lumaO, lumaO, lumaO), vec3(1.0f, 0.0f, 0.0f), -ox);
+    if (ox > 0.0) return mix(vec3(lumaO, lumaO, lumaO), vec3(0.0f, 0.0f, 1.0f), ox);
+    if (oy < 0.0) return mix(vec3(lumaO, lumaO, lumaO), vec3(1.0f, 0.6f, 0.2f), -oy);
+    if (oy > 0.0) return mix(vec3(lumaO, lumaO, lumaO), vec3(0.2f, 0.6f, 1.0f), oy);
     return vec3(lumaO, lumaO, lumaO);
 #endif
 
-    return FxaaTextureLod0(fbo_texture, vec2(f_texcoord.x + (horzSpan ? 0.0f : subPixelOffset),
-                                             f_texcoord.y + (horzSpan ? subPixelOffset : 0.0f)));
+    return TextureLod0(tex, vec2(coord.x + (horzSpan ? 0.0f : subPixelOffset),
+                                 coord.y + (horzSpan ? subPixelOffset : 0.0f)));
 }
 
 void main(void) {
-    vec3 color = FxaaFilter();
+    vec3 color = FXAAFilter(fbo_texture, f_texcoord);
 
     /* sRGB to linear conversion, OpenGL does not support
        the shader outputting sRGB when GL_FRAMEBUFFER_SRGB is
