@@ -11,11 +11,10 @@
 #include "OBJFormat.hpp"
 #include "Shader.hpp"
 #include "ShaderMaterial.hpp"
-#include "WalkingCamera.hpp"
 #include "WindowManager.hpp"
 #include "InputManager.hpp"
 #include "Renderer.hpp"
-#include "Camera.hpp"
+#include "FlyCamera.hpp"
 #include "RenderTarget.hpp"
 #include "TextConsole.hpp"
 #include "NOAARenderTarget.hpp"
@@ -143,13 +142,15 @@ int main(int argc, char**argv)
 	keys.push_back('R');
 	keys.push_back('N');
 	keys.push_back('F');
+	keys.push_back('Q');
+	keys.push_back('E');
 	keys.push_back(GLFW_KEY_ESCAPE);
 
 	windowManager->getKeyManager()->registerListener(inputManager, keys);
 	windowManager->getMouseManager()->registerListener(inputManager);
 
 	/* Create the game camera */
-	_camera = new Camera();
+	_camera = new FlyCamera();
 	_camera->setProjection(45, width/(2.0*(float)height), 0.1, 1000.0);
     glm::vec4 pos(220, 135, -1, 1);
     _camera->setPosition(pos);
@@ -208,11 +209,14 @@ int main(int argc, char**argv)
 		/* Dispatch input to geometry */
 		if (inputManager._keys['W']) {
 			_camera->forward(0.1*inputElapsedMs);
-		} else if (inputManager._keys['S']) {
+		}
+        if (inputManager._keys['S']) {
 			_camera->forward(-0.1*inputElapsedMs);
-		} else if (inputManager._keys['A']) {
+		}
+        if (inputManager._keys['A']) {
 			_camera->right(-0.1*inputElapsedMs);
-		} else if (inputManager._keys['D']) {
+		}
+        if (inputManager._keys['D']) {
 			_camera->right(0.1*inputElapsedMs);
 		}
         if (inputManager._keys['R']) {

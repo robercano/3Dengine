@@ -1,7 +1,7 @@
 /**
- * @class	WalkingCamera
- * @brief	Camera object with waking movement. This camera only uses yaw and pitch, and
- *          doesn't move on the y axis
+ * @class	FlyCamera
+ * @brief	Camera object with fly movement. This camera uses only yaw and pitch and
+ *          the rotations are always aligned to the world axes, not the camera own axes.
  *
  * @author	Roberto Cano (http://www.robertocano.es)
  */
@@ -11,7 +11,7 @@
 #include <glm/gtc/quaternion.hpp>
 #include "Camera.hpp"
 
-class WalkingCamera : public Camera
+class FlyCamera : public Camera
 {
 	public:
 		/**

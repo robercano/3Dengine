@@ -7,6 +7,8 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtx/transform.hpp>
 #include "Camera.hpp"
 
 Camera::Camera() : _position(0.0, 0.0, 10.0, 1.0),
@@ -57,24 +59,21 @@ void Camera::right(float amount)
 
 void Camera::rotatePitch(float angle)
 {
-	_pitch += angle;
-	_restrictAngle(_pitch);
+	_pitch = _restrictAngle(_pitch + angle);
 
 	_viewValid = false;
 }
 
 void Camera::rotateYaw(float angle)
 {
-	_yaw += angle;
-	_restrictAngle(_yaw);
+	_yaw = _restrictAngle(_yaw + angle);
 
 	_viewValid = false;
 }
 
 void Camera::rotateRoll(float angle)
 {
-	_roll += angle;
-	_restrictAngle(_roll);
+	_roll = _restrictAngle(_roll + angle);
 
 	_viewValid = false;
 }
@@ -86,27 +85,4 @@ const glm::mat4 & Camera::getProjection(void)
 		_projectionValid = true;
 	}
 	return _projection;
-}
-
-const glm::mat4 & Camera::getView(void)
-{
-	if (_viewValid == false) {
-		glm::mat4 rotation = glm::rotate(glm::mat4(1.0), _pitch, glm::vec3(_right)) *
-			                 glm::rotate(glm::mat4(1.0),   _yaw, glm::vec3(_up)) *
-							 glm::rotate(glm::mat4(1.0),  _roll, glm::vec3(_forward));
-
-		glm::vec4 forward = _forward * rotation;
-		glm::vec4 up      =      _up * rotation;
-		glm::vec4 right   =   _right * rotation;
-
-		_position += _mask*(_forwardAmount*forward + _rightAmount*right + _upAmount*up);
-//        printf("%f, %f, %f, %f, %f, %f\n", _position.x, _position.y, _position.z, _pitch, _yaw, _roll);
-
-		_forwardAmount = _upAmount = _rightAmount = 0;
-
-		_view = glm::lookAt(glm::vec3(_position), glm::vec3(_position + forward), glm::vec3(_up));
-		_viewValid = true;
-	}
-
-	return _view;
 }

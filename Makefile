@@ -17,14 +17,22 @@ CC=gcc
 #
 VPATH=core/src:core/opengl/src:core/procedural/src:utils/src
 
-CORE_FILES=Camera.cpp InputManager.cpp OBJFormat.cpp Renderer.cpp WindowManager.cpp TrueTypeFont.cpp FreeTypeFont.cpp \
-		   FontRenderer.cpp NOAARenderTarget.cpp MSAARenderTarget.cpp SSAARenderTarget.cpp TextConsole.cpp FXAARenderTarget.cpp \
-		   FXAA2RenderTarget.cpp Shader.cpp FBRenderTarget.cpp
+CORE_FILES=InputManager.cpp WindowManager.cpp \
+		   OBJFormat.cpp \
+		   TextConsole.cpp TrueTypeFont.cpp FreeTypeFont.cpp FontRenderer.cpp \
+           Renderer.cpp NOAARenderTarget.cpp MSAARenderTarget.cpp SSAARenderTarget.cpp \
+		   FXAARenderTarget.cpp FXAA2RenderTarget.cpp FBRenderTarget.cpp \
+		   Shader.cpp \
+		   Camera.cpp FlyCamera.cpp FreeFlyCamera.cpp WalkingCamera.cpp
+
 UTILS_FILES=MathUtils.c JPEGLoader.c
+
 OPENGL_FILES=GLFWKeyManager.cpp GLFWMouseManager.cpp GLFWWindowManager.cpp \
-			 OpenGLNOAARenderTarget.cpp OpenGLMSAARenderTarget.cpp OpenGLSSAARenderTarget.cpp OpenGLFXAARenderTarget.cpp \
-             OpenGLRenderer.cpp OpenGLShader.cpp OpenGLObject3D.cpp OpenGLFontRenderer.cpp OpenGLShaderMaterial.cpp \
-			 OpenGLUniformBlock.cpp OpenGLFXAA2RenderTarget.cpp OpenGLFBRenderTarget.cpp
+			 OpenGLObject3D.cpp \
+			 OpenGLFontRenderer.cpp \
+			 OpenGLRenderer.cpp OpenGLNOAARenderTarget.cpp OpenGLMSAARenderTarget.cpp OpenGLSSAARenderTarget.cpp \
+             OpenGLFXAARenderTarget.cpp OpenGLFXAA2RenderTarget.cpp OpenGLFBRenderTarget.cpp \
+             OpenGLShader.cpp OpenGLShaderMaterial.cpp OpenGLUniformBlock.cpp
 #PROCEDURAL_FILES=Cube.cpp Icosahedron.cpp Plane.cpp Sphere.cpp
 
 FILES=$(CORE_FILES) $(OPENGL_FILES) $(PROCEDURAL_FILES) $(UTILS_FILES)

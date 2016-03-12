@@ -7,6 +7,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 class Camera
 {
@@ -98,9 +99,9 @@ class Camera
 		/**
 		 * Gets the view matrix
 		 */
-		const glm::mat4 &getView(void);
+		virtual const glm::mat4 &getView(void) = 0;
 
-	private:
+	protected:
 
 		/**
 		 * Restricts the given angle to the 0..360 range
@@ -124,6 +125,7 @@ class Camera
 		 * Position of the camera in world coordinates
 		 */
 		glm::vec4 _position;
+        glm::mat4 _orientation;
 
 		/**
 		 * Where is the camera looking at
@@ -159,6 +161,7 @@ class Camera
 		 * Rotation components for the camera
 		 */
 		float _yaw, _pitch, _roll;
+        glm::quat _qyaw, _qpitch, _qroll;
 
 		/**
 		 * Projection matrix for the camera
