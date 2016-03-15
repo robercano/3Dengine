@@ -3,6 +3,20 @@
 ## Introduction
 This is a demo 3D engine set to showcase my 3D graphics and system programming skills. The main aim is to implement several known techniques and produce a series of demos to showcase this.
 
+## Compilation
+
+### Ubuntu 14.04 LTS
+
+You need to install the following packages in order to compile the package:
+
+    sudo apt-get install g++ cmake libglew-dev libjpeg-dev libglfw-dev xorg-dev
+
+Then you can compile the demos with:
+
+	make clean demos
+
+The binaries will be created in the demo directory.
+
 ## Current set of features
 
 * OpenGL renderer (based on GLFW and GLEW)
