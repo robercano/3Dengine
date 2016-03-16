@@ -76,12 +76,7 @@ all: engine
 
 engine: dirs $(LIBDIR)/$(LIBNAME)
 
-install: engine
-	@echo "- Installing $(LIBNAME) into $(HOME)/$(LIBDIR)...\c"
-	@cp $(LIBDIR)/$(LIBNAME) $(HOME)/$(LIBDIR)/
-	@echo "done"
-
-demos: engine install
+demos: engine
 	@echo "- Compiling project demos...\c"
 	@make -C $(DEMODIR) >/dev/null 2>&1
 	@echo "done"
