@@ -1,6 +1,6 @@
 /**
- * @class	Anti-aliasing comparison
- * @brief	Demo to compare different aliasing methods like MSAA, SSAA and FXAA
+ * @class	FXAA/FXAA2 (custom implementation) comparison
+ * @brief	Demo to compare Timothy Lottes FXAA implementation against mine
  *
  * @author	Roberto Cano (http://www.robertocano.es)
  */
@@ -46,24 +46,26 @@ int main(int argc, char**argv)
 
 	const float MouseSensibility = 10.0;
 	const float InvertMouse = 1.0;
-    float FPS = 0.0;
 	int32_t prevX = 0xFFFFFF, prevY = 0xFFFFFF;
-	struct timeval renderNow, renderPrevious;
+	struct timeval renderBegin, renderEnd;
     struct timeval inputNow, inputPrevious;
+    double renderFrameMs;
+    double jitterAdj = 1.02;
     bool resetStats = false;
 
-    float avgFPS[TARGET_FPS] = {0};
-    uint32_t avgFPSIdx = 0;
-    float minFPS = 10000000.0f;
-    float maxFPS = 0.0f;
-    float totalAvgFPS = 0;
-	uint32_t renders=0;
+    float avgRenderMs[TARGET_FPS] = { 1000.0 };
+    uint32_t avgRenderMsIdx = 0;
+    float minRenderFrameMs = 10000000.0f;
+    float maxRenderFrameMs = 0.0f;
+    float totalAvgTime = 0;
     float renderAdjustment = 0;
     float dueTime;
+    float FPS;
     bool _unboundFPS;
     uint32_t width;
     uint32_t height;
     uint32_t i;
+
 
 	/* TODO: Get the settings from a config file */
     width = 1920;
@@ -190,7 +192,7 @@ int main(int argc, char**argv)
 
     /* Main loop */
 	gettimeofday(&inputNow, NULL);
-    renderNow = renderPrevious = inputNow;
+    renderBegin = renderEnd = inputNow;
 
 	while (true)
 	{
@@ -233,10 +235,10 @@ int main(int argc, char**argv)
             targets = "NOAA Left / NOAA Right";
         }
         if (resetStats) {
-            minFPS = 1000000.0f;
-            maxFPS = 0.0f;
+            minRenderFrameMs = 1000000.0f;
+            maxRenderFrameMs = 0.0f;
             for (i=0; i<TARGET_FPS; ++i) {
-                avgFPS[i] = FPS;
+                avgRenderMs[i] = 1000.0;
             }
             resetStats = false;
         }
@@ -261,87 +263,94 @@ int main(int argc, char**argv)
 		prevX = inputManager._xMouse;
 		prevY = inputManager._yMouse;
 
-        /* Render all objects */
-        for (i=0; i<objects.size(); ++i) {
-            renderer->renderObject3D(*objects[i], *shaders[i],
-                    _camera->getProjection(), _camera->getView(),
-                    *selectedTargetLeft);
-            renderer->renderObject3D(*objects[i], *shaders[i],
-                    _camera->getProjection(), _camera->getView(),
-                    *selectedTargetRight);
-        }
+        /* If frame is due, render it */
+        gettimeofday(&renderBegin, NULL);
+        double renderElapsedMs = (renderBegin.tv_sec - renderEnd.tv_sec)*1000.0 +
+                                 (renderBegin.tv_usec - renderEnd.tv_usec)/1000.0;
 
-        console.clear();
-        console.gprintf("%s\n", targets.c_str());
-        console.gprintf("Avg. FPS: %d\n", (int)totalAvgFPS);
+        /* We take into account the last render time to start the rendering process
+         * in advance, so we are in time for the blit. This is currently too tight,
+         * we should account for variations in the render time due to changes of the
+         * game engine assets (camera, rendering distance, geometry) and also to
+         * account for the jitter in the GPU/CPU when rendering the same scene */
+        if (_unboundFPS == true || (renderElapsedMs + totalAvgTime*jitterAdj >= dueTime)) {
 
-        selectedTargetLeft->blit(0, 0, width/2, height);
-        selectedTargetRight->blit(width/2, 0, width/2, height);
-        console.blit();
+            /* Render all objects */
+            for (i=0; i<objects.size(); ++i) {
+                renderer->renderObject3D(*objects[i], *shaders[i],
+                        _camera->getProjection(), _camera->getView(),
+                        *selectedTargetLeft);
+                renderer->renderObject3D(*objects[i], *shaders[i],
+                        _camera->getProjection(), _camera->getView(),
+                        *selectedTargetRight);
+            }
 
-        /* Flush all operations so we can have a good measure
-         * of the time it takes to render the scene. Otherwise this
-         * will only happen when swapBuffers() is called. In a proper
-         * engine you want to accumulate operations and have a measurement
-         * of how long the card will take to render the scene, so you can
-         * maximimize the number of operations you can issue before running
-         * out of time:
-         *
-         *  |------------------------------ framerate time ----------------------------|
-         *  |__________________________________________________________________________|
-         *  |- process input -|- prepare scene -|- send rendering commands -|- render -|
-         *  |--------------------------------------------------------------------------|
-         *
-         *  Obviously not at scale. Rendering takes much longer than the rest.
-         */
-        renderer->flush();
-        renders++;
+            console.clear();
+            console.gprintf("%s\n", targets.c_str());
+            console.gprintf("FPS: %d\n", (int)FPS);
+            console.gprintf("Upper FPS: %d\n", (int)(1000.0/totalAvgTime));
+            console.gprintf("Avg. Render: %.2fms (%.2fms)\n", totalAvgTime, dueTime);
 
-		/* If frame is due, blit it */
-		gettimeofday(&renderNow, NULL);
-		double renderElapsedMs = (renderNow.tv_sec - renderPrevious.tv_sec)*1000.0 +
-                                 (renderNow.tv_usec - renderPrevious.tv_usec)/1000.0;
+            selectedTargetLeft->blit(0, 0, width/2, height);
+            selectedTargetRight->blit(width/2, 0, width/2, height);
+            console.blit();
 
-        /* Render time! */
-		if ((renderAdjustment + renderElapsedMs) >= dueTime) {
-			windowManager->swapBuffers();
-            renderPrevious = renderNow;
+            /* Flush all operations so we can have a good measure
+             * of the time it takes to render the scene. Otherwise this
+             * will only happen when swapBuffers() is called. In a proper
+             * engine you want to accumulate operations and have a measurement
+             * of how long the card will take to render the scene, so you can
+             * maximimize the number of operations you can issue before running
+             * out of time:
+             *
+             *  |------------------------------ framerate time ----------------------------|
+             *  |__________________________________________________________________________|
+             *  |- process input -|- prepare scene -|- send rendering commands -|- render -|
+             *  |--------------------------------------------------------------------------|
+             *
+             *  Obviously not at scale. Rendering takes much longer than the rest.
+             */
+            renderer->flush();
+            windowManager->swapBuffers();
+
+            /* Calculate how much did we take to render this frame */
+            gettimeofday(&renderEnd, NULL);
+
+            renderFrameMs = (renderEnd.tv_sec - renderBegin.tv_sec)*1000.0 +
+                (renderEnd.tv_usec - renderBegin.tv_usec)/1000.0;
 
             /* Check if we are really late, that means we are dropping
              * frames. In this case re-adjust the render adjustment and
              * the elapsed time. Have to check how costly that fmod is... */
-            if ((renderAdjustment + renderElapsedMs) > 2*dueTime) {
-                renderElapsedMs = fmod(renderElapsedMs, dueTime) + dueTime;
-                renderAdjustment = fmod(renderAdjustment, dueTime);
-                fprintf(stderr, "Droping frames...\n");
+            if (renderFrameMs > dueTime*jitterAdj) {
+                fprintf(stderr, "Droping frames...(%.2f, %.2f)\n", renderFrameMs, dueTime);
             }
-            renderAdjustment = renderAdjustment + renderElapsedMs - dueTime;
 
             /* Calculate FPS now */
-            FPS = 1000.0*renders/renderElapsedMs;
-
-            if (FPS > maxFPS) {
-                maxFPS = FPS;
+            if (renderFrameMs > maxRenderFrameMs) {
+                maxRenderFrameMs = renderFrameMs;
             }
-            if (FPS < minFPS) {
-                minFPS = FPS;
+            if (renderFrameMs < minRenderFrameMs) {
+                minRenderFrameMs = renderFrameMs;
             }
 
-            avgFPS[avgFPSIdx] = FPS;
-            avgFPSIdx = (avgFPSIdx + 1)%TARGET_FPS;
+            avgRenderMs[avgRenderMsIdx] = renderFrameMs;
+            avgRenderMsIdx = (avgRenderMsIdx + 1) % TARGET_FPS;
 
             /* Calculate the average FPS */
             for (i=0; i<TARGET_FPS; ++i) {
-                totalAvgFPS += avgFPS[i];
+                totalAvgTime += avgRenderMs[i];
             }
-            totalAvgFPS /= TARGET_FPS;
+            totalAvgTime /= TARGET_FPS;
 
-            renders = 0;
+            /* Render elapsed time should be also averaged to get a good
+             * estimation, but for now this will do */
+            FPS = (1000.0/(totalAvgTime + renderElapsedMs));
         }
 	}
 
-    fprintf(stderr, "Average FPS: %d\n", (int)totalAvgFPS);
-    fprintf(stderr, "Minimum FPS: %d\n", (int)minFPS);
-    fprintf(stderr, "Maximum FPS: %d\n", (int)maxFPS);
+    fprintf(stderr, "Average FPS: %d\n", (int)(1000.0/totalAvgTime));
+    fprintf(stderr, "Minimum FPS: %d\n", (int)(1000.0/maxRenderFrameMs));
+    fprintf(stderr, "Maximum FPS: %d\n", (int)(1000.0/minRenderFrameMs));
 	return 0;
 }
