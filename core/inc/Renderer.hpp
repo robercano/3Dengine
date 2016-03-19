@@ -57,6 +57,7 @@ class Renderer
 		 * @param view			View matrix
 		 */
 		virtual bool renderObject3D(RendererObject3D &object, Shader &shader,
+                                    Light &light, float ambientK,
                                     const glm::mat4 &projection, const glm::mat4 &view,
                                     RenderTarget &renderTarget) = 0;
 

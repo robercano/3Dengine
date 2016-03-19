@@ -10,7 +10,7 @@
 #include "OpenGL.h" // For GLFW_KEY_ESCAPE
 #include "OBJFormat.hpp"
 #include "Shader.hpp"
-#include "ShaderMaterial.hpp"
+#include "Light.hpp"
 #include "WindowManager.hpp"
 #include "InputManager.hpp"
 #include "Renderer.hpp"
@@ -66,6 +66,10 @@ int main(int argc, char**argv)
     uint32_t height;
     uint32_t i;
 
+    Light light(glm::vec3(5.0, 5.0, 5.0),
+                glm::vec3(5.0, 5.0, 5.0),
+                glm::vec3(5.0, 5.0, 5.0),
+                glm::vec3(50.0, 100.0, 50.0));
 
 	/* TODO: Get the settings from a config file */
     width = 1920;
@@ -277,10 +281,10 @@ int main(int argc, char**argv)
 
             /* Render all objects */
             for (i=0; i<objects.size(); ++i) {
-                renderer->renderObject3D(*objects[i], *shaders[i],
+                renderer->renderObject3D(*objects[i], *shaders[i], light, 0.0,
                         _camera->getProjection(), _camera->getView(),
                         *selectedTargetLeft);
-                renderer->renderObject3D(*objects[i], *shaders[i],
+                renderer->renderObject3D(*objects[i], *shaders[i], light, 0.0,
                         _camera->getProjection(), _camera->getView(),
                         *selectedTargetRight);
             }

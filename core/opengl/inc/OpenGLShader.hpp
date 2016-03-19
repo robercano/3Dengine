@@ -11,6 +11,7 @@
 #include <string>
 #include "Shader.hpp"
 #include "OpenGLShaderMaterial.hpp"
+#include "OpenGLShaderLight.hpp"
 
 class OpenGLShader : public Shader
 {
@@ -58,6 +59,7 @@ class OpenGLShader : public Shader
 		bool linkProgram(std::string &error);
 
         ShaderMaterial *getMaterial();
+        ShaderLight *getLight();
 
 		/**
 		 * Makes the shader active
@@ -141,4 +143,5 @@ class OpenGLShader : public Shader
 		uint32_t _programID;
 
         OpenGLShaderMaterial *_material;
+        OpenGLShaderLight *_light;
 };

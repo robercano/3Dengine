@@ -13,12 +13,16 @@
    @author Roberto Cano
 */
 
-//uniform struct Light {
-//    vec3 position;
-//    vec3 intensities;
-//} light;
+/* Light definition */
+layout (std140) uniform Light {
+    vec3 position;
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+} light;
 
-uniform mat4 view;
+/* Global scene ambient constant */
+uniform float ambientK;
 
 /* Material definition for this geometry */
 layout (std140) uniform Material {
@@ -30,6 +34,7 @@ layout (std140) uniform Material {
 } material;
 
 uniform sampler2D diffuseMap;
+uniform mat4 view;
 
 in vec3 fragment_vertex;
 in vec3 fragment_normal;
@@ -50,13 +55,6 @@ void main()
     vec3 colorAmbient, colorDiffuse, colorSpecular;
     mat4 model = mat4(1.0);
 
-    /* Light source */
-vec3 lightPos = vec3(50, 100, 50);
-float lightIntensity = 5.0/255.0;
-vec3 lightAmbient  = vec3(255.0, 255.0, 251.0) * lightIntensity;
-vec3 lightDiffuse  = vec3(255.0, 255.0, 251.0) * lightIntensity;
-vec3 lightSpecular = vec3(255.0, 255.0, 251.0) * lightIntensity;
-
     /* Texel color */
     vec4 texel = texture(diffuseMap, fragment_uvcoord);
     //texel = vec4(sRGB2Linear(texel.r),sRGB2Linear(texel.g),sRGB2Linear(texel.b), texel.a);
@@ -65,14 +63,10 @@ vec3 lightSpecular = vec3(255.0, 255.0, 251.0) * lightIntensity;
     vec3 fragmentPos = vec3(model*vec4(fragment_vertex, 1));
 
     /* Attenuation */
-    float attenuation = 1.0 / (1.0 + 0.00001 * pow(length(lightPos - fragmentPos), 2));
-
-    /* Ambient light constant */
-//float ambientK = attenuation*(lightAmbient.r + lightAmbient.g + lightAmbient.b)/3.0;
-float ambientK = 0.1;
+    float attenuation = 1.0 / (1.0 + 0.00001 * pow(length(light.position - fragmentPos), 2));
 
     /* Light vector to fragment */
-    vec3 L = normalize(lightPos - fragmentPos);
+    vec3 L = normalize(light.position - fragmentPos);
 
     /* Calculate the normal matrix (excluding scaling and translation, centerd in origin) */
     //mat3 normalMatrix = transpose(inverse(mat3(model)));
@@ -96,16 +90,14 @@ float ambientK = 0.1;
     Id = clamp(dot(L, N), 0.0, 1.0);
     Is = clamp(pow(dot(N, H), material.shininess), 0.0, 1.0);
 
-    colorAmbient  = lightAmbient*material.ambient*Ia;
-    colorDiffuse  = lightDiffuse*material.diffuse*Id;
-    colorSpecular  = lightSpecular*material.specular*Is;
+    colorAmbient  = light.ambient*material.ambient*Ia;
+    colorDiffuse  = light.diffuse*material.diffuse*Id;
+    colorSpecular  = light.specular*material.specular*Is;
 
     if (dot(L, N) <= 0) {
         colorSpecular = vec3(0.0);
     }
 
     color = texel * vec4(colorAmbient + attenuation*(colorDiffuse + colorSpecular), material.alpha);
-//    color = vec4(sRGB2Linear(color.r),sRGB2Linear(color.g),sRGB2Linear(color.b), color.a);
-//color = texel;
 }
 

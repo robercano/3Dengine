@@ -51,13 +51,14 @@ bool OpenGLUniformBlock::prepareForShader(GLuint programID)
 
     GL( _blockIndex = glGetUniformBlockIndex(programID, _blockName.c_str()) );
     if (_blockIndex == GL_INVALID_INDEX) {
+        fprintf(stderr, "ERROR OpenGLUniformBlock bad block index for block: %s\n", _blockName.c_str());
         return false;
     }
     GL( glGetActiveUniformBlockiv(programID, _blockIndex, GL_UNIFORM_BLOCK_DATA_SIZE, &_blockSize) );
-
     GL( glGetUniformIndices(programID, _paramsFullName.size(), names, indices) );
     for (i=0; i<_paramsOffsets.size(); ++i) {
         if (indices[i] == GL_INVALID_INDEX) {
+            fprintf(stderr, "ERROR OpenGLUniformBlock could not get all indices\n");
             return false;
         }
     }
@@ -80,6 +81,7 @@ bool OpenGLUniformBlock::prepareForShader(GLuint programID)
     GL( glBindBufferBase(GL_UNIFORM_BUFFER, _blockIndex, _uniformBufferObj) );
 
     _linkedToShader = true;
+    _programID = programID;
 
     return true;
 }
@@ -88,4 +90,6 @@ void OpenGLUniformBlock::bind()
 {
     GL( glBindBuffer(GL_UNIFORM_BUFFER, _uniformBufferObj) );
     GL( glBufferSubData(GL_UNIFORM_BUFFER, 0, _blockSize, _paramsBuffer) );
+    GL( glBindBuffer(GL_UNIFORM_BUFFER, 0) );
+    GL( glUniformBlockBinding(_programID, _blockIndex, _blockIndex) );
 }

@@ -11,6 +11,7 @@
 #include <glm/glm.hpp>
 #include <stdint.h>
 #include "ShaderMaterial.hpp"
+#include "ShaderLight.hpp"
 
 class Shader
 {
@@ -56,6 +57,7 @@ class Shader
 		virtual bool linkProgram(std::string &error) = 0;
 
         virtual ShaderMaterial *getMaterial() = 0;
+        virtual ShaderLight *getLight() = 0;
 
 		/**
 		 * Makes the shader active

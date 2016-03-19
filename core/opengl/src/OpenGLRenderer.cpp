@@ -47,6 +47,7 @@ RendererObject3D *OpenGLRenderer::prepareObject3D(const Object3D &object)
 }
 
 bool OpenGLRenderer::renderObject3D(RendererObject3D &object, Shader &shader,
+                                    Light &light, float ambientK,
                                     const glm::mat4 &projection, const glm::mat4 &view,
                                     RenderTarget &renderTarget)
 {
@@ -68,14 +69,18 @@ bool OpenGLRenderer::renderObject3D(RendererObject3D &object, Shader &shader,
         GL( glActiveTexture(GL_TEXTURE0) );
 
         /* Bind program to upload the uniform */
-        ShaderMaterial *shaderMaterial = shader.getMaterial();
-
         shader.attach();
+
+        ShaderLight *shaderLight = shader.getLight();
+        ShaderMaterial *shaderMaterial = shader.getMaterial();
 
         /* Send our transformation to the currently bound shader, in the "MVP" uniform */
         shader.setUniformMat4("MVP", MVP);
         shader.setUniformMat4("view", view);
         shader.setUniformTexture2D("diffuseMap", 0);
+        shader.setUniformFloat("ambientK", ambientK);
+
+        shaderLight->copyLight(light);
 
         /* Draw the object */
         GL( glBindVertexArray(glObject.getVertexArrayID()) );

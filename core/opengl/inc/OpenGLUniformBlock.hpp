@@ -6,6 +6,8 @@
  *
  * @author	Roberto Cano (http://www.robertocano.es)
  */
+#pragma once
+
 #include <string>
 #include <map>
 #include <vector>
@@ -39,6 +41,7 @@ class OpenGLUniformBlock
         std::map<std::string, GLint> _paramsOffsets;
         std::vector<std::string> _paramsFullName;
 
+        GLuint   _programID;
         GLuint   _blockIndex;
         GLint    _blockSize;
         GLubyte *_paramsBuffer;

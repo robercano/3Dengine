@@ -39,6 +39,12 @@ class Material
             _alpha(alpha),
             _shininess(shininess) {}
 
+        void setAmbient(glm::vec3 &ambient) { _ambient = ambient; }
+        void setDiffuse(glm::vec3 &diffuse) { _diffuse = diffuse; }
+        void setSpecular(glm::vec3 &specular) { _specular = specular; }
+        void setAlpha(float alpha) { _alpha = alpha; }
+        void setShininess(float shininess) { _shininess = shininess; }
+
         glm::vec3 getAmbient()  { return _ambient; }
         glm::vec3 getDiffuse()  { return _diffuse; }
         glm::vec3 getSpecular() { return _specular; }

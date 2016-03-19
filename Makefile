@@ -32,7 +32,7 @@ OPENGL_FILES=GLFWKeyManager.cpp GLFWMouseManager.cpp GLFWWindowManager.cpp \
 			 OpenGLFontRenderer.cpp \
 			 OpenGLRenderer.cpp OpenGLNOAARenderTarget.cpp OpenGLMSAARenderTarget.cpp OpenGLSSAARenderTarget.cpp \
              OpenGLFXAARenderTarget.cpp OpenGLFXAA2RenderTarget.cpp OpenGLFBRenderTarget.cpp \
-             OpenGLShader.cpp OpenGLShaderMaterial.cpp OpenGLUniformBlock.cpp
+             OpenGLShader.cpp OpenGLShaderMaterial.cpp OpenGLShaderLight.cpp OpenGLUniformBlock.cpp
 #PROCEDURAL_FILES=Cube.cpp Icosahedron.cpp Plane.cpp Sphere.cpp
 
 FILES=$(CORE_FILES) $(OPENGL_FILES) $(PROCEDURAL_FILES) $(UTILS_FILES)

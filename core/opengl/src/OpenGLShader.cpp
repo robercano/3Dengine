@@ -143,6 +143,22 @@ ShaderMaterial *OpenGLShader::getMaterial()
     return _material;
 }
 
+ShaderLight *OpenGLShader::getLight()
+{
+    if (_light != NULL) {
+        return _light;
+    }
+
+    _light = new OpenGLShaderLight();
+
+    if (_light->prepareForShader(_programID) == false) {
+        delete _light;
+        _light = NULL;
+    }
+
+    return _light;
+}
+
 bool OpenGLShader::attach(void)
 {
 	GL( glUseProgram(_programID) );
