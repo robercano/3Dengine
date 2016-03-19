@@ -15,6 +15,6 @@
 class OpenGLShaderMaterial : public OpenGLUniformBlock, public ShaderMaterial
 {
 	public:
-        OpenGLShaderMaterial();
+        OpenGLShaderMaterial(uint32_t bindingPoint);
         bool copyMaterial(Material &material);
 };

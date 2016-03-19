@@ -10,9 +10,10 @@
 #include "OpenGLShaderMaterial.hpp"
 #include <glm/glm.hpp>
 
-OpenGLShaderMaterial::OpenGLShaderMaterial()
+OpenGLShaderMaterial::OpenGLShaderMaterial(uint32_t bindingPoint)
 {
     setBlockName("Material");
+    setBindingPoint(bindingPoint);
     addParamName("ambient");
     addParamName("diffuse");
     addParamName("specular");

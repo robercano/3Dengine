@@ -56,8 +56,8 @@ class Shader
 		 */
 		virtual bool linkProgram(std::string &error) = 0;
 
-        virtual ShaderMaterial *getMaterial() = 0;
-        virtual ShaderLight *getLight() = 0;
+        virtual ShaderMaterial *getMaterial(uint32_t bindingPoint) = 0;
+        virtual ShaderLight *getLight(uint32_t bindingPoint) = 0;
 
 		/**
 		 * Makes the shader active

@@ -58,8 +58,8 @@ class OpenGLShader : public Shader
 		 */
 		bool linkProgram(std::string &error);
 
-        ShaderMaterial *getMaterial();
-        ShaderLight *getLight();
+        ShaderMaterial *getMaterial(uint32_t bindingPoint);
+        ShaderLight *getLight(uint32_t bindingPoint);
 
 		/**
 		 * Makes the shader active

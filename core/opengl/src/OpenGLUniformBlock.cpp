@@ -9,11 +9,9 @@
 #include <string.h>
 #include "OpenGLUniformBlock.hpp"
 
-OpenGLUniformBlock::OpenGLUniformBlock() : _linkedToShader(false),
-                                           _blockIndex(0),
-                                           _blockSize(0),
-                                           _paramsBuffer(NULL),
-                                           _uniformBufferObj(0)
+OpenGLUniformBlock::OpenGLUniformBlock() :
+    _programID(0), _bindingPoint(0), _linkedToShader(false),
+    _blockIndex(0), _blockSize(0), _paramsBuffer(NULL), _uniformBufferObj(0)
 {
 }
 
@@ -23,11 +21,6 @@ OpenGLUniformBlock::~OpenGLUniformBlock()
         glDeleteBuffers(1, &_uniformBufferObj);
         delete[] _paramsBuffer;
     }
-}
-
-void OpenGLUniformBlock::setBlockName(const std::string &name)
-{
-    _blockName = name;
 }
 
 void OpenGLUniformBlock::addParamName(const std::string &name)
@@ -78,7 +71,7 @@ bool OpenGLUniformBlock::prepareForShader(GLuint programID)
     GL( glGenBuffers(1, &_uniformBufferObj) );
     GL( glBindBuffer(GL_UNIFORM_BUFFER, _uniformBufferObj) );
     GL( glBufferData(GL_UNIFORM_BUFFER, _blockSize, NULL, GL_DYNAMIC_DRAW) );
-    GL( glBindBufferBase(GL_UNIFORM_BUFFER, _blockIndex, _uniformBufferObj) );
+    GL( glBindBufferBase(GL_UNIFORM_BUFFER, _bindingPoint, _uniformBufferObj) );
 
     _linkedToShader = true;
     _programID = programID;
@@ -91,5 +84,5 @@ void OpenGLUniformBlock::bind()
     GL( glBindBuffer(GL_UNIFORM_BUFFER, _uniformBufferObj) );
     GL( glBufferSubData(GL_UNIFORM_BUFFER, 0, _blockSize, _paramsBuffer) );
     GL( glBindBuffer(GL_UNIFORM_BUFFER, 0) );
-    GL( glUniformBlockBinding(_programID, _blockIndex, _blockIndex) );
+    GL( glUniformBlockBinding(_programID, _blockIndex, _bindingPoint) );
 }

@@ -71,8 +71,8 @@ bool OpenGLRenderer::renderObject3D(RendererObject3D &object, Shader &shader,
         /* Bind program to upload the uniform */
         shader.attach();
 
-        ShaderLight *shaderLight = shader.getLight();
-        ShaderMaterial *shaderMaterial = shader.getMaterial();
+        ShaderLight *shaderLight = shader.getLight(0);
+        ShaderMaterial *shaderMaterial = shader.getMaterial(1);
 
         /* Send our transformation to the currently bound shader, in the "MVP" uniform */
         shader.setUniformMat4("MVP", MVP);

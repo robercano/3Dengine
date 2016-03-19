@@ -127,13 +127,13 @@ bool OpenGLShader::linkProgram(std::string &error)
 	return true;
 }
 
-ShaderMaterial *OpenGLShader::getMaterial()
+ShaderMaterial *OpenGLShader::getMaterial(uint32_t bindingPoint)
 {
     if (_material != NULL) {
         return _material;
     }
 
-    _material = new OpenGLShaderMaterial();
+    _material = new OpenGLShaderMaterial(bindingPoint);
 
     if (_material->prepareForShader(_programID) == false) {
         delete _material;
@@ -143,13 +143,13 @@ ShaderMaterial *OpenGLShader::getMaterial()
     return _material;
 }
 
-ShaderLight *OpenGLShader::getLight()
+ShaderLight *OpenGLShader::getLight(uint32_t bindingPoint)
 {
     if (_light != NULL) {
         return _light;
     }
 
-    _light = new OpenGLShaderLight();
+    _light = new OpenGLShaderLight(bindingPoint);
 
     if (_light->prepareForShader(_programID) == false) {
         delete _light;
