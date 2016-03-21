@@ -20,10 +20,10 @@ class Light
             _ambient(ambient), _diffuse(diffuse), _specular(specular), _position(position) {}
 		~Light() {}
 
-		void setPosition(glm::vec3 &position) { _position = position; }
-        void setAmbient(glm::vec3 &ambient) { _ambient = ambient; }
-        void setDiffuse(glm::vec3 &diffuse) { _diffuse = diffuse; }
-        void setSpecular(glm::vec3 &specular) { _specular = specular; }
+		void setPosition(const glm::vec3 &position) { _position = position; }
+        void setAmbient(const glm::vec3 &ambient) { _ambient = ambient; }
+        void setDiffuse(const glm::vec3 &diffuse) { _diffuse = diffuse; }
+        void setSpecular(const glm::vec3 &specular) { _specular = specular; }
 
         glm::vec3 getPosition()  { return _position; }
         glm::vec3 getAmbient()  { return _ambient; }
