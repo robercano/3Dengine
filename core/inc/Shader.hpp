@@ -56,8 +56,8 @@ class Shader
 		 */
 		virtual bool linkProgram(std::string &error) = 0;
 
-        virtual ShaderMaterial *getMaterial(uint32_t bindingPoint) = 0;
-        virtual ShaderLight *getLight(uint32_t bindingPoint) = 0;
+        virtual ShaderMaterial *getMaterial() = 0;
+        virtual ShaderLight *getLight(uint32_t lightIndex) = 0;
 
 		/**
 		 * Makes the shader active
@@ -98,6 +98,7 @@ class Shader
 		virtual bool setUniformMat4(const std::string &name, const glm::mat4 &value) = 0;
         virtual bool setUniformTexture2D(const std::string &name, uint32_t unitID) = 0;
         virtual bool setUniformFloat(const std::string &name, float value) = 0;
+        virtual bool setUniformUint(const std::string &name, uint32_t value) = 0;
         virtual bool setUniformVec4(const std::string &name, glm::vec4 &value) = 0;
         virtual bool setUniformVec2(const std::string &name, glm::vec2 &value) = 0;
 };

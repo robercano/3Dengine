@@ -25,4 +25,5 @@ all: $(TARGETS)
 
 clean:
 	@rm -f *.o
+	@rm -rf *.dSYM
 	@rm -f $(TARGETS)

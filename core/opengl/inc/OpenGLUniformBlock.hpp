@@ -20,8 +20,9 @@ class OpenGLUniformBlock
         OpenGLUniformBlock();
         ~OpenGLUniformBlock();
 
-        void setBindingPoint(uint32_t bindingPoint) { _bindingPoint = bindingPoint; }
         void setBlockName(const std::string &name) { _blockName = name; }
+        void setBlockArrayIndex(uint32_t blockArrayIndex) { _blockArrayIndex = blockArrayIndex; }
+        void setBindingPoint(uint32_t bindingPoint) { _bindingPoint = bindingPoint; }
         void addParamName(const std::string &name);
 
         bool prepareForShader(GLuint programID);
@@ -39,11 +40,12 @@ class OpenGLUniformBlock
         bool _linkedToShader;
 
         std::string _blockName;
+        int32_t _blockArrayIndex;
+        GLuint _bindingPoint;
         std::map<std::string, GLint> _paramsOffsets;
         std::vector<std::string> _paramsFullName;
 
         GLuint   _programID;
-        GLuint   _bindingPoint;
         GLuint   _blockIndex;
         GLint    _blockSize;
         GLubyte *_paramsBuffer;

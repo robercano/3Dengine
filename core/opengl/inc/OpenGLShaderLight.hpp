@@ -15,6 +15,6 @@
 class OpenGLShaderLight : public OpenGLUniformBlock, public ShaderLight
 {
 	public:
-        OpenGLShaderLight(uint32_t bindingPoint);
+        OpenGLShaderLight(uint32_t bindingPoint, uint32_t lightIndex);
         bool copyLight(Light &material);
 };

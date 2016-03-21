@@ -85,7 +85,6 @@ dirs:
 	@echo "- Creating project dirs...\c"
 	@mkdir -p $(OBJDIR)
 	@mkdir -p $(LIBDIR)
-	@mkdir -p $(HOME)/$(LIBDIR)
 	@echo "done"
 
 $(LIBDIR)/$(LIBNAME): $(OBJECTS)

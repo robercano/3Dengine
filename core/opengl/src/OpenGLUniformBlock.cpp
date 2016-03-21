@@ -10,7 +10,7 @@
 #include "OpenGLUniformBlock.hpp"
 
 OpenGLUniformBlock::OpenGLUniformBlock() :
-    _programID(0), _bindingPoint(0), _linkedToShader(false),
+    _programID(0), _bindingPoint(0), _linkedToShader(false), _blockArrayIndex(-1),
     _blockIndex(0), _blockSize(0), _paramsBuffer(NULL), _uniformBufferObj(0)
 {
 }
@@ -35,6 +35,7 @@ bool OpenGLUniformBlock::prepareForShader(GLuint programID)
     GLuint indices[_paramsFullName.size()];
     GLint offsets[_paramsFullName.size()];
     std::map<std::string, GLint>::iterator it;
+    std::string accessName;
     int i;
 
     /* Prepare array of names pointers */
@@ -42,9 +43,14 @@ bool OpenGLUniformBlock::prepareForShader(GLuint programID)
         names[i] = _paramsFullName[i].c_str();
     }
 
-    GL( _blockIndex = glGetUniformBlockIndex(programID, _blockName.c_str()) );
+    if (_blockArrayIndex == -1) {
+        accessName = _blockName;
+    } else {
+        accessName = _blockName + std::string("[") + std::to_string(_blockArrayIndex) + std::string("]");
+    }
+    GL( _blockIndex = glGetUniformBlockIndex(programID, accessName.c_str()) );
     if (_blockIndex == GL_INVALID_INDEX) {
-        fprintf(stderr, "ERROR OpenGLUniformBlock bad block index for block: %s\n", _blockName.c_str());
+        fprintf(stderr, "ERROR OpenGLUniformBlock bad block index for block: %s\n", accessName.c_str());
         return false;
     }
     GL( glGetActiveUniformBlockiv(programID, _blockIndex, GL_UNIFORM_BLOCK_DATA_SIZE, &_blockSize) );

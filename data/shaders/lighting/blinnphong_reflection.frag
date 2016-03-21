@@ -19,7 +19,9 @@ layout (std140) uniform Light {
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
-} light;
+} light[10];
+
+uniform uint numLights;
 
 /* Global scene ambient constant */
 uniform float ambientK;
@@ -62,42 +64,51 @@ void main()
     /* Calculate fragment position in world coordinates */
     vec3 fragmentPos = vec3(model*vec4(fragment_vertex, 1));
 
-    /* Attenuation */
-    float attenuation = 1.0 / (1.0 + 0.00001 * pow(length(light.position - fragmentPos), 2));
-
-    /* Light vector to fragment */
-    vec3 L = normalize(light.position - fragmentPos);
-
-    /* Calculate the normal matrix (excluding scaling and translation, centerd in origin) */
-    //mat3 normalMatrix = transpose(inverse(mat3(model)));
-
-    /* And now calculate the final normal */
-    /* TODO: this must be done in the vertex shader */
-    vec3 N = normalize(fragment_normal);
+    /* Ambient */
+    Ia = clamp(ambientK, 0.0, 1.0);
 
     /* Vector to the camera */
     mat3 rotMatView = mat3(view);
     vec3 tmpCameraPos = vec3(view[3]);
     vec3 cameraPos = -tmpCameraPos * rotMatView;
-
     vec3 V = normalize(cameraPos - fragmentPos);
 
-    /* Normalized half vector for Blinn-Phong */
-    vec3 H = normalize(L + V);
+    vec3 acc = vec3(0.0);
 
-    /* Ambient + Diffuse + Specular */
-    Ia = clamp(ambientK, 0.0, 1.0);
-    Id = clamp(dot(L, N), 0.0, 1.0);
-    Is = clamp(pow(dot(N, H), material.shininess), 0.0, 1.0);
+/* FOR */
+    for (int i=0; i<10; i++) {
+        /* Attenuation */
+        float attenuation = 1.0 / (1.0 + 0.00001 * pow(length(light[i].position - fragmentPos), 2));
 
-    colorAmbient  = light.ambient*material.ambient*Ia;
-    colorDiffuse  = light.diffuse*material.diffuse*Id;
-    colorSpecular  = light.specular*material.specular*Is;
+        /* Light vector to fragment */
+        vec3 L = normalize(light[1].position - fragmentPos);
 
-    if (dot(L, N) <= 0) {
-        colorSpecular = vec3(0.0);
+        /* Calculate the normal matrix (excluding scaling and translation, centerd in origin) */
+        //mat3 normalMatrix = transpose(inverse(mat3(model)));
+
+        /* And now calculate the final normal */
+        /* TODO: this must be done in the vertex shader */
+        vec3 N = normalize(fragment_normal);
+
+        /* Normalized half vector for Blinn-Phong */
+        vec3 H = normalize(L + V);
+
+        /* Diffuse + Specular */
+        Id = clamp(dot(L, N), 0.0, 1.0);
+        Is = clamp(pow(dot(N, H), material.shininess), 0.0, 1.0);
+
+        colorAmbient  = light[1].ambient*material.ambient*Ia;
+        colorDiffuse  = light[1].diffuse*material.diffuse*Id;
+        colorSpecular  = light[1].specular*material.specular*Is;
+
+        if (dot(L, N) <= 0) {
+            colorSpecular = vec3(0.0);
+        }
+
+        /* Accumulate color components */
+        acc += colorAmbient + attenuation*(colorDiffuse + colorSpecular);
     }
 
-    color = texel * vec4(colorAmbient + attenuation*(colorDiffuse + colorSpecular), material.alpha);
+    color = texel * vec4(acc, material.alpha);
 }
 

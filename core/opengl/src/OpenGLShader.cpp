@@ -127,13 +127,13 @@ bool OpenGLShader::linkProgram(std::string &error)
 	return true;
 }
 
-ShaderMaterial *OpenGLShader::getMaterial(uint32_t bindingPoint)
+ShaderMaterial *OpenGLShader::getMaterial()
 {
     if (_material != NULL) {
         return _material;
     }
 
-    _material = new OpenGLShaderMaterial(bindingPoint);
+    _material = new OpenGLShaderMaterial(0);
 
     if (_material->prepareForShader(_programID) == false) {
         delete _material;
@@ -143,20 +143,22 @@ ShaderMaterial *OpenGLShader::getMaterial(uint32_t bindingPoint)
     return _material;
 }
 
-ShaderLight *OpenGLShader::getLight(uint32_t bindingPoint)
+ShaderLight *OpenGLShader::getLight(uint32_t lightIndex)
 {
-    if (_light != NULL) {
-        return _light;
+    if (lightIndex < sizeof _lights/sizeof *_lights &&
+        _lights[lightIndex] != NULL) {
+        return _lights[lightIndex];
     }
 
-    _light = new OpenGLShaderLight(bindingPoint);
+    OpenGLShaderLight **light = &_lights[lightIndex];
+    *light = new OpenGLShaderLight(lightIndex+1, lightIndex);
 
-    if (_light->prepareForShader(_programID) == false) {
-        delete _light;
-        _light = NULL;
+    if ((*light)->prepareForShader(_programID) == false) {
+        delete (*light);
+        *light = NULL;
     }
 
-    return _light;
+    return *light;
 }
 
 bool OpenGLShader::attach(void)
@@ -227,6 +229,18 @@ bool OpenGLShader::setUniformFloat(const std::string &name, float value)
 	}
 
     GL( glUniform1f(it->second, value) );
+    return true;
+}
+
+bool OpenGLShader::setUniformUint(const std::string &name, uint32_t value)
+{
+	std::map<std::string, uint32_t>::iterator it = _uniformNames.find(name);
+
+	if (it == _uniformNames.end()) {
+		return false;
+	}
+
+    GL( glUniform1ui(it->second, value) );
     return true;
 }
 

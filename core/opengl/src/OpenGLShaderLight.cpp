@@ -10,10 +10,11 @@
 #include "OpenGLShaderLight.hpp"
 #include <glm/glm.hpp>
 
-OpenGLShaderLight::OpenGLShaderLight(uint32_t bindingPoint)
+OpenGLShaderLight::OpenGLShaderLight(uint32_t bindingPoint, uint32_t lightIndex)
 {
     setBlockName("Light");
     setBindingPoint(bindingPoint);
+    setBlockArrayIndex(lightIndex);
     addParamName("position");
     addParamName("ambient");
     addParamName("diffuse");

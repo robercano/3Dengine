@@ -16,6 +16,8 @@
 class OpenGLShader : public Shader
 {
 	public:
+        static const uint32_t MAX_NUM_LIGHTS = 10;
+
 		/**
 		 * Constructor
 		 */
@@ -58,8 +60,8 @@ class OpenGLShader : public Shader
 		 */
 		bool linkProgram(std::string &error);
 
-        ShaderMaterial *getMaterial(uint32_t bindingPoint);
-        ShaderLight *getLight(uint32_t bindingPoint);
+        ShaderMaterial *getMaterial();
+        ShaderLight *getLight(uint32_t lightIndex);
 
 		/**
 		 * Makes the shader active
@@ -100,6 +102,7 @@ class OpenGLShader : public Shader
 		bool setUniformMat4(const std::string &name, const glm::mat4 &value);
         bool setUniformTexture2D(const std::string &name, uint32_t unitID);
         bool setUniformFloat(const std::string &name, float value);
+        bool setUniformUint(const std::string &name, uint32_t value);
         bool setUniformVec4(const std::string &name, glm::vec4 &value);
         bool setUniformVec2(const std::string &name, glm::vec2 &value);
 
@@ -143,5 +146,5 @@ class OpenGLShader : public Shader
 		uint32_t _programID;
 
         OpenGLShaderMaterial *_material;
-        OpenGLShaderLight *_light;
+        OpenGLShaderLight *_lights[MAX_NUM_LIGHTS];
 };

@@ -71,14 +71,23 @@ bool OpenGLRenderer::renderObject3D(RendererObject3D &object, Shader &shader,
         /* Bind program to upload the uniform */
         shader.attach();
 
-        ShaderLight *shaderLight = shader.getLight(0);
-        ShaderMaterial *shaderMaterial = shader.getMaterial(1);
+        ShaderLight *shaderLight = shader.getLight(1);
+        if (shaderLight == NULL) {
+            fprintf(stderr, "ERROR getting shader light\n");
+            return false;
+        }
+        ShaderMaterial *shaderMaterial = shader.getMaterial();
+        if (shaderMaterial == NULL) {
+            fprintf(stderr, "ERROR getting shader material\n");
+            return false;
+        }
 
         /* Send our transformation to the currently bound shader, in the "MVP" uniform */
         shader.setUniformMat4("MVP", MVP);
         shader.setUniformMat4("view", view);
         shader.setUniformTexture2D("diffuseMap", 0);
         shader.setUniformFloat("ambientK", ambientK);
+        shader.setUniformUint("numLights", 1);
 
         shaderLight->copyLight(light);
 
