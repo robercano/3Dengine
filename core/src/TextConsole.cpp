@@ -64,6 +64,7 @@ void TextConsole::setForegroundColor(float r, float g, float b, float a)
 void TextConsole::setBackgroundColor(float r, float g, float b, float a)
 {
     _background = glm::vec4(r, g, b, a);
+    _renderTarget->setClearColor(_background.r, _background.g, _background.b, _background.a);
 }
 
 void TextConsole::clear()
@@ -71,7 +72,7 @@ void TextConsole::clear()
     _xPos = SCREEN_TOP_MARGIN;
     _yPos = SCREEN_LEFT_MARGIN;
 
-    _renderTarget->clear(_background.r, _background.g, _background.b, _background.a);
+    _renderTarget->clear();
 }
 
 int TextConsole::gprintf(const char *format, ...)

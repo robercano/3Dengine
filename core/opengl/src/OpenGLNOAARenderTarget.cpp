@@ -193,10 +193,9 @@ bool OpenGLNOAARenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, 
     return true;
 }
 
-void OpenGLNOAARenderTarget::clear(float r, float g, float b, float a)
+void OpenGLNOAARenderTarget::clear()
 {
     GL( glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer) );
-    GL( glClearColor(r, g, b, a) );
+    GL( glClearColor(_r, _g, _b, _a) );
     GL( glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) );
-    GL( glBindFramebuffer(GL_FRAMEBUFFER, 0) );
 }

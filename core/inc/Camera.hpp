@@ -101,6 +101,11 @@ class Camera
 		 */
 		virtual const glm::mat4 &getView(void) = 0;
 
+		const glm::vec4 getPosition() { return _position; }
+		float getPitch() { return _pitch; }
+		float getRoll() { return _roll; }
+		float getYaw() { return _yaw; }
+
 	protected:
 
 		/**

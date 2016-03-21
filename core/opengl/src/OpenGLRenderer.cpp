@@ -62,11 +62,11 @@ bool OpenGLRenderer::renderObject3D(RendererObject3D &object, Shader &shader,
     /* Cast the object into an internal type */
     OpenGLObject3D &glObject = dynamic_cast<OpenGLObject3D&>(object);
 
+	renderTarget.clear();
+
     /* Bind the render target */
     renderTarget.bind();
     {
-        GL( glClearColor(0.0, 0.0, 0.0, 1.0) );
-        GL( glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT) );
         GL( glEnable(GL_MULTISAMPLE) );
         GL( glActiveTexture(GL_TEXTURE0) );
 

@@ -176,7 +176,7 @@ bool OpenGLFXAARenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, 
 
     /* Disable the depth test as the render target should
      * be always rendered */
-    glDisable(GL_DEPTH_TEST);
+    GL( glDisable(GL_DEPTH_TEST) );
     GL( glDisable(GL_BLEND) );
 
     GL( glBindVertexArray(_vertexArray) );
@@ -185,16 +185,15 @@ bool OpenGLFXAARenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, 
     }
     GL( glBindVertexArray(0) );
 
-    glEnable(GL_DEPTH_TEST);
+    GL( glEnable(GL_DEPTH_TEST) );
 
     _shader->detach();
     return true;
 }
 
-void OpenGLFXAARenderTarget::clear(float r, float g, float b, float a)
+void OpenGLFXAARenderTarget::clear()
 {
     GL( glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer) );
-    GL( glClearColor(r, g, b, a) );
+    GL( glClearColor(_r, _g, _b, _a) );
     GL( glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) );
-    GL( glBindFramebuffer(GL_FRAMEBUFFER, 0) );
 }
