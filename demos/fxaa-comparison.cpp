@@ -70,6 +70,9 @@ int main(int argc, char**argv)
                 glm::vec3(5.0, 5.0, 5.0),
                 glm::vec3(5.0, 5.0, 5.0),
                 glm::vec3(50.0, 100.0, 50.0));
+	std::vector<Light*> lights;
+
+	lights.push_back(&light);
 
 	/* TODO: Get the settings from a config file */
     width = 1920;
@@ -281,10 +284,10 @@ int main(int argc, char**argv)
 
             /* Render all objects */
             for (i=0; i<objects.size(); ++i) {
-                renderer->renderObject3D(*objects[i], *shaders[i], light, 0.0,
+                renderer->renderObject3D(*objects[i], *shaders[i], lights, 0.0,
                         _camera->getProjection(), _camera->getView(),
                         *selectedTargetLeft);
-                renderer->renderObject3D(*objects[i], *shaders[i], light, 0.0,
+                renderer->renderObject3D(*objects[i], *shaders[i], lights, 0.0,
                         _camera->getProjection(), _camera->getView(),
                         *selectedTargetRight);
             }

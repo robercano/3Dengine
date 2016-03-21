@@ -14,6 +14,9 @@
 
 OpenGLShader::OpenGLShader(void) : _programID(0), _material(NULL)
 {
+    for (int i=0; i<sizeof _lights/sizeof *_lights; ++i) {
+        _lights[i] = NULL;
+	}
 }
 
 OpenGLShader::~OpenGLShader(void)

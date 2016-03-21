@@ -20,7 +20,7 @@ class OpenGLRenderer : public Renderer
 		Shader * newShader(void);
         RendererObject3D *prepareObject3D(const Object3D &object);
 		bool renderObject3D(RendererObject3D &object, Shader &shader,
-                            Light &light, float ambientK,
+                            std::vector<Light*> &lights, float ambientK,
                             const glm::mat4 &projection, const glm::mat4 &view,
                             RenderTarget &renderTarget);
 		bool resize(uint16_t width, uint16_t height);

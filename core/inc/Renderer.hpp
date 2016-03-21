@@ -7,6 +7,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 #include <glm/glm.hpp>
 #include "Object3D.hpp"
 #include "RenderTarget.hpp"
@@ -57,7 +58,7 @@ class Renderer
 		 * @param view			View matrix
 		 */
 		virtual bool renderObject3D(RendererObject3D &object, Shader &shader,
-                                    Light &light, float ambientK,
+                                    std::vector<Light*> &lights, float ambientK,
                                     const glm::mat4 &projection, const glm::mat4 &view,
                                     RenderTarget &renderTarget) = 0;
 

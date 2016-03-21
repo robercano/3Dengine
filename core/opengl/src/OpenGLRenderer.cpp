@@ -47,10 +47,12 @@ RendererObject3D *OpenGLRenderer::prepareObject3D(const Object3D &object)
 }
 
 bool OpenGLRenderer::renderObject3D(RendererObject3D &object, Shader &shader,
-                                    Light &light, float ambientK,
+                                    std::vector<Light*> &lights, float ambientK,
                                     const glm::mat4 &projection, const glm::mat4 &view,
                                     RenderTarget &renderTarget)
 {
+	uint32_t numLights = 0;
+
 	/* Model matrix : an identity matrix (model will be at the origin) */
 	glm::mat4 model = glm::mat4(1.0f);
 
@@ -71,11 +73,6 @@ bool OpenGLRenderer::renderObject3D(RendererObject3D &object, Shader &shader,
         /* Bind program to upload the uniform */
         shader.attach();
 
-        ShaderLight *shaderLight = shader.getLight(1);
-        if (shaderLight == NULL) {
-            fprintf(stderr, "ERROR getting shader light\n");
-            return false;
-        }
         ShaderMaterial *shaderMaterial = shader.getMaterial();
         if (shaderMaterial == NULL) {
             fprintf(stderr, "ERROR getting shader material\n");
@@ -87,9 +84,16 @@ bool OpenGLRenderer::renderObject3D(RendererObject3D &object, Shader &shader,
         shader.setUniformMat4("view", view);
         shader.setUniformTexture2D("diffuseMap", 0);
         shader.setUniformFloat("ambientK", ambientK);
-        shader.setUniformUint("numLights", 1);
 
-        shaderLight->copyLight(light);
+		for (numLights=0; numLights<lights.size(); ++numLights) {
+			ShaderLight *shaderLight = shader.getLight(numLights);
+			if (shaderLight == NULL) {
+				fprintf(stderr, "ERROR getting shader light\n");
+				break;
+			}
+			shaderLight->copyLight(*lights[numLights]);
+		}
+        shader.setUniformUint("numLights", numLights);
 
         /* Draw the object */
         GL( glBindVertexArray(glObject.getVertexArrayID()) );

@@ -66,10 +66,24 @@ int main(int argc, char**argv)
     uint32_t height;
     uint32_t i;
 
-    Light light(glm::vec3(5.0, 5.0, 5.0),
-                glm::vec3(5.0, 5.0, 5.0),
-                glm::vec3(5.0, 5.0, 5.0),
-                glm::vec3(50.0, 100.0, 50.0));
+    Light light1(glm::vec3(5.0, 5.0, 5.0),
+                 glm::vec3(5.0, 5.0, 5.0),
+                 glm::vec3(5.0, 5.0, 5.0),
+                 glm::vec3(50.0, 100.0, 50.0));
+    Light light2(glm::vec3(5.0, 3.0, 3.0),
+                 glm::vec3(5.0, 3.0, 3.0),
+                 glm::vec3(5.0, 3.0, 3.0),
+                 glm::vec3(-50.0, 100.0, 50.0));
+    Light light3(glm::vec3(1.0, 1.0, 3.0),
+                 glm::vec3(1.0, 1.0, 3.0),
+                 glm::vec3(1.0, 1.0, 3.0),
+                 glm::vec3(50.0, 200.0, 100.0));
+
+	std::vector<Light*> lights;
+
+	lights.push_back(&light1);
+	lights.push_back(&light2);
+	lights.push_back(&light3);
 
 	/* TODO: Get the settings from a config file */
     width = 1920;
@@ -307,7 +321,7 @@ int main(int argc, char**argv)
             /* Render all objects */
             for (i=0; i<objects.size(); ++i) {
                 renderer->renderObject3D(*objects[i], *shaders[i],
-                                         light, 0.0,
+                                         lights, 0.0,
                                          _camera->getProjection(),
                                          _camera->getView(),
                                          *selectedRenderTarget);

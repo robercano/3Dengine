@@ -49,13 +49,13 @@ DEMODIR=demos
 # Mac OS alternate cmdline link options
 ifeq ($(UNAME), Darwin)
 LDFLAGS= -L/opt/X11/lib -lfreetype -lglew -lglfw3 -ljpeg -framework Cocoa -framework OpenGL -framework IOKit -fPIC
-CXXFLAGS=-I/opt/X11/include -I/opt/X11/include/freetype2/
+FLAGS=-I/opt/X11/include -I/opt/X11/include/freetype2/
 SHAREDGEN= -dynamiclib -Wl,-headerpad_max_install_names,-undefined,dynamic_lookup,-compatibility_version,1.0,-current_version,1.0,-install_name,$(LIBNAME)
 SHAREDEXT=dylib
 PREFIX=/usr/local/lib
 else
 LDFLAGS= -lGL -lGLEW -lglfw -lfreetype -ljpeg -fPIC
-CXXFLAGS=-I/usr/include -I/usr/include/freetype2
+FLAGS=-I/usr/include -I/usr/include/freetype2
 SHAREDGEN= -shared
 SHAREDEXT=so
 PREFIX=/usr/local/lib
@@ -64,8 +64,9 @@ endif
 #
 # Compilation flags
 #
-CXXFLAGS+= -Werror -MMD -fPIC -Icore/inc -Icore/opengl/inc -Icore/procedural/inc -Iutils/inc -I3rdparty -g -DDEBUG_OPENGL_PIPELINE
-CFLAGS=$(CXXFLAGS)
+FLAGS+=-Werror -MMD -fPIC -Icore/inc -Icore/opengl/inc -Icore/procedural/inc -Iutils/inc -I3rdparty -g -DDEBUG_OPENGL_PIPELINE
+CXXFLAGS=$(FLAGS) -std=c++11
+CFLAGS=$(FLAGS) -std=c11
 
 #
 # Main rules

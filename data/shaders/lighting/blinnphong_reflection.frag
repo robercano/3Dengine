@@ -1,7 +1,7 @@
 //
 // Roberto Cano (http://www.robertocano.es)
 //
-#version 330 core
+#version 400 core
 
 /* Phong reflection model implemented following the explanation
    at https://en.wikipedia.org/wiki/Phong_reflection_model and
@@ -13,13 +13,15 @@
    @author Roberto Cano
 */
 
+#define MAX_LIGHTS 10
+
 /* Light definition */
 layout (std140) uniform Light {
     vec3 position;
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
-} light[10];
+} light[MAX_LIGHTS];
 
 uniform uint numLights;
 
@@ -76,12 +78,14 @@ void main()
     vec3 acc = vec3(0.0);
 
 /* FOR */
-    for (int i=0; i<10; i++) {
+	uint nLights = min(numLights, MAX_LIGHTS);
+
+    for (int i=0; i<nLights; i++) {
         /* Attenuation */
         float attenuation = 1.0 / (1.0 + 0.00001 * pow(length(light[i].position - fragmentPos), 2));
 
         /* Light vector to fragment */
-        vec3 L = normalize(light[1].position - fragmentPos);
+        vec3 L = normalize(light[i].position - fragmentPos);
 
         /* Calculate the normal matrix (excluding scaling and translation, centerd in origin) */
         //mat3 normalMatrix = transpose(inverse(mat3(model)));
@@ -97,9 +101,9 @@ void main()
         Id = clamp(dot(L, N), 0.0, 1.0);
         Is = clamp(pow(dot(N, H), material.shininess), 0.0, 1.0);
 
-        colorAmbient  = light[1].ambient*material.ambient*Ia;
-        colorDiffuse  = light[1].diffuse*material.diffuse*Id;
-        colorSpecular  = light[1].specular*material.specular*Is;
+        colorAmbient  = light[i].ambient*material.ambient*Ia;
+        colorDiffuse  = light[i].diffuse*material.diffuse*Id;
+        colorSpecular  = light[i].specular*material.specular*Is;
 
         if (dot(L, N) <= 0) {
             colorSpecular = vec3(0.0);
