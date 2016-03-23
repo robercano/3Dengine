@@ -4,8 +4,20 @@
  * @author	Roberto Cano (http://www.robertocano.es)
  */
 #include <string>
+#if defined(__LINUX__)
 #include <sys/time.h>
 #include <unistd.h>
+
+uint32_t GetTickCount(void)
+{
+	struct timeval t;
+	gettimeofday(&t, NULL);
+	return t.tv_sec * 1000 + t.tv_usec / 1000;
+}
+
+#elif defined (_WIN32) || defined(_WIN64)
+#include <Windows.h>
+#endif
 #include "OpenGL.h" // For GLFW_KEY_ESCAPE
 #include "OBJFormat.hpp"
 #include "Shader.hpp"
@@ -19,6 +31,7 @@
 #include "FXAA2RenderTarget.hpp"
 
 #define TARGET_FPS 59
+#define PI 3.14159265358979323846
 
 int main(int argc, char**argv)
 {
@@ -38,8 +51,8 @@ int main(int argc, char**argv)
 	const float MouseSensibility = 10.0;
 	const float InvertMouse = 1.0;
 	int32_t prevX = 0xFFFFFF, prevY = 0xFFFFFF;
-	struct timeval renderBegin, renderEnd;
-    struct timeval inputNow, inputPrevious;
+	uint32_t renderBegin, renderEnd;
+    uint32_t inputNow, inputPrevious;
     double renderFrameMs;
     double jitterAdj = 1.02;
     bool resetStats = false;
@@ -183,7 +196,7 @@ int main(int argc, char**argv)
     shaders.push_back(shader);
 
     /* Main loop */
-	gettimeofday(&inputNow, NULL);
+	inputNow = GetTickCount();
     renderBegin = renderEnd = inputNow;
 
 	while (true)
@@ -196,9 +209,8 @@ int main(int argc, char**argv)
 
 		/* Get elapsed time */
 		inputPrevious = inputNow;
-		gettimeofday(&inputNow, NULL);
-		double inputElapsedMs = (inputNow.tv_sec - inputPrevious.tv_sec)*1000.0 +
-                                (inputNow.tv_usec - inputPrevious.tv_usec)/1000.0;
+		inputNow = GetTickCount();
+		double inputElapsedMs = inputNow - inputPrevious;
 
 		/* Dispatch input to geometry */
 		if (inputManager._keys['W']) {
@@ -236,28 +248,27 @@ int main(int argc, char**argv)
 		int32_t diffMouseY = InvertMouse*(inputManager._yMouse - prevY);
 
 		if (diffMouseX) {
-			_camera->rotateYaw(MouseSensibility*M_PI*diffMouseX/width);
+			_camera->rotateYaw(MouseSensibility*PI*diffMouseX/width);
 		}
 		if (diffMouseY) {
-			_camera->rotatePitch(MouseSensibility*M_PI*diffMouseY/height);
+			_camera->rotatePitch(MouseSensibility*PI*diffMouseY/height);
 		}
 
 		prevX = inputManager._xMouse;
 		prevY = inputManager._yMouse;
 
 		/* Move the light */
-		angle += 2*M_PI*inputElapsedMs/5000.0;
-		if (angle > 2*M_PI) {
-			angle -= 2*M_PI;
+		angle += 2*PI*inputElapsedMs/5000.0;
+		if (angle > 2*PI) {
+			angle -= 2*PI;
 		}
 		light1.setPosition(glm::vec3(50.0*glm::sin(-angle), 100.0, 50.0*glm::cos(-angle)));
 		light2.setPosition(glm::vec3(-50.0*glm::sin(angle), 100.0, 500.0*glm::cos(angle)));
 		light3.setPosition(glm::vec3(100.0*glm::sin(angle), 150.0, 100.0*glm::cos(angle)));
 
         /* If frame is due, render it */
-        gettimeofday(&renderBegin, NULL);
-        double renderElapsedMs = (renderBegin.tv_sec - renderEnd.tv_sec)*1000.0 +
-                                 (renderBegin.tv_usec - renderEnd.tv_usec)/1000.0;
+        renderBegin = GetTickCount();
+        double renderElapsedMs = renderBegin - renderEnd;
 
         /* We take into account the last render time to start the rendering process
          * in advance, so we are in time for the blit. This is currently too tight,
@@ -301,10 +312,9 @@ int main(int argc, char**argv)
             windowManager->swapBuffers();
 
             /* Calculate how much did we take to render this frame */
-            gettimeofday(&renderEnd, NULL);
+            renderEnd = GetTickCount();
 
-            renderFrameMs = (renderEnd.tv_sec - renderBegin.tv_sec)*1000.0 +
-                            (renderEnd.tv_usec - renderBegin.tv_usec)/1000.0;
+            renderFrameMs = renderEnd - renderBegin;
 
             /* Check if we are really late, that means we are dropping
              * frames. In this case re-adjust the render adjustment and

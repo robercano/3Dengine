@@ -8,8 +8,7 @@
 #pragma once
 
 #include <stdint.h>
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
+#include <OpenGL.h>
 #include "WindowManager.hpp"
 
 class GLFWWindowManager : public WindowManager

@@ -1,0 +1,969 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="core\opengl\src\GLFWKeyManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\opengl\src\GLFWMouseManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\opengl\src\GLFWWindowManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\opengl\src\OpenGLFBRenderTarget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\opengl\src\OpenGLFontRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\opengl\src\OpenGLFXAA2RenderTarget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\opengl\src\OpenGLFXAARenderTarget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\opengl\src\OpenGLMSAARenderTarget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\opengl\src\OpenGLNOAARenderTarget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\opengl\src\OpenGLObject3D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\opengl\src\OpenGLRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\opengl\src\OpenGLShader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\opengl\src\OpenGLShaderLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\opengl\src\OpenGLShaderMaterial.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\opengl\src\OpenGLSSAARenderTarget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\opengl\src\OpenGLUniformBlock.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\FBRenderTarget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\FlyCamera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\FontRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\FreeFlyCamera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\FreeTypeFont.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\FXAA2RenderTarget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\FXAARenderTarget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\InputManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\MSAARenderTarget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\NOAARenderTarget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\OBJFormat.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\Renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\SSAARenderTarget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\TextConsole.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\TrueTypeFont.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\WalkingCamera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\WindowManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="demos\anti-aliasing-comparison.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\src\JPEGLoader.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\src\MathUtils.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="3rdparty\glm\ext.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\glm.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\func_common.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\func_exponential.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\func_geometric.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\func_integer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\func_matrix.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\func_noise.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\func_packing.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\func_trigonometric.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\func_vector_relational.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\hint.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\intrinsic_common.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\intrinsic_exponential.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\intrinsic_geometric.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\intrinsic_matrix.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\intrinsic_trigonometric.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\intrinsic_vector_relational.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\setup.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\type.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\type_float.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\type_gentype.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\type_half.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\type_int.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\type_mat.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\type_mat2x2.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\type_mat2x3.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\type_mat2x4.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\type_mat3x2.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\type_mat3x3.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\type_mat3x4.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\type_mat4x2.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\type_mat4x3.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\type_mat4x4.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\type_size.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\type_vec.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\type_vec1.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\type_vec2.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\type_vec3.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\type_vec4.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\_detail.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\_fixes.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\_swizzle.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\_swizzle_func.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\core\_vectorize.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtc\constants.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtc\epsilon.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtc\half_float.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtc\matrix_access.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtc\matrix_integer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtc\matrix_inverse.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtc\matrix_transform.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtc\noise.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtc\quaternion.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtc\random.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtc\reciprocal.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtc\swizzle.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtc\type_precision.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtc\type_ptr.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtc\ulp.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\associated_min_max.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\bit.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\closest_point.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\color_cast.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\color_space.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\color_space_YCoCg.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\compatibility.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\component_wise.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\constants.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\epsilon.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\euler_angles.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\extend.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\extented_min_max.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\fast_exponential.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\fast_square_root.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\fast_trigonometry.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\gradient_paint.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\handed_coordinate_space.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\inertia.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\integer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\intersect.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\int_10_10_10_2.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\log_base.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\matrix_cross_product.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\matrix_interpolation.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\matrix_major_storage.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\matrix_operation.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\matrix_query.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\mixed_product.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\multiple.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\noise.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\norm.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\normal.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\normalize_dot.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\number_precision.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\ocl_type.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\optimum_pow.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\orthonormalize.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\perpendicular.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\polar_coordinates.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\projection.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\quaternion.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\random.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\raw_data.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\reciprocal.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\rotate_vector.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\simd_mat4.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\simd_vec4.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\spline.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\std_based_type.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\string_cast.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\transform.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\transform2.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\ulp.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\unsigned_int.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\vec1.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\vector_access.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\vector_angle.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\vector_query.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\verbose_operator.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\gtx\wrap.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\glm\virtrev\xstream.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc\Camera.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc\FBRenderTarget.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc\FlyCamera.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc\FontRenderer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc\FreeFlyCamera.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc\FreeTypeFont.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc\FXAA2RenderTarget.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc\FXAARenderTarget.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc\InputManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc\KeyManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc\Light.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc\Material.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc\MouseManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc\MSAARenderTarget.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc\NOAARenderTarget.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc\Object3D.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc\OBJFormat.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc\Renderer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc\RendererObject3D.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc\RenderTarget.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc\Shader.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc\ShaderLight.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc\ShaderMaterial.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc\SSAARenderTarget.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc\TextConsole.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc\Texture.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc\TrueTypeFont.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc\WalkingCamera.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc\WindowManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\opengl\inc\OpenGL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\opengl\inc\GLFWKeyManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\opengl\inc\GLFWMouseManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\opengl\inc\GLFWWindowManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\opengl\inc\OpenGLFBRenderTarget.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\opengl\inc\OpenGLFontRenderer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\opengl\inc\OpenGLFXAA2RenderTarget.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\opengl\inc\OpenGLFXAARenderTarget.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\opengl\inc\OpenGLMSAARenderTarget.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\opengl\inc\OpenGLNOAARenderTarget.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\opengl\inc\OpenGLObject3D.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\opengl\inc\OpenGLRenderer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\opengl\inc\OpenGLShader.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\opengl\inc\OpenGLShaderLight.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\opengl\inc\OpenGLShaderMaterial.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\opengl\inc\OpenGLSSAARenderTarget.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\opengl\inc\OpenGLUniformBlock.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\inc\JPEGLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\inc\MathUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="3rdparty\glm\core\func_common.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\core\func_exponential.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\core\func_geometric.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\core\func_integer.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\core\func_matrix.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\core\func_noise.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\core\func_packing.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\core\func_trigonometric.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\core\func_vector_relational.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\core\intrinsic_common.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\core\intrinsic_exponential.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\core\intrinsic_geometric.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\core\intrinsic_matrix.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\core\intrinsic_trigonometric.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\core\intrinsic_vector_relational.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\core\type_gentype.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\core\type_half.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\core\type_mat.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\core\type_mat2x2.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\core\type_mat2x3.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\core\type_mat2x4.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\core\type_mat3x2.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\core\type_mat3x3.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\core\type_mat3x4.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\core\type_mat4x2.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\core\type_mat4x3.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\core\type_mat4x4.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\core\type_vec.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\core\type_vec1.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\core\type_vec2.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\core\type_vec3.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\core\type_vec4.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtc\constants.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtc\epsilon.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtc\half_float.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtc\matrix_access.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtc\matrix_inverse.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtc\matrix_transform.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtc\noise.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtc\quaternion.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtc\random.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtc\reciprocal.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtc\swizzle.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtc\type_precision.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtc\type_ptr.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtc\ulp.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\associated_min_max.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\bit.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\closest_point.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\color_cast.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\color_space.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\color_space_YCoCg.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\compatibility.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\component_wise.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\euler_angles.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\extend.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\extented_min_max.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\fast_exponential.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\fast_square_root.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\fast_trigonometry.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\gradient_paint.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\handed_coordinate_space.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\inertia.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\integer.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\intersect.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\int_10_10_10_2.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\log_base.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\matrix_cross_product.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\matrix_interpolation.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\matrix_major_storage.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\matrix_operation.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\matrix_query.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\mixed_product.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\multiple.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\norm.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\normal.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\normalize_dot.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\number_precision.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\ocl_type.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\optimum_pow.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\orthonormalize.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\perpendicular.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\polar_coordinates.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\projection.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\quaternion.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\raw_data.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\rotate_vector.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\simd_mat4.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\simd_vec4.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\spline.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\std_based_type.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\string_cast.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\transform.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\transform2.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\unsigned_int.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\vec1.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\vector_access.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\vector_angle.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\vector_query.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\verbose_operator.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\glm\gtx\wrap.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="data\shaders\utils\sRGB.inc">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="3rdparty\lib\freetype6.def">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="3rdparty\lib\jpeg.def">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="3rdparty\lib\freetype.lib" />
+    <Library Include="3rdparty\lib\glew32.lib" />
+    <Library Include="3rdparty\lib\glew32s.lib" />
+    <Library Include="3rdparty\lib\glfw3.lib" />
+    <Library Include="3rdparty\lib\glfw3dll.lib" />
+    <Library Include="3rdparty\lib\jpeg.lib" />
+    <Library Include="3rdparty\lib\libfreetype.dll.a" />
+    <Library Include="3rdparty\lib\libjpeg.dll.a" />
+  </ItemGroup>
+</Project>

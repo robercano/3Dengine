@@ -31,9 +31,9 @@ void OpenGLUniformBlock::addParamName(const std::string &name)
 
 bool OpenGLUniformBlock::prepareForShader(GLuint programID)
 {
-    const GLchar *names[_paramsFullName.size()];
-    GLuint indices[_paramsFullName.size()];
-    GLint offsets[_paramsFullName.size()];
+	const GLchar **names = NULL;
+	GLuint *indices = NULL;
+	GLint *offsets = NULL;
     std::map<std::string, GLint>::iterator it;
     std::string accessName;
     int i;
@@ -48,16 +48,25 @@ bool OpenGLUniformBlock::prepareForShader(GLuint programID)
     } else {
         accessName = _blockName + std::string("[") + std::to_string(_blockArrayIndex) + std::string("]");
     }
+
     GL( _blockIndex = glGetUniformBlockIndex(programID, accessName.c_str()) );
     if (_blockIndex == GL_INVALID_INDEX) {
         fprintf(stderr, "ERROR OpenGLUniformBlock bad block index for block: %s\n", accessName.c_str());
         return false;
     }
+
+	names = new const GLchar*[_paramsFullName.size()];
+	indices = new GLuint[_paramsFullName.size()];
+	offsets = new GLint[_paramsFullName.size()];
+
     GL( glGetActiveUniformBlockiv(programID, _blockIndex, GL_UNIFORM_BLOCK_DATA_SIZE, &_blockSize) );
     GL( glGetUniformIndices(programID, _paramsFullName.size(), names, indices) );
     for (i=0; i<_paramsOffsets.size(); ++i) {
         if (indices[i] == GL_INVALID_INDEX) {
             fprintf(stderr, "ERROR OpenGLUniformBlock could not get all indices\n");
+			delete[] names;
+			delete[] indices;
+			delete[] offsets;
             return false;
         }
     }
@@ -81,6 +90,10 @@ bool OpenGLUniformBlock::prepareForShader(GLuint programID)
 
     _linkedToShader = true;
     _programID = programID;
+
+	delete[] names;
+	delete[] indices;
+	delete[] offsets;
 
     return true;
 }

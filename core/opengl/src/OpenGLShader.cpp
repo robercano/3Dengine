@@ -85,10 +85,9 @@ bool OpenGLShader::_loadShader(uint32_t shaderObjectID, const std::string &filen
 		int32_t infoLogLength;
 		GL( glGetShaderiv(shaderObjectID, GL_INFO_LOG_LENGTH, &infoLogLength) );
 
-		char errorMessage[infoLogLength + 1];
-		GL( glGetShaderInfoLog(shaderObjectID, infoLogLength, NULL, errorMessage) );
+		error.resize(infoLogLength + 1);
+		GL( glGetShaderInfoLog(shaderObjectID, infoLogLength, NULL, const_cast<GLchar*>(error.c_str())) );
 
-		error = errorMessage;
 		return false;
 	}
 
@@ -115,10 +114,9 @@ bool OpenGLShader::linkProgram(std::string &error)
 		int32_t infoLogLength;
 		GL( glGetProgramiv(_programID, GL_INFO_LOG_LENGTH, &infoLogLength) );
 
-		char errorMessage[infoLogLength + 1];
-		GL( glGetProgramInfoLog(_programID, infoLogLength, NULL, errorMessage) );
+		error.resize(infoLogLength + 1);
+		GL( glGetProgramInfoLog(_programID, infoLogLength, NULL, const_cast<GLchar*>(error.c_str())) );
 
-		error = errorMessage;
 		return false;
 	}
 

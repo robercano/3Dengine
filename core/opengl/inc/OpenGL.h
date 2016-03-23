@@ -15,9 +15,14 @@
 #if defined (__linux__)
 #include <GL/gl.h>
 #include <GL/glu.h>
+#include <GL/glew.h>
 #elif defined (__APPLE__)
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
+#include <GL/glew.h>
+#elif defined (_WIN32) || defined (_WIN64)
+#include <gl/GL.h>
+#include <GL/glew.h>
 #else
     #error "Platform not supported for OpenGL"
 #endif

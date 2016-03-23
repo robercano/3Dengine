@@ -5,8 +5,20 @@
  * @author	Roberto Cano (http://www.robertocano.es)
  */
 #include <string>
+#if defined(__LINUX__)
 #include <sys/time.h>
 #include <unistd.h>
+
+uint32_t GetTickCount(void)
+{
+	struct timeval t;
+	gettimeofday(&t, NULL);
+	return t.tv_sec * 1000 + t.tv_usec / 1000;
+}
+
+#elif defined (_WIN32) || defined(_WIN64)
+#include <Windows.h>
+#endif
 #include "OpenGL.h" // For GLFW_KEY_ESCAPE
 #include "OBJFormat.hpp"
 #include "Shader.hpp"
@@ -23,6 +35,7 @@
 #include "FXAA2RenderTarget.hpp"
 
 #define TARGET_FPS 59
+#define PI 3.14159265358979323846f
 
 int main(int argc, char**argv)
 {
@@ -47,20 +60,20 @@ int main(int argc, char**argv)
 	const float MouseSensibility = 10.0;
 	const float InvertMouse = 1.0;
 	int32_t prevX = 0xFFFFFF, prevY = 0xFFFFFF;
-	struct timeval renderBegin, renderEnd;
-    struct timeval inputNow, inputPrevious;
-    double renderFrameMs;
-    double jitterAdj = 1.02;
+	uint32_t renderBegin, renderEnd;
+    uint32_t inputNow, inputPrevious;
+    uint32_t renderFrameMs;
+    float jitterAdj = 1.02f;
     bool resetStats = false;
 
     float avgRenderMs[TARGET_FPS] = { 1000.0 };
     uint32_t avgRenderMsIdx = 0;
-    float minRenderFrameMs = 10000000.0f;
-    float maxRenderFrameMs = 0.0f;
+    uint32_t minRenderFrameMs = 10000000;
+    uint32_t maxRenderFrameMs = 0;
     float totalAvgTime = 0;
     float renderAdjustment = 0;
     float dueTime;
-    float FPS;
+    float FPS = 0.0f;
     bool _unboundFPS;
     uint32_t width;
     uint32_t height;
@@ -89,7 +102,7 @@ int main(int argc, char**argv)
     width = 1920;
     height = 1080;
 
-    dueTime = 1000.0/TARGET_FPS;
+    dueTime = 1000.0f/TARGET_FPS;
     _unboundFPS = false;
 
 	windowManager = WindowManager::GetInstance();
@@ -163,8 +176,8 @@ int main(int argc, char**argv)
         return 1;
     }
 
-    console.setForegroundColor(1.0, 0.5, 0.2, 1.0);
-    console.setBackgroundColor(0.0, 0.0, 0.0, 0.0);
+    console.setForegroundColor(1.0f, 0.5f, 0.2f, 1.0f);
+    console.setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
 
 	/* Register the key and mouse listener */
 	std::vector<uint32_t> keys; // The keys should be read from a config file
@@ -186,7 +199,7 @@ int main(int argc, char**argv)
 
 	/* Create the game camera */
 	_camera = new FlyCamera();
-	_camera->setProjection(45, width/(float)height, 0.1, 1000.0);
+	_camera->setProjection(45, width/(float)height, 0.1f, 1000.0f);
     glm::vec4 pos( 220, 165, -1, 1);
     _camera->setPosition(pos);
     _camera->rotateYaw(-90);
@@ -224,7 +237,7 @@ int main(int argc, char**argv)
     shaders.push_back(shader);
 
     /* Main loop */
-	gettimeofday(&inputNow, NULL);
+	inputNow = GetTickCount();
     renderBegin = renderEnd = inputNow;
 
 	while (true)
@@ -237,22 +250,21 @@ int main(int argc, char**argv)
 
 		/* Get elapsed time */
 		inputPrevious = inputNow;
-		gettimeofday(&inputNow, NULL);
-		double inputElapsedMs = (inputNow.tv_sec - inputPrevious.tv_sec)*1000.0 +
-                                (inputNow.tv_usec - inputPrevious.tv_usec)/1000.0;
+		inputNow = GetTickCount();
+		uint32_t inputElapsedMs = inputNow - inputPrevious;
 
 		/* Dispatch input to geometry */
 		if (inputManager._keys['W']) {
-			_camera->forward(0.1*inputElapsedMs);
+			_camera->forward(0.1f*inputElapsedMs);
 		}
         if (inputManager._keys['S']) {
-			_camera->forward(-0.1*inputElapsedMs);
+			_camera->forward(-0.1f*inputElapsedMs);
 		}
         if (inputManager._keys['A']) {
-			_camera->right(-0.1*inputElapsedMs);
+			_camera->right(-0.1f*inputElapsedMs);
 		}
         if (inputManager._keys['D']) {
-			_camera->right(0.1*inputElapsedMs);
+			_camera->right(0.1f*inputElapsedMs);
 		}
         if (inputManager._keys['1']) {
             selectedRenderTarget = renderTargetNOAA;
@@ -279,8 +291,8 @@ int main(int argc, char**argv)
             resetStats = true;
         }
         if (resetStats) {
-            minRenderFrameMs = 1000000.0f;
-            maxRenderFrameMs = 0.0f;
+            minRenderFrameMs = 1000000;
+            maxRenderFrameMs = 0;
             for (i=0; i<TARGET_FPS; ++i) {
                 avgRenderMs[i] = 1000.0;
             }
@@ -295,22 +307,21 @@ int main(int argc, char**argv)
 		}
 
 		int32_t diffMouseX = inputManager._xMouse - prevX;
-		int32_t diffMouseY = InvertMouse*(inputManager._yMouse - prevY);
+		int32_t diffMouseY = (int32_t)(InvertMouse*(inputManager._yMouse - prevY));
 
 		if (diffMouseX) {
-			_camera->rotateYaw(MouseSensibility*M_PI*diffMouseX/width);
+			_camera->rotateYaw(MouseSensibility*PI*diffMouseX/width);
 		}
 		if (diffMouseY) {
-			_camera->rotatePitch(MouseSensibility*M_PI*diffMouseY/height);
+			_camera->rotatePitch(MouseSensibility*PI*diffMouseY/height);
 		}
 
 		prevX = inputManager._xMouse;
 		prevY = inputManager._yMouse;
 
         /* If frame is due, render it */
-        gettimeofday(&renderBegin, NULL);
-        double renderElapsedMs = (renderBegin.tv_sec - renderEnd.tv_sec)*1000.0 +
-                                 (renderBegin.tv_usec - renderEnd.tv_usec)/1000.0;
+        renderBegin = GetTickCount();
+        uint32_t renderElapsedMs = renderBegin - renderEnd;
 
         /* We take into account the last render time to start the rendering process
          * in advance, so we are in time for the blit. This is currently too tight,
@@ -355,16 +366,15 @@ int main(int argc, char**argv)
             windowManager->swapBuffers();
 
             /* Calculate how much did we take to render this frame */
-            gettimeofday(&renderEnd, NULL);
+            renderEnd = GetTickCount();
 
-            renderFrameMs = (renderEnd.tv_sec - renderBegin.tv_sec)*1000.0 +
-                            (renderEnd.tv_usec - renderBegin.tv_usec)/1000.0;
+            renderFrameMs = renderEnd - renderBegin;
 
             /* Check if we are really late, that means we are dropping
              * frames. In this case re-adjust the render adjustment and
              * the elapsed time. Have to check how costly that fmod is... */
             if (renderFrameMs > dueTime*jitterAdj) {
-                fprintf(stderr, "Droping frames...(%.2f, %.2f)\n", renderFrameMs, dueTime);
+                fprintf(stderr, "Droping frames...(%d, %.2f)\n", renderFrameMs, dueTime);
             }
 
             /* Calculate FPS now */
@@ -375,7 +385,7 @@ int main(int argc, char**argv)
                 minRenderFrameMs = renderFrameMs;
             }
 
-            avgRenderMs[avgRenderMsIdx] = renderFrameMs;
+            avgRenderMs[avgRenderMsIdx] = (float)renderFrameMs;
             avgRenderMsIdx = (avgRenderMsIdx + 1) % TARGET_FPS;
 
             /* Calculate the average FPS */
@@ -386,7 +396,7 @@ int main(int argc, char**argv)
 
             /* Render elapsed time should be also averaged to get a good
              * estimation, but for now this will do */
-            FPS = (1000.0/(totalAvgTime + renderElapsedMs));
+            FPS = (1000.0f/(totalAvgTime + renderElapsedMs));
         }
 	}
 

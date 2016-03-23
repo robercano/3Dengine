@@ -5,8 +5,20 @@
  * @author	Roberto Cano (http://www.robertocano.es)
  */
 #include <string>
+#if defined(__LINUX__)
 #include <sys/time.h>
 #include <unistd.h>
+
+uint32_t GetTickCount(void)
+{
+	struct timeval t;
+	gettimeofday(&t, NULL);
+	return t.tv_sec * 1000 + t.tv_usec / 1000;
+}
+
+#elif defined (_WIN32) || defined(_WIN64)
+#include <Windows.h>
+#endif
 #include "OpenGL.h" // For GLFW_KEY_ESCAPE
 #include "OBJFormat.hpp"
 #include "Shader.hpp"

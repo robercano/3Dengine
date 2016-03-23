@@ -47,12 +47,12 @@ class Camera
 		 * @param near	Near plane for the frustum
 		 * @param far	Far plane for the frustum
 		 */
-		void setProjection(float fov, float ratio, float near, float far)
+		void setProjection(float fov, float ratio, float p_near, float p_far)
 		{
 			_fov   = fov;
 			_ratio = ratio;
-			_near  = near;
-			_far   = far;
+			_near  = p_near;
+			_far   = p_far;
 
 			_projectionValid = false;
 		}
@@ -64,8 +64,8 @@ class Camera
 		 */
 		void setFov(float fov)     { _fov   = fov;   _projectionValid = false; }
 		void setRatio(float ratio) { _ratio = ratio; _projectionValid = false; }
-		void setNear(float near)   { _near  = near;  _projectionValid = false; }
-		void setFar(float far)     { _far   = far;   _projectionValid = false; }
+		void setNear(float p_near)   { _near  = p_near;  _projectionValid = false; }
+		void setFar(float p_far)     { _far   = p_far;   _projectionValid = false; }
 
 		/**
 		 * Moves the camera in the required direction
