@@ -5,7 +5,8 @@
  * @author	Roberto Cano (http://www.robertocano.es)
  */
 #include <string>
-#if defined(__LINUX__)
+#include <stdint.h>
+#if defined(__linux__)
 #include <sys/time.h>
 #include <unistd.h>
 
@@ -13,7 +14,7 @@ uint32_t GetTickCount(void)
 {
 	struct timeval t;
 	gettimeofday(&t, NULL);
-	return t.tv_sec * 1000 + t.tv_usec / 1000;
+	return (t.tv_sec * 1000) + (t.tv_usec / 1000);
 }
 
 #elif defined (_WIN32) || defined(_WIN64)
@@ -60,9 +61,9 @@ int main(int argc, char**argv)
 	const float MouseSensibility = 10.0;
 	const float InvertMouse = 1.0;
 	int32_t prevX = 0xFFFFFF, prevY = 0xFFFFFF;
-	uint32_t renderBegin, renderEnd;
-    uint32_t inputNow, inputPrevious;
-    uint32_t renderFrameMs;
+	float renderBegin, renderEnd;
+    float inputNow, inputPrevious;
+    float renderFrameMs;
     float jitterAdj = 1.02f;
     bool resetStats = false;
 
@@ -70,7 +71,7 @@ int main(int argc, char**argv)
     uint32_t avgRenderMsIdx = 0;
     uint32_t minRenderFrameMs = 10000000;
     uint32_t maxRenderFrameMs = 0;
-    float totalAvgTime = 0;
+    float totalAvgTime = 0.0f;
     float renderAdjustment = 0;
     float dueTime;
     float FPS = 0.0f;
@@ -251,7 +252,7 @@ int main(int argc, char**argv)
 		/* Get elapsed time */
 		inputPrevious = inputNow;
 		inputNow = GetTickCount();
-		uint32_t inputElapsedMs = inputNow - inputPrevious;
+		float inputElapsedMs = inputNow - inputPrevious;
 
 		/* Dispatch input to geometry */
 		if (inputManager._keys['W']) {
@@ -321,8 +322,8 @@ int main(int argc, char**argv)
 
         /* If frame is due, render it */
         renderBegin = GetTickCount();
-        uint32_t renderElapsedMs = renderBegin - renderEnd;
-
+        float renderElapsedMs = renderBegin - renderEnd;
+fprintf(stderr, "%.2f\n", GetTickCount());
         /* We take into account the last render time to start the rendering process
          * in advance, so we are in time for the blit. This is currently too tight,
          * we should account for variations in the render time due to changes of the
@@ -342,6 +343,7 @@ int main(int argc, char**argv)
             console.gprintf("Anti-aliasing: %s\n", renderTargetName.c_str());
             console.gprintf("FPS: %d\n", (int)FPS);
             console.gprintf("Upper FPS: %d\n", (int)(1000.0/totalAvgTime));
+            console.gprintf("Upper FPS: %.2f\n", totalAvgTime);
             console.gprintf("Avg. Render: %.2fms (%.2fms)\n", totalAvgTime, dueTime);
 
             selectedRenderTarget->blit(0, 0, width, height);
@@ -376,6 +378,7 @@ int main(int argc, char**argv)
             if (renderFrameMs > dueTime*jitterAdj) {
                 fprintf(stderr, "Droping frames...(%d, %.2f)\n", renderFrameMs, dueTime);
             }
+                fprintf(stderr, "Droping frames...(%d, %.2f)\n", renderFrameMs, dueTime);
 
             /* Calculate FPS now */
             if (renderFrameMs > maxRenderFrameMs) {
@@ -385,7 +388,7 @@ int main(int argc, char**argv)
                 minRenderFrameMs = renderFrameMs;
             }
 
-            avgRenderMs[avgRenderMsIdx] = (float)renderFrameMs;
+            avgRenderMs[avgRenderMsIdx] = renderFrameMs;
             avgRenderMsIdx = (avgRenderMsIdx + 1) % TARGET_FPS;
 
             /* Calculate the average FPS */

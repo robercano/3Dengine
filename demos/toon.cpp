@@ -5,7 +5,7 @@
  */
 #include <string>
 #include <stdint.h>
-#if defined(__LINUX__)
+#if defined(__linux__)
 #include <sys/time.h>
 #include <unistd.h>
 

@@ -5,7 +5,8 @@
  * @author	Roberto Cano (http://www.robertocano.es)
  */
 #include <string>
-#if defined(__LINUX__)
+#include <stdint.h>
+#if defined(__linux__)
 #include <sys/time.h>
 #include <unistd.h>
 
