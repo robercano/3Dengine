@@ -28,7 +28,7 @@ The binaries will be created in the demo directory.
 * OBJ format importer supporting geometry, textures and material specification
 * Render targets support
 * Anti-aliasing render targets implemented with shaders: FXAA, FXAA2, SSAA and MSAA
-** FXAA2 is my own implementation of FXAA based on Timothy Lottes paper
+    FXAA2 is my own implementation of FXAA based on Timothy Lottes paper
 * Text rendering using TrueType fonts
 * Walk, Fly and FreeFly cameras implemented with quaternions
 * Goraud and flat illumination shaders
