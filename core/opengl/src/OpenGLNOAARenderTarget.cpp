@@ -132,27 +132,17 @@ bool OpenGLNOAARenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, 
 {
 #define RENDER_TARGET_ENABLE_BLEND
 #ifdef RENDER_TARGET_ENABLE_BLEND
-    uint32_t windowWidth, windowHeight;
-
-    WindowManager::GetInstance()->getWindowSize(&windowWidth, &windowHeight);
-
-    float ratioWidth = _width/(float)windowWidth;
-    float ratioHeight = _height/(float)windowHeight;
-
-    glm::mat4 targetMat(ratioWidth, 0.0f,        0.0f, 0.0f,
-                        0.0f,       ratioHeight, 0.0f, 0.0f,
-                        0.0f,       0.0f,        1.0f, 0.0f,
-                        ratioWidth + (2.0f*dstX/windowWidth) - 1.0f,
-                        ratioHeight + (2.0f*dstY/windowHeight) - 1.0f, 0.0f, 1.0f);
+    GL( glViewport(dstX, dstY, width, height) );
 
     /* Bind the target texture */
+    GL( glBindFramebuffer(GL_FRAMEBUFFER, 0) );
+    GL( glViewport(dstX, dstY, width, height) );
     GL( glActiveTexture(GL_TEXTURE0) );
     GL( glBindTexture(GL_TEXTURE_2D, _colorBuffer) );
 
     /* Tell the shader which texture unit to use */
     _shader->attach();
     _shader->setUniformTexture2D("fbo_texture", 0);
-    _shader->setUniformMat4("f_scale", targetMat);
 
     /* Disable the depth test as the render target should
      * be always rendered */

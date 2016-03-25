@@ -16,7 +16,16 @@ void Game::setWindowSize(uint32_t width, uint32_t height, bool fullscreen)
 void Game::setFPS(uint32_t FPS, bool unbound)
 {
     _targetFPS = FPS;
-    _unboundFPS = true;
+    _unboundFPS = unbound;
+}
+
+void Game::resetStats()
+{
+	_minRenderFrameMs = 1000000;
+	_maxRenderFrameMs = 0;
+	for (int i=0; i<sizeof _avgRenderMs / sizeof *_avgRenderMs; ++i) {
+		_avgRenderMs[i] = 1000.0;
+	}
 }
 
 bool Game::init()
@@ -64,28 +73,19 @@ bool Game::init()
     _console.setForegroundColor(1.0, 0.5, 0.2, 1.0);
     _console.setBackgroundColor(0.0, 0.0, 0.0, 0.0);
 
-    std::vector<uint32_t> keys; // The keys should be read from a config file
-    _gameHandler->handleInit(*_windowManager, *_renderer, keys);
-
-    _windowManager->getKeyManager()->registerListener(_inputManager, keys);
-    _windowManager->getMouseManager()->registerListener(_inputManager);
+    _gameHandler->handleInit(this);
 
     return true;
 }
 
 bool Game::loop()
 {
-    const float InvertMouse = 1.0;
-    int32_t prevX = 0xFFFFFF, prevY = 0xFFFFFF;
     double renderBegin, renderEnd;
-    double inputNow, inputPrevious;
+    double tickNow, tickPrevious;
     double renderFrameMs;
     double jitterAdj = 1.02;
     bool resetStats = false;
-    float *avgRenderMs = NULL;
     uint32_t avgRenderMsIdx = 0;
-    float minRenderFrameMs = 10000000.0f;
-    float maxRenderFrameMs = 0.0f;
     float totalAvgTime = 0;
     float renderAdjustment = 0;
     float dueTime = 1000.0/_targetFPS;
@@ -93,50 +93,20 @@ bool Game::loop()
     int i;
 
     /* Main loop */
-    avgRenderMs = new float[_targetFPS]();
-
-    inputNow = _timer->getElapsedMs();
-    renderBegin = renderEnd = inputNow;
+    renderBegin = renderEnd = tickNow = _timer->getElapsedMs();
 
     while (true)
     {
-        /* Read input */
+        /* Read window events */
         _windowManager->poll();
 
         /* Get elapsed time */
-        inputPrevious = inputNow;
-        inputNow = _timer->getElapsedMs();
-        double inputElapsedMs = inputNow - inputPrevious;
+        tickPrevious = tickNow;
+        tickNow = _timer->getElapsedMs();
 
-        if (_gameHandler->handleKeyboard(_inputManager, inputElapsedMs) != true) {
+        if (_gameHandler->handleTick(this, tickNow - tickPrevious) != true) {
             break;
         }
-
-        if (resetStats) {
-            minRenderFrameMs = 1000000.0f;
-            maxRenderFrameMs = 0.0f;
-            for (i=0; i<_targetFPS; ++i) {
-                avgRenderMs[i] = 1000.0;
-            }
-            resetStats = false;
-        }
-
-        if (prevX == 0xFFFFFF) {
-            prevX = _inputManager._xMouse;
-        }
-        if (prevY == 0xFFFFFF) {
-            prevY = _inputManager._yMouse;
-        }
-
-        int32_t diffMouseX = _inputManager._xMouse - prevX;
-        int32_t diffMouseY = InvertMouse*(_inputManager._yMouse - prevY);
-
-        if (_gameHandler->handleMouse(diffMouseX, diffMouseY) != true) {
-            fprintf(stderr, "ERROR calling mouse callback\n");
-        }
-
-        prevX = _inputManager._xMouse;
-        prevY = _inputManager._yMouse;
 
         /* If frame is due, render it */
         renderBegin = _timer->getElapsedMs();
@@ -150,7 +120,7 @@ bool Game::loop()
         if (_unboundFPS == true || (renderElapsedMs + totalAvgTime*jitterAdj >= dueTime)) {
 
             _console.clear();
-            if (_gameHandler->handleRender(*_renderer, _console) != true) {
+            if (_gameHandler->handleRender(this) != true) {
                 fprintf(stderr, "ERROR handling render callback");
             }
             _console.gprintf("FPS: %d\n", (int)FPS);
@@ -188,19 +158,19 @@ bool Game::loop()
             }
 
             /* Calculate FPS now */
-            if (renderFrameMs > maxRenderFrameMs) {
-                maxRenderFrameMs = renderFrameMs;
+            if (renderFrameMs > _maxRenderFrameMs) {
+                _maxRenderFrameMs = renderFrameMs;
             }
-            if (renderFrameMs < minRenderFrameMs) {
-                minRenderFrameMs = renderFrameMs;
+            if (renderFrameMs < _minRenderFrameMs) {
+                _minRenderFrameMs = renderFrameMs;
             }
 
-            avgRenderMs[avgRenderMsIdx] = renderFrameMs;
-            avgRenderMsIdx = (avgRenderMsIdx + 1) % _targetFPS;
+            _avgRenderMs[avgRenderMsIdx] = renderFrameMs;
+            avgRenderMsIdx = (avgRenderMsIdx + 1) % (sizeof _avgRenderMs/sizeof *_avgRenderMs);
 
             /* Calculate the average FPS */
             for (i=0; i<_targetFPS; ++i) {
-                totalAvgTime += avgRenderMs[i];
+                totalAvgTime += _avgRenderMs[i];
             }
             totalAvgTime /= _targetFPS;
 
@@ -211,8 +181,8 @@ bool Game::loop()
     }
 
     fprintf(stderr, "Average FPS: %d\n", (int)(1000.0/totalAvgTime));
-    fprintf(stderr, "Minimum FPS: %d\n", (int)(1000.0/maxRenderFrameMs));
-    fprintf(stderr, "Maximum FPS: %d\n", (int)(1000.0/minRenderFrameMs));
+    fprintf(stderr, "Minimum FPS: %d\n", (int)(1000.0/_maxRenderFrameMs));
+    fprintf(stderr, "Maximum FPS: %d\n", (int)(1000.0/_minRenderFrameMs));
 
     return true;
 }

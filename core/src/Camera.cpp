@@ -25,12 +25,12 @@ Camera::~Camera()
 {
 }
 
-void Camera::setPosition(glm::vec4 &position)
+void Camera::setPosition(const glm::vec4 &position)
 {
 	_position = position;
 }
 
-void Camera::lookAt(glm::vec4 &at)
+void Camera::lookAt(const glm::vec4 &at)
 {
 }
 
