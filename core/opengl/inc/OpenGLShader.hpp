@@ -29,6 +29,21 @@ class OpenGLShader : public Shader
 		~OpenGLShader(void);
 
 		/**
+		 * Loads a new shader code and compiles it. Path contains the subdirectory
+		 * inside data/shaders/ and the name of the shader files without the extension.
+		 *
+		 * i.e.: anti-aliasing/fxaa will load data/shaders/anti-aliasing/fxaa.vert
+		 *       and data/shaders/anti-aliasing/fxaa/frag
+		 *
+		 * @param		path  Path to the vertex/fragment shader pair
+		 * @param[out]	error If compilation fails error will contain
+		 *					  a description of the error
+		 *
+		 * @return true or false
+		 */
+		bool use(const std::string &path, std::string &error);
+
+		/**
 		 * Loads a new vertex shader code and compiles it
 		 *
 		 * @param		filename  File name of the shader to be compiled

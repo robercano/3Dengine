@@ -100,16 +100,8 @@ class AntiaAliasingDemo : public GameHandler
             _shader = Shader::New();
 
             std::string error;
-            if (_shader->loadVertexShader("data/shaders/lighting/blinnphong_reflection.vert", error) == false) {
-                printf("ERROR compiling vertex shader: %s\n", error.c_str());
-                return false;
-            }
-            if (_shader->loadFragmentShader("data/shaders/lighting/blinnphong_reflection.frag", error) == false) {
-                printf("ERROR 00compiling fragment shader: %s\n", error.c_str());
-                return false;
-            }
-            if (_shader->linkProgram(error) == false) {
-                printf("ERROR linking shader: %s\n", error.c_str());
+            if (_shader->use("lighting/blinnphong_reflection", error) == false) {
+                printf("ERROR loading shader: %s\n", error.c_str());
                 return false;
             }
 

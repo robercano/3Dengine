@@ -25,6 +25,20 @@ OpenGLShader::~OpenGLShader(void)
 	GL( glDeleteProgram(_programID) );
 }
 
+bool OpenGLShader::use(const std::string &path, std::string &error)
+{
+	std::string vertex = std::string("data/shaders/") + path + std::string(".vert");
+	std::string fragment = std::string("data/shaders/") + path + std::string(".frag");
+
+	if (loadVertexShader(vertex, error) == false) {
+		return false;
+	}
+	if (loadFragmentShader(fragment, error) == false) {
+		return false;
+	}
+	return linkProgram(error);
+}
+
 bool OpenGLShader::loadVertexShader(const std::string &filename, std::string &error)
 {
 	GLuint shaderObjectID;

@@ -98,16 +98,8 @@ bool OpenGLNOAARenderTarget::init(uint32_t width, uint32_t height)
     _shader = Shader::New();
 
 	std::string error;
-	if (_shader->loadVertexShader("data/shaders/anti-aliasing/noaa.vert", error) == false) {
-		printf("ERROR compiling vertex shader: %s\n", error.c_str());
-		return false;
-	}
-	if (_shader->loadFragmentShader("data/shaders/anti-aliasing/noaa.frag", error) == false) {
-		printf("ERROR compiling fragment shader: %s\n", error.c_str());
-		return false;
-	}
-	if (_shader->linkProgram(error) == false) {
-		printf("ERROR linking shader: %s\n", error.c_str());
+	if (_shader->use("anti-aliasing/noaa", error) == false) {
+		printf("ERROR loading shader: %s\n", error.c_str());
 		return false;
 	}
 
