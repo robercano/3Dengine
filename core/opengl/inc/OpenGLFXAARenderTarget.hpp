@@ -14,42 +14,27 @@
 #include "OpenGL.h"
 #include "Shader.hpp"
 #include "FXAARenderTarget.hpp"
+#include "OpenGLFilterRenderTarget.hpp"
 
-class OpenGLFXAARenderTarget : public FXAARenderTarget
+class OpenGLFXAARenderTarget : public FXAARenderTarget, public OpenGLFilterRenderTarget
 {
-	public:
-        ~OpenGLFXAARenderTarget();
-        bool init(uint32_t width, uint32_t height);
-        void bind();
-        void unbind();
-        bool blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height);
-        void clear();
-
-    private:
-        /**
-         * Frame buffer object ID to reference
-         * both the color buffer and the depth buffer
-         */
-        GLuint _frameBuffer;
-
-        /**
-         * Frame buffer texture to hold the color buffer
-         */
-        GLuint _colorBuffer;
-
-        /**
-         * Render buffer object to hold the depth buffer
-         */
-        GLuint _depthBuffer;
-
-        /**
-         * Render target vertices buffer
-         */
-        GLuint _vertexArray;
-        GLuint _vertexBuffer;
-
-        /**
-         * Shader for the target rendering to screen
-         */
-        Shader *_shader;
+	private:
+		bool customInit() {
+			std::string error;
+			if (_shader->use("anti-aliasing/fxaa_lottes", error) == false) {
+				printf("ERROR loading shader: %s\n", error.c_str());
+				return false;
+			}
+			return true;
+		}
+		void setCustomParams(void)
+		{
+			glm::vec2 rpcFrame(1.0f/_width, 1.0f/_height);
+			_shader->setUniformVec2("f_rpcFrame", rpcFrame);
+			GL( glDisable(GL_BLEND) );
+			GL( glDisable(GL_DEPTH_TEST) );
+		}
+		void unsetCustomParams(void) {
+			glEnable(GL_DEPTH_TEST);
+		}
 };

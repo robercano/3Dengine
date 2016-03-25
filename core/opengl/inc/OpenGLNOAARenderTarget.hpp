@@ -13,42 +13,26 @@
 #include "OpenGL.h"
 #include "Shader.hpp"
 #include "NOAARenderTarget.hpp"
+#include "OpenGLFilterRenderTarget.hpp"
 
-class OpenGLNOAARenderTarget : public NOAARenderTarget
+class OpenGLNOAARenderTarget : public NOAARenderTarget, public OpenGLFilterRenderTarget
 {
 	public:
-        ~OpenGLNOAARenderTarget();
-        bool init(uint32_t width, uint32_t height);
-        void bind();
-        void unbind();
-        bool blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height);
-        void clear();
-
-    private:
-        /**
-         * Frame buffer object ID to reference
-         * both the color buffer and the depth buffer
-         */
-        GLuint _frameBuffer;
-
-        /**
-         * Frame buffer texture to hold the color buffer
-         */
-        GLuint _colorBuffer;
-
-        /**
-         * Render buffer object to hold the depth buffer
-         */
-        GLuint _depthBuffer;
-
-        /**
-         * Render target vertices buffer
-         */
-        GLuint _vertexArray;
-        GLuint _vertexBuffer;
-
-        /**
-         * Shader for the target rendering to screen
-         */
-        Shader *_shader;
+		bool customInit() {
+			std::string error;
+			if (_shader->use("anti-aliasing/noaa", error) == false) {
+				printf("ERROR loading shader: %s\n", error.c_str());
+				return false;
+			}
+			return true;
+		}
+		void setCustomParams(void) {
+			GL( glDisable(GL_DEPTH_TEST) );
+			GL( glEnable(GL_BLEND) );
+			GL( glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA) );
+		}
+		void unsetCustomParams(void) {
+			GL( glDisable(GL_BLEND) );
+			GL( glEnable(GL_DEPTH_TEST) );
+		}
 };

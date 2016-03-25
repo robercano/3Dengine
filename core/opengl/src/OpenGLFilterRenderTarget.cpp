@@ -1,21 +1,18 @@
 /**
- * @class	OpenGLFXAA2RenderTarget
+ * @class	OpenGLFilterRenderTarget
  * @brief	Render target for OpenGL. A render target allows to render objects to it
  *          instead of to the main screen. Then the target can be rendered to the main screen as
  *          a texture
- *
- *          The FXAA2 render target applies Fast Approximate Anti-Aliasing from
- *          Timothy Lottes paper t Nvidia
  *
  * @author	Roberto Cano (http://www.robertocano.es)
  */
 #include <glm/gtc/matrix_transform.hpp>
 #include "OpenGL.h"
-#include "OpenGLFXAA2RenderTarget.hpp"
+#include "OpenGLFilterRenderTarget.hpp"
 #include "Renderer.hpp"
 #include "WindowManager.hpp"
 
-OpenGLFXAA2RenderTarget::~OpenGLFXAA2RenderTarget()
+OpenGLFilterRenderTarget::~OpenGLFilterRenderTarget()
 {
     delete _shader;
 
@@ -26,9 +23,9 @@ OpenGLFXAA2RenderTarget::~OpenGLFXAA2RenderTarget()
     GL( glDeleteFramebuffers(1, &_frameBuffer) );
 }
 
-bool OpenGLFXAA2RenderTarget::init(uint32_t width, uint32_t height)
+bool OpenGLFilterRenderTarget::init(uint32_t width, uint32_t height, uint32_t maxSamples)
 {
-    /* Frame buffer objects do not care which texture unit is used */
+	(void)maxSamples;
 
     /* Texture buffer */
     GL( glGenTextures(1, &_colorBuffer) );
@@ -37,7 +34,7 @@ bool OpenGLFXAA2RenderTarget::init(uint32_t width, uint32_t height)
         GLfloat fLargest;
         glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &fLargest);
 
-        /* FXAA2 requires a 4x anisotropic filter */
+        /* FXAA requires a 4x anisotropic filter */
         if (fLargest > 4.0) {
             fLargest = 4.0;
         }
@@ -55,7 +52,6 @@ bool OpenGLFXAA2RenderTarget::init(uint32_t width, uint32_t height)
 #else
         GL( glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL) );
 #endif
-
     }
     GL( glBindTexture(GL_TEXTURE_2D, 0) );
 
@@ -115,34 +111,29 @@ bool OpenGLFXAA2RenderTarget::init(uint32_t width, uint32_t height)
     /* Create the shader */
     _shader = Shader::New();
 
-	std::string error;
-	if (_shader->use("anti-aliasing/fxaa", error) == false) {
-		printf("ERROR loading shader: %s\n", error.c_str());
-		return false;
-	}
-
     _width = width;
     _height = height;
 
-    return true;
+	return customInit();
 }
 
-void OpenGLFXAA2RenderTarget::bind()
+void OpenGLFilterRenderTarget::bind()
 {
     GL( glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer) );
     GL( glViewport(0, 0, _width, _height) );
 }
 
-void OpenGLFXAA2RenderTarget::unbind()
+void OpenGLFilterRenderTarget::unbind()
 {
     GL( glBindFramebuffer(GL_FRAMEBUFFER, 0) );
 }
 
-bool OpenGLFXAA2RenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height)
+bool OpenGLFilterRenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height)
 {
-    glm::vec2 rpcFrame(1.0f/_width, 1.0f/_height);
+	/* Setup the viewport */
+    GL( glViewport(dstX, dstY, width, height) );
 
-   /* Bind the target texture */
+    /* Bind the target texture */
     GL( glBindFramebuffer(GL_FRAMEBUFFER, 0) );
     GL( glViewport(dstX, dstY, width, height) );
     GL( glActiveTexture(GL_TEXTURE0) );
@@ -151,12 +142,8 @@ bool OpenGLFXAA2RenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width,
     /* Tell the shader which texture unit to use */
     _shader->attach();
     _shader->setUniformTexture2D("fbo_texture", 0);
-    _shader->setUniformVec2("f_rpcFrame", rpcFrame);
 
-    /* Disable the depth test as the render target should
-     * be always rendered */
-    glDisable(GL_DEPTH_TEST);
-    GL( glDisable(GL_BLEND) );
+	setCustomParams();
 
     GL( glBindVertexArray(_vertexArray) );
     {
@@ -164,13 +151,14 @@ bool OpenGLFXAA2RenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width,
     }
     GL( glBindVertexArray(0) );
 
-    glEnable(GL_DEPTH_TEST);
+	unsetCustomParams();
 
     _shader->detach();
+
     return true;
 }
 
-void OpenGLFXAA2RenderTarget::clear()
+void OpenGLFilterRenderTarget::clear()
 {
     GL( glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer) );
     GL( glClearColor(_r, _g, _b, _a) );

@@ -30,8 +30,8 @@ UTILS_FILES=MathUtils.c JPEGLoader.c
 OPENGL_FILES=GLFWKeyManager.cpp GLFWMouseManager.cpp GLFWWindowManager.cpp \
 			 OpenGLObject3D.cpp \
 			 OpenGLFontRenderer.cpp \
-			 OpenGLRenderer.cpp OpenGLNOAARenderTarget.cpp OpenGLMSAARenderTarget.cpp OpenGLSSAARenderTarget.cpp \
-             OpenGLFXAARenderTarget.cpp OpenGLFXAA2RenderTarget.cpp OpenGLFBRenderTarget.cpp \
+			 OpenGLRenderer.cpp OpenGLFilterRenderTarget.cpp \
+             OpenGLMSAARenderTarget.cpp OpenGLSSAARenderTarget.cpp OpenGLFBRenderTarget.cpp \
              OpenGLShader.cpp OpenGLShaderMaterial.cpp OpenGLShaderLight.cpp OpenGLUniformBlock.cpp
 #PROCEDURAL_FILES=Cube.cpp Icosahedron.cpp Plane.cpp Sphere.cpp
 

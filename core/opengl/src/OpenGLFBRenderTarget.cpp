@@ -21,9 +21,9 @@ OpenGLFBRenderTarget::~OpenGLFBRenderTarget()
     GL( glDeleteFramebuffers(1, &_frameBuffer) );
 }
 
-bool OpenGLFBRenderTarget::init(uint32_t width, uint32_t height)
+bool OpenGLFBRenderTarget::init(uint32_t width, uint32_t height, uint32_t maxSamples)
 {
-    /* Frame buffer objects do not care which texture unit is used */
+	(void)maxSamples;
 
     /* Texture buffer */
     GL( glGenTextures(1, &_colorBuffer) );

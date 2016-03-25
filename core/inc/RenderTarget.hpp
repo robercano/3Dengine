@@ -14,11 +14,14 @@ class RenderTarget
 {
 	public:
 		RenderTarget() : _r(0.0), _g(0.0), _b(0.0), _a(1.0) {}
+
+		virtual bool init(uint32_t width, uint32_t height, uint32_t maxSamples = 0) = 0;
         virtual void bind() = 0;
         virtual void unbind() = 0;
         virtual bool blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height) = 0;
         virtual bool blit() { return blit(0, 0, _width, _height); }
         virtual void clear() = 0;
+
         virtual void setClearColor(float r, float g, float b, float a)
 		{
 			_r = r;
