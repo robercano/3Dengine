@@ -4,27 +4,18 @@
  *
  * @author	Roberto Cano (http://www.robertocano.es)
  */
+#include <stdio.h>
 #include <string>
 #include <stdint.h>
 #if defined(__linux__)
-#include <sys/time.h>
 #include <unistd.h>
-
-uint32_t GetTickCount(void)
-{
-	struct timeval t;
-	gettimeofday(&t, NULL);
-	return (t.tv_sec * 1000) + (t.tv_usec / 1000);
-}
-
-#elif defined (_WIN32) || defined(_WIN64)
-#include <Windows.h>
 #endif
 #include "OpenGL.h" // For GLFW_KEY_ESCAPE
 #include "OBJFormat.hpp"
 #include "Shader.hpp"
 #include "WindowManager.hpp"
 #include "InputManager.hpp"
+#include "TimeManager.hpp"
 #include "Renderer.hpp"
 #include "FlyCamera.hpp"
 #include "RenderTarget.hpp"
@@ -50,6 +41,7 @@ int main(int argc, char**argv)
     RenderTarget *selectedRenderTarget = NULL;
     std::string renderTargetName;
     InputManager inputManager;
+    TimeManager *timer;
     Camera *_camera;
     std::vector<RendererObject3D*> objects;
     std::vector<Shader*> shaders;
@@ -118,6 +110,13 @@ int main(int argc, char**argv)
 		fprintf(stderr, "ERROR allocating renderer\n");
 		return 1;
 	}
+
+    /* Time manager */
+    timer = TimeManager::GetInstance();
+    if (timer == NULL) {
+		fprintf(stderr, "ERROR allocating timer\n");
+		return 1;
+    }
 
     /* Create a render target to allow post-processing */
     renderTargetNOAA = NOAARenderTarget::New();
@@ -238,7 +237,7 @@ int main(int argc, char**argv)
     shaders.push_back(shader);
 
     /* Main loop */
-	inputNow = GetTickCount();
+	inputNow = timer->getElapsedMs();
     renderBegin = renderEnd = inputNow;
 
 	while (true)
@@ -251,7 +250,7 @@ int main(int argc, char**argv)
 
 		/* Get elapsed time */
 		inputPrevious = inputNow;
-		inputNow = GetTickCount();
+		inputNow = timer->getElapsedMs();
 		float inputElapsedMs = inputNow - inputPrevious;
 
 		/* Dispatch input to geometry */
@@ -321,9 +320,9 @@ int main(int argc, char**argv)
 		prevY = inputManager._yMouse;
 
         /* If frame is due, render it */
-        renderBegin = GetTickCount();
+        renderBegin = timer->getElapsedMs();
         float renderElapsedMs = renderBegin - renderEnd;
-fprintf(stderr, "%.2f\n", GetTickCount());
+
         /* We take into account the last render time to start the rendering process
          * in advance, so we are in time for the blit. This is currently too tight,
          * we should account for variations in the render time due to changes of the
@@ -343,7 +342,6 @@ fprintf(stderr, "%.2f\n", GetTickCount());
             console.gprintf("Anti-aliasing: %s\n", renderTargetName.c_str());
             console.gprintf("FPS: %d\n", (int)FPS);
             console.gprintf("Upper FPS: %d\n", (int)(1000.0/totalAvgTime));
-            console.gprintf("Upper FPS: %.2f\n", totalAvgTime);
             console.gprintf("Avg. Render: %.2fms (%.2fms)\n", totalAvgTime, dueTime);
 
             selectedRenderTarget->blit(0, 0, width, height);
@@ -368,7 +366,7 @@ fprintf(stderr, "%.2f\n", GetTickCount());
             windowManager->swapBuffers();
 
             /* Calculate how much did we take to render this frame */
-            renderEnd = GetTickCount();
+            renderEnd = timer->getElapsedMs();
 
             renderFrameMs = renderEnd - renderBegin;
 
@@ -376,9 +374,8 @@ fprintf(stderr, "%.2f\n", GetTickCount());
              * frames. In this case re-adjust the render adjustment and
              * the elapsed time. Have to check how costly that fmod is... */
             if (renderFrameMs > dueTime*jitterAdj) {
-                fprintf(stderr, "Droping frames...(%d, %.2f)\n", renderFrameMs, dueTime);
+               fprintf(stderr, "Droping frames...(%.2f, %.2f)\n", renderFrameMs, dueTime);
             }
-                fprintf(stderr, "Droping frames...(%d, %.2f)\n", renderFrameMs, dueTime);
 
             /* Calculate FPS now */
             if (renderFrameMs > maxRenderFrameMs) {

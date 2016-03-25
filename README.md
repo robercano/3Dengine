@@ -19,27 +19,40 @@ The binaries will be created in the demo directory.
 
 ## Current set of features
 
+* Class hierarchy designed to support different rendering APIs (OpenGL, DirectX)
+* Implementation aimed to be cross-platform with minimal porting effort (Linux and Mac supported, Windows on the way)
 * OpenGL renderer (based on GLFW and GLEW)
 * Input manager (keyboard and mouse for now)
 * Window manager (based on GLFW)
 * Shader class to compile and apply shaders
-* Generic interface for all API dependant classes (like OpenGL renderer) that
-  allows for a different API to be used (like DirectX)
-* Multi-platform compilation (Linux and Mac for now)
-* OBJ format importer
-* Render targets
-* Anti-alising render targets (SSAA and MSAA for now)
+* OBJ format importer supporting geometry, textures and material specification
+* Render targets support
+* Anti-aliasing render targets implemented with shaders: FXAA, FXAA2, SSAA and MSAA
+    FXAA2 is my own implementation of FXAA based on Timothy Lottes paper
 * Text rendering using TrueType fonts
-* Fly camera
+* Walk, Fly and FreeFly cameras implemented with quaternions
 * Goraud and flat illumination shaders
 * Phong and Blinn-Phong reflection model shaders
 * Simple shader demo effect for render targets (waves)
+* Dynamic lights support
+
+# Current set of demos
+* Anti-aliasing methods showcase demo (FXAA, FXAA2, MSAA and SSAA)
+* FXAA and FXAA2 side by side comparison
+* Dynamic lights demo
+* Toon shader demo
 
 ## In the pipeline
-
-* Anti-aliasing methods showcase demo
-* Support for OBJ material and texture specification. Include geometry groups support.
-* Implement FXAA
-* Add proper light specification support (parametrize shader)
-* Use quaternions for camera
+* Windows support
+* Shadow mapping
 * Ambient occlusion
+* Mipmaps support
+* Refactoring for common game loop
+* OBJ object importer tool: it converts from OBJ to custom binary format for the engine
+* Bump-mapping
+* Portals implementation
+* More shaders effect like bloom effect
+* Extra anti-aliasing filters: CMAA, TXAA, MLAA
+* Anisotropic filtering support and showcase
+* Deferred rendering pipeline
+* Implement a small game with the engine
