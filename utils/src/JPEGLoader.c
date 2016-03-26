@@ -6,6 +6,8 @@
 #include <jerror.h>
 #include "JPEGLoader.h"
 
+#if defined (_WIN32) || defined(_WIN64)
+
 /* Read JPEG image from a memory segment */
 static void init_source(j_decompress_ptr cinfo) {}
 static boolean fill_input_buffer(j_decompress_ptr cinfo)
@@ -43,6 +45,7 @@ static void jpeg_mem_src(j_decompress_ptr cinfo, void* buffer, long nbytes)
 	src->bytes_in_buffer = nbytes;
 	src->next_input_byte = (JOCTET*)buffer;
 }
+#endif
 
 int loadJPEG(const char *filename, uint8_t **image, uint32_t *width, uint32_t *height, uint32_t *bytesPerPixel)
 {
