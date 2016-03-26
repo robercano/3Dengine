@@ -30,6 +30,8 @@ void Game::resetStats()
 
 bool Game::init()
 {
+	resetStats();
+
     _windowManager = WindowManager::GetInstance();
     if (_windowManager == NULL) {
         fprintf(stderr, "ERROR creating new window manager\n");

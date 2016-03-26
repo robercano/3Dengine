@@ -244,7 +244,7 @@ int main()
     }
 
     game->setHandler(&antiAliasingDemo);
-    game->setWindowSize(800, 600, false);
+    game->setWindowSize(2560, 1440, true);
     game->setFPS(60);
 
     if (game->init() == false) {
