@@ -9,6 +9,8 @@
 #include "FXAARenderTarget.hpp"
 #include "FXAA2RenderTarget.hpp"
 
+#define PI 3.14159265358979323846
+
 class AntiaAliasingDemo : public GameHandler
 {
     public:
@@ -120,9 +122,9 @@ class AntiaAliasingDemo : public GameHandler
 
             /* Create the game camera */
             _camera = new FlyCamera();
-            _camera->setProjection(45, _width/(float)_height, 0.1, 1000.0);
-            _camera->setPosition( glm::vec4(220, 135, -1, 1) );
-            _camera->rotateYaw(-90);
+            _camera->setProjection(45.0f, _width/(float)_height, 0.1f, 1000.0f);
+            _camera->setPosition( glm::vec4(220.0f, 135.0f, -1.0f, 1.0f) );
+            _camera->rotateYaw(-90.0f);
 
             return true;
         }
@@ -134,16 +136,16 @@ class AntiaAliasingDemo : public GameHandler
                 return false;
             }
             if (_inputManager._keys['W']) {
-                _camera->forward(0.1*elapsedMs);
+                _camera->forward(0.1f*(float)elapsedMs);
             }
             if (_inputManager._keys['S']) {
-                _camera->forward(-0.1*elapsedMs);
+                _camera->forward(-0.1f*(float)elapsedMs);
             }
             if (_inputManager._keys['A']) {
-                _camera->right(-0.1*elapsedMs);
+                _camera->right(-0.1f*(float)elapsedMs);
             }
             if (_inputManager._keys['D']) {
-                _camera->right(0.1*elapsedMs);
+                _camera->right(0.1f*(float)elapsedMs);
             }
             if (_inputManager._keys['R']) {
                 game->resetStats();
@@ -179,13 +181,13 @@ class AntiaAliasingDemo : public GameHandler
 			}
 
 			int32_t diffMouseX = _inputManager._xMouse - _prevX;
-			int32_t diffMouseY = _InvertMouse*(_inputManager._yMouse - _prevY);
+			int32_t diffMouseY = (int32_t)(_InvertMouse*(_inputManager._yMouse - _prevY));
 
             if (diffMouseX) {
-                _camera->rotateYaw(_MouseSensibility*M_PI*diffMouseX/_width);
+                _camera->rotateYaw((float)(_MouseSensibility*PI*diffMouseX/_width));
             }
             if (diffMouseY) {
-                _camera->rotatePitch(_MouseSensibility*M_PI*diffMouseY/_height);
+                _camera->rotatePitch((float)(_MouseSensibility*PI*diffMouseY/_height));
             }
 
 			_prevX = _inputManager._xMouse;
@@ -242,7 +244,7 @@ int main()
     }
 
     game->setHandler(&antiAliasingDemo);
-    game->setWindowSize(2560, 1440, true);
+    game->setWindowSize(800, 600, false);
     game->setFPS(60);
 
     if (game->init() == false) {

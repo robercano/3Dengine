@@ -73,24 +73,27 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>3rdparty\;core\inc;core\opengl\inc;3rdparty\freetype2\;utils\inc\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>3rdparty\;core\inc;core\opengl\inc;3rdparty\windows\freetype2\;utils\inc\;3rdparty\windows;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <TargetMachine>MachineX86</TargetMachine>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>freetype.lib;glew32.lib;glew32s.lib;glfw3.lib;glfw3dll.lib;jpeg.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>glfw3.lib;glfw3dll.lib;glew32.lib;opengl32.lib;freetype.lib;jpeg.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\Users\rcano\Development\3Dengine_priv\3rdparty\lib</AdditionalLibraryDirectories>
+      <AddModuleNamesToAssembly>
+      </AddModuleNamesToAssembly>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -98,9 +101,10 @@
     <Link>
       <TargetMachine>MachineX86</TargetMachine>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>C:\Users\rcano\Development\3Dengine_priv\3rdparty\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -116,11 +120,9 @@
     <ClCompile Include="core\opengl\src\GLFWMouseManager.cpp" />
     <ClCompile Include="core\opengl\src\GLFWWindowManager.cpp" />
     <ClCompile Include="core\opengl\src\OpenGLFBRenderTarget.cpp" />
+    <ClCompile Include="core\opengl\src\OpenGLFilterRenderTarget.cpp" />
     <ClCompile Include="core\opengl\src\OpenGLFontRenderer.cpp" />
-    <ClCompile Include="core\opengl\src\OpenGLFXAA2RenderTarget.cpp" />
-    <ClCompile Include="core\opengl\src\OpenGLFXAARenderTarget.cpp" />
     <ClCompile Include="core\opengl\src\OpenGLMSAARenderTarget.cpp" />
-    <ClCompile Include="core\opengl\src\OpenGLNOAARenderTarget.cpp" />
     <ClCompile Include="core\opengl\src\OpenGLObject3D.cpp" />
     <ClCompile Include="core\opengl\src\OpenGLRenderer.cpp" />
     <ClCompile Include="core\opengl\src\OpenGLShader.cpp" />
@@ -136,6 +138,7 @@
     <ClCompile Include="core\src\FreeTypeFont.cpp" />
     <ClCompile Include="core\src\FXAA2RenderTarget.cpp" />
     <ClCompile Include="core\src\FXAARenderTarget.cpp" />
+    <ClCompile Include="core\src\Game.cpp" />
     <ClCompile Include="core\src\InputManager.cpp" />
     <ClCompile Include="core\src\MSAARenderTarget.cpp" />
     <ClCompile Include="core\src\NOAARenderTarget.cpp" />
@@ -144,6 +147,7 @@
     <ClCompile Include="core\src\Shader.cpp" />
     <ClCompile Include="core\src\SSAARenderTarget.cpp" />
     <ClCompile Include="core\src\TextConsole.cpp" />
+    <ClCompile Include="core\src\TimeManager.cpp" />
     <ClCompile Include="core\src\TrueTypeFont.cpp" />
     <ClCompile Include="core\src\WalkingCamera.cpp" />
     <ClCompile Include="core\src\WindowManager.cpp" />
@@ -425,19 +429,7 @@
     <None Include="3rdparty\glm\gtx\vector_query.inl" />
     <None Include="3rdparty\glm\gtx\verbose_operator.inl" />
     <None Include="3rdparty\glm\gtx\wrap.inl" />
-    <None Include="3rdparty\lib\freetype6.def" />
-    <None Include="3rdparty\lib\jpeg.def" />
     <None Include="data\shaders\utils\sRGB.inc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="3rdparty\lib\freetype.lib" />
-    <Library Include="3rdparty\lib\glew32.lib" />
-    <Library Include="3rdparty\lib\glew32s.lib" />
-    <Library Include="3rdparty\lib\glfw3.lib" />
-    <Library Include="3rdparty\lib\glfw3dll.lib" />
-    <Library Include="3rdparty\lib\jpeg.lib" />
-    <Library Include="3rdparty\lib\libfreetype.dll.a" />
-    <Library Include="3rdparty\lib\libjpeg.dll.a" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

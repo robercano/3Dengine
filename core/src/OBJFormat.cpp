@@ -26,7 +26,7 @@ bool OBJFormat::load(const string &filename)
     uint8_t *texture = NULL;
     uint32_t texWidth, texHeight, texBytesPerPixel;
     std::vector<bool> positionSet;
-int t=0;
+	int t=0;
 
     std::map< std::string, std::vector<uint32_t> > indices;
     std::map< std::string, Material >              materials;

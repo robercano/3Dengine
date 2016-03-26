@@ -6,6 +6,7 @@
  */
 
 #include <iostream>
+#include <algorithm>
 #include <fstream>
 #include <stdio.h>
 #include "OpenGL.h"
@@ -62,7 +63,7 @@ bool OpenGLShader::_loadShader(uint32_t shaderObjectID, const std::string &filen
 	GLint result = GL_FALSE;
 
 	/* Open file and read it */
-	FILE *shader = fopen(filename.c_str(), "r");
+	FILE *shader = fopen(filename.c_str(), "rb");
 
 	if (shader == NULL) {
 		error = std::string("File ") + filename + std::string(" couldn't be opened");
@@ -79,9 +80,10 @@ bool OpenGLShader::_loadShader(uint32_t shaderObjectID, const std::string &filen
 		return false;
 	}
 	char *shaderText = new char[size+1];
-	if (fread(shaderText, sizeof(char), size, shader) != size) {
+	size_t count = fread(shaderText, sizeof(char), size, shader);
+	if (count != size) {
 		error = std::string("Failed when reading ") + filename;
-		delete shaderText;
+		delete[] shaderText;
 		fclose(shader);
 		return false;
 	}
@@ -301,7 +303,6 @@ void OpenGLShader::_buildUniformsMap(void)
 
 	for (i=0; i<count; ++i) {
 		char uniformName[128];
-        GLsizei length;
         GLint size;
         GLenum type;
 

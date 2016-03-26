@@ -50,7 +50,7 @@ const uint8_t *FreeTypeFont::getBitmap(char letter, uint32_t &width, uint32_t &h
 {
     FT_Glyph glyph;
 
-    if (letter > _ftGlyphCache.size()) {
+    if ((size_t)letter > _ftGlyphCache.size()) {
         return NULL;
     }
 

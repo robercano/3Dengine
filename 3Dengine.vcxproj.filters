@@ -15,54 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="core\opengl\src\GLFWKeyManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="core\opengl\src\GLFWMouseManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="core\opengl\src\GLFWWindowManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="core\opengl\src\OpenGLFBRenderTarget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="core\opengl\src\OpenGLFontRenderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="core\opengl\src\OpenGLFXAA2RenderTarget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="core\opengl\src\OpenGLFXAARenderTarget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="core\opengl\src\OpenGLMSAARenderTarget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="core\opengl\src\OpenGLNOAARenderTarget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="core\opengl\src\OpenGLObject3D.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="core\opengl\src\OpenGLRenderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="core\opengl\src\OpenGLShader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="core\opengl\src\OpenGLShaderLight.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="core\opengl\src\OpenGLShaderMaterial.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="core\opengl\src\OpenGLSSAARenderTarget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="core\opengl\src\OpenGLUniformBlock.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="core\src\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -127,6 +79,54 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="utils\src\MathUtils.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\TimeManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\Game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\opengl\src\GLFWKeyManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\opengl\src\GLFWMouseManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\opengl\src\GLFWWindowManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\opengl\src\OpenGLFBRenderTarget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\opengl\src\OpenGLFilterRenderTarget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\opengl\src\OpenGLFontRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\opengl\src\OpenGLMSAARenderTarget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\opengl\src\OpenGLObject3D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\opengl\src\OpenGLRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\opengl\src\OpenGLShader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\opengl\src\OpenGLShaderLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\opengl\src\OpenGLShaderMaterial.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\opengl\src\OpenGLSSAARenderTarget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\opengl\src\OpenGLUniformBlock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -949,21 +949,5 @@
     <None Include="data\shaders\utils\sRGB.inc">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="3rdparty\lib\freetype6.def">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="3rdparty\lib\jpeg.def">
-      <Filter>Source Files</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="3rdparty\lib\freetype.lib" />
-    <Library Include="3rdparty\lib\glew32.lib" />
-    <Library Include="3rdparty\lib\glew32s.lib" />
-    <Library Include="3rdparty\lib\glfw3.lib" />
-    <Library Include="3rdparty\lib\glfw3dll.lib" />
-    <Library Include="3rdparty\lib\jpeg.lib" />
-    <Library Include="3rdparty\lib\libfreetype.dll.a" />
-    <Library Include="3rdparty\lib\libjpeg.dll.a" />
   </ItemGroup>
 </Project>

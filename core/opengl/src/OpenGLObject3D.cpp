@@ -81,7 +81,7 @@ bool OpenGLObject3D::init(const Object3D &object)
     _texturesIDs.resize(textures.size());
     GL( glGenTextures(textures.size(), &_texturesIDs[0]) );
 
-    for(int i = 0; i < textures.size(); ++i) {
+    for(size_t i = 0; i < textures.size(); ++i) {
         /* TODO: Once we use our own format, this should not
          * be needed */
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);

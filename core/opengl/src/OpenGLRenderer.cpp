@@ -103,7 +103,7 @@ bool OpenGLRenderer::renderObject3D(RendererObject3D &object, Shader &shader,
             std::vector<uint32_t> offset      = glObject.getIndicesOffsets();
             std::vector<uint32_t> count       = glObject.getIndicesCount();
 
-            for (int i=0; i<materials.size(); ++i) {
+            for (size_t  i=0; i<materials.size(); ++i) {
                 GL( glBindTexture(GL_TEXTURE_2D, texturesIDs[i]) );
                 shaderMaterial->copyMaterial(materials[i]);
 

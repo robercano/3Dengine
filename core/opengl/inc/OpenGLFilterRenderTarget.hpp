@@ -14,6 +14,8 @@
 #include "RenderTarget.hpp"
 #include "Shader.hpp"
 
+#pragma warning( disable : 4250 )
+
 class OpenGLFilterRenderTarget : public virtual RenderTarget
 {
 	public:

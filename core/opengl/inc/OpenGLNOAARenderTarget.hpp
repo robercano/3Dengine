@@ -15,6 +15,8 @@
 #include "NOAARenderTarget.hpp"
 #include "OpenGLFilterRenderTarget.hpp"
 
+#pragma warning( disable : 4250 )
+
 class OpenGLNOAARenderTarget : public NOAARenderTarget, public OpenGLFilterRenderTarget
 {
 	public:

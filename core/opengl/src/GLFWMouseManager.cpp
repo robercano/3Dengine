@@ -64,5 +64,5 @@ void GLFWMouseManager::processMouse(int32_t x, int32_t y)
 
 void GLFWMouseManager::mouseCallback(GLFWwindow *w, double x, double y)
 {
-	GLFWMouseManager::GetMouseManager()->processMouse(x, y);
+	GLFWMouseManager::GetMouseManager()->processMouse((int32_t)x, (int32_t)y);
 }

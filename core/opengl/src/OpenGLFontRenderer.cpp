@@ -24,7 +24,7 @@ OpenGLFontRenderer::~OpenGLFontRenderer()
 
 bool OpenGLFontRenderer::setFont(TrueTypeFont *font)
 {
-    uint32_t i, j, k;
+	uint32_t i;
     GLubyte *textureData = NULL;
     uint32_t lastTextureSize = 0;
 
@@ -117,8 +117,6 @@ bool OpenGLFontRenderer::renderText(uint32_t x, uint32_t y, std::string &text, g
 
 bool OpenGLFontRenderer::renderText(uint32_t x, uint32_t y, const char *text, glm::vec4 &color, RenderTarget &target)
 {
-    int i;
-
     GL( glEnable(GL_BLEND) );
     GL( glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA) );
 
@@ -147,7 +145,7 @@ bool OpenGLFontRenderer::renderText(uint32_t x, uint32_t y, const char *text, gl
     GL( glDisable(GL_DEPTH_TEST) );
 
     uint32_t textLength = strlen(text);
-    for (i=0; i<textLength; ++i) {
+    for (size_t i=0; i<textLength; ++i) {
         /* Get the size of the glyph */
         uint32_t glyphWidth, glyphHeight, offsetLeft, offsetTop, advance;
 

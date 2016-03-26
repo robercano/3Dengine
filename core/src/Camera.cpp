@@ -11,12 +11,12 @@
 #include <glm/gtx/transform.hpp>
 #include "Camera.hpp"
 
-Camera::Camera() : _position(0.0, 0.0, 10.0, 1.0),
-				   _forward(0.0, 0.0, -1.0, 0.0), _up(0.0, 1.0, 0.0, 0.0), _right(1.0, 0.0, 0.0, 0.0),
-				   _fov(45.0), _ratio(16.0/9.0), _near(0.1), _far(100.0),
-				   _yaw(0.0), _pitch(0.0), _roll(0.0),
-				   _forwardAmount(0.0), _upAmount(0.0), _rightAmount(0.0),
-				   _mask(1.0),
+Camera::Camera() : _position(0.0f, 0.0f, 10.0f, 1.0f),
+				   _forward(0.0f, 0.0f, -1.0f, 0.0f), _up(0.0f, 1.0f, 0.0f, 0.0f), _right(1.0f, 0.0f, 0.0f, 0.0f),
+				   _fov(45.0f), _ratio(16.0f/9.0f), _near(0.1f), _far(100.0f),
+				   _yaw(0.0f), _pitch(0.0f), _roll(0.0f),
+				   _forwardAmount(0.0f), _upAmount(0.0f), _rightAmount(0.0f),
+				   _mask(1.0f),
 				   _projectionValid(false), _viewValid(false)
 {
 }

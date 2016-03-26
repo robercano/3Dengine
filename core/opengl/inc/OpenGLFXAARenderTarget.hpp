@@ -16,6 +16,8 @@
 #include "FXAARenderTarget.hpp"
 #include "OpenGLFilterRenderTarget.hpp"
 
+#pragma warning( disable : 4250 )
+
 class OpenGLFXAARenderTarget : public FXAARenderTarget, public OpenGLFilterRenderTarget
 {
 	private:

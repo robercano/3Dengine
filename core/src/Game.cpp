@@ -70,8 +70,8 @@ bool Game::init()
         return 1;
     }
 
-    _console.setForegroundColor(1.0, 0.5, 0.2, 1.0);
-    _console.setBackgroundColor(0.0, 0.0, 0.0, 0.0);
+    _console.setForegroundColor(1.0f, 0.5f, 0.2f, 1.0f);
+    _console.setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
 
     _gameHandler->handleInit(this);
 
@@ -82,15 +82,14 @@ bool Game::loop()
 {
     double renderBegin, renderEnd;
     double tickNow, tickPrevious;
-    double renderFrameMs;
+    float renderFrameMs;
     double jitterAdj = 1.02;
     bool resetStats = false;
     uint32_t avgRenderMsIdx = 0;
     float totalAvgTime = 0;
     float renderAdjustment = 0;
-    float dueTime = 1000.0/_targetFPS;
-    float FPS;
-    int i;
+    float dueTime = 1000.0f/_targetFPS;
+    float FPS = 0.0f;
 
     /* Main loop */
     renderBegin = renderEnd = tickNow = _timer->getElapsedMs();
@@ -148,7 +147,7 @@ bool Game::loop()
 
             /* Calculate how much did we take to render this frame */
             renderEnd = _timer->getElapsedMs();
-            renderFrameMs = renderEnd - renderBegin;
+            renderFrameMs = (float)(renderEnd - renderBegin);
 
             /* Check if we are really late, that means we are dropping
              * frames. In this case re-adjust the render adjustment and
@@ -169,14 +168,14 @@ bool Game::loop()
             avgRenderMsIdx = (avgRenderMsIdx + 1) % (sizeof _avgRenderMs/sizeof *_avgRenderMs);
 
             /* Calculate the average FPS */
-            for (i=0; i<_targetFPS; ++i) {
+            for (uint32_t i=0; i<_targetFPS; ++i) {
                 totalAvgTime += _avgRenderMs[i];
             }
             totalAvgTime /= _targetFPS;
 
             /* Render elapsed time should be also averaged to get a good
              * estimation, but for now this will do */
-            FPS = (1000.0/(totalAvgTime + renderElapsedMs));
+            FPS = (float)(1000.0f/(totalAvgTime + renderElapsedMs));
         }
     }
 

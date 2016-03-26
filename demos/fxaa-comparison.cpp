@@ -9,6 +9,8 @@
 #include "FXAARenderTarget.hpp"
 #include "FXAA2RenderTarget.hpp"
 
+#define PI 3.14159265358979323846
+
 class AntiaAliasingDemo : public GameHandler
 {
     public:
