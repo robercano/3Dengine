@@ -67,7 +67,7 @@ class AntiaAliasingDemo : public GameHandler
             }
 
             /* Load the geometry */
-            std::string meshPath = "data/objects/deadpool";
+            std::string meshPath = "data/objects/daxter";
 
             OBJFormat obj3D;
             if (obj3D.load(meshPath) == false) {

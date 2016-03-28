@@ -1,0 +1,10 @@
+# Max2Mtl Version 4.0 Mar 10th, 2001
+#
+newmtl mario_1
+Ka  0.8 0.8 0.8
+Kd  0.8 0.8 0.8
+Ks  0.0 0.0 0.0
+Ns  0.0
+map_Kd marioD.jpg
+#
+# EOF

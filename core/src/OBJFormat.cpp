@@ -11,6 +11,7 @@
 #include <glm/glm.hpp>
 #include "OBJFormat.hpp"
 #include "JPEGLoader.h"
+#include "PNGLoader.h"
 
 using namespace std;
 
@@ -106,11 +107,23 @@ bool OBJFormat::load(const string &filename)
 
                     if (strcmp(line+7, "null") != 0) {
                         /* Load the texture */
-                        if (loadJPEG(texname.c_str(), &texture, &texWidth, &texHeight, &texBytesPerPixel) != 0) {
-                            printf("ERROR loading texture %s\n", texname.c_str());
-                            ret = false;
-                            goto error_exit;
-                        }
+						if (texname.compare(texname.length() - 4, std::string::npos, ".png") == 0) {
+							if (loadPNG(texname.c_str(), &texture, &texWidth, &texHeight, &texBytesPerPixel) != 0) {
+								printf("ERROR loading PNG texture %s\n", texname.c_str());
+								ret = false;
+								goto error_exit;
+							}
+						} else if (texname.compare(texname.length() - 4, std::string::npos, ".jpg") == 0) {
+							if (loadJPEG(texname.c_str(), &texture, &texWidth, &texHeight, &texBytesPerPixel) != 0) {
+								printf("ERROR loading JPEG texture %s\n", texname.c_str());
+								ret = false;
+								goto error_exit;
+							}
+						} else {
+							fprintf(stderr, "ERROR texture format not supported\n");
+							ret = false;
+							goto error_exit;
+						}
                     } else {
                         texture = NULL;
                         texWidth = 0;

@@ -108,7 +108,7 @@ class AntiaAliasingDemo : public GameHandler
             }
 
             /* Load the geometry */
-            std::string meshPath = "data/objects/deadpool";
+            std::string meshPath = "data/objects/daxter";
 
             OBJFormat obj3D;
             if (obj3D.load(meshPath) == false) {
@@ -123,8 +123,11 @@ class AntiaAliasingDemo : public GameHandler
             /* Create the game camera */
             _camera = new FlyCamera();
             _camera->setProjection(45.0f, _width/(float)_height, 0.1f, 1000.0f);
-            _camera->setPosition( glm::vec4(220.0f, 135.0f, -1.0f, 1.0f) );
-            _camera->rotateYaw(-90.0f);
+            //_camera->setPosition( glm::vec4(220.0f, 135.0f, -1.0f, 1.0f) );
+            //_camera->rotateYaw(-90.0f);
+            _camera->setPosition( glm::vec4(-25.87f, 13.62f, 25.90f, 1.0f) );
+			_camera->rotatePitch(5.59f);
+			_camera->rotateYaw(46.07f);
 
             return true;
         }
@@ -198,6 +201,7 @@ class AntiaAliasingDemo : public GameHandler
 
         bool handleRender(Game *game)
         {
+			//printf("%.2f %.2f, %.2f, %.2f, %.2f, %.2f\n", _camera->getPosition().x, _camera->getPosition().y, _camera->getPosition().z, _camera->getPitch(), _camera->getYaw(), _camera->getRoll());
             /* Render all objects */
             game->getRenderer()->renderObject3D(*_model3D, *_shader, _lights, 0.0,
                                                 _camera->getProjection(), _camera->getView(),

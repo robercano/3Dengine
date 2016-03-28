@@ -1,0 +1,80 @@
+# Blender MTL File: 'None'
+# Material Count: 6
+
+newmtl Material__76
+Ns 9.803922
+Ka 0.588000 0.588000 0.588000
+Kd 0.588000 0.588000 0.588000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd Clothes_c.jpg
+map_Bump Clothes_n.png
+map_Ka Clothes_c.png
+
+newmtl Material__77
+Ns 9.803922
+Ka 0.588000 0.588000 0.588000
+Kd 0.588000 0.588000 0.588000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd Metal_c.jpg
+map_Bump Metal_n.png
+map_Ka Metal_c.png
+
+newmtl Material__78
+Ns 9.803922
+Ka 0.588000 0.588000 0.588000
+Kd 0.588000 0.588000 0.588000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd Eye_c.jpg
+map_Bump Eye_n.png
+map_Ka Eye_c.png
+
+newmtl Material__79
+Ns 9.803922
+Ka 0.588000 0.588000 0.588000
+Kd 0.588000 0.588000 0.588000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd Body_c.jpg
+map_Bump Body_n.png
+map_Ka Body_c.png
+
+newmtl Material__80
+Ns 9.803922
+Ka 0.588000 0.588000 0.588000
+Kd 0.588000 0.588000 0.588000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd Head_c.jpg
+map_Bump Head_n.png
+map_Ka Head_c.png
+
+newmtl Material__81
+Ns 9.803922
+Ka 0.588000 0.588000 0.588000
+Kd 0.588000 0.588000 0.588000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd Teeth_c.jpg
+map_Bump Teeth_n.png
+map_Ka Teeth_c.png
