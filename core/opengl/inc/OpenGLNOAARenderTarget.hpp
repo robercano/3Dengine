@@ -23,7 +23,7 @@ class OpenGLNOAARenderTarget : public NOAARenderTarget, public OpenGLFilterRende
 		bool customInit() {
 			std::string error;
 			if (_shader->use("anti-aliasing/noaa", error) == false) {
-				printf("ERROR loading shader: %s\n", error.c_str());
+				printf("ERROR loading shader anti-aliasing/noaa: %s\n", error.c_str());
 				return false;
 			}
 			return true;

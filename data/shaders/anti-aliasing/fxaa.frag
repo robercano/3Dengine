@@ -12,17 +12,13 @@ out vec4 fragColor;
 /*
    Defines to control the debug output of the shader
 */
-//#define DEBUG_LOCAL_CONTRAST
-//#define DEBUG_VERTHOR_TEST
-//#define DEBUG_PIXEL_PAIR
-//#define DEBUG_NEGPOS
-//#define DEBUG_OFFSET
+//#define DEBUG_LOCAL_CONTRAST 1
+//#define DEBUG_VERTHOR_TEST 1
+//#define DEBUG_PIXEL_PAIR 1
+//#define DEBUG_NEGPOS 1
+//#define DEBUG_OFFSET 1
 
-#if defined(DEBUG_LOCAL_CONTRAST) || \
-    defined(DEBUG_VERTHOR_TEST) || \
-    defined(DEBUG_PIXEL_PAIR) || \
-    defined(DEBUG_NEGPOS) || \
-    defined(DEBUG_OFFSET)
+#if DEBUG_LOCAL_CONTRAST || DEBUG_VERTHOR_TEST || DEBUG_PIXEL_PAIR || DEBUG_NEGPOS || DEBUG_OFFSET
 #define DEBUG 1
 #else
 #define DEBUG 0

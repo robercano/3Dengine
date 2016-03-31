@@ -103,12 +103,12 @@ class AntiaAliasingDemo : public GameHandler
 
             std::string error;
             if (_shader->use("lighting/blinnphong_reflection", error) == false) {
-                printf("ERROR loading shader: %s\n", error.c_str());
+                printf("ERROR loading shader blinnphong_reflection: %s\n", error.c_str());
                 return false;
             }
 
             /* Load the geometry */
-            std::string meshPath = "data/objects/daxter";
+            std::string meshPath = "data/objects/deadpool";
 
             OBJFormat obj3D;
             if (obj3D.load(meshPath) == false) {
@@ -123,11 +123,9 @@ class AntiaAliasingDemo : public GameHandler
             /* Create the game camera */
             _camera = new FlyCamera();
             _camera->setProjection(45.0f, _width/(float)_height, 0.1f, 1000.0f);
-            //_camera->setPosition( glm::vec4(220.0f, 135.0f, -1.0f, 1.0f) );
-            //_camera->rotateYaw(-90.0f);
-            _camera->setPosition( glm::vec4(-25.87f, 13.62f, 25.90f, 1.0f) );
-			_camera->rotatePitch(5.59f);
-			_camera->rotateYaw(46.07f);
+            /* Deadpool */
+            _camera->setPosition( glm::vec4(220.0f, 135.0f, -1.0f, 1.0f) );
+            _camera->rotateYaw(-90.0f);
 
             return true;
         }
@@ -248,7 +246,7 @@ int main()
     }
 
     game->setHandler(&antiAliasingDemo);
-    game->setWindowSize(2560, 1440, true);
+    game->setWindowSize(800, 600, false);
     game->setFPS(60);
 
     if (game->init() == false) {

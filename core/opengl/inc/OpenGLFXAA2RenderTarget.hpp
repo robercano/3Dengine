@@ -24,7 +24,7 @@ class OpenGLFXAA2RenderTarget : public FXAA2RenderTarget, public OpenGLFilterRen
 		bool customInit() {
 			std::string error;
 			if (_shader->use("anti-aliasing/fxaa", error) == false) {
-				printf("ERROR loading shader: %s\n", error.c_str());
+				printf("ERROR loading shader anti-aliasing/fxaa: %s\n", error.c_str());
 				return false;
 			}
 			return true;

@@ -71,7 +71,7 @@ class AntiaAliasingDemo : public GameHandler
 
             std::string error;
             if (_shader->use("lighting/blinnphong_reflection", error) == false) {
-                printf("ERROR loading shader: %s\n", error.c_str());
+                printf("ERROR loading shader blinnphong_reflection: %s\n", error.c_str());
                 return false;
             }
 

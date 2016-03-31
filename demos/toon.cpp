@@ -62,7 +62,7 @@ class AntiaAliasingDemo : public GameHandler
 
             std::string error;
             if (_shader->use("lighting/toon", error) == false) {
-                printf("ERROR compiling vertex shader: %s\n", error.c_str());
+                printf("ERROR compiling shader lighting/toon: %s\n", error.c_str());
                 return false;
             }
 
@@ -82,9 +82,10 @@ class AntiaAliasingDemo : public GameHandler
             /* Create the game camera */
             _camera = new FlyCamera();
             _camera->setProjection(45, _width/(float)_height, 0.1, 1000.0);
-            _camera->setPosition( glm::vec4( 161.8, 179.3, 200.7, 1) );
-			_camera->rotatePitch(18.45);
-			_camera->rotateYaw(321.4);
+            /* Daxter */
+            _camera->setPosition( glm::vec4(-25.87f, 13.62f, 25.90f, 1.0f) );
+			_camera->rotatePitch(5.59f);
+			_camera->rotateYaw(46.07f);
 
             return true;
         }
@@ -176,7 +177,7 @@ int main()
     }
 
     game->setHandler(&antiAliasingDemo);
-    game->setWindowSize(2560, 1440, true);
+    game->setWindowSize(800, 600, false);
     game->setFPS(60);
 
     if (game->init() == false) {

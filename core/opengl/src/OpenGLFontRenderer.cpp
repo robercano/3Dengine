@@ -91,17 +91,9 @@ bool OpenGLFontRenderer::setFont(TrueTypeFont *font)
     /* Create the shader */
     _shader = Shader::New();
 
-	std::string error;
-	if (_shader->loadVertexShader("data/shaders/text/glyph.vert", error) == false) {
-		printf("ERROR compiling vertex shader: %s\n", error.c_str());
-		return 1;
-	}
-	if (_shader->loadFragmentShader("data/shaders/text/glyph.frag", error) == false) {
-		printf("ERROR compiling fragment shader: %s\n", error.c_str());
-		return 1;
-	}
-	if (_shader->linkProgram(error) == false) {
-		printf("ERROR linking shader: %s\n", error.c_str());
+    std::string error;
+    if (_shader->use("text/glyph", error) == false) {
+		printf("ERROR compiling shader text/glyph: %s\n", error.c_str());
 		return 1;
 	}
 
