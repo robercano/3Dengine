@@ -10,8 +10,7 @@
 #include <string.h>
 #include <glm/glm.hpp>
 #include "OBJFormat.hpp"
-#include "JPEGLoader.h"
-#include "PNGLoader.h"
+#include "ImageLoaders.h"
 
 using namespace std;
 

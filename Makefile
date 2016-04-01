@@ -25,7 +25,7 @@ CORE_FILES=Game.cpp InputManager.cpp WindowManager.cpp TimeManager.cpp \
 		   Shader.cpp \
 		   Camera.cpp FlyCamera.cpp FreeFlyCamera.cpp WalkingCamera.cpp
 
-UTILS_FILES=MathUtils.c JPEGLoader.c PNGLoader.c
+UTILS_FILES=MathUtils.c ImageLoaders.c
 
 OPENGL_FILES=GLFWKeyManager.cpp GLFWMouseManager.cpp GLFWWindowManager.cpp \
 			 OpenGLModel3D.cpp \

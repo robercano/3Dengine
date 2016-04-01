@@ -1,6 +1,6 @@
 /**
- * @file    JPEGLoader.h
- * @brief	JPEG image loader helper
+ * @file    ImageLoader.h
+ * @brief	Several image loader helpers
  *
  * @author	Roberto Cano (http://www.robertocano.es)
  */
@@ -13,6 +13,7 @@ extern "C" {
 #endif
 
 int loadJPEG(const char *filename, uint8_t **image, uint32_t *width, uint32_t *height, uint32_t *bytesPerPixel);
+int loadPNG(const char *filename, uint8_t **image, uint32_t *width, uint32_t *height, uint32_t *bytesPerPixel);
 
 #ifdef __cplusplus
 }
