@@ -9,10 +9,11 @@
 #include <stdint.h>
 #include <glm/glm.hpp>
 #include <vector>
+#include "Object3D.hpp"
 #include "Material.hpp"
 #include "Texture.hpp"
 
-class Model3D
+class Model3D : public Object3D
 {
 	public:
         typedef struct {
