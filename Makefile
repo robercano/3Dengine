@@ -28,7 +28,7 @@ CORE_FILES=Game.cpp InputManager.cpp WindowManager.cpp TimeManager.cpp \
 UTILS_FILES=MathUtils.c JPEGLoader.c PNGLoader.c
 
 OPENGL_FILES=GLFWKeyManager.cpp GLFWMouseManager.cpp GLFWWindowManager.cpp \
-			 OpenGLObject3D.cpp \
+			 OpenGLModel3D.cpp \
 			 OpenGLFontRenderer.cpp \
 			 OpenGLRenderer.cpp OpenGLFilterRenderTarget.cpp \
              OpenGLMSAARenderTarget.cpp OpenGLSSAARenderTarget.cpp OpenGLFBRenderTarget.cpp \

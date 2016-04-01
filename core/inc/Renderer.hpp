@@ -9,9 +9,9 @@
 #include <string>
 #include <vector>
 #include <glm/glm.hpp>
-#include "Object3D.hpp"
+#include "Model3D.hpp"
 #include "RenderTarget.hpp"
-#include "RendererObject3D.hpp"
+#include "RendererModel3D.hpp"
 #include "Shader.hpp"
 
 class Renderer
@@ -34,33 +34,33 @@ class Renderer
 		virtual void init(void) = 0;
 
         /**
-         * Wraps an object3D with a renderer specific object 3D,
+         * Wraps an model3D with a renderer specific model 3D,
          * peparing all the structures needed to quickly render
-         * the object in the renderer
+         * the model in the renderer
          *
-         * The returned object can be deleted through a delete
-         * statement. The input Object3D has no linkage with the
-         * output RenderObject3D and hence they can have different
+         * The returned model can be deleted through a delete
+         * statement. The input Model3D has no linkage with the
+         * output RenderModel3D and hence they can have different
          * lif cycles
          *
-         * @param object  Object to prepare in the renderer and used to
-         *                generate the RendererObject3D
+         * @param model  Object to prepare in the renderer and used to
+         *                generate the RendererModel3D
          *
-         * @return The prepared RendererObject3D pointer or NULL if an
+         * @return The prepared RendererModel3D pointer or NULL if an
          *         error happened
          */
-        virtual RendererObject3D *prepareObject3D(const Object3D &object) = 0;
+        virtual RendererModel3D *prepareModel3D(const Model3D &model) = 0;
 
 		/**
-		 * Renders the internal list of objects to a render target
+		 * Renders the internal list of models to a render target
 		 *
 		 * @param projection	Projection matrix
 		 * @param view			View matrix
 		 */
-		virtual bool renderObject3D(RendererObject3D &object, Shader &shader,
-                                    std::vector<Light*> &lights, float ambientK,
-                                    const glm::mat4 &projection, const glm::mat4 &view,
-                                    RenderTarget &renderTarget) = 0;
+		virtual bool renderModel3D(RendererModel3D &model, Shader &shader,
+                                   std::vector<Light*> &lights, float ambientK,
+                                   const glm::mat4 &projection, const glm::mat4 &view,
+                                   RenderTarget &renderTarget) = 0;
 
 		/**
 		 * Adjusts the renderer's display size

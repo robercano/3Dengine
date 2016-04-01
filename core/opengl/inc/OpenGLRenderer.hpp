@@ -18,8 +18,8 @@ class OpenGLRenderer : public Renderer
 		 */
 		void init(void);
 		Shader * newShader(void);
-        RendererObject3D *prepareObject3D(const Object3D &object);
-		bool renderObject3D(RendererObject3D &object, Shader &shader,
+        RendererModel3D *prepareModel3D(const Model3D &model);
+		bool renderModel3D(RendererModel3D &model, Shader &shader,
                             std::vector<Light*> &lights, float ambientK,
                             const glm::mat4 &projection, const glm::mat4 &view,
                             RenderTarget &renderTarget);

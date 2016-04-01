@@ -118,7 +118,7 @@ class AntiaAliasingDemo : public GameHandler
 
             /* Wrap the geometry for the renderer, this typically generates any
              * renderer API specific structures and uploads data to the graphics card */
-            _model3D = game->getRenderer()->prepareObject3D(obj3D);
+            _model3D = game->getRenderer()->prepareModel3D(obj3D);
 
             /* Create the game camera */
             _camera = new FlyCamera();
@@ -201,9 +201,9 @@ class AntiaAliasingDemo : public GameHandler
         {
 			//printf("%.2f %.2f, %.2f, %.2f, %.2f, %.2f\n", _camera->getPosition().x, _camera->getPosition().y, _camera->getPosition().z, _camera->getPitch(), _camera->getYaw(), _camera->getRoll());
             /* Render all objects */
-            game->getRenderer()->renderObject3D(*_model3D, *_shader, _lights, 0.0,
-                                                _camera->getProjection(), _camera->getView(),
-                                                *_selectedRenderTarget);
+            game->getRenderer()->renderModel3D(*_model3D, *_shader, _lights, 0.0,
+                                               _camera->getProjection(), _camera->getView(),
+                                               *_selectedRenderTarget);
 
             _selectedRenderTarget->blit(0, 0, _width, _height);
 
@@ -214,7 +214,7 @@ class AntiaAliasingDemo : public GameHandler
 
     private:
         Camera             *_camera;
-        RendererObject3D   *_model3D;
+        RendererModel3D    *_model3D;
         Shader             *_shader;
 		NOAARenderTarget   *_renderTargetNOAA;
 		MSAARenderTarget   *_renderTargetMSAA;

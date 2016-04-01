@@ -1,9 +1,9 @@
 /**
- * @class	RendererObject3D
+ * @class	RendererModel3D
  * @brief	Object 3D representation prepared for the specific renderer
- *          This is a composite object generated through Renderer::prepareObject3D()
- *          that prepares the object for the specific renderer. For example in
- *          OpenGL it would generate the VBO specific to the object 3D and cache
+ *          This is a composite model generated through Renderer::prepareModel3D()
+ *          that prepares the model for the specific renderer. For example in
+ *          OpenGL it would generate the VBO specific to the model 3D and cache
  *          that value so it can be used later on
  *
  * @author	Roberto Cano (http://www.robertocano.es)
@@ -11,13 +11,13 @@
 #pragma once
 
 #include <stdint.h>
-#include "RendererObject3D.hpp"
+#include "RendererModel3D.hpp"
 #include "OpenGL.h"
 
-class OpenGLObject3D : public RendererObject3D
+class OpenGLModel3D : public RendererModel3D
 {
 	public:
-        bool init(const Object3D &object);
+        bool init(const Model3D &model);
         bool destroy();
         uint32_t getVertexArrayID() { return _gVAO; }
         uint32_t getIndicesArrayID() { return _indicesBO; }

@@ -2,8 +2,7 @@ obj
 lib
 adjust_date.*
 .DS_Store
-cscope.files
-cscope.out
+cscope.*
 tags
 .vs
 Debug

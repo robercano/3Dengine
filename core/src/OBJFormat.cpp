@@ -196,7 +196,7 @@ bool OBJFormat::load(const string &filename)
     fseek(file, SEEK_SET, 0);
 
     /* Allocate size for the final data */
-    _objectData.resize(vertices.size());
+    _modelData.resize(vertices.size());
     positionSet.resize(vertices.size(), false);
 
     /* Now parse the groups and the faces */
@@ -239,19 +239,19 @@ bool OBJFormat::load(const string &filename)
                 uint32_t dataIdx   = vertexIdx;
 
                 if (positionSet[dataIdx] == true) {
-                    if (_objectData[dataIdx].normal != normals[normalIdx] ||
-                        _objectData[dataIdx].uvcoord != uvcoords[uvIdx]) {
+                    if (_modelData[dataIdx].normal != normals[normalIdx] ||
+                        _modelData[dataIdx].uvcoord != uvcoords[uvIdx]) {
 
-                        dataIdx = _objectData.size();
-                        _objectData.resize(_objectData.size() + 1);
+                        dataIdx = _modelData.size();
+                        _modelData.resize(_modelData.size() + 1);
                         positionSet.resize(positionSet.size() + 1, false);
                     }
                 }
 
                 if (positionSet[dataIdx] == false) {
-                    _objectData[dataIdx].vertex  = vertices[vertexIdx];
-                    _objectData[dataIdx].normal  = normals[normalIdx];
-                    _objectData[dataIdx].uvcoord = uvcoords[uvIdx];
+                    _modelData[dataIdx].vertex  = vertices[vertexIdx];
+                    _modelData[dataIdx].normal  = normals[normalIdx];
+                    _modelData[dataIdx].uvcoord = uvcoords[uvIdx];
 
                     positionSet[vertexIdx] = true;
                 }
@@ -272,16 +272,16 @@ bool OBJFormat::load(const string &filename)
 
         std::vector<uint32_t> *idx = &indices[it->first];
 
-        _indicesOffsets.push_back(_objectIndices.size());
+        _indicesOffsets.push_back(_modelIndices.size());
 
         /* Append to the final indices vector */
-        _objectIndices.reserve(_objectIndices.size() + idx->size());
-        _objectIndices.insert(_objectIndices.end(), idx->begin(), idx->end());
+        _modelIndices.reserve(_modelIndices.size() + idx->size());
+        _modelIndices.insert(_modelIndices.end(), idx->begin(), idx->end());
 
         _indicesCount.push_back(idx->size());
     }
 
-    printf("Loaded %s with %zu vertices and %zu faces\n", filename.c_str(), _objectData.size(), _objectIndices.size()/3);
+    printf("Loaded %s with %zu vertices and %zu faces\n", filename.c_str(), _modelData.size(), _modelIndices.size()/3);
 
 error_exit:
     fclose(file);

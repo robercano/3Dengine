@@ -86,7 +86,7 @@ class AntiaAliasingDemo : public GameHandler
 
             /* Wrap the geometry for the renderer, this typically generates any
              * renderer API specific structures and uploads data to the graphics card */
-            _model3D = game->getRenderer()->prepareObject3D(obj3D);
+            _model3D = game->getRenderer()->prepareModel3D(obj3D);
 
             /* Create the game camera */
             _camera = new FlyCamera();
@@ -156,7 +156,7 @@ class AntiaAliasingDemo : public GameHandler
         bool handleRender(Game *game)
         {
             /* Render all objects */
-            game->getRenderer()->renderObject3D(*_model3D, *_shader, _lights, 0.0,
+            game->getRenderer()->renderModel3D(*_model3D, *_shader, _lights, 0.0,
                                                 _camera->getProjection(), _camera->getView(),
                                                 *_renderTargetFXAA2);
 
@@ -166,7 +166,7 @@ class AntiaAliasingDemo : public GameHandler
 
     private:
         Camera             *_camera;
-        RendererObject3D   *_model3D;
+        RendererModel3D   *_model3D;
         Shader             *_shader;
 		FXAA2RenderTarget  *_renderTargetFXAA2;
 		std::string         _renderTargetName;

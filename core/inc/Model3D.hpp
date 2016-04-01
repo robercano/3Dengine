@@ -1,6 +1,6 @@
 /**
- * @class	Object3D
- * @brief	Basic object 3D representation
+ * @class	Model3D
+ * @brief	Basic model 3D representation
  *
  * @author	Roberto Cano (http://www.robertocano.es)
  */
@@ -12,7 +12,7 @@
 #include "Material.hpp"
 #include "Texture.hpp"
 
-class Object3D
+class Model3D
 {
 	public:
         typedef struct {
@@ -24,15 +24,15 @@ class Object3D
 		/**
 		 * Destructor
 		 */
-		virtual ~Object3D() {}
+		virtual ~Model3D() {}
 
-        const std::vector< Object3D::VertexData > &getVertexData() const
+        const std::vector< Model3D::VertexData > &getVertexData() const
         {
-            return _objectData;
+            return _modelData;
         }
         const std::vector< uint32_t > &getIndexData() const
         {
-            return _objectIndices;
+            return _modelIndices;
         }
         const std::vector< Material > &getMaterials() const
         {
@@ -52,15 +52,15 @@ class Object3D
         }
 
     protected:
-        Object3D() {}
+        Model3D() {}
 
         /**
          * Object data
          */
-        std::vector<Object3D::VertexData> _objectData;
-        std::vector<uint32_t>             _objectIndices;
-        std::vector<Material>             _materials;
-        std::vector<Texture>              _textures;
-        std::vector<uint32_t>             _indicesOffsets;
-        std::vector<uint32_t>             _indicesCount;
+        std::vector<Model3D::VertexData> _modelData;
+        std::vector<uint32_t>            _modelIndices;
+        std::vector<Material>            _materials;
+        std::vector<Texture>             _textures;
+        std::vector<uint32_t>            _indicesOffsets;
+        std::vector<uint32_t>            _indicesCount;
 };

@@ -7,7 +7,7 @@
 #include "OpenGL.h"
 #include "OpenGLRenderer.hpp"
 #include "OpenGLShader.hpp"
-#include "OpenGLObject3D.hpp"
+#include "OpenGLModel3D.hpp"
 
 void OpenGLRenderer::init()
 {
@@ -37,16 +37,16 @@ Shader * OpenGLRenderer::newShader(void)
 	return new OpenGLShader();
 }
 
-RendererObject3D *OpenGLRenderer::prepareObject3D(const Object3D &object)
+RendererModel3D *OpenGLRenderer::prepareModel3D(const Model3D &model)
 {
-    OpenGLObject3D *glObject = new OpenGLObject3D();
+    OpenGLModel3D *glObject = new OpenGLModel3D();
     if (glObject != NULL) {
-        glObject->init(object);
+        glObject->init(model);
     }
     return glObject;
 }
 
-bool OpenGLRenderer::renderObject3D(RendererObject3D &object, Shader &shader,
+bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Shader &shader,
                                     std::vector<Light*> &lights, float ambientK,
                                     const glm::mat4 &projection, const glm::mat4 &view,
                                     RenderTarget &renderTarget)
@@ -59,8 +59,8 @@ bool OpenGLRenderer::renderObject3D(RendererObject3D &object, Shader &shader,
 	/* Our ModelViewProjection : multiplication of our 3 matrices */
 	glm::mat4 MVP = projection * view * model; // Remember, matrix multiplication is the other way around
 
-    /* Cast the object into an internal type */
-    OpenGLObject3D &glObject = dynamic_cast<OpenGLObject3D&>(object);
+    /* Cast the model into an internal type */
+    OpenGLModel3D &glObject = dynamic_cast<OpenGLModel3D&>(model3D);
 
 	renderTarget.clear();
 
@@ -95,7 +95,7 @@ bool OpenGLRenderer::renderObject3D(RendererObject3D &object, Shader &shader,
 		}
         shader.setUniformUint("numLights", numLights);
 
-        /* Draw the object */
+        /* Draw the model */
         GL( glBindVertexArray(glObject.getVertexArrayID()) );
         {
             std::vector<Material> materials   = glObject.getMaterials();

@@ -1,14 +1,14 @@
 /**
- * @class	OpenGLObject3D
- * @brief	OpengGL object 3D representation
+ * @class	OpenGLModel3D
+ * @brief	OpengGL model 3D representation
  *
  * @author	Roberto Cano (http://www.robertocano.es)
  */
 
-#include "OpenGLObject3D.hpp"
+#include "OpenGLModel3D.hpp"
 #include "OpenGL.h"
 
-bool OpenGLObject3D::init(const Object3D &object)
+bool OpenGLModel3D::init(const Model3D &model)
 {
     uint32_t offset;
 
@@ -16,14 +16,14 @@ bool OpenGLObject3D::init(const Object3D &object)
 	GL( glGenVertexArrays(1, &_gVAO) );
 	GL( glBindVertexArray(_gVAO) );
     {
-        /* Generate a buffer object for the vertices positions */
+        /* Generate a buffer model for the vertices positions */
         GL( glGenBuffers(1, &_vertexDataVBO) );
         GL( glBindBuffer(GL_ARRAY_BUFFER, _vertexDataVBO) );
         {
             /* Upload the data for this buffer */
             GL( glBufferData(GL_ARRAY_BUFFER,
-                             object.getVertexData().size() * sizeof object.getVertexData()[0],
-                             &(object.getVertexData()[0]),
+                             model.getVertexData().size() * sizeof model.getVertexData()[0],
+                             &(model.getVertexData()[0]),
                              GL_STATIC_DRAW) );
 
             /* First attribute contains the vertex coordinates */
@@ -33,7 +33,7 @@ bool OpenGLObject3D::init(const Object3D &object)
                     3,                             // size
                     GL_FLOAT,                      // type
                     GL_FALSE,                      // normalized?
-                    sizeof(Object3D::VertexData),// stride
+                    sizeof(Model3D::VertexData),// stride
                     (void*)0                       // array buffer offset
                     ) );
 
@@ -45,7 +45,7 @@ bool OpenGLObject3D::init(const Object3D &object)
                     3,                             // size
                     GL_FLOAT,                      // type
                     GL_FALSE,                      // normalized?
-                    sizeof(Object3D::VertexData),  // stride
+                    sizeof(Model3D::VertexData),  // stride
                     reinterpret_cast<void*>(offset)                  // array buffer offset
                     ) );
 
@@ -57,26 +57,26 @@ bool OpenGLObject3D::init(const Object3D &object)
                     2,                             // size
                     GL_FLOAT,                      // type
                     GL_FALSE,                      // normalized?
-                    sizeof(Object3D::VertexData),// stride
+                    sizeof(Model3D::VertexData),// stride
                     reinterpret_cast<void*>(offset)                  // array buffer offset
                     ) );
         }
 
-        /* Generate the buffer objects for the indices */
+        /* Generate the buffer models for the indices */
         GL( glGenBuffers(1, &_indicesBO) );
         GL( glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indicesBO) );
         {
             /* Upload the data */
             GL( glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-                             object.getIndexData().size() * sizeof(object.getIndexData()[0]),
-                             &(object.getIndexData()[0]),
+                             model.getIndexData().size() * sizeof(model.getIndexData()[0]),
+                             &(model.getIndexData()[0]),
                              GL_STATIC_DRAW) );
         }
     }
     GL( glBindVertexArray(0) );
 
     /* TODO: Upload the textures */
-    const std::vector< Texture > &textures = object.getTextures();
+    const std::vector< Texture > &textures = model.getTextures();
 
     _texturesIDs.resize(textures.size());
     GL( glGenTextures(textures.size(), &_texturesIDs[0]) );
@@ -101,14 +101,14 @@ bool OpenGLObject3D::init(const Object3D &object)
     }
     GL( glBindTexture(GL_TEXTURE_2D, 0) );
 
-    _materials = object.getMaterials();
-    _indicesOffsets = object.getIndicesOffsets();
-    _indicesCount = object.getIndicesCount();
+    _materials = model.getMaterials();
+    _indicesOffsets = model.getIndicesOffsets();
+    _indicesCount = model.getIndicesCount();
 
     return true;
 }
 
-bool OpenGLObject3D::destroy()
+bool OpenGLModel3D::destroy()
 {
 	GL( glDeleteBuffers(1, &_vertexDataVBO) );
 	GL( glDeleteVertexArrays(1, &_gVAO) );
