@@ -23,7 +23,8 @@ CORE_FILES=Game.cpp InputManager.cpp WindowManager.cpp TimeManager.cpp \
            Renderer.cpp NOAARenderTarget.cpp MSAARenderTarget.cpp SSAARenderTarget.cpp \
 		   FXAARenderTarget.cpp FXAA2RenderTarget.cpp FBRenderTarget.cpp \
 		   Shader.cpp \
-		   Camera.cpp FlyCamera.cpp FreeFlyCamera.cpp WalkingCamera.cpp
+		   Camera.cpp \
+		   FlyMotion.cpp FreeFlyMotion.cpp WalkingMotion.cpp
 
 UTILS_FILES=MathUtils.c ImageLoaders.c
 
@@ -96,14 +97,12 @@ $(LIBDIR)/$(LIBNAME): $(OBJECTS)
 -include $(OBJECTS:.o=.d)
 
 $(OBJDIR)/%.o: %.cpp
-	@echo "- Compiling $<...\c"
+	@echo "- Compiling $<..."
 	@$(CXX) $(CXXFLAGS) -c -o $@ $<
-	@echo "done"
 
 $(OBJDIR)/%.o: %.c
-	@echo "- Compiling $<...\c"
+	@echo "- Compiling $<..."
 	@$(CC) $(CFLAGS) -c -o $@ $<
-	@echo "done"
 
 clean:
 	@echo "- Cleaning project directories...\c"

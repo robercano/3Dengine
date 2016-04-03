@@ -4,6 +4,8 @@
 #include "OpenGL.h"
 #include "Shader.hpp"
 #include "FXAA2RenderTarget.hpp"
+#include "Camera.hpp"
+#include "FlyMotion.hpp"
 
 #define PI 3.14159265358979323846
 
@@ -89,10 +91,9 @@ class AntiaAliasingDemo : public GameHandler
             _model3D = game->getRenderer()->prepareModel3D(obj3D);
 
             /* Create the game camera */
-            _camera = new FlyCamera();
-            _camera->setProjection(45, _width/(float)_height, 0.1, 1000.0);
-            _camera->setPosition( glm::vec4(220, 135, -1, 1) );
-            _camera->rotateYaw(-90);
+            _camera.setProjection(45, _width/(float)_height, 0.1, 1000.0);
+            _cameraMotion.setPosition( glm::vec3(220.0f, 135.0f, -1.0f) );
+            _cameraMotion.rotateYaw(-90);
 
             return true;
         }
@@ -104,16 +105,16 @@ class AntiaAliasingDemo : public GameHandler
                 return false;
             }
             if (_inputManager._keys['W']) {
-                _camera->forward(0.1*elapsedMs);
+                _cameraMotion.forward(0.1*elapsedMs);
             }
             if (_inputManager._keys['S']) {
-                _camera->forward(-0.1*elapsedMs);
+                _cameraMotion.forward(-0.1*elapsedMs);
             }
             if (_inputManager._keys['A']) {
-                _camera->right(-0.1*elapsedMs);
+                _cameraMotion.right(-0.1*elapsedMs);
             }
             if (_inputManager._keys['D']) {
-                _camera->right(0.1*elapsedMs);
+                _cameraMotion.right(0.1*elapsedMs);
             }
             if (_inputManager._keys['R']) {
                 game->resetStats();
@@ -131,10 +132,10 @@ class AntiaAliasingDemo : public GameHandler
 			int32_t diffMouseY = _InvertMouse*(_inputManager._yMouse - _prevY);
 
             if (diffMouseX) {
-                _camera->rotateYaw(_MouseSensibility*M_PI*diffMouseX/_width);
+                _cameraMotion.rotateYaw(_MouseSensibility*M_PI*diffMouseX/_width);
             }
             if (diffMouseY) {
-                _camera->rotatePitch(_MouseSensibility*M_PI*diffMouseY/_height);
+                _cameraMotion.rotatePitch(_MouseSensibility*M_PI*diffMouseY/_height);
             }
 
 			_prevX = _inputManager._xMouse;
@@ -155,9 +156,12 @@ class AntiaAliasingDemo : public GameHandler
 
         bool handleRender(Game *game)
         {
+			/* Apply the motion to the camera */
+			_cameraMotion.applyTo(_camera);
+
             /* Render all objects */
             game->getRenderer()->renderModel3D(*_model3D, *_shader, _lights, 0.0,
-                                                _camera->getProjection(), _camera->getView(),
+                                                _camera.getProjectionMatrix(), _camera.getViewMatrix(),
                                                 *_renderTargetFXAA2);
 
             _renderTargetFXAA2->blit(0, 0, _width, _height);
@@ -165,8 +169,9 @@ class AntiaAliasingDemo : public GameHandler
         }
 
     private:
-        Camera             *_camera;
-        RendererModel3D   *_model3D;
+        Camera             _camera;
+		FlyMotion          _cameraMotion;
+        RendererModel3D    *_model3D;
         Shader             *_shader;
 		FXAA2RenderTarget  *_renderTargetFXAA2;
 		std::string         _renderTargetName;

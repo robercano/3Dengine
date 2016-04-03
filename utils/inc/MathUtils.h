@@ -12,6 +12,7 @@ extern "C" {
 #endif
 
 uint32_t clp2(uint32_t x);
+float restrictAngle(float angle);
 
 #ifdef __cplusplus
 }

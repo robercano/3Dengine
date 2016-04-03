@@ -9,17 +9,19 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 class Object3D
 {
 	public:
 		Object3D() : _position(0.0f, 0.0f, 0.0f),
                      _orientation(glm::mat4(1.0f)),
+					 _scale(glm::vec3(1.0)),
                      _model(glm::mat4(1.0f)),
                      _modelValid(true),
                      _viewValid(true) {}
 
-		void setPosition(const glm::vec4 &position)
+		void setPosition(const glm::vec3 &position)
         {
             _position = position;
             _modelValid = false;
@@ -31,6 +33,12 @@ class Object3D
             _modelValid = false;
             _viewValid = false;
         }
+		void setScaleFactor(const glm::vec3 &factor)
+		{
+			_scale = factor;
+			_modelValid = false;
+			_viewValid = false;
+		}
         void move(const glm::vec3 &amount)
         {
             _position += amount;
@@ -43,15 +51,27 @@ class Object3D
             _modelValid = false;
             _viewValid = false;
         }
+		void scale(const glm::vec3 &factor)
+		{
+			_scale *= factor;
+            _modelValid = false;
+            _viewValid = false;
+		}
+		void normalize()
+		{
+			/* TODO */
+		}
 
-		const glm::vec4 &getPosition() { return _position; }
+		const glm::vec3 &getPosition() { return _position; }
 		const glm::mat4 &getOrientation() { return _orientation; }
+		const glm::vec3 &getScaleFactor() { return _scale; }
 
 		const glm::mat4 &getModelMatrix(void)
         {
             if (_modelValid == false) {
-                glm::mat4 translation = glm::translate(glm::mat4(), position);
-                _model = ( translation * _orientation );
+				glm::mat4 tmp = glm::scale(glm::mat4(), _scale);
+				tmp = _orientation * tmp;
+                _model = glm::translate(tmp, _position);
                 _modelValid = true;
             }
             return _model;
@@ -60,8 +80,9 @@ class Object3D
         {
             if (_viewValid == false) {
                 glm::mat4 translation = glm::translate(glm::mat4(), -_position);
-                _view = ( _orientation * translation );
-                _viewValid = false;
+                _view = glm::scale( _orientation * translation, _scale );
+                _view = _orientation * translation;
+                _viewValid = true;
             }
             return _view;
         }
@@ -69,6 +90,7 @@ class Object3D
 	protected:
 		glm::vec3 _position;
         glm::mat4 _orientation;
+		glm::vec3 _scale;
 		glm::mat4 _model;
 		glm::mat4 _view;
 		bool _modelValid;

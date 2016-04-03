@@ -4,6 +4,8 @@
 #include "OpenGL.h"
 #include "Shader.hpp"
 #include "FXAA2RenderTarget.hpp"
+#include "Camera.hpp"
+#include "FlyMotion.hpp"
 
 #define PI 3.14159265358979323846
 
@@ -11,7 +13,8 @@ class AntiaAliasingDemo : public GameHandler
 {
     public:
         AntiaAliasingDemo() {
-            _MouseSensibility = 10.0;
+            _MouseSensibility = 3.0f;
+			_KeyboardSensibility = 0.03f;
 			_InvertMouse = 1.0;
 			_prevX = 0xFFFFFF;
 			_prevY = 0xFFFFFF;
@@ -80,12 +83,11 @@ class AntiaAliasingDemo : public GameHandler
             _model3D = game->getRenderer()->prepareModel3D(obj3D);
 
             /* Create the game camera */
-            _camera = new FlyCamera();
-            _camera->setProjection(45, _width/(float)_height, 0.1, 1000.0);
+            _camera.setProjection(45, _width/(float)_height, 0.1, 1000.0);
             /* Daxter */
-            _camera->setPosition( glm::vec4(-25.87f, 13.62f, 25.90f, 1.0f) );
-			_camera->rotatePitch(5.59f);
-			_camera->rotateYaw(46.07f);
+            _cameraMotion.setPosition( glm::vec3(-25.87f, 13.62f, 25.90f) );
+			_cameraMotion.rotatePitch(5.59f);
+			_cameraMotion.rotateYaw(46.07f);
 
             return true;
         }
@@ -97,16 +99,16 @@ class AntiaAliasingDemo : public GameHandler
                 return false;
             }
             if (_inputManager._keys['W']) {
-                _camera->forward(0.1*elapsedMs);
+                _cameraMotion.forward(_KeyboardSensibility*elapsedMs);
             }
             if (_inputManager._keys['S']) {
-                _camera->forward(-0.1*elapsedMs);
+                _cameraMotion.forward(-_KeyboardSensibility*elapsedMs);
             }
             if (_inputManager._keys['A']) {
-                _camera->right(-0.1*elapsedMs);
+                _cameraMotion.right(-_KeyboardSensibility*elapsedMs);
             }
             if (_inputManager._keys['D']) {
-                _camera->right(0.1*elapsedMs);
+                _cameraMotion.right(_KeyboardSensibility*elapsedMs);
             }
             if (_inputManager._keys['R']) {
                 game->resetStats();
@@ -124,10 +126,10 @@ class AntiaAliasingDemo : public GameHandler
 			int32_t diffMouseY = _InvertMouse*(_inputManager._yMouse - _prevY);
 
             if (diffMouseX) {
-                _camera->rotateYaw(_MouseSensibility*M_PI*diffMouseX/_width);
+                _cameraMotion.rotateYaw(_MouseSensibility*M_PI*diffMouseX/_width);
             }
             if (diffMouseY) {
-                _camera->rotatePitch(_MouseSensibility*M_PI*diffMouseY/_height);
+                _cameraMotion.rotatePitch(_MouseSensibility*M_PI*diffMouseY/_height);
             }
 
 			_prevX = _inputManager._xMouse;
@@ -138,9 +140,12 @@ class AntiaAliasingDemo : public GameHandler
 
         bool handleRender(Game *game)
         {
+			/* Apply the motion to the camera */
+			_cameraMotion.applyTo(_camera);
+
             /* Render all objects */
             game->getRenderer()->renderModel3D(*_model3D, *_shader, _lights, 0.05,
-                                                _camera->getProjection(), _camera->getView(),
+                                                _camera.getProjectionMatrix(), _camera.getViewMatrix(),
                                                 *_renderTargetFXAA2);
 
             _renderTargetFXAA2->blit(0, 0, _width, _height);
@@ -148,8 +153,9 @@ class AntiaAliasingDemo : public GameHandler
         }
 
     private:
-        Camera             *_camera;
-        RendererModel3D   *_model3D;
+        Camera             _camera;
+		FlyMotion          _cameraMotion;
+        RendererModel3D    *_model3D;
         Shader             *_shader;
 		FXAA2RenderTarget  *_renderTargetFXAA2;
 		std::string         _renderTargetName;
@@ -157,6 +163,7 @@ class AntiaAliasingDemo : public GameHandler
 		InputManager        _inputManager;
 
         float _MouseSensibility;
+        float _KeyboardSensibility;
 		float _InvertMouse;
 		int32_t _prevX;
 		int32_t	_prevY;
@@ -177,7 +184,7 @@ int main()
     }
 
     game->setHandler(&antiAliasingDemo);
-    game->setWindowSize(800, 600, false);
+    game->setWindowSize(2560, 1440, true);
     game->setFPS(60);
 
     if (game->init() == false) {

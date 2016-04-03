@@ -12,7 +12,6 @@
 #include "InputManager.hpp"
 #include "TimeManager.hpp"
 #include "Renderer.hpp"
-#include "FlyCamera.hpp"
 #include "RenderTarget.hpp"
 #include "TextConsole.hpp"
 
@@ -50,7 +49,6 @@ class Game {
         Renderer      *_renderer;
         InputManager   _inputManager;
         TimeManager   *_timer;
-        //    Camera *_camera;
         TextConsole    _console;
         std::string    _name;
 

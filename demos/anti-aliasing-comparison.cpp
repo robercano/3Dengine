@@ -8,6 +8,8 @@
 #include "SSAARenderTarget.hpp"
 #include "FXAARenderTarget.hpp"
 #include "FXAA2RenderTarget.hpp"
+#include "Camera.hpp"
+#include "FlyMotion.hpp"
 
 #define PI 3.14159265358979323846
 
@@ -121,11 +123,11 @@ class AntiaAliasingDemo : public GameHandler
             _model3D = game->getRenderer()->prepareModel3D(obj3D);
 
             /* Create the game camera */
-            _camera = new FlyCamera();
-            _camera->setProjection(45.0f, _width/(float)_height, 0.1f, 1000.0f);
+            _camera.setProjection(45.0f, _width/(float)_height, 0.1f, 1000.0f);
+
             /* Deadpool */
-            _camera->setPosition( glm::vec4(220.0f, 135.0f, -1.0f, 1.0f) );
-            _camera->rotateYaw(-90.0f);
+			_cameraMotion.setPosition( glm::vec3(220.0f, 135.0f, -1.0f) );
+            _cameraMotion.rotateYaw(-90.0f);
 
             return true;
         }
@@ -137,16 +139,16 @@ class AntiaAliasingDemo : public GameHandler
                 return false;
             }
             if (_inputManager._keys['W']) {
-                _camera->forward(0.1f*(float)elapsedMs);
+                _cameraMotion.forward(0.1f*(float)elapsedMs);
             }
             if (_inputManager._keys['S']) {
-                _camera->forward(-0.1f*(float)elapsedMs);
+                _cameraMotion.forward(-0.1f*(float)elapsedMs);
             }
             if (_inputManager._keys['A']) {
-                _camera->right(-0.1f*(float)elapsedMs);
+                _cameraMotion.right(-0.1f*(float)elapsedMs);
             }
             if (_inputManager._keys['D']) {
-                _camera->right(0.1f*(float)elapsedMs);
+                _cameraMotion.right(0.1f*(float)elapsedMs);
             }
             if (_inputManager._keys['R']) {
                 game->resetStats();
@@ -185,10 +187,10 @@ class AntiaAliasingDemo : public GameHandler
 			int32_t diffMouseY = (int32_t)(_InvertMouse*(_inputManager._yMouse - _prevY));
 
             if (diffMouseX) {
-                _camera->rotateYaw((float)(_MouseSensibility*PI*diffMouseX/_width));
+                _cameraMotion.rotateYaw((float)(_MouseSensibility*PI*diffMouseX/_width));
             }
             if (diffMouseY) {
-                _camera->rotatePitch((float)(_MouseSensibility*PI*diffMouseY/_height));
+                _cameraMotion.rotatePitch((float)(_MouseSensibility*PI*diffMouseY/_height));
             }
 
 			_prevX = _inputManager._xMouse;
@@ -199,10 +201,14 @@ class AntiaAliasingDemo : public GameHandler
 
         bool handleRender(Game *game)
         {
-			//printf("%.2f %.2f, %.2f, %.2f, %.2f, %.2f\n", _camera->getPosition().x, _camera->getPosition().y, _camera->getPosition().z, _camera->getPitch(), _camera->getYaw(), _camera->getRoll());
+			//printf("%.2f %.2f, %.2f, %.2f, %.2f\n", _cameraMotion.g->getPosition().x, _camera->getPosition().y, _camera->getPosition().z, _camera->getPitch(), _camera->getYaw());
+
+			/* Apply final movement to the camera */
+			_cameraMotion.applyTo(_camera);
+
             /* Render all objects */
             game->getRenderer()->renderModel3D(*_model3D, *_shader, _lights, 0.0,
-                                               _camera->getProjection(), _camera->getView(),
+                                               _camera.getProjectionMatrix(), _camera.getViewMatrix(),
                                                *_selectedRenderTarget);
 
             _selectedRenderTarget->blit(0, 0, _width, _height);
@@ -213,7 +219,8 @@ class AntiaAliasingDemo : public GameHandler
         }
 
     private:
-        Camera             *_camera;
+        Camera             _camera;
+		FlyMotion          _cameraMotion;
         RendererModel3D    *_model3D;
         Shader             *_shader;
 		NOAARenderTarget   *_renderTargetNOAA;
@@ -246,7 +253,7 @@ int main()
     }
 
     game->setHandler(&antiAliasingDemo);
-    game->setWindowSize(800, 600, false);
+    game->setWindowSize(2560, 1440, true);
     game->setFPS(60);
 
     if (game->init() == false) {

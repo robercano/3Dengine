@@ -11,7 +11,7 @@
 #include <glm/gtx/transform.hpp>
 #include "Camera.hpp"
 
-Object3D::Object3D() : _position(0.0f, 0.0f, 10.0f, 1.0f),
+Object3D::Object3D() : _position(0.0f, 0.0f, 10.0f, 1.0f), _orientation(glm::mat4(1.0f)),
 				       _forward(0.0f, 0.0f, -1.0f, 0.0f), _up(0.0f, 1.0f, 0.0f, 0.0f), _right(1.0f, 0.0f, 0.0f, 0.0f),
 				       _yaw(0.0f), _pitch(0.0f), _roll(0.0f),
 				       _modelValid(false)
