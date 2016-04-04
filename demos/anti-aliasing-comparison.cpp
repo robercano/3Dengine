@@ -9,7 +9,7 @@
 #include "FXAARenderTarget.hpp"
 #include "FXAA2RenderTarget.hpp"
 #include "Camera.hpp"
-#include "WalkingMotion.hpp"
+#include "FlyMotion.hpp"
 
 #define PI 3.14159265358979323846
 
@@ -28,15 +28,15 @@ class AntiaAliasingDemo : public GameHandler
             Light *light1 = new Light(glm::vec3(5.0, 5.0, 5.0),
                     glm::vec3(5.0, 5.0, 5.0),
                     glm::vec3(5.0, 5.0, 5.0),
-                    glm::vec3(50.0, 100.0, 50.0));
-            Light *light2 = new Light(glm::vec3(5.0, 3.0, 3.0),
-                    glm::vec3(5.0, 3.0, 3.0),
-                    glm::vec3(5.0, 3.0, 3.0),
-                    glm::vec3(-50.0, 100.0, 50.0));
-            Light *light3 = new Light(glm::vec3(1.0, 1.0, 3.0),
-                    glm::vec3(1.0, 1.0, 3.0),
-                    glm::vec3(1.0, 1.0, 3.0),
-                    glm::vec3(50.0, 200.0, 100.0));
+                    glm::vec3(0.0, 150.0, 50.0));
+            Light *light2 = new Light(glm::vec3(0.0, 0.0, 3.0),
+                    glm::vec3(0.0, 0.0, 3.0),
+                    glm::vec3(0.0, 0.0, 3.0),
+                    glm::vec3(50.0, 20.0, -150.0));
+            Light *light3 = new Light(glm::vec3(1.0, 0.0, 1.0),
+                    glm::vec3(1.0, 0.0, 1.0),
+                    glm::vec3(1.0, 0.0, 1.0),
+                    glm::vec3(30.0, 20.0, 0.0));
 
             _lights.push_back(light1);
             _lights.push_back(light2);
@@ -125,8 +125,10 @@ class AntiaAliasingDemo : public GameHandler
 
             /* Create the game camera */
             _camera.setProjection(45.0f, _width/(float)_height, 0.1f, 1000.0f);
+			_cameraMotion.reset();
 			_cameraMotion.setPosition( glm::vec3(150.0f, 100.0f, 150.0f) );
             _cameraMotion.rotateYaw(-45.0f);
+
 
             return true;
         }
@@ -217,7 +219,7 @@ class AntiaAliasingDemo : public GameHandler
 
     private:
         Camera             _camera;
-		WalkingMotion      _cameraMotion;
+		FlyMotion      _cameraMotion;
         RendererModel3D    *_model3D;
         Shader             *_shader;
 		NOAARenderTarget   *_renderTargetNOAA;

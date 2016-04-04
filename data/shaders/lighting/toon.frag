@@ -39,6 +39,7 @@ layout (std140) uniform Material {
 
 uniform sampler2D diffuseMap;
 uniform mat4 view;
+uniform mat4 model;
 
 in vec3 fragment_vertex;
 in vec3 fragment_normal;
@@ -55,7 +56,7 @@ float sRGB2Linear(float c) {
 
 float toonify(float intensity)
 {
-	if (intensity < 0.01) return 0.0;
+	if (intensity < 0.0001) return 0.0;
 	else if (intensity < 0.25) return 0.125;
 	else if (intensity < 0.5) return 0.375;
 	else if (intensity < 0.75) return 0.625;
@@ -67,28 +68,19 @@ void main()
 {
     float Ia, Id, Is;
     vec3 colorAmbient, colorDiffuse, colorSpecular;
-    mat4 model = mat4(1.0);
 
     /* Texel color */
     vec4 texel = texture(diffuseMap, fragment_uvcoord);
-    //texel = vec4(sRGB2Linear(texel.r),sRGB2Linear(texel.g),sRGB2Linear(texel.b), texel.a);
-
-    /* Calculate fragment position in world coordinates */
-    vec3 fragmentPos = vec3(model*vec4(fragment_vertex, 1));
 
     /* Ambient */
     Ia = toonify(clamp(ambientK, 0.0, 1.0));
 
     /* Vector to the camera */
-    mat3 rotMatView = mat3(view);
-    vec3 tmpCameraPos = vec3(view[3]);
-    vec3 cameraPos = -tmpCameraPos * rotMatView;
-    vec3 V = normalize(cameraPos - fragmentPos);
-
-	/* And now calculate the final normal */
-	/* TODO: this must be done in the vertex shader */
-	vec3 N = normalize(fragment_normal);
-
+    vec3 cameraPos = -vec3(view * vec4(0.0f, 0.0f, 0.0f, 1.0f));
+    vec3 V = normalize(cameraPos - fragment_vertex);
+	vec3 Nv = normalize(vec3(view * vec4(fragment_normal, 0.0)));
+	vec3 Pv = normalize(-vec3(view * vec4(fragment_vertex, 1.0)));
+	vec3 N = fragment_normal;
     vec3 acc = vec3(0.0);
 
 /* FOR */
@@ -96,10 +88,10 @@ void main()
 
     for (int i=0; i<nLights; i++) {
         /* Attenuation */
-        float attenuation = 1.0 / (1.0 + 0.00001 * pow(length(light[i].position - fragmentPos), 2));
+        float attenuation = 1.0 / (1.0 + 0.00001 * pow(length(light[i].position - fragment_vertex), 2));
 
         /* Light vector to fragment */
-        vec3 L = normalize(light[i].position - fragmentPos);
+        vec3 L = normalize(light[i].position - fragment_vertex);
 
         /* Calculate the normal matrix (excluding scaling and translation, centerd in origin) */
         //mat3 normalMatrix = transpose(inverse(mat3(model)));
@@ -123,13 +115,12 @@ void main()
         acc += colorAmbient + attenuation*(colorDiffuse + colorSpecular);
     }
 
-	float border = dot(N, V);
+	float border = dot(Nv, Pv);
 
-	if (border < 0.4) {
+	if (border < 0.3) {
 		texel = vec4(0.0, 0.0, 0.0, 1.0);
 	}
 
-	//vec3 midtone = vec3(round(16 * texel) / 16);
 	vec3 midtone = vec3(texel);
 
     color = vec4(midtone * acc, material.alpha);

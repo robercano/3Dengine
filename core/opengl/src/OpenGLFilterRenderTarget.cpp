@@ -67,21 +67,12 @@ bool OpenGLFilterRenderTarget::init(uint32_t width, uint32_t height, uint32_t ma
     }
     GL( glBindTexture(GL_TEXTURE_2D, 0) );
 
-    /* Depth buffer */
-/*    GL( glGenRenderbuffers(1, &_depthBuffer) );
-    GL( glBindRenderbuffer(GL_RENDERBUFFER, _depthBuffer) );
-    {
-        GL( glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32, width, height) );
-    }
-    GL( glBindRenderbuffer(GL_RENDERBUFFER, 0) );
-    */
-
     /* Framebuffer to link everything together */
     GL( glGenFramebuffers(1, &_frameBuffer) );
     GL( glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer) );
     {
         GL( glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _colorBuffer, 0) );
-        GL( glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _depthBuffer) );
+        GL( glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _depthBuffer, 0) );
 
         GLenum status;
         if ((status = glCheckFramebufferStatus(GL_FRAMEBUFFER)) != GL_FRAMEBUFFER_COMPLETE) {

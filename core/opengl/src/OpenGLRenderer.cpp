@@ -78,6 +78,7 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
         /* Send our transformation to the currently bound shader, in the "MVP" uniform */
         shader.setUniformMat4("MVP", MVP);
         shader.setUniformMat4("view", camera.getViewMatrix());
+        shader.setUniformMat4("model", model3D.getModelMatrix());
         shader.setUniformTexture2D("diffuseMap", 0);
         shader.setUniformFloat("ambientK", ambientK);
 

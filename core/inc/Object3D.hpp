@@ -64,19 +64,15 @@ class Object3D
 		const glm::mat4 &getModelMatrix(void)
         {
             if (_modelValid == false) {
-				glm::mat4 tmp = glm::scale(glm::mat4(), _scale);
-				tmp = _orientation * tmp;
-                _model = glm::translate(tmp, _position);
+				_model = glm::scale(glm::translate(glm::mat4(), _position) * _orientation, _scale);
                 _modelValid = true;
             }
             return _model;
         }
-		virtual const glm::mat4 &getViewMatrix(void)
+		const glm::mat4 &getViewMatrix(void)
         {
             if (_viewValid == false) {
-                glm::mat4 translation = glm::translate(glm::mat4(), -_position);
-                _view = glm::scale( _orientation * translation, _scale );
-                _view = _orientation * translation;
+				_view = glm::translate(glm::scale(glm::mat4(), _scale) * _orientation, -_position);
                 _viewValid = true;
             }
             return _view;

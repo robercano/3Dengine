@@ -39,6 +39,7 @@ layout (std140) uniform Material {
 
 uniform sampler2D diffuseMap;
 uniform mat4 view;
+uniform mat4 model;
 
 in vec3 fragment_vertex;
 in vec3 fragment_normal;
@@ -57,42 +58,30 @@ void main()
 {
     float Ia, Id, Is;
     vec3 colorAmbient, colorDiffuse, colorSpecular;
-    mat4 model = mat4(1.0);
 
     /* Texel color */
     vec4 texel = texture(diffuseMap, fragment_uvcoord);
-    //texel = vec4(sRGB2Linear(texel.r),sRGB2Linear(texel.g),sRGB2Linear(texel.b), texel.a);
-
-    /* Calculate fragment position in world coordinates */
-    vec3 fragmentPos = vec3(model*vec4(fragment_vertex, 1));
 
     /* Ambient */
     Ia = clamp(ambientK, 0.0, 1.0);
 
     /* Vector to the camera */
-    mat3 rotMatView = mat3(view);
-    vec3 tmpCameraPos = vec3(view[3]);
-    vec3 cameraPos = -tmpCameraPos * rotMatView;
-    vec3 V = normalize(cameraPos - fragmentPos);
+    vec3 cameraPos = -vec3(view * vec4(0.0, 0.0, 0.0, 1.0));
+    vec3 V = normalize(cameraPos - fragment_vertex);
 
     vec3 acc = vec3(0.0);
+
+	vec3 N = fragment_normal;
 
 /* FOR */
 	uint nLights = min(numLights, MAX_LIGHTS);
 
     for (int i=0; i<nLights; i++) {
         /* Attenuation */
-        float attenuation = 1.0 / (1.0 + 0.00001 * pow(length(light[i].position - fragmentPos), 2));
+        float attenuation = 1.0 / (1.0 + 0.00001 * pow(length(light[i].position - fragment_vertex), 2));
 
         /* Light vector to fragment */
-        vec3 L = normalize(light[i].position - fragmentPos);
-
-        /* Calculate the normal matrix (excluding scaling and translation, centerd in origin) */
-        //mat3 normalMatrix = transpose(inverse(mat3(model)));
-
-        /* And now calculate the final normal */
-        /* TODO: this must be done in the vertex shader */
-        vec3 N = normalize(fragment_normal);
+        vec3 L = normalize(light[i].position - fragment_vertex);
 
         /* Normalized half vector for Blinn-Phong */
         vec3 H = normalize(L + V);
