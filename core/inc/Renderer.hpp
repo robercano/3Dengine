@@ -13,6 +13,7 @@
 #include "RenderTarget.hpp"
 #include "RendererModel3D.hpp"
 #include "Shader.hpp"
+#include "Camera.hpp"
 
 class Renderer
 {
@@ -57,9 +58,8 @@ class Renderer
 		 * @param projection	Projection matrix
 		 * @param view			View matrix
 		 */
-		virtual bool renderModel3D(RendererModel3D &model, Shader &shader,
-                                   std::vector<Light*> &lights, float ambientK,
-                                   const glm::mat4 &projection, const glm::mat4 &view,
+		virtual bool renderModel3D(RendererModel3D &model, Camera &camera,
+                                   Shader &shader, std::vector<Light*> &lights, float ambientK,
                                    RenderTarget &renderTarget) = 0;
 
 		/**

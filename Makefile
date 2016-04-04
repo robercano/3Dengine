@@ -19,6 +19,7 @@ VPATH=core/src:core/opengl/src:core/procedural/src:utils/src
 
 CORE_FILES=Game.cpp InputManager.cpp WindowManager.cpp TimeManager.cpp \
 		   OBJFormat.cpp \
+		   Model3D.cpp \
 		   TextConsole.cpp TrueTypeFont.cpp FreeTypeFont.cpp FontRenderer.cpp \
            Renderer.cpp NOAARenderTarget.cpp MSAARenderTarget.cpp SSAARenderTarget.cpp \
 		   FXAARenderTarget.cpp FXAA2RenderTarget.cpp FBRenderTarget.cpp \

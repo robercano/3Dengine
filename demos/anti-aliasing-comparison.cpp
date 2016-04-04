@@ -9,7 +9,7 @@
 #include "FXAARenderTarget.hpp"
 #include "FXAA2RenderTarget.hpp"
 #include "Camera.hpp"
-#include "FlyMotion.hpp"
+#include "WalkingMotion.hpp"
 
 #define PI 3.14159265358979323846
 
@@ -121,13 +121,12 @@ class AntiaAliasingDemo : public GameHandler
             /* Wrap the geometry for the renderer, this typically generates any
              * renderer API specific structures and uploads data to the graphics card */
             _model3D = game->getRenderer()->prepareModel3D(obj3D);
+            _model3D->setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
 
             /* Create the game camera */
             _camera.setProjection(45.0f, _width/(float)_height, 0.1f, 1000.0f);
-
-            /* Deadpool */
-			_cameraMotion.setPosition( glm::vec3(220.0f, 135.0f, -1.0f) );
-            _cameraMotion.rotateYaw(-90.0f);
+			_cameraMotion.setPosition( glm::vec3(150.0f, 100.0f, 150.0f) );
+            _cameraMotion.rotateYaw(-45.0f);
 
             return true;
         }
@@ -207,9 +206,7 @@ class AntiaAliasingDemo : public GameHandler
 			_cameraMotion.applyTo(_camera);
 
             /* Render all objects */
-            game->getRenderer()->renderModel3D(*_model3D, *_shader, _lights, 0.0,
-                                               _camera.getProjectionMatrix(), _camera.getViewMatrix(),
-                                               *_selectedRenderTarget);
+            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shader, _lights, 0.0, *_selectedRenderTarget);
 
             _selectedRenderTarget->blit(0, 0, _width, _height);
 
@@ -220,7 +217,7 @@ class AntiaAliasingDemo : public GameHandler
 
     private:
         Camera             _camera;
-		FlyMotion          _cameraMotion;
+		WalkingMotion      _cameraMotion;
         RendererModel3D    *_model3D;
         Shader             *_shader;
 		NOAARenderTarget   *_renderTargetNOAA;

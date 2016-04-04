@@ -26,6 +26,7 @@ class Model3D : public Object3D
 		 * Destructor
 		 */
 		virtual ~Model3D() {}
+        void normalize();
 
         const std::vector< Model3D::VertexData > &getVertexData() const
         {
@@ -54,6 +55,8 @@ class Model3D : public Object3D
 
     protected:
         Model3D() {}
+
+        void _calculateCenterOfMass(glm::vec3 &cm);
 
         /**
          * Object data

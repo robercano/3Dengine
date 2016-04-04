@@ -280,6 +280,9 @@ bool OBJFormat::load(const string &filename)
         _indicesCount.push_back(idx->size());
     }
 
+    /* And finally normalize the vertices */
+    normalize();
+
     printf("Loaded %s with %zu vertices and %zu faces\n", filename.c_str(), _modelData.size(), _modelIndices.size()/3);
 
 error_exit:

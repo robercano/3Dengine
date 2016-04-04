@@ -11,9 +11,10 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include "Object3D.hpp"
 #include "Model3D.hpp"
 
-class RendererModel3D
+class RendererModel3D : public Object3D
 {
 	public:
         virtual ~RendererModel3D() {}

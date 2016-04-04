@@ -46,18 +46,14 @@ RendererModel3D *OpenGLRenderer::prepareModel3D(const Model3D &model)
     return glObject;
 }
 
-bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Shader &shader,
-                                    std::vector<Light*> &lights, float ambientK,
-                                    const glm::mat4 &projection, const glm::mat4 &view,
-                                    RenderTarget &renderTarget)
+bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
+                                   Shader &shader, std::vector<Light*> &lights, float ambientK,
+                                   RenderTarget &renderTarget)
 {
 	uint32_t numLights = 0;
 
-	/* Model matrix : an identity matrix (model will be at the origin) */
-	glm::mat4 model = glm::mat4(1.0f);
-
 	/* Our ModelViewProjection : multiplication of our 3 matrices */
-	glm::mat4 MVP = projection * view * model; // Remember, matrix multiplication is the other way around
+	glm::mat4 MVP = camera.getProjectionMatrix() * camera.getViewMatrix() * model3D.getModelMatrix();
 
     /* Cast the model into an internal type */
     OpenGLModel3D &glObject = dynamic_cast<OpenGLModel3D&>(model3D);
@@ -81,7 +77,7 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Shader &shader,
 
         /* Send our transformation to the currently bound shader, in the "MVP" uniform */
         shader.setUniformMat4("MVP", MVP);
-        shader.setUniformMat4("view", view);
+        shader.setUniformMat4("view", camera.getViewMatrix());
         shader.setUniformTexture2D("diffuseMap", 0);
         shader.setUniformFloat("ambientK", ambientK);
 

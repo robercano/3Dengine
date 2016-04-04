@@ -31,7 +31,7 @@ class OpenGLModel3D : public RendererModel3D
         GLuint _vertexDataVBO;
         GLuint _indicesBO;
         std::vector<Material> _materials;
-        std::vector<uint32_t>   _texturesIDs;
+        std::vector<uint32_t> _texturesIDs;
         std::vector<uint32_t> _indicesOffsets;
         std::vector<uint32_t> _indicesCount;
 };

@@ -57,11 +57,6 @@ class Object3D
             _modelValid = false;
             _viewValid = false;
 		}
-		void normalize()
-		{
-			/* TODO */
-		}
-
 		const glm::vec3 &getPosition() { return _position; }
 		const glm::mat4 &getOrientation() { return _orientation; }
 		const glm::vec3 &getScaleFactor() { return _scale; }

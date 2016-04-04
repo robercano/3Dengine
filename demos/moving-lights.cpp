@@ -89,11 +89,12 @@ class AntiaAliasingDemo : public GameHandler
             /* Wrap the geometry for the renderer, this typically generates any
              * renderer API specific structures and uploads data to the graphics card */
             _model3D = game->getRenderer()->prepareModel3D(obj3D);
+            _model3D->setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
 
             /* Create the game camera */
             _camera.setProjection(45, _width/(float)_height, 0.1, 1000.0);
-            _cameraMotion.setPosition( glm::vec3(220.0f, 135.0f, -1.0f) );
-            _cameraMotion.rotateYaw(-90);
+			_cameraMotion.setPosition( glm::vec3(150.0f, 100.0f, 150.0f) );
+            _cameraMotion.rotateYaw(-45.0f);
 
             return true;
         }
@@ -160,9 +161,7 @@ class AntiaAliasingDemo : public GameHandler
 			_cameraMotion.applyTo(_camera);
 
             /* Render all objects */
-            game->getRenderer()->renderModel3D(*_model3D, *_shader, _lights, 0.0,
-                                                _camera.getProjectionMatrix(), _camera.getViewMatrix(),
-                                                *_renderTargetFXAA2);
+            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shader, _lights, 0.0, *_renderTargetFXAA2);
 
             _renderTargetFXAA2->blit(0, 0, _width, _height);
             return true;

@@ -13,8 +13,8 @@ class AntiaAliasingDemo : public GameHandler
 {
     public:
         AntiaAliasingDemo() {
-            _MouseSensibility = 3.0f;
-			_KeyboardSensibility = 0.03f;
+            _MouseSensibility = 10.0f;
+			_KeyboardSensibility = 0.1f;
 			_InvertMouse = 1.0;
 			_prevX = 0xFFFFFF;
 			_prevY = 0xFFFFFF;
@@ -81,13 +81,12 @@ class AntiaAliasingDemo : public GameHandler
             /* Wrap the geometry for the renderer, this typically generates any
              * renderer API specific structures and uploads data to the graphics card */
             _model3D = game->getRenderer()->prepareModel3D(obj3D);
+            _model3D->setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
 
             /* Create the game camera */
             _camera.setProjection(45, _width/(float)_height, 0.1, 1000.0);
-            /* Daxter */
-            _cameraMotion.setPosition( glm::vec3(-25.87f, 13.62f, 25.90f) );
-			_cameraMotion.rotatePitch(5.59f);
-			_cameraMotion.rotateYaw(46.07f);
+			_cameraMotion.setPosition( glm::vec3(150.0f, 100.0f, 150.0f) );
+            _cameraMotion.rotateYaw(-45.0f);
 
             return true;
         }
@@ -144,9 +143,7 @@ class AntiaAliasingDemo : public GameHandler
 			_cameraMotion.applyTo(_camera);
 
             /* Render all objects */
-            game->getRenderer()->renderModel3D(*_model3D, *_shader, _lights, 0.05,
-                                                _camera.getProjectionMatrix(), _camera.getViewMatrix(),
-                                                *_renderTargetFXAA2);
+            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shader, _lights, 0.05, *_renderTargetFXAA2);
 
             _renderTargetFXAA2->blit(0, 0, _width, _height);
             return true;
@@ -184,7 +181,7 @@ int main()
     }
 
     game->setHandler(&antiAliasingDemo);
-    game->setWindowSize(2560, 1440, true);
+    game->setWindowSize(800, 600, false);
     game->setFPS(60);
 
     if (game->init() == false) {
