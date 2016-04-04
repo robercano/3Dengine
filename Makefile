@@ -23,6 +23,7 @@ CORE_FILES=Game.cpp InputManager.cpp WindowManager.cpp TimeManager.cpp \
 		   TextConsole.cpp TrueTypeFont.cpp FreeTypeFont.cpp FontRenderer.cpp \
            Renderer.cpp NOAARenderTarget.cpp MSAARenderTarget.cpp SSAARenderTarget.cpp \
 		   FXAARenderTarget.cpp FXAA2RenderTarget.cpp FBRenderTarget.cpp \
+		   ToonRenderTarget.cpp \
 		   Shader.cpp \
 		   Camera.cpp \
 		   FlyMotion.cpp FreeFlyMotion.cpp WalkingMotion.cpp

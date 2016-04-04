@@ -4,6 +4,7 @@
 #include "OpenGL.h"
 #include "Shader.hpp"
 #include "FXAA2RenderTarget.hpp"
+#include "ToonRenderTarget.hpp"
 #include "Camera.hpp"
 #include "FlyMotion.hpp"
 
@@ -35,12 +36,22 @@ class AntiaAliasingDemo : public GameHandler
 			/* Create a render target to allow post-processing */
 			_renderTargetFXAA2 = FXAA2RenderTarget::New();
 			if (_renderTargetFXAA2 == NULL) {
-				fprintf(stderr, "ERROR allocating render target\n");
+				fprintf(stderr, "ERROR allocating fxaa2 render target\n");
 				return false;
 			}
 
 			_renderTargetFXAA2->init(_width, _height);
 			_renderTargetFXAA2->setClearColor(1.0, 1.0, 1.0, 0.0);
+
+            /* Create a render target for the toon processing */
+            _renderTargetToon = ToonRenderTarget::New();
+            if (_renderTargetToon == NULL) {
+				fprintf(stderr, "ERROR allocating toon render target\n");
+				return false;
+            }
+
+			_renderTargetToon->init(_width, _height);
+			_renderTargetToon->setClearColor(1.0, 1.0, 1.0, 0.0);
 
             /* Register the key and mouse listener */
 			std::vector<uint32_t> keys; // The keys should be read from a config file
@@ -155,6 +166,7 @@ class AntiaAliasingDemo : public GameHandler
         RendererModel3D    *_model3D;
         Shader             *_shader;
 		FXAA2RenderTarget  *_renderTargetFXAA2;
+		ToonRenderTarget   *_renderTargetToon;
 		std::string         _renderTargetName;
         std::vector<Light*> _lights;
 		InputManager        _inputManager;
