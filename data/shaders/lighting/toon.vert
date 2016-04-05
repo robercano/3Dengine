@@ -3,25 +3,26 @@
 //
 #version 330 core
 
-layout(location = 0) in vec3 vertex;
-layout(location = 1) in vec3 normal;
-layout(location = 2) in vec2 uvcoord;
+layout(location = 0) in vec3 in_vertex;
+layout(location = 1) in vec3 in_normal;
+layout(location = 2) in vec2 in_uvcoord;
 
-uniform mat4 MVP;
-uniform mat4 view;
-uniform mat4 model;
+uniform mat4 u_MVPMatrix;
+uniform mat4 u_normalMatrix;
+uniform mat4 u_viewMatrix;
+uniform mat4 u_modelMatrix;
 
-out vec3 fragment_vertex;
-out vec3 fragment_normal;
-out vec2 fragment_uvcoord;
+out vec3 io_fragVertex;
+out vec3 io_fragNormal;
+out vec2 io_fragUVCoord;
 
 void main()
 {
-	gl_Position    = MVP * vec4(vertex, 1);
-    fragment_vertex = vec3(model * vec4(vertex, 1.0f));
+	gl_Position     = u_MVPMatrix * vec4(in_vertex, 1.0f);
+    io_fragVertex = vec3(u_modelMatrix * vec4(in_vertex, 1.0f));
 
 	/* Calculate the normal matrix - account for non-uniform scale */
-    mat3 normalMatrix = transpose(inverse(mat3(model)));
-    fragment_normal = normalize(normalMatrix * normal);
-    fragment_uvcoord = uvcoord;
+    mat3 normalMatrix = transpose(inverse(mat3(u_modelMatrix)));
+    io_fragNormal = normalize(normalMatrix * in_normal);
+    io_fragUVCoord = in_uvcoord;
 }

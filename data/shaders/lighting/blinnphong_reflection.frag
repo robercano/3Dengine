@@ -1,8 +1,3 @@
-//
-// Roberto Cano (http://www.robertocano.es)
-//
-#version 400 core
-
 /* Phong reflection model implemented following the explanation
    at https://en.wikipedia.org/wiki/Phong_reflection_model and
    http://sunandblackcat.com/tipFullView.php?l=eng&topicid=30&topic=Phong-Lighting
@@ -12,6 +7,7 @@
 
    @author Roberto Cano
 */
+#version 400 core
 
 #define MAX_LIGHTS 10
 
@@ -21,12 +17,12 @@ layout (std140) uniform Light {
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
-} light[MAX_LIGHTS];
+} u_light[MAX_LIGHTS];
 
-uniform uint numLights;
+uniform uint u_numLights;
 
 /* Global scene ambient constant */
-uniform float ambientK;
+uniform float u_ambientK;
 
 /* Material definition for this geometry */
 layout (std140) uniform Material {
@@ -35,17 +31,20 @@ layout (std140) uniform Material {
     vec3 specular;
     float alpha;
     float shininess;
-} material;
+} u_material;
 
-uniform sampler2D diffuseMap;
-uniform mat4 view;
-uniform mat4 model;
+/* Texture and transformation matrices */
+uniform sampler2D u_diffuseMap;
+uniform mat4      u_viewMatrix;
+uniform mat4      u_modelMatrix;
 
-in vec3 fragment_vertex;
-in vec3 fragment_normal;
-in vec2 fragment_uvcoord;
+/* Input from vertex shader */
+in vec3 io_fragVertex;
+in vec3 io_fragNormal;
+in vec2 io_fragUVCoord;
 
-out vec4 color;
+/* Output of this shader */
+out vec4 o_color;
 
 float sRGB2Linear(float c) {
     if (c <= 0.04045) {
@@ -60,48 +59,58 @@ void main()
     vec3 colorAmbient, colorDiffuse, colorSpecular;
 
     /* Texel color */
-    vec4 texel = texture(diffuseMap, fragment_uvcoord);
+    vec3 texel = vec3(0.0f, 0.0f, 0.0f);
 
     /* Ambient */
-    Ia = clamp(ambientK, 0.0, 1.0);
+    Ia = clamp(u_ambientK, 0.0, 1.0);
 
-    /* Vector to the camera */
-    vec3 cameraPos = -vec3(view * vec4(0.0, 0.0, 0.0, 1.0));
-    vec3 V = normalize(cameraPos - fragment_vertex);
+    /* View vector to the fragment in world space */
+    vec3 cameraPos = -vec3(u_viewMatrix * vec4(0.0f, 0.0f, 0.0f, 1.0f));
+    vec3 V = normalize(cameraPos - io_fragVertex);
 
-    vec3 acc = vec3(0.0);
+    /* Normal and fragment position in view space */
+	vec3 Nv = normalize(vec3(u_viewMatrix * vec4(io_fragNormal, 0.0)));
+	vec3 Pv = normalize(-vec3(u_viewMatrix * vec4(io_fragVertex, 1.0)));
 
-	vec3 N = fragment_normal;
+    /* Accumulates the final intensities for the texel */
+    vec3 lightAcc = vec3(0.0);
 
-/* FOR */
-	uint nLights = min(numLights, MAX_LIGHTS);
+    /* Dot product of view vector and fragment normal in view space. If
+       result is close to 0 we decide it is an edge fragment and we paint it black */
+	if (dot(Nv, Pv) >= 0.3) {
+        texel = vec3(texture(u_diffuseMap, io_fragUVCoord));
 
-    for (int i=0; i<nLights; i++) {
-        /* Attenuation */
-        float attenuation = 1.0 / (1.0 + 0.00001 * pow(length(light[i].position - fragment_vertex), 2));
+        uint nLights = min(u_numLights, MAX_LIGHTS);
 
-        /* Light vector to fragment */
-        vec3 L = normalize(light[i].position - fragment_vertex);
+        for (int i=0; i<nLights; i++) {
+            vec3 unnormL = u_light[i].position - io_fragVertex;
 
-        /* Normalized half vector for Blinn-Phong */
-        vec3 H = normalize(L + V);
+            /* Attenuation */
+            float attenuation = 1.0 / (1.0 + 0.00001 * pow(length(unnormL), 2));
 
-        /* Diffuse + Specular */
-        Id = clamp(dot(L, N), 0.0, 1.0);
-        Is = clamp(pow(dot(N, H), material.shininess), 0.0, 1.0);
+            /* Light vector to fragment */
+            vec3 L = normalize(unnormL);
 
-        colorAmbient  = light[i].ambient*material.ambient*Ia;
-        colorDiffuse  = light[i].diffuse*material.diffuse*Id;
-        colorSpecular  = light[i].specular*material.specular*Is;
+            /* Normalized half vector for Blinn-Phong */
+            vec3 H = normalize(L + V);
 
-        if (dot(L, N) <= 0) {
-            colorSpecular = vec3(0.0);
+            /* Diffuse + Specular */
+            Id = clamp(dot(L, io_fragNormal), 0.0, 1.0);
+            Is = clamp(pow(dot(io_fragNormal, H), u_material.shininess), 0.0, 1.0);
+
+            colorAmbient   = u_light[i].ambient*u_material.ambient*Ia;
+            colorDiffuse   = u_light[i].diffuse*u_material.diffuse*Id;
+            colorSpecular  = u_light[i].specular*u_material.specular*Is;
+
+            if (dot(L, io_fragNormal) <= 0) {
+                colorSpecular = vec3(0.0);
+            }
+
+            /* Accumulate color components */
+            lightAcc += colorAmbient + attenuation*(colorDiffuse + colorSpecular);
         }
-
-        /* Accumulate color components */
-        acc += colorAmbient + attenuation*(colorDiffuse + colorSpecular);
     }
 
-    color = texel * vec4(acc, material.alpha);
+    o_color = vec4(texel * lightAcc, u_material.alpha);
 }
 

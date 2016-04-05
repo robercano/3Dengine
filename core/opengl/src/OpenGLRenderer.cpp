@@ -76,11 +76,11 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
         }
 
         /* Send our transformation to the currently bound shader, in the "MVP" uniform */
-        shader.setUniformMat4("MVP", MVP);
-        shader.setUniformMat4("view", camera.getViewMatrix());
-        shader.setUniformMat4("model", model3D.getModelMatrix());
-        shader.setUniformTexture2D("diffuseMap", 0);
-        shader.setUniformFloat("ambientK", ambientK);
+        shader.setUniformMat4("u_MVPMatrix", MVP);
+        shader.setUniformMat4("u_viewMatrix", camera.getViewMatrix());
+        shader.setUniformMat4("u_modelMatrix", model3D.getModelMatrix());
+        shader.setUniformTexture2D("u_diffuseMap", 0);
+        shader.setUniformFloat("u_ambientK", ambientK);
 
 		for (numLights=0; numLights<lights.size(); ++numLights) {
 			ShaderLight *shaderLight = shader.getLight(numLights);
@@ -90,7 +90,7 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
 			}
 			shaderLight->copyLight(*lights[numLights]);
 		}
-        shader.setUniformUint("numLights", numLights);
+        shader.setUniformUint("u_numLights", numLights);
 
         /* Draw the model */
         GL( glBindVertexArray(glObject.getVertexArrayID()) );
