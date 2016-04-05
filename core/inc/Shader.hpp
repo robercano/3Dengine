@@ -111,6 +111,7 @@ class Shader
 		 *         attribute cannot be found
 		 */
 		virtual bool setUniformMat4(const std::string &name, const glm::mat4 &value) = 0;
+		virtual bool setUniformMat3(const std::string &name, const glm::mat3 &value) = 0;
         virtual bool setUniformTexture2D(const std::string &name, uint32_t unitID) = 0;
         virtual bool setUniformFloat(const std::string &name, float value) = 0;
         virtual bool setUniformUint(const std::string &name, uint32_t value) = 0;

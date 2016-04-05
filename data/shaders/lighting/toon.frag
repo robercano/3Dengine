@@ -39,13 +39,13 @@ layout (std140) uniform Material {
 
 /* Texture and transformation matrices */
 uniform sampler2D u_diffuseMap;
-uniform mat4      u_viewMatrix;
-uniform mat4      u_modelMatrix;
 
 /* Input from vertex shader */
 in vec3 io_fragVertex;
 in vec3 io_fragNormal;
 in vec2 io_fragUVCoord;
+in vec3 io_viewNormal;
+in vec3 io_viewVertex;
 
 /* Output of this shader */
 out vec4 o_color;
@@ -78,20 +78,12 @@ void main()
     /* Ambient */
     Ia = toonify(clamp(u_ambientK, 0.0, 1.0));
 
-    /* View vector to the fragment in world space */
-    vec3 cameraPos = -vec3(u_viewMatrix * vec4(0.0f, 0.0f, 0.0f, 1.0f));
-    vec3 V = normalize(cameraPos - io_fragVertex);
-
-    /* Normal and fragment position in view space */
-	vec3 Nv = normalize(vec3(u_viewMatrix * vec4(io_fragNormal, 0.0)));
-	vec3 Pv = normalize(-vec3(u_viewMatrix * vec4(io_fragVertex, 1.0)));
-
     /* Accumulates the final intensities for the texel */
     vec3 lightAcc = vec3(0.0);
 
     /* Dot product of view vector and fragment normal in view space. If
        result is close to 0 we decide it is an edge fragment and we paint it black */
-	if (dot(Nv, Pv) >= 0.3) {
+	if (dot(io_viewNormal, io_viewVertex) >= 0.3) {
         texel = vec3(texture(u_diffuseMap, io_fragUVCoord));
 
         uint nLights = min(u_numLights, MAX_LIGHTS);
@@ -106,7 +98,7 @@ void main()
             vec3 L = normalize(unnormL);
 
             /* Normalized half vector for Blinn-Phong */
-            vec3 H = normalize(L + V);
+            vec3 H = normalize(L + io_viewVertex);
 
             /* Diffuse + Specular */
             Id = toonify(clamp(dot(L, io_fragNormal), 0.0, 1.0));

@@ -115,6 +115,7 @@ class OpenGLShader : public Shader
 		 *         attribute cannot be found
 		 */
 		bool setUniformMat4(const std::string &name, const glm::mat4 &value);
+		bool setUniformMat3(const std::string &name, const glm::mat3 &value);
         bool setUniformTexture2D(const std::string &name, uint32_t unitID);
         bool setUniformFloat(const std::string &name, float value);
         bool setUniformUint(const std::string &name, uint32_t value);

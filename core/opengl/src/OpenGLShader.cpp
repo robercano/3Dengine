@@ -225,6 +225,19 @@ bool OpenGLShader::setUniformMat4(const std::string &name, const glm::mat4 &valu
 	return true;
 }
 
+bool OpenGLShader::setUniformMat3(const std::string &name, const glm::mat3 &value)
+{
+	std::map<std::string, uint32_t>::iterator it = _uniformNames.find(name);
+
+	if (it == _uniformNames.end()) {
+		return false;
+	}
+
+	GL( glUniformMatrix3fv(it->second, 1, GL_FALSE, &value[0][0]) );
+	return true;
+}
+
+
 bool OpenGLShader::setUniformTexture2D(const std::string &name, uint32_t unitID)
 {
 	std::map<std::string, uint32_t>::iterator it = _uniformNames.find(name);

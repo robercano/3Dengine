@@ -52,8 +52,11 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
 {
 	uint32_t numLights = 0;
 
-	/* Our ModelViewProjection : multiplication of our 3 matrices */
+	/* Calculate MVP matrix */
 	glm::mat4 MVP = camera.getProjectionMatrix() * camera.getViewMatrix() * model3D.getModelMatrix();
+
+    /* Calculate normal matrix */
+    glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(model3D.getModelMatrix())));
 
     /* Cast the model into an internal type */
     OpenGLModel3D &glObject = dynamic_cast<OpenGLModel3D&>(model3D);
@@ -79,6 +82,7 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
         shader.setUniformMat4("u_MVPMatrix", MVP);
         shader.setUniformMat4("u_viewMatrix", camera.getViewMatrix());
         shader.setUniformMat4("u_modelMatrix", model3D.getModelMatrix());
+        shader.setUniformMat3("u_normalMatrix", normalMatrix);
         shader.setUniformTexture2D("u_diffuseMap", 0);
         shader.setUniformFloat("u_ambientK", ambientK);
 

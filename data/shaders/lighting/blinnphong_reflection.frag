@@ -42,6 +42,8 @@ uniform mat4      u_modelMatrix;
 in vec3 io_fragVertex;
 in vec3 io_fragNormal;
 in vec2 io_fragUVCoord;
+in vec3 io_viewNormal;
+in vec3 io_viewVertex;
 
 /* Output of this shader */
 out vec4 o_color;
@@ -58,9 +60,6 @@ void main()
     float Ia, Id, Is;
     vec3 colorAmbient, colorDiffuse, colorSpecular;
 
-    /* Texel color */
-    vec3 texel = vec3(0.0f, 0.0f, 0.0f);
-
     /* Ambient */
     Ia = clamp(u_ambientK, 0.0, 1.0);
 
@@ -68,49 +67,39 @@ void main()
     vec3 cameraPos = -vec3(u_viewMatrix * vec4(0.0f, 0.0f, 0.0f, 1.0f));
     vec3 V = normalize(cameraPos - io_fragVertex);
 
-    /* Normal and fragment position in view space */
-	vec3 Nv = normalize(vec3(u_viewMatrix * vec4(io_fragNormal, 0.0)));
-	vec3 Pv = normalize(-vec3(u_viewMatrix * vec4(io_fragVertex, 1.0)));
-
     /* Accumulates the final intensities for the texel */
     vec3 lightAcc = vec3(0.0);
 
-    /* Dot product of view vector and fragment normal in view space. If
-       result is close to 0 we decide it is an edge fragment and we paint it black */
-	if (dot(Nv, Pv) >= 0.3) {
-        texel = vec3(texture(u_diffuseMap, io_fragUVCoord));
+    uint nLights = min(u_numLights, MAX_LIGHTS);
 
-        uint nLights = min(u_numLights, MAX_LIGHTS);
+    for (int i=0; i<nLights; i++) {
+        vec3 unnormL = u_light[i].position - io_fragVertex;
 
-        for (int i=0; i<nLights; i++) {
-            vec3 unnormL = u_light[i].position - io_fragVertex;
+        /* Attenuation */
+        float attenuation = 1.0 / (1.0 + 0.00001 * pow(length(unnormL), 2));
 
-            /* Attenuation */
-            float attenuation = 1.0 / (1.0 + 0.00001 * pow(length(unnormL), 2));
+        /* Light vector to fragment */
+        vec3 L = normalize(unnormL);
 
-            /* Light vector to fragment */
-            vec3 L = normalize(unnormL);
+        /* Normalized half vector for Blinn-Phong */
+        vec3 H = normalize(L + V);
 
-            /* Normalized half vector for Blinn-Phong */
-            vec3 H = normalize(L + V);
+        /* Diffuse + Specular */
+        Id = clamp(dot(L, io_fragNormal), 0.0, 1.0);
+        Is = clamp(pow(dot(io_fragNormal, H), u_material.shininess), 0.0, 1.0);
 
-            /* Diffuse + Specular */
-            Id = clamp(dot(L, io_fragNormal), 0.0, 1.0);
-            Is = clamp(pow(dot(io_fragNormal, H), u_material.shininess), 0.0, 1.0);
+        colorAmbient   = u_light[i].ambient*u_material.ambient*Ia;
+        colorDiffuse   = u_light[i].diffuse*u_material.diffuse*Id;
+        colorSpecular  = u_light[i].specular*u_material.specular*Is;
 
-            colorAmbient   = u_light[i].ambient*u_material.ambient*Ia;
-            colorDiffuse   = u_light[i].diffuse*u_material.diffuse*Id;
-            colorSpecular  = u_light[i].specular*u_material.specular*Is;
-
-            if (dot(L, io_fragNormal) <= 0) {
-                colorSpecular = vec3(0.0);
-            }
-
-            /* Accumulate color components */
-            lightAcc += colorAmbient + attenuation*(colorDiffuse + colorSpecular);
+        if (dot(L, io_fragNormal) <= 0) {
+            colorSpecular = vec3(0.0);
         }
+
+        /* Accumulate color components */
+        lightAcc += colorAmbient + attenuation*(colorDiffuse + colorSpecular);
     }
 
-    o_color = vec4(texel * lightAcc, u_material.alpha);
+    o_color = vec4(vec3(texture(u_diffuseMap, io_fragUVCoord)) * lightAcc, u_material.alpha);
 }
 
