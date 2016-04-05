@@ -116,5 +116,6 @@ class Shader
         virtual bool setUniformFloat(const std::string &name, float value) = 0;
         virtual bool setUniformUint(const std::string &name, uint32_t value) = 0;
         virtual bool setUniformVec4(const std::string &name, glm::vec4 &value) = 0;
+        virtual bool setUniformVec3(const std::string &name, glm::vec3 &value) = 0;
         virtual bool setUniformVec2(const std::string &name, glm::vec2 &value) = 0;
 };

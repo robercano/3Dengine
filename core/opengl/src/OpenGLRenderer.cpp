@@ -48,7 +48,7 @@ RendererModel3D *OpenGLRenderer::prepareModel3D(const Model3D &model)
 
 bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
                                    Shader &shader, std::vector<Light*> &lights, float ambientK,
-                                   RenderTarget &renderTarget)
+                                   RenderTarget &renderTarget, bool disableDepth)
 {
 	uint32_t numLights = 0;
 
@@ -61,8 +61,11 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
     /* Cast the model into an internal type */
     OpenGLModel3D &glObject = dynamic_cast<OpenGLModel3D&>(model3D);
 
-	renderTarget.clear();
-
+    if (disableDepth) {
+        glDisable(GL_DEPTH_TEST);
+    } else {
+        glEnable(GL_DEPTH_TEST);
+    }
     /* Bind the render target */
     renderTarget.bind();
     {

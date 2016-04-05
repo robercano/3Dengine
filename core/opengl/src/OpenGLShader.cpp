@@ -274,18 +274,6 @@ bool OpenGLShader::setUniformUint(const std::string &name, uint32_t value)
     return true;
 }
 
-bool OpenGLShader::setUniformVec2(const std::string &name, glm::vec2 &value)
-{
-	std::map<std::string, uint32_t>::iterator it = _uniformNames.find(name);
-
-	if (it == _uniformNames.end()) {
-		return false;
-	}
-
-    GL( glUniform2fv(it->second, 1, &value[0]) );
-    return true;
-}
-
 bool OpenGLShader::setUniformVec4(const std::string &name, glm::vec4 &value)
 {
 	std::map<std::string, uint32_t>::iterator it = _uniformNames.find(name);
@@ -295,6 +283,30 @@ bool OpenGLShader::setUniformVec4(const std::string &name, glm::vec4 &value)
 	}
 
     GL( glUniform4fv(it->second, 1, &value[0]) );
+    return true;
+}
+
+bool OpenGLShader::setUniformVec3(const std::string &name, glm::vec3 &value)
+{
+	std::map<std::string, uint32_t>::iterator it = _uniformNames.find(name);
+
+	if (it == _uniformNames.end()) {
+		return false;
+	}
+
+    GL( glUniform3fv(it->second, 1, &value[0]) );
+    return true;
+}
+
+bool OpenGLShader::setUniformVec2(const std::string &name, glm::vec2 &value)
+{
+	std::map<std::string, uint32_t>::iterator it = _uniformNames.find(name);
+
+	if (it == _uniformNames.end()) {
+		return false;
+	}
+
+    GL( glUniform2fv(it->second, 1, &value[0]) );
     return true;
 }
 

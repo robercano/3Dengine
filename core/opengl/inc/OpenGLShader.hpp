@@ -120,6 +120,7 @@ class OpenGLShader : public Shader
         bool setUniformFloat(const std::string &name, float value);
         bool setUniformUint(const std::string &name, uint32_t value);
         bool setUniformVec4(const std::string &name, glm::vec4 &value);
+        bool setUniformVec3(const std::string &name, glm::vec3 &value);
         bool setUniformVec2(const std::string &name, glm::vec2 &value);
 
 	private:

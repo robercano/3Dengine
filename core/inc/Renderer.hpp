@@ -60,7 +60,7 @@ class Renderer
 		 */
 		virtual bool renderModel3D(RendererModel3D &model, Camera &camera,
                                    Shader &shader, std::vector<Light*> &lights, float ambientK,
-                                   RenderTarget &renderTarget) = 0;
+                                   RenderTarget &renderTarget, bool disableDepth = false) = 0;
 
 		/**
 		 * Adjusts the renderer's display size

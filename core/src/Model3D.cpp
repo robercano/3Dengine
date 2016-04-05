@@ -26,7 +26,6 @@ void Model3D::normalize()
     _calculateCenterOfMass(cm);
 
     /* Substract the center of mass to all vertices */
-    float min_Y = std::numeric_limits<float>::infinity();
     float max_length = std::numeric_limits<float>::min();
 
     for (it = _modelData.begin(); it != _modelData.end(); ++it) {
@@ -37,18 +36,11 @@ void Model3D::normalize()
         if (length > max_length) {
             max_length = length;
         }
-
-        /* Calculate minimum Y coordinate */
-        if (it->vertex.y < min_Y) {
-            min_Y = it->vertex.y;
-        }
     }
 
-    /* Finally bottom of model to the XZ plane by substracting min_Y
-     * and then divide by max_length to make the model fit in a sphere
+    /* Finally divide by max_length to make the model fit in a sphere
      * of radius 1.0 */
     for (it = _modelData.begin(); it != _modelData.end(); ++it) {
-        it->vertex.y -= min_Y;
         it->vertex /= max_length;
     }
 }
