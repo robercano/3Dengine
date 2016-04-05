@@ -107,14 +107,16 @@ uint32_t OpenGLMSAARenderTarget::getMaxSamples()
     return (uint32_t)samples;
 }
 
-bool OpenGLMSAARenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height)
+bool OpenGLMSAARenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height, bool bindMainFB)
 {
     if ((width-dstX) != _width || (height-dstY) != _height) {
         fprintf(stderr, "ERROR in OpenGLMSAARenderTarget::blit() different size for src and dest\n");
         return false;
     }
     GL( glBindFramebuffer(GL_READ_FRAMEBUFFER, _frameBuffer) );
-    GL( glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0) );
+	if (bindMainFB) {
+		GL( glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0) );
+	}
     /* As this is a multi-sample buffer source and destination rectangles must be of
      * the same size, thus we always use GL_NEAREST and blit color and depth at the same time */
     GL( glBlitFramebuffer(0, 0, _width, _height, dstX, dstY, width, height, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST) );

@@ -30,6 +30,7 @@ void OpenGLRenderer::init()
 #define GL_MULTISAMPLE_ARB 0x809D
     GL( glDisable(GL_MULTISAMPLE_ARB)  );
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glDepthRangef(0.1f, 1000.0f);
 }
 
 Shader * OpenGLRenderer::newShader(void)

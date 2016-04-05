@@ -208,6 +208,7 @@ class AntiaAliasingDemo : public GameHandler
 			_cameraMotion.applyTo(_camera);
 
             /* Render all objects */
+			_selectedRenderTarget->clear();
             game->getRenderer()->renderModel3D(*_model3D, _camera, *_shader, _lights, 0.0, *_selectedRenderTarget);
 
             _selectedRenderTarget->blit(0, 0, _width, _height);
@@ -252,7 +253,7 @@ int main()
     }
 
     game->setHandler(&antiAliasingDemo);
-    game->setWindowSize(800, 600, false);
+    game->setWindowSize(2560, 1440, true);
     game->setFPS(60);
 
     if (game->init() == false) {

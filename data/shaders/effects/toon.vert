@@ -15,7 +15,7 @@ uniform mat3 u_normalMatrix;
 
 void main()
 {
-    vec3 scale = vec3(1.03, 1.03, 1.03);
+    vec3 scale = vec3(1.05, 1.05, 1.05);
 	//gl_Position = u_MVPMatrix * scale * vec4(in_vertex, 1.0f);
 	gl_Position = u_MVPMatrix * vec4(scale * in_vertex, 1.0f);
 }

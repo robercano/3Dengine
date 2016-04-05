@@ -109,10 +109,12 @@ void OpenGLSSAARenderTarget::unbind()
     GL( glBindFramebuffer(GL_FRAMEBUFFER, 0) );
 }
 
-bool OpenGLSSAARenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height)
+bool OpenGLSSAARenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height, bool bindMainFB)
 {
     glBindFramebuffer(GL_READ_FRAMEBUFFER, _frameBuffer);
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	if (bindMainFB) {
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	}
     glBlitFramebuffer(0, 0, _width, _height, dstX, dstY, width, height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
     glBlitFramebuffer(0, 0, _width, _height, dstX, dstY, width, height, GL_DEPTH_BUFFER_BIT, GL_LINEAR);
     glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);

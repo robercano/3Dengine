@@ -77,10 +77,12 @@ void OpenGLFBRenderTarget::unbind()
     GL( glBindFramebuffer(GL_FRAMEBUFFER, 0) );
 }
 
-bool OpenGLFBRenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height)
+bool OpenGLFBRenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height, bool bindMainFB)
 {
     GL( glBindFramebuffer(GL_READ_FRAMEBUFFER, _frameBuffer) );
-    GL( glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0) );
+	if (bindMainFB) {
+		GL( glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0) );
+	}
     GL( glEnable(GL_BLEND) );
     GL( glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA) );
 

@@ -83,7 +83,7 @@ void main()
 
     /* Dot product of view vector and fragment normal in view space. If
        result is close to 0 we decide it is an edge fragment and we paint it black */
-	if (dot(io_viewNormal, io_viewVertex) >= 0.3) {
+	if (dot(io_viewNormal, io_viewVertex) >= 0.2) {
         texel = vec3(texture(u_diffuseMap, io_fragUVCoord));
 
         uint nLights = min(u_numLights, MAX_LIGHTS);

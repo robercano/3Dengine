@@ -167,6 +167,8 @@ class AntiaAliasingDemo : public GameHandler
 			_cameraMotion.applyTo(_camera);
 
             /* Render all objects */
+			_selectedTargetLeft->clear();
+			_selectedTargetRight->clear();
             game->getRenderer()->renderModel3D(*_model3D, _camera, *_shader, _lights, 0.0, *_selectedTargetLeft);
             game->getRenderer()->renderModel3D(*_model3D, _camera, *_shader, _lights, 0.0, *_selectedTargetRight);
 

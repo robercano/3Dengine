@@ -25,5 +25,5 @@ class MSAARenderTarget : public RenderTarget
         virtual void bind() = 0;
         virtual void unbind() = 0;
         virtual void clear() = 0;
-        virtual bool blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height) = 0;
+        virtual bool blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height, bool bindMainFB = true) = 0;
 };

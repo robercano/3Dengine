@@ -4,6 +4,7 @@
 #include "OpenGL.h"
 #include "Shader.hpp"
 #include "FXAA2RenderTarget.hpp"
+#include "ToonRenderTarget.hpp"
 #include "Camera.hpp"
 #include "FlyMotion.hpp"
 
@@ -41,6 +42,16 @@ class AntiaAliasingDemo : public GameHandler
 
 			_renderTargetFXAA2->init(_width, _height);
 			_renderTargetFXAA2->setClearColor(1.0, 1.0, 1.0, 0.0);
+
+			/* Create the toon target to add a border */
+			_renderTargetToon = ToonRenderTarget::New();
+			if (_renderTargetToon == NULL) {
+				fprintf(stderr, "ERROR allocating toon render target\n");
+				return false;
+			}
+
+			_renderTargetToon->init(_width, _height);
+			_renderTargetToon->setClearColor(1.0, 1.0, 1.0, 1.0);
 
             /* Register the key and mouse listener */
 			std::vector<uint32_t> keys; // The keys should be read from a config file
@@ -148,11 +159,14 @@ class AntiaAliasingDemo : public GameHandler
 			_cameraMotion.applyTo(_camera);
 
             _renderTargetFXAA2->clear();
+            _renderTargetToon->clear();
 
             /* Render all objects */
-            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderBorder, _lights, 0.05, *_renderTargetFXAA2, true);
-            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderLight, _lights, 0.05, *_renderTargetFXAA2);
-            _renderTargetFXAA2->blit(0, 0, _width, _height);
+            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderLight, _lights, 0.05, *_renderTargetToon);
+
+			_renderTargetFXAA2->bind();
+            _renderTargetToon->blit(0, 0, _width, _height, false);
+			_renderTargetFXAA2->blit();
             return true;
         }
 
@@ -163,6 +177,7 @@ class AntiaAliasingDemo : public GameHandler
         Shader             *_shaderLight;
         Shader             *_shaderBorder;
 		FXAA2RenderTarget  *_renderTargetFXAA2;
+		ToonRenderTarget   *_renderTargetToon;
 		std::string         _renderTargetName;
         std::vector<Light*> _lights;
 		InputManager        _inputManager;
@@ -189,7 +204,7 @@ int main()
     }
 
     game->setHandler(&antiAliasingDemo);
-    game->setWindowSize(800, 600, false);
+    game->setWindowSize(2560, 1440, true);
     game->setFPS(60);
 
     if (game->init() == false) {
