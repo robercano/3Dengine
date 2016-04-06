@@ -14,6 +14,9 @@
 #version 400 core
 
 #define MAX_LIGHTS 10
+/* -1.0..1.0 */
+//#define EFFECT_STRENGTH 0.2
+#define EFFECT_STRENGTH -1.0
 
 /* Light definition */
 layout (std140) uniform Light {
@@ -83,7 +86,7 @@ void main()
 
     /* Dot product of view vector and fragment normal in view space. If
        result is close to 0 we decide it is an edge fragment and we paint it black */
-	if (dot(io_viewNormal, io_viewVertex) >= 0.2) {
+	if (dot(io_viewNormal, io_viewVertex) >= EFFECT_STRENGTH) {
         texel = vec3(texture(u_diffuseMap, io_fragUVCoord));
 
         uint nLights = min(u_numLights, MAX_LIGHTS);
