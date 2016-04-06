@@ -162,7 +162,7 @@ class AntiaAliasingDemo : public GameHandler
             _renderTargetToon->clear();
 
             /* Render all objects */
-            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderLight, _lights, 0.05, *_renderTargetToon);
+            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderLight, _lights, 0.2, *_renderTargetToon);
 
 			_renderTargetFXAA2->bind();
             _renderTargetToon->blit(0, 0, _width, _height, false);
@@ -204,7 +204,7 @@ int main()
     }
 
     game->setHandler(&antiAliasingDemo);
-    game->setWindowSize(800, 600, false);
+    game->setWindowSize(2560, 1440, true);
     game->setFPS(60);
 
     if (game->init() == false) {

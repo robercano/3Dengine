@@ -14,9 +14,14 @@
 #version 400 core
 
 #define MAX_LIGHTS 10
-/* -1.0..1.0 */
-//#define EFFECT_STRENGTH 0.2
-#define EFFECT_STRENGTH -1.0
+
+/* Effect strength of the shader. It ranges from -1.0..1.0 and
+   determines how much border is added to the model */
+#define EFFECT_STRENGTH -1.1
+
+/* Enables the discretization of the intensity values to
+   achieve a toonified ilumination */
+#define ENABLE_TOON_LIGHT 1
 
 /* Light definition */
 layout (std140) uniform Light {
@@ -62,12 +67,16 @@ float sRGB2Linear(float c) {
 
 float toonify(float intensity)
 {
+#if ENABLE_TOON_LIGHT
 	if (intensity < 0.0001) return 0.0;
 	else if (intensity < 0.25) return 0.125;
 	else if (intensity < 0.5) return 0.375;
 	else if (intensity < 0.75) return 0.625;
 	else if (intensity < 0.99) return 0.875;
 	else return 1.0;
+#else
+	return intensity;
+#endif
 }
 
 void main()
