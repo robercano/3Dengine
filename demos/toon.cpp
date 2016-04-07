@@ -72,18 +72,22 @@ class AntiaAliasingDemo : public GameHandler
 			game->getWindowManager()->getMouseManager()->registerListener(_inputManager);
 
             /* Create a Blinn-phong shader for the geometry */
-            _shaderLight = Shader::New();
-            _shaderBorder = Shader::New();
+            _shaderBlinnLight = Shader::New();
+            _shaderToonLight  = Shader::New();
 
             std::string error;
-            if (_shaderLight->use("lighting/toon", error) == false) {
+            if (_shaderToonLight->use("lighting/toon", error) == false) {
                 printf("ERROR compiling shader lighting/toon: %s\n", error.c_str());
                 return false;
             }
-            if (_shaderBorder->use("effects/toon", error) == false) {
-                printf("ERROR compiling shader lighting/toon: %s\n", error.c_str());
+            if (_shaderBlinnLight->use("lighting/blinnphong_reflection", error) == false) {
+                printf("ERROR compiling shader lighting/blinnphong_reflection: %s\n", error.c_str());
                 return false;
             }
+
+            _shaderLight = _shaderBlinnLight;
+            _renderTarget = _renderTargetFXAA2;
+            _current = "Normal";
 
             /* Load the geometry */
             std::string meshPath = "data/objects/daxter";
@@ -128,6 +132,21 @@ class AntiaAliasingDemo : public GameHandler
             if (_inputManager._keys['R']) {
                 game->resetStats();
             }
+            if (_inputManager._keys['1']) {
+                _shaderLight = _shaderBlinnLight;
+                _renderTarget = _renderTargetFXAA2;
+                _current = "Normal";
+            }
+            if (_inputManager._keys['2']) {
+                _shaderLight = _shaderToonLight;
+                _renderTarget = _renderTargetFXAA2;
+                _current = "ToonLight";
+            }
+            if (_inputManager._keys['3']) {
+                _shaderLight = _shaderToonLight;
+                _renderTarget = _renderTargetToon;
+                _current = "ToonLight+Filter";
+            }
 
 			/* Mouse */
 			if (_prevX == 0xFFFFFF) {
@@ -158,15 +177,14 @@ class AntiaAliasingDemo : public GameHandler
 			/* Apply the motion to the camera */
 			_cameraMotion.applyTo(_camera);
 
-            _renderTargetFXAA2->clear();
-            _renderTargetToon->clear();
+            _renderTarget->clear();
 
             /* Render all objects */
-            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderLight, _lights, 0.2, *_renderTargetToon);
+            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderLight, _lights, 0.2, *_renderTarget);
+            game->getTextConsole()->gprintf("Current = %s\n", _current.c_str());
+            game->getTextConsole()->gprintf("1=Normal, 2=ToonLight, 3=ToonLight+Filter\n");
 
-			_renderTargetFXAA2->bind();
-            _renderTargetToon->blit(0, 0, _width, _height, false);
-			_renderTargetFXAA2->blit();
+            _renderTarget->blit();
             return true;
         }
 
@@ -175,12 +193,15 @@ class AntiaAliasingDemo : public GameHandler
 		FlyMotion          _cameraMotion;
         RendererModel3D    *_model3D;
         Shader             *_shaderLight;
-        Shader             *_shaderBorder;
+        Shader             *_shaderBlinnLight;
+        Shader             *_shaderToonLight;
+        RenderTarget       *_renderTarget;
 		FXAA2RenderTarget  *_renderTargetFXAA2;
 		ToonRenderTarget   *_renderTargetToon;
 		std::string         _renderTargetName;
         std::vector<Light*> _lights;
 		InputManager        _inputManager;
+        std::string         _current;
 
         float _MouseSensibility;
         float _KeyboardSensibility;
@@ -204,7 +225,7 @@ int main()
     }
 
     game->setHandler(&antiAliasingDemo);
-    game->setWindowSize(2560, 1440, true);
+    game->setWindowSize(800, 600, false);
     game->setFPS(60);
 
     if (game->init() == false) {
