@@ -21,10 +21,11 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{FFE84D7E-D7BB-49E7-AB8F-05565EB49F7E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
@@ -84,7 +85,7 @@
       <TargetMachine>MachineX86</TargetMachine>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>glfw3.lib;glfw3dll.lib;glew32.lib;opengl32.lib;freetype.lib;jpeg.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;glfw3dll.lib;glew32.lib;opengl32.lib;freetype.lib;jpeg.lib;zlib.lib;libpng.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\Users\rcano\Development\3Dengine_priv\3rdparty\lib</AdditionalLibraryDirectories>
       <AddModuleNamesToAssembly>
       </AddModuleNamesToAssembly>
@@ -122,8 +123,8 @@
     <ClCompile Include="core\opengl\src\OpenGLFBRenderTarget.cpp" />
     <ClCompile Include="core\opengl\src\OpenGLFilterRenderTarget.cpp" />
     <ClCompile Include="core\opengl\src\OpenGLFontRenderer.cpp" />
+    <ClCompile Include="core\opengl\src\OpenGLModel3D.cpp" />
     <ClCompile Include="core\opengl\src\OpenGLMSAARenderTarget.cpp" />
-    <ClCompile Include="core\opengl\src\OpenGLObject3D.cpp" />
     <ClCompile Include="core\opengl\src\OpenGLRenderer.cpp" />
     <ClCompile Include="core\opengl\src\OpenGLShader.cpp" />
     <ClCompile Include="core\opengl\src\OpenGLShaderLight.cpp" />
@@ -132,14 +133,15 @@
     <ClCompile Include="core\opengl\src\OpenGLUniformBlock.cpp" />
     <ClCompile Include="core\src\Camera.cpp" />
     <ClCompile Include="core\src\FBRenderTarget.cpp" />
-    <ClCompile Include="core\src\FlyCamera.cpp" />
+    <ClCompile Include="core\src\FlyMotion.cpp" />
     <ClCompile Include="core\src\FontRenderer.cpp" />
-    <ClCompile Include="core\src\FreeFlyCamera.cpp" />
+    <ClCompile Include="core\src\FreeFlyMotion.cpp" />
     <ClCompile Include="core\src\FreeTypeFont.cpp" />
     <ClCompile Include="core\src\FXAA2RenderTarget.cpp" />
     <ClCompile Include="core\src\FXAARenderTarget.cpp" />
     <ClCompile Include="core\src\Game.cpp" />
     <ClCompile Include="core\src\InputManager.cpp" />
+    <ClCompile Include="core\src\Model3D.cpp" />
     <ClCompile Include="core\src\MSAARenderTarget.cpp" />
     <ClCompile Include="core\src\NOAARenderTarget.cpp" />
     <ClCompile Include="core\src\OBJFormat.cpp" />
@@ -148,11 +150,11 @@
     <ClCompile Include="core\src\SSAARenderTarget.cpp" />
     <ClCompile Include="core\src\TextConsole.cpp" />
     <ClCompile Include="core\src\TimeManager.cpp" />
+    <ClCompile Include="core\src\ToonRenderTarget.cpp" />
     <ClCompile Include="core\src\TrueTypeFont.cpp" />
-    <ClCompile Include="core\src\WalkingCamera.cpp" />
+    <ClCompile Include="core\src\WalkingMotion.cpp" />
     <ClCompile Include="core\src\WindowManager.cpp" />
-    <ClCompile Include="demos\anti-aliasing-comparison.cpp" />
-    <ClCompile Include="utils\src\JPEGLoader.c" />
+    <ClCompile Include="utils\src\ImageLoaders.c" />
     <ClCompile Include="utils\src\MathUtils.c" />
   </ItemGroup>
   <ItemGroup>
@@ -280,23 +282,26 @@
     <ClInclude Include="3rdparty\glm\virtrev\xstream.hpp" />
     <ClInclude Include="core\inc\Camera.hpp" />
     <ClInclude Include="core\inc\FBRenderTarget.hpp" />
-    <ClInclude Include="core\inc\FlyCamera.hpp" />
+    <ClInclude Include="core\inc\FlyMotion.hpp" />
     <ClInclude Include="core\inc\FontRenderer.hpp" />
-    <ClInclude Include="core\inc\FreeFlyCamera.hpp" />
+    <ClInclude Include="core\inc\FreeFlyMotion.hpp" />
     <ClInclude Include="core\inc\FreeTypeFont.hpp" />
     <ClInclude Include="core\inc\FXAA2RenderTarget.hpp" />
     <ClInclude Include="core\inc\FXAARenderTarget.hpp" />
+    <ClInclude Include="core\inc\Game.hpp" />
     <ClInclude Include="core\inc\InputManager.hpp" />
     <ClInclude Include="core\inc\KeyManager.hpp" />
     <ClInclude Include="core\inc\Light.hpp" />
     <ClInclude Include="core\inc\Material.hpp" />
+    <ClInclude Include="core\inc\Model3D.hpp" />
+    <ClInclude Include="core\inc\Motion.hpp" />
     <ClInclude Include="core\inc\MouseManager.hpp" />
     <ClInclude Include="core\inc\MSAARenderTarget.hpp" />
     <ClInclude Include="core\inc\NOAARenderTarget.hpp" />
     <ClInclude Include="core\inc\Object3D.hpp" />
     <ClInclude Include="core\inc\OBJFormat.hpp" />
     <ClInclude Include="core\inc\Renderer.hpp" />
-    <ClInclude Include="core\inc\RendererObject3D.hpp" />
+    <ClInclude Include="core\inc\RendererModel3D.hpp" />
     <ClInclude Include="core\inc\RenderTarget.hpp" />
     <ClInclude Include="core\inc\Shader.hpp" />
     <ClInclude Include="core\inc\ShaderLight.hpp" />
@@ -304,27 +309,32 @@
     <ClInclude Include="core\inc\SSAARenderTarget.hpp" />
     <ClInclude Include="core\inc\TextConsole.hpp" />
     <ClInclude Include="core\inc\Texture.hpp" />
+    <ClInclude Include="core\inc\TimeManager.hpp" />
+    <ClInclude Include="core\inc\ToonRenderTarget.hpp" />
     <ClInclude Include="core\inc\TrueTypeFont.hpp" />
-    <ClInclude Include="core\inc\WalkingCamera.hpp" />
+    <ClInclude Include="core\inc\WalkingMotion.hpp" />
     <ClInclude Include="core\inc\WindowManager.hpp" />
     <ClInclude Include="core\opengl\inc\GLFWKeyManager.hpp" />
     <ClInclude Include="core\opengl\inc\GLFWMouseManager.hpp" />
+    <ClInclude Include="core\opengl\inc\GLFWTimeManager.hpp" />
     <ClInclude Include="core\opengl\inc\GLFWWindowManager.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGL.h" />
     <ClInclude Include="core\opengl\inc\OpenGLFBRenderTarget.hpp" />
+    <ClInclude Include="core\opengl\inc\OpenGLFilterRenderTarget.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLFontRenderer.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLFXAA2RenderTarget.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLFXAARenderTarget.hpp" />
+    <ClInclude Include="core\opengl\inc\OpenGLModel3D.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLMSAARenderTarget.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLNOAARenderTarget.hpp" />
-    <ClInclude Include="core\opengl\inc\OpenGLObject3D.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLRenderer.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLShader.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLShaderLight.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLShaderMaterial.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLSSAARenderTarget.hpp" />
+    <ClInclude Include="core\opengl\inc\OpenGLToonRenderTarget.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLUniformBlock.hpp" />
-    <ClInclude Include="utils\inc\JPEGLoader.h" />
+    <ClInclude Include="utils\inc\ImageLoaders.h" />
     <ClInclude Include="utils\inc\MathUtils.h" />
   </ItemGroup>
   <ItemGroup>

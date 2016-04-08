@@ -109,10 +109,10 @@ int loadJPEG(const char *filename, uint8_t **image, uint32_t *width, uint32_t *h
 
 int loadPNG(const char *filename, uint8_t **image, uint32_t *width, uint32_t *height, uint32_t *bytesPerPixel)
 {
-	int x, y;
-	int ret = 0;
+	uint32_t y;
+	uint32_t ret = 0;
 	//png_byte color_type;
-	png_byte bit_depth;
+	//png_byte bit_depth;
 	png_structp png_ptr;
 	png_infop info_ptr;
 	//int number_of_passes;

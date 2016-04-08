@@ -104,7 +104,7 @@ class AntiaAliasingDemo : public GameHandler
             _model3D->setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
 
             /* Create the game camera */
-            _camera.setProjection(45, _width/(float)_height, 0.1, 1000.0);
+            _camera.setProjection(45, _width/(float)_height, 0.1f, 1000.0f);
 			_cameraMotion.setPosition( glm::vec3(150.0f, 100.0f, 150.0f) );
             _cameraMotion.rotateYaw(-45.0f);
 
@@ -118,16 +118,16 @@ class AntiaAliasingDemo : public GameHandler
                 return false;
             }
             if (_inputManager._keys['W']) {
-                _cameraMotion.forward(_KeyboardSensibility*elapsedMs);
+                _cameraMotion.forward(_KeyboardSensibility*(float)elapsedMs);
             }
             if (_inputManager._keys['S']) {
-                _cameraMotion.forward(-_KeyboardSensibility*elapsedMs);
+                _cameraMotion.forward(-_KeyboardSensibility*(float)elapsedMs);
             }
             if (_inputManager._keys['A']) {
-                _cameraMotion.right(-_KeyboardSensibility*elapsedMs);
+                _cameraMotion.right(-_KeyboardSensibility*(float)elapsedMs);
             }
             if (_inputManager._keys['D']) {
-                _cameraMotion.right(_KeyboardSensibility*elapsedMs);
+                _cameraMotion.right(_KeyboardSensibility*(float)elapsedMs);
             }
             if (_inputManager._keys['R']) {
                 game->resetStats();
@@ -157,13 +157,13 @@ class AntiaAliasingDemo : public GameHandler
 			}
 
 			int32_t diffMouseX = _inputManager._xMouse - _prevX;
-			int32_t diffMouseY = _InvertMouse*(_inputManager._yMouse - _prevY);
+			int32_t diffMouseY = (int32_t)(_InvertMouse*(_inputManager._yMouse - _prevY));
 
             if (diffMouseX) {
-                _cameraMotion.rotateYaw(_MouseSensibility*M_PI*diffMouseX/_width);
+                _cameraMotion.rotateYaw((float)(_MouseSensibility*PI*diffMouseX/_width));
             }
             if (diffMouseY) {
-                _cameraMotion.rotatePitch(_MouseSensibility*M_PI*diffMouseY/_height);
+                _cameraMotion.rotatePitch((float)(_MouseSensibility*PI*diffMouseY/_height));
             }
 
 			_prevX = _inputManager._xMouse;
@@ -180,7 +180,7 @@ class AntiaAliasingDemo : public GameHandler
             _renderTarget->clear();
 
             /* Render all objects */
-            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderLight, _lights, 0.2, *_renderTarget);
+            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderLight, _lights, 0.2f, *_renderTarget);
             game->getTextConsole()->gprintf("Current = %s\n", _current.c_str());
             game->getTextConsole()->gprintf("1=Normal, 2=ToonLight, 3=ToonLight+Filter\n");
 

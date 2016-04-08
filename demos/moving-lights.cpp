@@ -92,7 +92,7 @@ class AntiaAliasingDemo : public GameHandler
             _model3D->setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
 
             /* Create the game camera */
-            _camera.setProjection(45, _width/(float)_height, 0.1, 1000.0);
+            _camera.setProjection(45, _width/(float)_height, 0.1f, 1000.0f);
 			_cameraMotion.setPosition( glm::vec3(150.0f, 100.0f, 150.0f) );
             _cameraMotion.rotateYaw(-45.0f);
 
@@ -106,16 +106,16 @@ class AntiaAliasingDemo : public GameHandler
                 return false;
             }
             if (_inputManager._keys['W']) {
-                _cameraMotion.forward(0.1*elapsedMs);
+                _cameraMotion.forward(0.1f*(float)elapsedMs);
             }
             if (_inputManager._keys['S']) {
-                _cameraMotion.forward(-0.1*elapsedMs);
+                _cameraMotion.forward(-0.1f*(float)elapsedMs);
             }
             if (_inputManager._keys['A']) {
-                _cameraMotion.right(-0.1*elapsedMs);
+                _cameraMotion.right(-0.1f*(float)elapsedMs);
             }
             if (_inputManager._keys['D']) {
-                _cameraMotion.right(0.1*elapsedMs);
+                _cameraMotion.right(0.1f*(float)elapsedMs);
             }
             if (_inputManager._keys['R']) {
                 game->resetStats();
@@ -130,22 +130,22 @@ class AntiaAliasingDemo : public GameHandler
 			}
 
 			int32_t diffMouseX = _inputManager._xMouse - _prevX;
-			int32_t diffMouseY = _InvertMouse*(_inputManager._yMouse - _prevY);
+			int32_t diffMouseY = (int32_t)(_InvertMouse*(_inputManager._yMouse - _prevY));
 
             if (diffMouseX) {
-                _cameraMotion.rotateYaw(_MouseSensibility*M_PI*diffMouseX/_width);
+                _cameraMotion.rotateYaw((float)(_MouseSensibility*PI*diffMouseX/_width));
             }
             if (diffMouseY) {
-                _cameraMotion.rotatePitch(_MouseSensibility*M_PI*diffMouseY/_height);
+                _cameraMotion.rotatePitch((float)(_MouseSensibility*PI*diffMouseY/_height));
             }
 
 			_prevX = _inputManager._xMouse;
 			_prevY = _inputManager._yMouse;
 
 			/* Move the lights */
-			_angle += 2*PI*elapsedMs/5000.0;
+			_angle += (float)(2*PI*elapsedMs/5000.0);
 			if (_angle > 2*PI) {
-				_angle -= 2*PI;
+				_angle -= (float)(2*PI);
 			}
 
 			_lights[0]->setPosition(glm::vec3(50.0*glm::sin(-_angle), 100.0, 50.0*glm::cos(-_angle)));
@@ -199,7 +199,7 @@ int main()
     }
 
     game->setHandler(&antiAliasingDemo);
-    game->setWindowSize(2560, 1440, true);
+    game->setWindowSize(800, 600, false);
     game->setFPS(60);
 
     if (game->init() == false) {

@@ -58,7 +58,7 @@ FT_BEGIN_HEADER
   /*************************************************************************/
 
 
-#define HAVE_UNISTD_H 1
+#define HAVE_UNISTD_H 0
 #define HAVE_FCNTL_H 1
 
 #define SIZEOF_INT 4
