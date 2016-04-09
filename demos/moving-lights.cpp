@@ -2,7 +2,7 @@
 #include "Game.hpp"
 #include "OBJFormat.hpp"
 #include "OpenGL.h"
-#include "Shader.hpp"
+#include "BlinnPhongShader.hpp"
 #include "FXAA2RenderTarget.hpp"
 #include "Camera.hpp"
 #include "FlyMotion.hpp"
@@ -69,13 +69,11 @@ class AntiaAliasingDemo : public GameHandler
 			game->getWindowManager()->getMouseManager()->registerListener(_inputManager);
 
             /* Create a Blinn-phong shader for the geometry */
-            _shader = Shader::New();
-
-            std::string error;
-            if (_shader->use("lighting/blinnphong_reflection", error) == false) {
-                printf("ERROR loading shader blinnphong_reflection: %s\n", error.c_str());
-                return false;
-            }
+            _blinnPhongShader = BlinnPhongShader::New();
+			if (_blinnPhongShader->init() == false) {
+				printf("ERROR initializing blinn-phong shader\n");
+				return false;
+			}
 
             /* Load the geometry */
             std::string meshPath = "data/objects/deadpool";
@@ -162,7 +160,7 @@ class AntiaAliasingDemo : public GameHandler
 
             /* Render all objects */
 			_renderTargetFXAA2->clear();
-            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shader, _lights, 0.0, *_renderTargetFXAA2);
+            game->getRenderer()->renderModel3D(*_model3D, _camera, *_blinnPhongShader, _lights, 0.0, *_renderTargetFXAA2);
 
             _renderTargetFXAA2->blit(0, 0, _width, _height);
             return true;
@@ -172,7 +170,7 @@ class AntiaAliasingDemo : public GameHandler
         Camera             _camera;
 		FlyMotion          _cameraMotion;
         RendererModel3D    *_model3D;
-        Shader             *_shader;
+        BlinnPhongShader   *_blinnPhongShader;
 		FXAA2RenderTarget  *_renderTargetFXAA2;
 		std::string         _renderTargetName;
         std::vector<Light*> _lights;

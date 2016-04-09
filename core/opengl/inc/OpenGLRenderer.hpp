@@ -20,7 +20,7 @@ class OpenGLRenderer : public Renderer
 		Shader * newShader(void);
         RendererModel3D *prepareModel3D(const Model3D &model);
 		bool renderModel3D(RendererModel3D &model, Camera &camera,
-                           Shader &shader, std::vector<Light*> &lights, float ambientK,
+                           LightingShader &shader, std::vector<Light*> &lights, float ambientK,
                            RenderTarget &renderTarget, bool disableDepth = false);
 		bool resize(uint16_t width, uint16_t height);
         void flush();

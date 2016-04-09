@@ -10,7 +10,7 @@
 #include "OpenGLShaderMaterial.hpp"
 #include <glm/glm.hpp>
 
-OpenGLShaderMaterial::OpenGLShaderMaterial(uint32_t bindingPoint)
+void OpenGLShaderMaterial::init(uint32_t bindingPoint)
 {
     setBlockName("Material");
     setBindingPoint(bindingPoint);
@@ -21,7 +21,7 @@ OpenGLShaderMaterial::OpenGLShaderMaterial(uint32_t bindingPoint)
     addParamName("shininess");
 }
 
-bool OpenGLShaderMaterial::copyMaterial(Material &material)
+void OpenGLShaderMaterial::copyMaterial(Material &material)
 {
     setParamValue("ambient",   material.getAmbient());
     setParamValue("diffuse",   material.getDiffuse());
@@ -29,5 +29,4 @@ bool OpenGLShaderMaterial::copyMaterial(Material &material)
     setParamValue("alpha",     material.getAlpha());
     setParamValue("shininess", material.getShininess());
     bind();
-    return true;
 }

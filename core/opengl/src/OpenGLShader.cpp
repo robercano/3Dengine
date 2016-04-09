@@ -13,11 +13,8 @@
 #include "OpenGLShader.hpp"
 #include "OpenGLShaderMaterial.hpp"
 
-OpenGLShader::OpenGLShader(void) : _programID(0), _material(NULL)
+OpenGLShader::OpenGLShader(void) : _programID(0)
 {
-    for (int i=0; i<sizeof _lights/sizeof *_lights; ++i) {
-        _lights[i] = NULL;
-	}
 }
 
 OpenGLShader::~OpenGLShader(void)
@@ -142,40 +139,6 @@ bool OpenGLShader::linkProgram(std::string &error)
 	_deleteShadersIDs();
 
 	return true;
-}
-
-ShaderMaterial *OpenGLShader::getMaterial()
-{
-    if (_material != NULL) {
-        return _material;
-    }
-
-    _material = new OpenGLShaderMaterial(0);
-
-    if (_material->prepareForShader(_programID) == false) {
-        delete _material;
-        _material = NULL;
-    }
-
-    return _material;
-}
-
-ShaderLight *OpenGLShader::getLight(uint32_t lightIndex)
-{
-    if (lightIndex < sizeof _lights/sizeof *_lights &&
-        _lights[lightIndex] != NULL) {
-        return _lights[lightIndex];
-    }
-
-    OpenGLShaderLight **light = &_lights[lightIndex];
-    *light = new OpenGLShaderLight(lightIndex+1, lightIndex);
-
-    if ((*light)->prepareForShader(_programID) == false) {
-        delete (*light);
-        *light = NULL;
-    }
-
-    return *light;
 }
 
 bool OpenGLShader::attach(void)

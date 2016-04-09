@@ -12,7 +12,7 @@
 #include "Model3D.hpp"
 #include "RenderTarget.hpp"
 #include "RendererModel3D.hpp"
-#include "Shader.hpp"
+#include "LightingShader.hpp"
 #include "Camera.hpp"
 
 class Renderer
@@ -59,7 +59,7 @@ class Renderer
 		 * @param view			View matrix
 		 */
 		virtual bool renderModel3D(RendererModel3D &model, Camera &camera,
-                                   Shader &shader, std::vector<Light*> &lights, float ambientK,
+                                   LightingShader &shader, std::vector<Light*> &lights, float ambientK,
                                    RenderTarget &renderTarget, bool disableDepth = false) = 0;
 
 		/**

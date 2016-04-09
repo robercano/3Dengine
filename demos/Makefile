@@ -21,7 +21,8 @@ TARGETS=$(FILES:.cpp=)
 all: $(TARGETS)
 
 %: %.cpp
-	g++ $(CXXFLAGS) -o $@ $? $(LDFLAGS) 
+	@echo "- Compiling $<..."
+	@g++ $(CXXFLAGS) -o $@ $? $(LDFLAGS) 
 
 clean:
 	@rm -f *.o

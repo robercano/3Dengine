@@ -9,12 +9,12 @@
 #pragma once
 
 #include "OpenGL.h"
-#include "ShaderLight.hpp"
 #include "OpenGLUniformBlock.hpp"
+#include "Light.hpp"
 
-class OpenGLShaderLight : public OpenGLUniformBlock, public ShaderLight
+class OpenGLShaderLight : public OpenGLUniformBlock
 {
 	public:
-        OpenGLShaderLight(uint32_t bindingPoint, uint32_t lightIndex);
-        bool copyLight(Light &material);
+        void init(uint32_t bindingPoint, uint32_t lightIndex);
+        void copyLight(Light &light);
 };

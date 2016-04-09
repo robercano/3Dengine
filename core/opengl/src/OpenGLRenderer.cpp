@@ -8,6 +8,7 @@
 #include "OpenGLRenderer.hpp"
 #include "OpenGLShader.hpp"
 #include "OpenGLModel3D.hpp"
+#include "LightingShader.hpp"
 
 void OpenGLRenderer::init()
 {
@@ -48,7 +49,7 @@ RendererModel3D *OpenGLRenderer::prepareModel3D(const Model3D &model)
 }
 
 bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
-                                   Shader &shader, std::vector<Light*> &lights, float ambientK,
+                                   LightingShader &shader, std::vector<Light*> &lights, float ambientK,
                                    RenderTarget &renderTarget, bool disableDepth)
 {
 	uint32_t numLights = 0;
@@ -76,12 +77,6 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
         /* Bind program to upload the uniform */
         shader.attach();
 
-        ShaderMaterial *shaderMaterial = shader.getMaterial();
-        if (shaderMaterial == NULL) {
-            fprintf(stderr, "ERROR getting shader material\n");
-            return false;
-        }
-
         /* Send our transformation to the currently bound shader, in the "MVP" uniform */
         shader.setUniformMat4("u_MVPMatrix", MVP);
         shader.setUniformMat4("u_viewMatrix", camera.getViewMatrix());
@@ -91,12 +86,7 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
         shader.setUniformFloat("u_ambientK", ambientK);
 
 		for (numLights=0; numLights<lights.size(); ++numLights) {
-			ShaderLight *shaderLight = shader.getLight(numLights);
-			if (shaderLight == NULL) {
-				fprintf(stderr, "ERROR getting shader light\n");
-				break;
-			}
-			shaderLight->copyLight(*lights[numLights]);
+			shader.setLight(numLights, *lights[numLights]);
 		}
         shader.setUniformUint("u_numLights", numLights);
 
@@ -110,7 +100,7 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
 
             for (size_t  i=0; i<materials.size(); ++i) {
                 GL( glBindTexture(GL_TEXTURE_2D, texturesIDs[i]) );
-                shaderMaterial->copyMaterial(materials[i]);
+                shader.setMaterial(materials[i]);
 
                 GL( glDrawElements(GL_TRIANGLES, count[i], GL_UNSIGNED_INT, (void*)(offset[i] * sizeof(GLuint))) );
             }

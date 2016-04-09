@@ -24,6 +24,7 @@ CORE_FILES=Game.cpp InputManager.cpp WindowManager.cpp TimeManager.cpp \
            Renderer.cpp NOAARenderTarget.cpp MSAARenderTarget.cpp SSAARenderTarget.cpp \
 		   FXAARenderTarget.cpp FXAA2RenderTarget.cpp FBRenderTarget.cpp ToonRenderTarget.cpp \
 		   Shader.cpp \
+		   BlinnPhongShader.cpp ToonLightingShader.cpp \
 		   Camera.cpp \
 		   FlyMotion.cpp FreeFlyMotion.cpp WalkingMotion.cpp
 
@@ -80,9 +81,7 @@ all: engine
 engine: dirs $(LIBDIR)/$(LIBNAME)
 
 demos: engine
-	@echo "- Compiling project demos...\c"
-	@make -C $(DEMODIR) >/dev/null 2>&1
-	@echo "done"
+	@make -C $(DEMODIR)
 
 dirs:
 	@echo "- Creating project dirs...\c"

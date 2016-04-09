@@ -69,15 +69,13 @@ bool Game::init()
 
     if (_console.init(fontPath, 14, _width, _height) == false) {
         printf("ERROR creating text console\n");
-        return 1;
+        return false;
     }
 
     _console.setForegroundColor(1.0f, 0.5f, 0.2f, 1.0f);
     _console.setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-    _gameHandler->handleInit(this);
-
-    return true;
+    return _gameHandler->handleInit(this);
 }
 
 bool Game::loop()

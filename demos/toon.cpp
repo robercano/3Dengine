@@ -2,7 +2,8 @@
 #include "Game.hpp"
 #include "OBJFormat.hpp"
 #include "OpenGL.h"
-#include "Shader.hpp"
+#include "ToonLightingShader.hpp"
+#include "BlinnPhongShader.hpp"
 #include "FXAA2RenderTarget.hpp"
 #include "ToonRenderTarget.hpp"
 #include "Camera.hpp"
@@ -51,7 +52,7 @@ class AntiaAliasingDemo : public GameHandler
 			}
 
 			_renderTargetToon->init(_width, _height);
-			_renderTargetToon->setClearColor(1.0, 1.0, 1.0, 1.0);
+			_renderTargetToon->setClearColor(1.0, 1.0, 1.0, 0.0);
 
             /* Register the key and mouse listener */
 			std::vector<uint32_t> keys; // The keys should be read from a config file
@@ -72,18 +73,16 @@ class AntiaAliasingDemo : public GameHandler
 			game->getWindowManager()->getMouseManager()->registerListener(_inputManager);
 
             /* Create a Blinn-phong shader for the geometry */
-            _shaderBlinnLight = Shader::New();
-            _shaderToonLight  = Shader::New();
-
-            std::string error;
-            if (_shaderToonLight->use("lighting/toon", error) == false) {
-                printf("ERROR compiling shader lighting/toon: %s\n", error.c_str());
-                return false;
-            }
-            if (_shaderBlinnLight->use("lighting/blinnphong_reflection", error) == false) {
-                printf("ERROR compiling shader lighting/blinnphong_reflection: %s\n", error.c_str());
-                return false;
-            }
+            _shaderToonLight  = ToonLightingShader::New();
+			if (_shaderToonLight->init() == false) {
+				printf("ERROR initializing toon lighting shader\n");
+				return false;
+			}
+            _shaderBlinnLight = BlinnPhongShader::New();
+			if (_shaderBlinnLight->init() == false) {
+				printf("ERROR initializing blinn-phong shader\n");
+				return false;
+			}
 
             _shaderLight = _shaderBlinnLight;
             _renderTarget = _renderTargetFXAA2;
@@ -180,7 +179,7 @@ class AntiaAliasingDemo : public GameHandler
             _renderTarget->clear();
 
             /* Render all objects */
-            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderLight, _lights, 0.2f, *_renderTarget);
+            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderLight, _lights, 0.2f, *_renderTargetFXAA2);
             game->getTextConsole()->gprintf("Current = %s\n", _current.c_str());
             game->getTextConsole()->gprintf("1=Normal, 2=ToonLight, 3=ToonLight+Filter\n");
 
@@ -192,9 +191,9 @@ class AntiaAliasingDemo : public GameHandler
         Camera             _camera;
 		FlyMotion          _cameraMotion;
         RendererModel3D    *_model3D;
-        Shader             *_shaderLight;
-        Shader             *_shaderBlinnLight;
-        Shader             *_shaderToonLight;
+        LightingShader     *_shaderLight;
+        BlinnPhongShader   *_shaderBlinnLight;
+        ToonLightingShader *_shaderToonLight;
         RenderTarget       *_renderTarget;
 		FXAA2RenderTarget  *_renderTargetFXAA2;
 		ToonRenderTarget   *_renderTargetToon;

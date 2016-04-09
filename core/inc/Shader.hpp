@@ -10,8 +10,6 @@
 #include <map>
 #include <glm/glm.hpp>
 #include <stdint.h>
-#include "ShaderMaterial.hpp"
-#include "ShaderLight.hpp"
 
 class Shader
 {
@@ -23,6 +21,8 @@ class Shader
 		 * Destructor
 		 */
 		virtual ~Shader() {}
+
+		virtual bool init() = 0;
 
 		/**
 		 * Loads a new shader code and compiles it. Path contains the subdirectory
@@ -70,9 +70,6 @@ class Shader
 		 * @return true or false
 		 */
 		virtual bool linkProgram(std::string &error) = 0;
-
-        virtual ShaderMaterial *getMaterial() = 0;
-        virtual ShaderLight *getLight(uint32_t lightIndex) = 0;
 
 		/**
 		 * Makes the shader active

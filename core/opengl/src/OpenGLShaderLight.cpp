@@ -10,7 +10,7 @@
 #include "OpenGLShaderLight.hpp"
 #include <glm/glm.hpp>
 
-OpenGLShaderLight::OpenGLShaderLight(uint32_t bindingPoint, uint32_t lightIndex)
+void OpenGLShaderLight::init(uint32_t bindingPoint, uint32_t lightIndex)
 {
     setBlockName("Light");
     setBindingPoint(bindingPoint);
@@ -21,12 +21,11 @@ OpenGLShaderLight::OpenGLShaderLight(uint32_t bindingPoint, uint32_t lightIndex)
     addParamName("specular");
 }
 
-bool OpenGLShaderLight::copyLight(Light &light)
+void OpenGLShaderLight::copyLight(Light &light)
 {
     setParamValue("position", light.getPosition());
     setParamValue("ambient",  light.getAmbient());
     setParamValue("diffuse",  light.getDiffuse());
     setParamValue("specular", light.getSpecular());
     bind();
-    return true;
 }
