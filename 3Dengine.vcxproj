@@ -79,7 +79,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>3rdparty\;core\inc;core\opengl\inc;3rdparty\windows\freetype2\;utils\inc\;3rdparty\windows;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>3rdparty\;core\inc;core\opengl\inc;3rdparty\windows\include\freetype2\;utils\inc\;3rdparty\windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <TargetMachine>MachineX86</TargetMachine>
@@ -110,7 +110,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>3rdparty\;core\inc;core\opengl\inc;3rdparty\freetype2\;utils\inc\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>3rdparty\;3rdparty\windows\;core\inc;core\opengl\inc;3rdparty\freetype2\;utils\inc\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>freetype.lib;glew32.lib;glew32s.lib;glfw3.lib;jpeg.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -131,6 +131,7 @@
     <ClCompile Include="core\opengl\src\OpenGLShaderMaterial.cpp" />
     <ClCompile Include="core\opengl\src\OpenGLSSAARenderTarget.cpp" />
     <ClCompile Include="core\opengl\src\OpenGLUniformBlock.cpp" />
+    <ClCompile Include="core\src\BlinnPhongShader.cpp" />
     <ClCompile Include="core\src\Camera.cpp" />
     <ClCompile Include="core\src\FBRenderTarget.cpp" />
     <ClCompile Include="core\src\FlyMotion.cpp" />
@@ -150,6 +151,7 @@
     <ClCompile Include="core\src\SSAARenderTarget.cpp" />
     <ClCompile Include="core\src\TextConsole.cpp" />
     <ClCompile Include="core\src\TimeManager.cpp" />
+    <ClCompile Include="core\src\ToonLightingShader.cpp" />
     <ClCompile Include="core\src\ToonRenderTarget.cpp" />
     <ClCompile Include="core\src\TrueTypeFont.cpp" />
     <ClCompile Include="core\src\WalkingMotion.cpp" />

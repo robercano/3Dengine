@@ -18,7 +18,7 @@ class OpenGLShader : public virtual Shader
 	public:
 		OpenGLShader(void);
 		~OpenGLShader(void);
-		bool init() {}
+		bool init() { return true; }
 		bool use(const std::string &path, std::string &error);
 		bool loadVertexShader(const std::string &filename, std::string &error);
 		bool loadFragmentShader(const std::string &filename, std::string &error);
