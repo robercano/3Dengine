@@ -282,6 +282,7 @@
     <ClInclude Include="3rdparty\glm\gtx\verbose_operator.hpp" />
     <ClInclude Include="3rdparty\glm\gtx\wrap.hpp" />
     <ClInclude Include="3rdparty\glm\virtrev\xstream.hpp" />
+    <ClInclude Include="core\inc\BlinnPhongShader.hpp" />
     <ClInclude Include="core\inc\Camera.hpp" />
     <ClInclude Include="core\inc\FBRenderTarget.hpp" />
     <ClInclude Include="core\inc\FlyMotion.hpp" />
@@ -294,6 +295,7 @@
     <ClInclude Include="core\inc\InputManager.hpp" />
     <ClInclude Include="core\inc\KeyManager.hpp" />
     <ClInclude Include="core\inc\Light.hpp" />
+    <ClInclude Include="core\inc\LightingShader.hpp" />
     <ClInclude Include="core\inc\Material.hpp" />
     <ClInclude Include="core\inc\Model3D.hpp" />
     <ClInclude Include="core\inc\Motion.hpp" />
@@ -312,6 +314,7 @@
     <ClInclude Include="core\inc\TextConsole.hpp" />
     <ClInclude Include="core\inc\Texture.hpp" />
     <ClInclude Include="core\inc\TimeManager.hpp" />
+    <ClInclude Include="core\inc\ToonLightingShader.hpp" />
     <ClInclude Include="core\inc\ToonRenderTarget.hpp" />
     <ClInclude Include="core\inc\TrueTypeFont.hpp" />
     <ClInclude Include="core\inc\WalkingMotion.hpp" />
@@ -321,11 +324,13 @@
     <ClInclude Include="core\opengl\inc\GLFWTimeManager.hpp" />
     <ClInclude Include="core\opengl\inc\GLFWWindowManager.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGL.h" />
+    <ClInclude Include="core\opengl\inc\OpenGLBlinnPhongShader.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLFBRenderTarget.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLFilterRenderTarget.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLFontRenderer.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLFXAA2RenderTarget.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLFXAARenderTarget.hpp" />
+    <ClInclude Include="core\opengl\inc\OpenGLLightingShader.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLModel3D.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLMSAARenderTarget.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLNOAARenderTarget.hpp" />
@@ -334,6 +339,7 @@
     <ClInclude Include="core\opengl\inc\OpenGLShaderLight.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLShaderMaterial.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLSSAARenderTarget.hpp" />
+    <ClInclude Include="core\opengl\inc\OpenGLToonLightingShader.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLToonRenderTarget.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLUniformBlock.hpp" />
     <ClInclude Include="utils\inc\ImageLoaders.h" />

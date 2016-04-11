@@ -7,3 +7,7 @@ tags
 .vs
 Debug
 Release
+*.ilk
+*.pdb
+*.exe
+*.sdf

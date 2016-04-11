@@ -8,6 +8,8 @@
 #include "OpenGLShader.hpp"
 #include "LightingShader.hpp"
 
+#pragma warning( disable : 4250 )
+
 /* Even though OpenGLLightingShader is the end of the diamond for
  * the following diagram:
  *
