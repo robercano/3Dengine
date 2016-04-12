@@ -180,6 +180,11 @@ class AntiaAliasingDemo : public GameHandler
             _renderTarget->clear();
 
             /* Render all objects */
+			_model3D->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderLight, _lights, 0.2f, *_renderTarget);
+			_model3D->setPosition(glm::vec3(0.0f, 0.0f, -50.0f));
+            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderLight, _lights, 0.2f, *_renderTarget);
+			_model3D->setPosition(glm::vec3(0.0f, 0.0f, -100.0f));
             game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderLight, _lights, 0.2f, *_renderTarget);
             game->getTextConsole()->gprintf("Current = %s\n", _current.c_str());
             game->getTextConsole()->gprintf("1=Normal, 2=ToonLight, 3=ToonLight+Filter\n");
