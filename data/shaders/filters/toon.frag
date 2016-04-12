@@ -29,7 +29,7 @@
    to all fragments at 'nearFragment' distance in the z-buffer, meaning
    the border can extend beyond the indicated value, but it is an estimation
    of the thickness of the average border */
-#define BORDER_SIZE 3
+#define BORDER_SIZE 2
 
 /* Number of texels in the depth-buffer to offset to detect a true edge of the model.
    A true edge is defined as an edge of the model which is drawn agains a very far
@@ -48,28 +48,26 @@ in vec2 f_texcoord;
 
 uniform sampler2D fbo_texture;
 uniform sampler2D depthTexture;
+uniform float zNear;
+uniform float zFar;
+uniform float nearFrag;
+uniform float distantFrag;
+uniform vec4 borderColor;
 
 out vec4 fragColor;
 
-/* TODO: move to uniforms */
-float zNear = 0.1f;
-float zFar  = 1000.0f;
-float nearFragment = 2.0 * (zFar - zNear) / 1000.0;
-float distantFragment = 16.0*nearFragment;
-vec4  borderColor = vec4(0.0, 0.0, 0.0, 1.0);
-
 #if ENABLE_ANTI_ALIAS
 #define CheckBorder(db, daa, dm, cm) \
-	if (db - dm > nearFragment) { \
+	if (db - dm > nearFrag) { \
 		fragColor = borderColor; \
-		if (abs(daa - dm) > distantFragment) { \
+		if (abs(daa - dm) > distantFrag) { \
 			numColors++; \
 			aaColor += cm; \
 		} \
 	}
 #else
 #define CheckBorder(db, daa, dm, cm) \
-    if (db - dm > nearFragment) { \
+    if (db - dm > nearFrag) { \
 		fragColor = borderColor;  \
 	}
 #endif // ENABLE_ANTI_ALIAS

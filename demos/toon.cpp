@@ -52,7 +52,8 @@ class AntiaAliasingDemo : public GameHandler
 			}
 
 			_renderTargetToon->init(_width, _height);
-			_renderTargetToon->setClearColor(1.0, 1.0, 1.0, 0.0);
+			_renderTargetToon->setClearColor(1.0, 1.0, 1.0, 1.0);
+			_renderTargetToon->setBorderColor(glm::vec4(0.0, 0.0, 0.0, 1.0));
 
             /* Register the key and mouse listener */
 			std::vector<uint32_t> keys; // The keys should be read from a config file
@@ -179,7 +180,7 @@ class AntiaAliasingDemo : public GameHandler
             _renderTarget->clear();
 
             /* Render all objects */
-            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderLight, _lights, 0.2f, *_renderTargetFXAA2);
+            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderLight, _lights, 0.2f, *_renderTarget);
             game->getTextConsole()->gprintf("Current = %s\n", _current.c_str());
             game->getTextConsole()->gprintf("1=Normal, 2=ToonLight, 3=ToonLight+Filter\n");
 
@@ -224,7 +225,7 @@ int main()
     }
 
     game->setHandler(&antiAliasingDemo);
-    game->setWindowSize(800, 600, false);
+    game->setWindowSize(2560, 1440, true);
     game->setFPS(60);
 
     if (game->init() == false) {

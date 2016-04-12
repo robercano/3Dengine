@@ -31,9 +31,17 @@ class OpenGLToonRenderTarget : public ToonRenderTarget, public OpenGLFilterRende
 		}
 		void setCustomParams(void)
 		{
+			float nearFrag = 2.0f * (_far - _near) / 1000.0f;
+			float distantFrag = 16.0*nearFrag;
+
 			GL( glActiveTexture(GL_TEXTURE1) );
 			GL( glBindTexture(GL_TEXTURE_2D, _depthBuffer) );
 			_shader->setUniformTexture2D("depthTexture", 1);
+			_shader->setUniformFloat("zNear", _near);
+			_shader->setUniformFloat("zFar", _far);
+			_shader->setUniformFloat("nearFrag", nearFrag);
+			_shader->setUniformFloat("distantFrag", distantFrag);
+			_shader->setUniformVec4("borderColor", _color);
 
 			GL( glDisable(GL_DEPTH_TEST) );
 			GL( glEnable(GL_BLEND) );
