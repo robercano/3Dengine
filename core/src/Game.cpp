@@ -63,6 +63,12 @@ bool Game::init()
 
     _windowManager->setRenderer(_renderer);
 
+    /* Retrieve the renderer info */
+    fprintf(stderr, "Renderer:       %s\n", _renderer->getName());
+    fprintf(stderr, "Vendor:         %s\n", _renderer->getVendor());
+    fprintf(stderr, "Version:        %s\n", _renderer->getVersion());
+    fprintf(stderr, "Shader Version: %s\n\n", _renderer->getShaderVersion());
+
     /* Setup the text console */
     glm::vec4 color(1.0, 0.5, 0.2, 1.0);
     std::string fontPath = "data/fonts/Arial.ttf";
