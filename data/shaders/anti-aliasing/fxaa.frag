@@ -12,11 +12,11 @@ out vec4 fragColor;
 /*
    Defines to control the debug output of the shader
 */
-//#define DEBUG_LOCAL_CONTRAST 1
-//#define DEBUG_VERTHOR_TEST 1
-//#define DEBUG_PIXEL_PAIR 1
-//#define DEBUG_NEGPOS 1
-//#define DEBUG_OFFSET 1
+#define DEBUG_LOCAL_CONTRAST 0
+#define DEBUG_VERTHOR_TEST 0
+#define DEBUG_PIXEL_PAIR 0
+#define DEBUG_NEGPOS 0
+#define DEBUG_OFFSET 0
 
 #if DEBUG_LOCAL_CONTRAST || DEBUG_VERTHOR_TEST || DEBUG_PIXEL_PAIR || DEBUG_NEGPOS || DEBUG_OFFSET
 #define DEBUG 1
@@ -108,7 +108,7 @@ vec3 FXAAFilter(sampler2D tex, vec2 coord) {
 #endif
     }
 
-#ifdef DEBUG_LOCAL_CONTRAST
+#if DEBUG_LOCAL_CONTRAST
     return vec3(1.0, 0.0, 0.0);
 #endif
 
@@ -133,7 +133,7 @@ vec3 FXAAFilter(sampler2D tex, vec2 coord) {
         abs((0.25 * lumaNE) + (-0.5 * lumaE) + (0.25 * lumaSE));
     bool horzSpan = edgeHorz >= edgeVert;
 
-#ifdef DEBUG_VERTHOR_TEST
+#if DEBUG_VERTHOR_TEST
     //float o = lumaNW/(1.0f + (0.587f/0.299f));
     //return vec3(2*o, 0.0, 0.0);
 
@@ -158,7 +158,7 @@ vec3 FXAAFilter(sampler2D tex, vec2 coord) {
 
     bool pairN = gradientN >= gradientS;
 
-#ifdef DEBUG_PIXEL_PAIR
+#if DEBUG_PIXEL_PAIR
     if (pairN) {
         return vec3(0.0f, 0.0f, 1.0f);
     } else {
@@ -219,7 +219,7 @@ vec3 FXAAFilter(sampler2D tex, vec2 coord) {
     float dstN = horzSpan ? coord.x - posN.x : coord.y - posN.y;
     float dstP = horzSpan ? posP.x - coord.x : posP.y - coord.y;
     bool directionN = dstN < dstP;
-#ifdef DEBUG_NEGPOS
+#if DEBUG_NEGPOS
     if (directionN) return vec3(1.0f, 0.0f, 0.0f);
     else            return vec3(0.0f, 0.0f, 1.0f);
 #endif
@@ -239,7 +239,7 @@ vec3 FXAAFilter(sampler2D tex, vec2 coord) {
        filtering support? */
     float subPixelOffset = (0.5 + (dstN * (-1.0/spanLength))) * lengthSign;
 
-#ifdef DEBUG_OFFSET
+#if DEBUG_OFFSET
     float ox = horzSpan ? 0.0 : subPixelOffset*2.0/f_rpcFrame.x;
     float oy = horzSpan ? subPixelOffset*2.0/f_rpcFrame.y : 0.0;
     float lumaO = lumaM/(1.0f + (0.587f/0.299f));

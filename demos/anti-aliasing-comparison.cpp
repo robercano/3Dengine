@@ -33,7 +33,7 @@ class AntiaAliasingDemo : public GameHandler
                     glm::vec3(0.0, 0.0, 3.0),
                     glm::vec3(0.0, 0.0, 3.0),
                     glm::vec3(50.0, 20.0, -150.0));
-            Light *light3 = new Light(glm::vec3(1.0, 0.0, 1.0),
+            Light *light3 = new Light(glm::vec3(3.0, 0.0, 3.0),
                     glm::vec3(1.0, 0.0, 1.0),
                     glm::vec3(1.0, 0.0, 1.0),
                     glm::vec3(30.0, 20.0, 0.0));
@@ -251,7 +251,11 @@ int main()
     }
 
     game->setHandler(&antiAliasingDemo);
+#ifdef _WIN32
     game->setWindowSize(800, 600, false);
+#else
+    game->setWindowSize(1440, 900, true);
+#endif
     game->setFPS(60);
 
     if (game->init() == false) {

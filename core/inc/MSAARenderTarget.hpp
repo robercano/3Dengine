@@ -18,4 +18,6 @@ class MSAARenderTarget : public RenderTarget
         static MSAARenderTarget *New();
         static void Delete(MSAARenderTarget *target);
         static uint32_t getMaxSamples();
+
+        virtual ~MSAARenderTarget() {}
 };

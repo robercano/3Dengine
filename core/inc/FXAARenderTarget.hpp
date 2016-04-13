@@ -18,4 +18,6 @@ class FXAARenderTarget : public virtual RenderTarget
 	public:
         static FXAARenderTarget *New();
         static void Delete(FXAARenderTarget *target);
+
+        virtual ~FXAARenderTarget() {}
 };

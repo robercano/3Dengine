@@ -79,7 +79,7 @@ int loadJPEG(const char *filename, uint8_t **image, uint32_t *width, uint32_t *h
     cinfo.err = jpeg_std_error(&jerr);
     jpeg_create_decompress(&cinfo);
 
-    jpeg_mem_src(&cinfo, jpeg, size);
+    jpeg_mem_src(&cinfo, (unsigned char*)jpeg, size);
     jpeg_read_header(&cinfo, TRUE);
     jpeg_start_decompress(&cinfo);
 
@@ -133,7 +133,7 @@ int loadPNG(const char *filename, uint8_t **image, uint32_t *width, uint32_t *he
 		return -1;
 	}
 
-	if (png_sig_cmp(header, 0, sizeof header)) {
+	if (png_sig_cmp((png_const_bytep)header, 0, sizeof header)) {
 		fprintf(stderr, "ERROR file %s is not recognized as a PNG file", filename);
 		return -1;
 	}

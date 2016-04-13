@@ -90,7 +90,7 @@ bool OpenGLShader::_loadShader(uint32_t shaderObjectID, const std::string &filen
 	GL( glShaderSource(shaderObjectID, 1, (const GLchar **)&shaderText, NULL) );
 	GL( glCompileShader(shaderObjectID) );
 
-	delete shaderText;
+	delete[] shaderText;
 
 	/* Get compilation status */
 	GL( glGetShaderiv(shaderObjectID, GL_COMPILE_STATUS, &result) );

@@ -35,6 +35,14 @@ class Renderer
 		virtual void init(void) = 0;
 
         /**
+         * Renderer introspection
+         */
+        virtual const char *getName() = 0;
+        virtual const char *getVersion() = 0;
+        virtual const char *getVendor() = 0;
+        virtual const char *getShaderVersion() = 0;
+
+        /**
          * Wraps an model3D with a renderer specific model 3D,
          * peparing all the structures needed to quickly render
          * the model in the renderer

@@ -34,6 +34,26 @@ void OpenGLRenderer::init()
 	glDepthRangef(0.1f, 1000.0f);
 }
 
+const char *OpenGLRenderer::getName()
+{
+    return (const char*)glGetString(GL_RENDERER);
+}
+
+const char *OpenGLRenderer::getVersion()
+{
+    return (const char*)glGetString(GL_VERSION);
+}
+
+const char *OpenGLRenderer::getVendor()
+{
+    return (const char*)glGetString(GL_VENDOR);
+}
+
+const char *OpenGLRenderer::getShaderVersion()
+{
+    return (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
+}
+
 Shader * OpenGLRenderer::newShader(void)
 {
 	return new OpenGLShader();

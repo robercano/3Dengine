@@ -26,6 +26,7 @@ class ToonRenderTarget : public virtual RenderTarget
 
 	protected:
 		ToonRenderTarget() : _near(0.1f), _far(1000.0f), _color(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)) {}
+        virtual ~ToonRenderTarget() {}
 
 		float _near;
 		float _far;

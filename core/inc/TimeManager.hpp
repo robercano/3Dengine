@@ -24,6 +24,8 @@ class TimeManager
 		 */
 		static void DisposeInstance();
 
+        virtual ~TimeManager() {}
+
 		/**
 		 * Retrieves the current elapsed time in milliseconds
 		 *

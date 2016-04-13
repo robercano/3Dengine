@@ -17,6 +17,10 @@ class OpenGLRenderer : public Renderer
 		 * Renderer methods
 		 */
 		void init(void);
+        const char *getName();
+        const char *getVersion();
+        const char *getVendor();
+        const char *getShaderVersion();
 		Shader * newShader(void);
         RendererModel3D *prepareModel3D(const Model3D &model);
 		bool renderModel3D(RendererModel3D &model, Camera &camera,

@@ -18,4 +18,6 @@ class FXAA2RenderTarget : public virtual RenderTarget
 	public:
         static FXAA2RenderTarget *New();
         static void Delete(FXAA2RenderTarget *target);
+
+        virtual ~FXAA2RenderTarget() {}
 };

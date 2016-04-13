@@ -17,4 +17,6 @@ class NOAARenderTarget : public virtual RenderTarget
 	public:
         static NOAARenderTarget *New();
         static void Delete(NOAARenderTarget *target);
+
+        virtual ~NOAARenderTarget() {}
 };
