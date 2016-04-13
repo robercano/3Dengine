@@ -9,6 +9,7 @@
 */
 #version 400 core
 
+#define GLSL_VERSION 440
 #define MAX_LIGHTS 10
 
 /* Light definition */
@@ -55,50 +56,64 @@ float sRGB2Linear(float c) {
     return pow((c + 0.055)/1.055, 2.4);
 }
 
+#define _ProcessLight(color, n, V)                                                    \
+{                                                                                     \
+    if (n < u_numLights) {                                                            \
+        vec3 unnormL = u_light[n].position - io_fragVertex;                           \
+                                                                                      \
+        /* Attenuation */                                                             \
+        float attenuation = 1.0 / (1.0 + 0.00001 * pow(length(unnormL), 2));          \
+                                                                                      \
+        /* Light vector to fragment */                                                \
+        vec3 L = normalize(unnormL);                                                  \
+                                                                                      \
+        /* Normalized half vector for Blinn-Phong */                                  \
+        vec3 H = normalize(L + V);                                                    \
+                                                                                      \
+        /* Ambient + Diffuse + Specular */                                            \
+        float Ia = clamp(u_ambientK, 0.0, 1.0);                                       \
+        float Id = clamp(dot(L, io_fragNormal), 0.0, 1.0);                            \
+        float Is = clamp(pow(dot(io_fragNormal, H), u_material.shininess), 0.0, 1.0); \
+                                                                                      \
+        vec3 colorAmbient  = u_light[n].ambient*u_material.ambient*Ia;                \
+        vec3 colorDiffuse  = u_light[n].diffuse*u_material.diffuse*Id;                \
+        vec3 colorSpecular = u_light[n].specular*u_material.specular*Is;              \
+                                                                                      \
+        if (dot(L, io_fragNormal) <= 0) {                                             \
+            colorSpecular = vec3(0.0);                                                \
+        }                                                                             \
+                                                                                      \
+        /* Accumulate color components */                                             \
+        color += colorAmbient + attenuation*(colorDiffuse + colorSpecular);           \
+    }                                                                                 \
+}
+
 void main()
 {
-    float Ia, Id, Is;
-    vec3 colorAmbient, colorDiffuse, colorSpecular;
-
-    /* Ambient */
-    Ia = clamp(u_ambientK, 0.0, 1.0);
-
-    /* View vector to the fragment in world space */
-    vec3 cameraPos = -vec3(u_viewMatrix * vec4(0.0f, 0.0f, 0.0f, 1.0f));
-    vec3 V = normalize(cameraPos - io_fragVertex);
-
     /* Accumulates the final intensities for the texel */
     vec3 lightAcc = vec3(0.0);
 
-    uint nLights = min(u_numLights, MAX_LIGHTS);
+    /* For shaders on version 3.3 and earlier the uniform
+       block must be indexed by a constant integral expression, which
+       in this case must be a harcoded index, thus the macro instead
+       of a handy loop */
+#if GLSL_VERSION >= 440
+        uint nLights = min(u_numLights, MAX_LIGHTS);
 
-    for (int i=0; i<nLights; i++) {
-        vec3 unnormL = u_light[i].position - io_fragVertex;
-
-        /* Attenuation */
-        float attenuation = 1.0 / (1.0 + 0.00001 * pow(length(unnormL), 2));
-
-        /* Light vector to fragment */
-        vec3 L = normalize(unnormL);
-
-        /* Normalized half vector for Blinn-Phong */
-        vec3 H = normalize(L + V);
-
-        /* Diffuse + Specular */
-        Id = clamp(dot(L, io_fragNormal), 0.0, 1.0);
-        Is = clamp(pow(dot(io_fragNormal, H), u_material.shininess), 0.0, 1.0);
-
-        colorAmbient   = u_light[i].ambient*u_material.ambient*Ia;
-        colorDiffuse   = u_light[i].diffuse*u_material.diffuse*Id;
-        colorSpecular  = u_light[i].specular*u_material.specular*Is;
-
-        if (dot(L, io_fragNormal) <= 0) {
-            colorSpecular = vec3(0.0);
+        for (int i=0; i<nLights; ++i) {
+            _ProcessLight(lightAcc, i, io_viewVertex);
         }
-
-        /* Accumulate color components */
-        lightAcc += colorAmbient + attenuation*(colorDiffuse + colorSpecular);
-    }
+#else
+        _ProcessLight(lightAcc, 0, io_viewVertex);
+        _ProcessLight(lightAcc, 1, io_viewVertex);
+        _ProcessLight(lightAcc, 2, io_viewVertex);
+        _ProcessLight(lightAcc, 4, io_viewVertex);
+        _ProcessLight(lightAcc, 5, io_viewVertex);
+        _ProcessLight(lightAcc, 6, io_viewVertex);
+        _ProcessLight(lightAcc, 7, io_viewVertex);
+        _ProcessLight(lightAcc, 8, io_viewVertex);
+        _ProcessLight(lightAcc, 9, io_viewVertex);
+#endif
 
     o_color = vec4(vec3(texture(u_diffuseMap, io_fragUVCoord)) * lightAcc, u_material.alpha);
 }
