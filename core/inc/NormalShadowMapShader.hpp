@@ -6,7 +6,7 @@
 
 #include "Shader.hpp"
 
-class NormalShadowMapShader : public Shader
+class NormalShadowMapShader : public virtual Shader
 {
 	public:
         static NormalShadowMapShader *New();

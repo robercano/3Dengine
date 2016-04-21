@@ -8,9 +8,12 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
-#include "Object3D.hpp"
+#include "Camera.hpp"
 
-class Light : public Object3D
+/**
+ * Light inherits from Camera to be able to implement Shadow maps by projecting the models
+ * into the light as if it were a camera. Need to check if there is a better hierarchy for this */
+class Light : public Camera
 {
 	public:
 		Light() {}
@@ -18,7 +21,10 @@ class Light : public Object3D
             _ambient(ambient), _diffuse(diffuse), _specular(specular) {
         }
 		Light(const glm::vec3 &ambient, const glm::vec3 &diffuse, const glm::vec3 &specular, const glm::vec3 &position) :
-            _ambient(ambient), _diffuse(diffuse), _specular(specular), _position(position) {}
+            _ambient(ambient), _diffuse(diffuse), _specular(specular)
+		{
+			setPosition(position);
+		}
 		~Light() {}
 
         void setAmbient(const glm::vec3 &ambient) { _ambient = ambient; }

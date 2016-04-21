@@ -156,6 +156,9 @@ class AntiaAliasingDemo : public GameHandler
 				_selectedRenderTarget = _renderTargetNOAA;
 				_renderTargetName = "NOAA";
                 game->resetStats();
+
+				//_cameraMotion.reset();
+				_camera.lookAt(glm::vec3(0.0, 0.0, 0.0));
 			} else if (_inputManager._keys['2']) {
 				_selectedRenderTarget = _renderTargetMSAA;
 				_renderTargetName = "MSAA";
@@ -203,7 +206,9 @@ class AntiaAliasingDemo : public GameHandler
 			//printf("%.2f %.2f, %.2f, %.2f, %.2f\n", _cameraMotion.g->getPosition().x, _camera->getPosition().y, _camera->getPosition().z, _camera->getPitch(), _camera->getYaw());
 
 			/* Apply final movement to the camera */
-			_cameraMotion.applyTo(_camera);
+			if (_renderTargetName != std::string("NOAA")) {
+				_cameraMotion.applyTo(_camera);
+			}
 
             /* Render all objects */
 			_selectedRenderTarget->clear();
@@ -218,7 +223,7 @@ class AntiaAliasingDemo : public GameHandler
 
     private:
         Camera             _camera;
-		FlyMotion      _cameraMotion;
+		FlyMotion          _cameraMotion;
         RendererModel3D    *_model3D;
         BlinnPhongShader   *_blinnPhongShader;
 		NOAARenderTarget   *_renderTargetNOAA;
@@ -252,9 +257,9 @@ int main()
 
     game->setHandler(&antiAliasingDemo);
 #ifdef _WIN32
-    game->setWindowSize(800, 600, false);
+    game->setWindowSize(2560, 1440, false);
 #else
-    game->setWindowSize(1440, 900, true);
+    game->setWindowSize(2560, 1440, true);
 #endif
     game->setFPS(60);
 

@@ -12,7 +12,7 @@
 
 #pragma warning( disable : 4250 )
 
-class OpenGLNormalShadowMapShader : public NormalShadowMapShader
+class OpenGLNormalShadowMapShader : public NormalShadowMapShader, public OpenGLShader
 {
 	public:
 		bool init()

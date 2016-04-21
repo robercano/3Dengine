@@ -21,7 +21,6 @@ class Camera : public Object3D
 		 */
 		~Camera();
 
-        void lookAt(const glm::vec4 &at);
 		void setProjection(float fov, float ratio, float p_near, float p_far)
 		{
 			_fov   = fov;

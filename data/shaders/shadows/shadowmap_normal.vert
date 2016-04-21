@@ -9,8 +9,6 @@ layout(location = 2) in vec2 in_uvcoord;
 
 uniform mat4 u_MVPMatrix;
 
-out vec3 io_fragVertex;
-
 void main()
 {
     /* Clip-space coordinates */

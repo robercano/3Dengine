@@ -8,7 +8,6 @@
 #include "OpenGLRenderer.hpp"
 #include "OpenGLShader.hpp"
 #include "OpenGLModel3D.hpp"
-#include "LightingShader.hpp"
 
 void OpenGLRenderer::init()
 {
@@ -135,10 +134,10 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
     return true;
 }
 
-bool OpenGLRenderer::renderToShadowMap(RendererModel3D &model3D, Light &light, NormalShadowMapShader &shader, RenderTarget &renderTarget)
+bool OpenGLRenderer::renderToShadowMap(RendererModel3D &model3D, Camera &camera, NormalShadowMapShader &shader, RenderTarget &renderTarget)
 {
 	/* Calculate MVP matrix */
-	glm::mat4 MVP = light.getProjectionMatrix() * light.getViewMatrix() * light.getModelMatrix();
+	glm::mat4 MVP = camera.getProjectionMatrix() * camera.getViewMatrix() * model3D.getModelMatrix();
 
     /* Calculate normal matrix */
     glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(model3D.getModelMatrix())));
@@ -146,45 +145,24 @@ bool OpenGLRenderer::renderToShadowMap(RendererModel3D &model3D, Light &light, N
     /* Cast the model into an internal type */
     OpenGLModel3D &glObject = dynamic_cast<OpenGLModel3D&>(model3D);
 
-    if (disableDepth) {
-        glDisable(GL_DEPTH_TEST);
-    } else {
-        glEnable(GL_DEPTH_TEST);
-    }
+	glEnable(GL_DEPTH_TEST);
+
     /* Bind the render target */
     renderTarget.bind();
     {
-        GL( glEnable(GL_MULTISAMPLE) );
-        GL( glActiveTexture(GL_TEXTURE0) );
-
         /* Bind program to upload the uniform */
         shader.attach();
 
         /* Send our transformation to the currently bound shader, in the "MVP" uniform */
         shader.setUniformMat4("u_MVPMatrix", MVP);
-        shader.setUniformMat4("u_viewMatrix", camera.getViewMatrix());
-        shader.setUniformMat4("u_modelMatrix", model3D.getModelMatrix());
-        shader.setUniformMat3("u_normalMatrix", normalMatrix);
-        shader.setUniformTexture2D("u_diffuseMap", 0);
-        shader.setUniformFloat("u_ambientK", ambientK);
-
-		for (numLights=0; numLights<lights.size(); ++numLights) {
-			shader.setLight(numLights, *lights[numLights]);
-		}
-        shader.setUniformUint("u_numLights", numLights);
 
         /* Draw the model */
         GL( glBindVertexArray(glObject.getVertexArrayID()) );
         {
-            std::vector<Material> materials   = glObject.getMaterials();
-            std::vector<uint32_t> texturesIDs = glObject.getTextures();
             std::vector<uint32_t> offset      = glObject.getIndicesOffsets();
             std::vector<uint32_t> count       = glObject.getIndicesCount();
 
-            for (size_t  i=0; i<materials.size(); ++i) {
-                GL( glBindTexture(GL_TEXTURE_2D, texturesIDs[i]) );
-                shader.setMaterial(materials[i]);
-
+            for (size_t i=0; i<count.size(); ++i) {
                 GL( glDrawElements(GL_TRIANGLES, count[i], GL_UNSIGNED_INT, (void*)(offset[i] * sizeof(GLuint))) );
             }
         }

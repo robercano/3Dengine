@@ -2,5 +2,6 @@ anti-aliasing-comparison
 fxaa-comparison
 moving-lights
 toon
+shadows
 game-class-demo
 *.dSYM

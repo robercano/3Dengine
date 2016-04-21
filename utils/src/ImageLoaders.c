@@ -133,7 +133,7 @@ int loadPNG(const char *filename, uint8_t **image, uint32_t *width, uint32_t *he
 		return -1;
 	}
 
-	if (png_sig_cmp((png_const_bytep)header, 0, sizeof header)) {
+	if (png_sig_cmp((png_bytep)header, 0, sizeof header)) {
 		fprintf(stderr, "ERROR file %s is not recognized as a PNG file", filename);
 		return -1;
 	}

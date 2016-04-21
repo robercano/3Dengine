@@ -24,7 +24,7 @@ CORE_FILES=Game.cpp InputManager.cpp WindowManager.cpp TimeManager.cpp \
            Renderer.cpp NOAARenderTarget.cpp MSAARenderTarget.cpp SSAARenderTarget.cpp \
 		   FXAARenderTarget.cpp FXAA2RenderTarget.cpp FBRenderTarget.cpp ToonRenderTarget.cpp \
 		   Shader.cpp \
-		   BlinnPhongShader.cpp ToonLightingShader.cpp \
+		   BlinnPhongShader.cpp ToonLightingShader.cpp NormalShadowMapShader.cpp \
 		   Camera.cpp \
 		   FlyMotion.cpp FreeFlyMotion.cpp WalkingMotion.cpp
 

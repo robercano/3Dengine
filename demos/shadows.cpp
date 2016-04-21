@@ -6,6 +6,8 @@
 #include "BlinnPhongShader.hpp"
 #include "FXAA2RenderTarget.hpp"
 #include "ToonRenderTarget.hpp"
+#include "NOAARenderTarget.hpp"
+#include "NormalShadowMapShader.hpp"
 #include "Camera.hpp"
 #include "FlyMotion.hpp"
 
@@ -34,16 +36,6 @@ class AntiaAliasingDemo : public GameHandler
 
             game->getWindowManager()->getWindowSize(&_width, &_height);
 
-			/* Create a render target to allow post-processing */
-			_renderTargetFXAA2 = FXAA2RenderTarget::New();
-			if (_renderTargetFXAA2 == NULL) {
-				fprintf(stderr, "ERROR allocating fxaa2 render target\n");
-				return false;
-			}
-
-			_renderTargetFXAA2->init(_width, _height);
-			_renderTargetFXAA2->setClearColor(1.0, 1.0, 1.0, 0.0);
-
 			/* Create the toon target to add a border */
 			_renderTargetToon = ToonRenderTarget::New();
 			if (_renderTargetToon == NULL) {
@@ -54,6 +46,15 @@ class AntiaAliasingDemo : public GameHandler
 			_renderTargetToon->init(_width, _height);
 			_renderTargetToon->setClearColor(1.0, 1.0, 1.0, 1.0);
 			_renderTargetToon->setBorderColor(glm::vec4(0.0, 0.0, 0.0, 1.0));
+
+			/* Setup the normal render target for the shadow mapping */
+			_renderTargetNormal = NOAARenderTarget::New();
+			if (_renderTargetNormal == NULL) {
+				fprintf(stderr, "ERROR allocating normal render target\n");
+				return false;
+			}
+
+			_renderTargetNormal->init(_width, _height);
 
             /* Register the key and mouse listener */
 			std::vector<uint32_t> keys; // The keys should be read from a config file
@@ -79,15 +80,11 @@ class AntiaAliasingDemo : public GameHandler
 				printf("ERROR initializing toon lighting shader\n");
 				return false;
 			}
-            _shaderBlinnLight = BlinnPhongShader::New();
-			if (_shaderBlinnLight->init() == false) {
-				printf("ERROR initializing blinn-phong shader\n");
+			_shaderShadow = NormalShadowMapShader::New();
+			if (_shaderShadow->init() == false) {
+				printf("ERROR initializing shadow map shader\n");
 				return false;
 			}
-
-            _shaderLight = _shaderBlinnLight;
-            _renderTarget = _renderTargetFXAA2;
-            _current = "Normal";
 
             /* Load the geometry */
             std::string meshPath = "data/objects/daxter";
@@ -132,21 +129,6 @@ class AntiaAliasingDemo : public GameHandler
             if (_inputManager._keys['R']) {
                 game->resetStats();
             }
-            if (_inputManager._keys['1']) {
-                _shaderLight = _shaderBlinnLight;
-                _renderTarget = _renderTargetFXAA2;
-                _current = "Normal";
-            }
-            if (_inputManager._keys['2']) {
-                _shaderLight = _shaderToonLight;
-                _renderTarget = _renderTargetFXAA2;
-                _current = "ToonLight";
-            }
-            if (_inputManager._keys['3']) {
-                _shaderLight = _shaderToonLight;
-                _renderTarget = _renderTargetToon;
-                _current = "ToonLight+Filter";
-            }
 
 			/* Mouse */
 			if (_prevX == 0xFFFFFF) {
@@ -177,19 +159,19 @@ class AntiaAliasingDemo : public GameHandler
 			/* Apply the motion to the camera */
 			_cameraMotion.applyTo(_camera);
 
-            _renderTarget->clear();
+            _renderTargetToon->clear();
+            _renderTargetNormal->clear();
+
+			_model3D->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+
+			/* Render the shadow */
+			game->getRenderer()->renderToShadowMap(*_model3D, _camera, *_shaderShadow, *_renderTargetNormal);
 
             /* Render all objects */
-			_model3D->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
-            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderLight, _lights, 0.2f, *_renderTarget);
-			_model3D->setPosition(glm::vec3(0.0f, 0.0f, -50.0f));
-            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderLight, _lights, 0.2f, *_renderTarget);
-			_model3D->setPosition(glm::vec3(0.0f, 0.0f, -100.0f));
-            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderLight, _lights, 0.2f, *_renderTarget);
-            game->getTextConsole()->gprintf("Current = %s\n", _current.c_str());
-            game->getTextConsole()->gprintf("1=Normal, 2=ToonLight, 3=ToonLight+Filter\n");
+            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderToonLight, _lights, 0.2f, *_renderTargetToon);
 
-            _renderTarget->blit();
+//            _renderTargetToon->blit();
+			_renderTargetNormal->blit();
             return true;
         }
 
@@ -197,13 +179,10 @@ class AntiaAliasingDemo : public GameHandler
         Camera             _camera;
 		FlyMotion          _cameraMotion;
         RendererModel3D    *_model3D;
-        LightingShader     *_shaderLight;
-        BlinnPhongShader   *_shaderBlinnLight;
         ToonLightingShader *_shaderToonLight;
-        RenderTarget       *_renderTarget;
-		FXAA2RenderTarget  *_renderTargetFXAA2;
+		NormalShadowMapShader *_shaderShadow;
 		ToonRenderTarget   *_renderTargetToon;
-		std::string         _renderTargetName;
+		NOAARenderTarget   *_renderTargetNormal;
         std::vector<Light*> _lights;
 		InputManager        _inputManager;
         std::string         _current;
@@ -240,7 +219,7 @@ int main()
     if (game->init() == false) {
         fprintf(stderr, "ERROR initializing game\n");
         return 1;
-    }
+   }
 
     game->loop();
     return 0;

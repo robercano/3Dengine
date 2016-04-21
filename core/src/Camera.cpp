@@ -20,10 +20,6 @@ Camera::~Camera()
 {
 }
 
-void Camera::lookAt(const glm::vec4 &at)
-{
-}
-
 const glm::mat4 & Camera::getProjectionMatrix(void)
 {
 	if (_projectionValid == false) {
