@@ -122,7 +122,7 @@ class AntiaAliasingDemo : public GameHandler
             _model3D->setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
 
             /* Create the game camera */
-            _camera.setProjection(45.0f, _width/(float)_height, 0.1f, 1000.0f);
+            _camera.setProjection(45.0f, (float)_width, (float)_height, 0.1f, 1000.0f);
 			_cameraMotion.reset();
 			_cameraMotion.setPosition( glm::vec3(150.0f, 100.0f, 150.0f) );
             _cameraMotion.rotateYaw(-45.0f);
@@ -156,9 +156,6 @@ class AntiaAliasingDemo : public GameHandler
 				_selectedRenderTarget = _renderTargetNOAA;
 				_renderTargetName = "NOAA";
                 game->resetStats();
-
-				//_cameraMotion.reset();
-				_camera.lookAt(glm::vec3(0.0, 0.0, 0.0));
 			} else if (_inputManager._keys['2']) {
 				_selectedRenderTarget = _renderTargetMSAA;
 				_renderTargetName = "MSAA";
@@ -206,9 +203,7 @@ class AntiaAliasingDemo : public GameHandler
 			//printf("%.2f %.2f, %.2f, %.2f, %.2f\n", _cameraMotion.g->getPosition().x, _camera->getPosition().y, _camera->getPosition().z, _camera->getPitch(), _camera->getYaw());
 
 			/* Apply final movement to the camera */
-			if (_renderTargetName != std::string("NOAA")) {
-				_cameraMotion.applyTo(_camera);
-			}
+			_cameraMotion.applyTo(_camera);
 
             /* Render all objects */
 			_selectedRenderTarget->clear();

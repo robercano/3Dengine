@@ -51,13 +51,13 @@ DEMODIR=demos
 
 # Mac OS alternate cmdline link options
 ifeq ($(UNAME), Darwin)
-LDFLAGS= -L/opt/X11/lib -lfreetype -lglew -lglfw3 -ljpeg -framework Cocoa -framework OpenGL -framework IOKit -fPIC
+LDFLAGS= -Llib -lengine -L/opt/X11/lib -lfreetype -lglew -lglfw3 -ljpeg -framework Cocoa -framework OpenGL -framework IOKit -fPIC
 FLAGS=-I/opt/X11/include -I/opt/X11/include/freetype2/ -Wno-deprecated-register
 SHAREDGEN= -dynamiclib -Wl,-headerpad_max_install_names,-undefined,dynamic_lookup,-compatibility_version,1.0,-current_version,1.0,-install_name,$(LIBNAME)
 SHAREDEXT=dylib
 PREFIX=/usr/local/lib
 else
-LDFLAGS= -lGL -lGLEW -lglfw -lfreetype -ljpeg -fPIC
+LDFLAGS+= -Llib -lengine -lGL -lGLEW -lglfw3 -lpng -ljpeg -lfreetype -lX11 -lXrandr -lXinerama -lXi -lXxf86vm -lXcursor -ldl -pthread -fPIC
 FLAGS=-I/usr/include -I/usr/include/freetype2
 SHAREDGEN= -shared
 SHAREDEXT=so
@@ -72,26 +72,31 @@ CXXFLAGS=$(FLAGS) -std=c++11
 CFLAGS=$(FLAGS) -std=c11
 
 #
+# Demos
+#
+DEMO_FILES=$(shell \ls demos/*.cpp)
+DEMO_TARGETS=$(DEMO_FILES:.cpp=)
+
+#
 # Main rules
 #
 .PHONY: demos
 
-all: engine 
+all: engine $(DEMO_TARGETS)
 
 engine: dirs $(LIBDIR)/$(LIBNAME)
 
-demos: engine
-	@make -C $(DEMODIR)
+demos/%: demos/%.cpp $(LIBDIR)/$(LIBNAME)
+	@echo "- Compiling demo $@"
+	@g++ $(CXXFLAGS) -o $@ $< $(LDFLAGS) 
 
 dirs:
-	@echo "- Creating project dirs...\c"
 	@mkdir -p $(OBJDIR)
 	@mkdir -p $(LIBDIR)
-	@echo "done"
 
 $(LIBDIR)/$(LIBNAME): $(OBJECTS)
 	@echo "- Generating $@...\c"
-	@$(CXX) $(SHAREDGEN) -o $@ $(OBJECTS) $(LDFLAGS)
+	@$(CXX) $(SHAREDGEN) -o $@ $(OBJECTS) -lglfw
 	@echo "done"
 
 -include $(OBJECTS:.o=.d)
@@ -108,5 +113,4 @@ clean:
 	@echo "- Cleaning project directories...\c"
 	@rm -fr $(OBJDIR)
 	@rm -fr $(LIBDIR)
-	@make -C $(DEMODIR) clean >/dev/null 2>&1
 	@echo "done"

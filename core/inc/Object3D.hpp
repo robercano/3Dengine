@@ -60,7 +60,6 @@ class Object3D
 		void lookAt(const glm::vec3 &at)
 		{
 			glm::vec3 up(0.0f, 1.0f, 0.0f);
-			glm::vec3 zero(0.1f, 0.1f, 0.1f);
 
 			_view = glm::lookAt(_position, at, up);
             _modelValid = false;
