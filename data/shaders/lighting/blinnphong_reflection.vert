@@ -11,12 +11,14 @@ uniform mat4 u_MVPMatrix;
 uniform mat4 u_viewMatrix;
 uniform mat4 u_modelMatrix;
 uniform mat3 u_normalMatrix;
+uniform mat4 u_shadowMVPMatrix;
 
 out vec3 io_fragVertex;
 out vec3 io_fragNormal;
 out vec2 io_fragUVCoord;
 out vec3 io_viewNormal;
 out vec3 io_viewVertex;
+out vec4 io_shadowCoord;
 
 void main()
 {
@@ -35,4 +37,6 @@ void main()
     /* Clip-space coordinates */
 	gl_Position = u_MVPMatrix * vec4(in_vertex, 1.0f);
 
+	/* Shadow-map coordinate */
+	io_shadowCoord = u_shadowMVPMatrix * vec4(in_vertex, 1.0f);
 }

@@ -36,8 +36,10 @@ layout (std140) uniform Material {
 
 /* Texture and transformation matrices */
 uniform sampler2D u_diffuseMap;
+uniform sampler2D u_shadowMap;
 uniform mat4      u_viewMatrix;
 uniform mat4      u_modelMatrix;
+uniform mat4      u_shadowMVPMatrix;
 
 /* Input from vertex shader */
 in vec3 io_fragVertex;
@@ -45,6 +47,7 @@ in vec3 io_fragNormal;
 in vec2 io_fragUVCoord;
 in vec3 io_viewNormal;
 in vec3 io_viewVertex;
+in vec4 io_shadowCoord;
 
 /* Output of this shader */
 out vec4 o_color;
@@ -56,13 +59,13 @@ float sRGB2Linear(float c) {
     return pow((c + 0.055)/1.055, 2.4);
 }
 
-#define _ProcessLight(color, n, V)                                                    \
+#define _ProcessLight(color, shadow, n, V)                                            \
 {                                                                                     \
     if (n < u_numLights) {                                                            \
         vec3 unnormL = u_light[n].position - io_fragVertex;                           \
                                                                                       \
         /* Attenuation */                                                             \
-        float attenuation = 1.0 / (1.0 + 0.00001 * pow(length(unnormL), 2));          \
+        float attenuation = shadow / (1.0 + 0.00001 * pow(length(unnormL), 2));         \
                                                                                       \
         /* Light vector to fragment */                                                \
         vec3 L = normalize(unnormL);                                                  \
@@ -92,6 +95,11 @@ void main()
 {
     /* Accumulates the final intensities for the texel */
     vec3 lightAcc = vec3(0.0);
+	float shadow = 1.0f;
+
+	if (texture(u_shadowMap, io_shadowCoord.xy).x < io_shadowCoord.z) {
+		shadow = 0.0f;
+	}
 
     /* For shaders on version 3.3 and earlier the uniform
        block must be indexed by a constant integral expression, which
@@ -101,20 +109,20 @@ void main()
         uint nLights = min(u_numLights, MAX_LIGHTS);
 
         for (int i=0; i<nLights; ++i) {
-            _ProcessLight(lightAcc, i, io_viewVertex);
+            _ProcessLight(lightAcc, shadow, i, io_viewVertex);
         }
 #else
-        _ProcessLight(lightAcc, 0, io_viewVertex);
-        _ProcessLight(lightAcc, 1, io_viewVertex);
-        _ProcessLight(lightAcc, 2, io_viewVertex);
-        _ProcessLight(lightAcc, 4, io_viewVertex);
-        _ProcessLight(lightAcc, 5, io_viewVertex);
-        _ProcessLight(lightAcc, 6, io_viewVertex);
-        _ProcessLight(lightAcc, 7, io_viewVertex);
-        _ProcessLight(lightAcc, 8, io_viewVertex);
-        _ProcessLight(lightAcc, 9, io_viewVertex);
+        _ProcessLight(lightAcc, shadow, 0, io_viewVertex);
+        _ProcessLight(lightAcc, shadow, 1, io_viewVertex);
+        _ProcessLight(lightAcc, shadow, 2, io_viewVertex);
+        _ProcessLight(lightAcc, shadow, 4, io_viewVertex);
+        _ProcessLight(lightAcc, shadow, 5, io_viewVertex);
+        _ProcessLight(lightAcc, shadow, 6, io_viewVertex);
+        _ProcessLight(lightAcc, shadow, 7, io_viewVertex);
+        _ProcessLight(lightAcc, shadow, 8, io_viewVertex);
+        _ProcessLight(lightAcc, shadow, 9, io_viewVertex);
 #endif
 
-    o_color = vec4(vec3(texture(u_diffuseMap, io_fragUVCoord)) * lightAcc, u_material.alpha);
+	o_color = vec4(vec3(texture(u_diffuseMap, io_fragUVCoord)) * lightAcc, u_material.alpha);
 }
 

@@ -14,9 +14,9 @@
  * the following diagram:
  *
  *                    Shader
- *                    /   \
- *                   /     \
- *       LightingShader    <API>Shader
+ *                    /    \
+ *                   /      \
+ *       LightingShader   <API>Shader
  *                   \      /
  *                    \    /
  *              <API>LightingShader

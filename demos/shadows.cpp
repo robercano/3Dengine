@@ -13,10 +13,10 @@
 
 #define PI 3.14159265358979323846
 
-class AntiaAliasingDemo : public GameHandler
+class ShadowsDemo : public GameHandler
 {
     public:
-        AntiaAliasingDemo() {
+        ShadowsDemo() {
             _MouseSensibility = 10.0f;
 			_KeyboardSensibility = 0.1f;
 			_InvertMouse = 1.0;
@@ -30,22 +30,9 @@ class AntiaAliasingDemo : public GameHandler
 			Light *light1 = new Light(glm::vec3(3.5, 3.5, 4.5),
 									 glm::vec3(3.5, 3.5, 4.5),
 									 glm::vec3(3.5, 3.5, 4.5),
-									 glm::vec3(75.0, 300.0, 150.0));
-
-            _lights.push_back(light1);
+									 glm::vec3(0.0, 300.0, 150.0));
 
             game->getWindowManager()->getWindowSize(&_width, &_height);
-
-			/* Create the toon target to add a border */
-			_renderTargetToon = ToonRenderTarget::New();
-			if (_renderTargetToon == NULL) {
-				fprintf(stderr, "ERROR allocating toon render target\n");
-				return false;
-			}
-
-			_renderTargetToon->init(_width, _height);
-			_renderTargetToon->setClearColor(1.0, 1.0, 1.0, 1.0);
-			_renderTargetToon->setBorderColor(glm::vec4(0.0, 0.0, 0.0, 1.0));
 
 			/* Setup the normal render target for the shadow mapping */
 			_renderTargetNormal = NOAARenderTarget::New();
@@ -55,6 +42,7 @@ class AntiaAliasingDemo : public GameHandler
 			}
 
 			_renderTargetNormal->init(_width, _height);
+			_renderTargetNormal->setClearColor(1.0, 1.0, 1.0, 1.0);
 
             /* Register the key and mouse listener */
 			std::vector<uint32_t> keys; // The keys should be read from a config file
@@ -75,8 +63,8 @@ class AntiaAliasingDemo : public GameHandler
 			game->getWindowManager()->getMouseManager()->registerListener(_inputManager);
 
             /* Create a Blinn-phong shader for the geometry */
-            _shaderToonLight  = ToonLightingShader::New();
-			if (_shaderToonLight->init() == false) {
+            _shaderBlinnLight  = BlinnPhongShader::New();
+			if (_shaderBlinnLight->init() == false) {
 				printf("ERROR initializing toon lighting shader\n");
 				return false;
 			}
@@ -104,6 +92,11 @@ class AntiaAliasingDemo : public GameHandler
             _camera.setProjection(45, (float)_width, (float)_height, 0.1f, 1000.0f);
 			_cameraMotion.setPosition( glm::vec3(150.0f, 100.0f, 150.0f) );
             _cameraMotion.rotateYaw(-45.0f);
+
+			light1->setOrthogonal((float)_width/4.0f, (float)_height/4.0f, 0.1f, 1000.0f);
+			light1->getShadowMap()->init(_width, _height);
+
+            _lights.push_back(light1);
 
             return true;
         }
@@ -159,19 +152,33 @@ class AntiaAliasingDemo : public GameHandler
 			/* Apply the motion to the camera */
 			_cameraMotion.applyTo(_camera);
 
-            _renderTargetToon->clear();
             _renderTargetNormal->clear();
 
-			_model3D->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+			/* Render the shadow map for each light */
+			for (std::vector<Light*>::iterator it = _lights.begin(); it != _lights.end(); ++it) {
+				/* TODO: lookAt the center of the calculated bounding box, but for
+				 * now this is enough */
+				(*it)->lookAt(_model3D->getPosition());
+				(*it)->getShadowMap()->clear();
 
-			/* Render the shadow */
-			game->getRenderer()->renderToShadowMap(*_model3D, _camera, *_shaderShadow, *_renderTargetNormal);
+				_model3D->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+				game->getRenderer()->renderToShadowMap(*_model3D, *(*it), *_shaderShadow);
+				_model3D->setPosition(glm::vec3(0.0f, 0.0f, -50.0f));
+				game->getRenderer()->renderToShadowMap(*_model3D, *(*it), *_shaderShadow);
+				_model3D->setPosition(glm::vec3(0.0f, 0.0f, -100.0f));
+				game->getRenderer()->renderToShadowMap(*_model3D, *(*it), *_shaderShadow);
+			}
 
             /* Render all objects */
-            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderToonLight, _lights, 0.2f, *_renderTargetToon);
+			_model3D->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderBlinnLight, _lights, 0.2f, *_renderTargetNormal);
+			_model3D->setPosition(glm::vec3(0.0f, 0.0f, -50.0f));
+            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderBlinnLight, _lights, 0.2f, *_renderTargetNormal);
+			_model3D->setPosition(glm::vec3(0.0f, 0.0f, -100.0f));
+            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderBlinnLight, _lights, 0.2f, *_renderTargetNormal);
 
-//            _renderTargetToon->blit();
 			_renderTargetNormal->blit();
+			//_lights[0]->getShadowMap()->blit(0, 0, _width, _height);
             return true;
         }
 
@@ -179,9 +186,8 @@ class AntiaAliasingDemo : public GameHandler
         Camera             _camera;
 		FlyMotion          _cameraMotion;
         RendererModel3D    *_model3D;
-        ToonLightingShader *_shaderToonLight;
+        BlinnPhongShader *_shaderBlinnLight;
 		NormalShadowMapShader *_shaderShadow;
-		ToonRenderTarget   *_renderTargetToon;
 		NOAARenderTarget   *_renderTargetNormal;
         std::vector<Light*> _lights;
 		InputManager        _inputManager;
@@ -200,7 +206,7 @@ class AntiaAliasingDemo : public GameHandler
 int main()
 {
     Game *game;
-    AntiaAliasingDemo antiAliasingDemo;
+    ShadowsDemo shadowsDemo;
 
     game = new Game("Anti Aliasing Comparison demo");
     if (game == NULL) {
@@ -208,7 +214,7 @@ int main()
         return 1;
     }
 
-    game->setHandler(&antiAliasingDemo);
+    game->setHandler(&shadowsDemo);
 #ifdef _WIN32
     game->setWindowSize(800, 600, false);
 #else

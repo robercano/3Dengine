@@ -9,6 +9,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include "Camera.hpp"
+#include "ShadowMapRenderTarget.hpp"
 
 /**
  * Light inherits from Camera to be able to implement Shadow maps by projecting the models
@@ -16,16 +17,22 @@
 class Light : public Camera
 {
 	public:
-		Light() {}
+		Light() {
+			_shadowMap = ShadowMapRenderTarget::New();
+		}
 		Light(const glm::vec3 &ambient, const glm::vec3 &diffuse, const glm::vec3 &specular) :
             _ambient(ambient), _diffuse(diffuse), _specular(specular) {
+			_shadowMap = ShadowMapRenderTarget::New();
         }
 		Light(const glm::vec3 &ambient, const glm::vec3 &diffuse, const glm::vec3 &specular, const glm::vec3 &position) :
             _ambient(ambient), _diffuse(diffuse), _specular(specular)
 		{
+			_shadowMap = ShadowMapRenderTarget::New();
 			setPosition(position);
 		}
-		~Light() {}
+		~Light() {
+			ShadowMapRenderTarget::Delete(_shadowMap);
+		}
 
         void setAmbient(const glm::vec3 &ambient) { _ambient = ambient; }
         void setDiffuse(const glm::vec3 &diffuse) { _diffuse = diffuse; }
@@ -35,8 +42,12 @@ class Light : public Camera
         glm::vec3 getDiffuse()  { return _diffuse; }
         glm::vec3 getSpecular() { return _specular; }
 
+		RenderTarget *getShadowMap() { return _shadowMap; }
+
 	protected:
         glm::vec3 _ambient;
         glm::vec3 _diffuse;
         glm::vec3 _specular;
+
+		ShadowMapRenderTarget *_shadowMap;
 };

@@ -72,6 +72,12 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
                                    RenderTarget &renderTarget, bool disableDepth)
 {
 	uint32_t numLights = 0;
+	glm::mat4 biasMatrix(
+			0.5, 0.0, 0.0, 0.0,
+			0.0, 0.5, 0.0, 0.0,
+			0.0, 0.0, 0.5, 0.0,
+			0.5, 0.5, 0.5, 1.0
+			);
 
 	/* Calculate MVP matrix */
 	glm::mat4 MVP = camera.getProjectionMatrix() * camera.getViewMatrix() * model3D.getModelMatrix();
@@ -91,7 +97,6 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
     renderTarget.bind();
     {
         GL( glEnable(GL_MULTISAMPLE) );
-        GL( glActiveTexture(GL_TEXTURE0) );
 
         /* Bind program to upload the uniform */
         shader.attach();
@@ -106,12 +111,28 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
 
 		for (numLights=0; numLights<lights.size(); ++numLights) {
 			shader.setLight(numLights, *lights[numLights]);
+
+			/* Calculate adjusted shadow map matrix */
+			glm::mat4 shadowMVP = lights[numLights]->getOrthogonalMatrix() *
+				                  lights[numLights]->getViewMatrix() *
+								  model3D.getModelMatrix();
+			shadowMVP = biasMatrix * shadowMVP;
+
+			/* TODO: This has to be set in a matrix array */
+			shader.setUniformMat4("u_shadowMVPMatrix", shadowMVP);
+			shader.setUniformTexture2D("u_shadowMap", numLights+1);
+
+			GL( glActiveTexture(GL_TEXTURE1) );
+			lights[numLights]->getShadowMap()->bindDepth();
+
 		}
         shader.setUniformUint("u_numLights", numLights);
 
         /* Draw the model */
         GL( glBindVertexArray(glObject.getVertexArrayID()) );
         {
+			GL( glActiveTexture(GL_TEXTURE0) );
+
             std::vector<Material> materials   = glObject.getMaterials();
             std::vector<uint32_t> texturesIDs = glObject.getTextures();
             std::vector<uint32_t> offset      = glObject.getIndicesOffsets();
@@ -134,10 +155,10 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
     return true;
 }
 
-bool OpenGLRenderer::renderToShadowMap(RendererModel3D &model3D, Camera &camera, NormalShadowMapShader &shader, RenderTarget &renderTarget)
+bool OpenGLRenderer::renderToShadowMap(RendererModel3D &model3D, Light &light, NormalShadowMapShader &shader)
 {
 	/* Calculate MVP matrix */
-	glm::mat4 MVP = camera.getProjectionMatrix() * camera.getViewMatrix() * model3D.getModelMatrix();
+	glm::mat4 MVP = light.getOrthogonalMatrix() * light.getViewMatrix() * model3D.getModelMatrix();
 
     /* Calculate normal matrix */
     glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(model3D.getModelMatrix())));
@@ -146,9 +167,10 @@ bool OpenGLRenderer::renderToShadowMap(RendererModel3D &model3D, Camera &camera,
     OpenGLModel3D &glObject = dynamic_cast<OpenGLModel3D&>(model3D);
 
 	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
 
     /* Bind the render target */
-    renderTarget.bind();
+    light.getShadowMap()->bind();
     {
         /* Bind program to upload the uniform */
         shader.attach();
@@ -171,7 +193,7 @@ bool OpenGLRenderer::renderToShadowMap(RendererModel3D &model3D, Camera &camera,
         /* Unbind */
         shader.detach();
     }
-    renderTarget.unbind();
+    light.getShadowMap()->unbind();
 
     return true;
 }

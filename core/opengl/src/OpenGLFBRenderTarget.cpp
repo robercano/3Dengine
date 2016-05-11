@@ -72,6 +72,11 @@ void OpenGLFBRenderTarget::bind()
     GL( glViewport(0, 0, _width, _height) );
 }
 
+void OpenGLFBRenderTarget::bindDepth()
+{
+	GL( glBindTexture(GL_TEXTURE_2D, _depthBuffer) );
+}
+
 void OpenGLFBRenderTarget::unbind()
 {
     GL( glBindFramebuffer(GL_FRAMEBUFFER, 0) );

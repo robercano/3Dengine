@@ -26,8 +26,7 @@ class OpenGLRenderer : public Renderer
 		bool renderModel3D(RendererModel3D &model, Camera &camera,
                            LightingShader &shader, std::vector<Light*> &lights, float ambientK,
                            RenderTarget &renderTarget, bool disableDepth = false);
-		bool renderToShadowMap(RendererModel3D &model3D, Camera &camera,
-				               NormalShadowMapShader &shader, RenderTarget &renderTarget);
+		bool renderToShadowMap(RendererModel3D &model3D, Light &light, NormalShadowMapShader &shader);
 		bool resize(uint16_t width, uint16_t height);
         void flush();
 

@@ -1,5 +1,5 @@
 /**
- * @class	OpenGLFilterRenderTarget
+ * @class	OpenGLShadowMapRenderTarget
  * @brief	Render target for OpenGL. A render target allows to render objects to it
  *          instead of to the main screen. Then the target can be rendered to the main screen as
  *          a texture
@@ -8,51 +8,19 @@
  */
 #include <glm/gtc/matrix_transform.hpp>
 #include "OpenGL.h"
-#include "OpenGLFilterRenderTarget.hpp"
+#include "OpenGLShadowMapRenderTarget.hpp"
 #include "Renderer.hpp"
 #include "WindowManager.hpp"
 
-OpenGLFilterRenderTarget::~OpenGLFilterRenderTarget()
+OpenGLShadowMapRenderTarget::~OpenGLShadowMapRenderTarget()
 {
-    delete _shader;
-
-    GL( glDeleteBuffers(1, &_vertexBuffer) );
-    GL( glDeleteVertexArrays(1, &_vertexArray) );
-    GL( glDeleteTextures(1, &_colorBuffer) );
     GL( glDeleteRenderbuffers(1, &_depthBuffer) );
     GL( glDeleteFramebuffers(1, &_frameBuffer) );
 }
 
-bool OpenGLFilterRenderTarget::init(uint32_t width, uint32_t height, uint32_t maxSamples)
+bool OpenGLShadowMapRenderTarget::init(uint32_t width, uint32_t height, uint32_t maxSamples)
 {
 	(void)maxSamples;
-
-    /* Texture buffer */
-    GL( glGenTextures(1, &_colorBuffer) );
-    GL( glBindTexture(GL_TEXTURE_2D, _colorBuffer) );
-    {
-        GLfloat fLargest;
-        glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &fLargest);
-
-        /* FXAA requires a 4x anisotropic filter */
-        if (fLargest > 4.0) {
-            fLargest = 4.0;
-        }
-
-        GL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR) );
-        GL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR) );
-        GL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE) );
-        GL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE) );
-        GL( glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, fLargest) );
-
-        /* Because we cannot enable GL_FRAMEBUFFER_SRGB we will use a normal
-         * RGBA texture here and do the conversion in the fragment shader */
-#if 0
-        GL( glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8_ALPHA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL) );
-#endif
-        GL( glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL) );
-    }
-    GL( glBindTexture(GL_TEXTURE_2D, 0) );
 
     /* Depth buffer */
     GL( glGenTextures(1, &_depthBuffer) );
@@ -71,7 +39,7 @@ bool OpenGLFilterRenderTarget::init(uint32_t width, uint32_t height, uint32_t ma
     GL( glGenFramebuffers(1, &_frameBuffer) );
     GL( glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer) );
     {
-        GL( glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _colorBuffer, 0) );
+        GL( glDrawBuffer(GL_NONE) );
         GL( glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _depthBuffer, 0) );
 
         GLenum status;
@@ -118,26 +86,32 @@ bool OpenGLFilterRenderTarget::init(uint32_t width, uint32_t height, uint32_t ma
     _width = width;
     _height = height;
 
-	return customInit();
+	std::string error;
+	if (_shader->use("utils/depth2color", error) == false) {
+		printf("ERROR loading shader utils/depth2color: %s\n", error.c_str());
+		return false;
+	}
+
+	return true;
 }
 
-void OpenGLFilterRenderTarget::bind()
+void OpenGLShadowMapRenderTarget::bind()
 {
     GL( glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer) );
     GL( glViewport(0, 0, _width, _height) );
 }
 
-void OpenGLFilterRenderTarget::bindDepth()
+void OpenGLShadowMapRenderTarget::bindDepth()
 {
     GL( glBindTexture(GL_TEXTURE_2D, _depthBuffer) );
 }
 
-void OpenGLFilterRenderTarget::unbind()
+void OpenGLShadowMapRenderTarget::unbind()
 {
     GL( glBindFramebuffer(GL_FRAMEBUFFER, 0) );
 }
 
-bool OpenGLFilterRenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height, bool bindMainFB)
+bool OpenGLShadowMapRenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height, bool bindMainFB)
 {
 	/* Setup the viewport */
     GL( glViewport(dstX, dstY, width, height) );
@@ -146,15 +120,18 @@ bool OpenGLFilterRenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width
 	if (bindMainFB) {
 		GL( glBindFramebuffer(GL_FRAMEBUFFER, 0) );
 	}
+
     GL( glViewport(dstX, dstY, width, height) );
     GL( glActiveTexture(GL_TEXTURE0) );
-    GL( glBindTexture(GL_TEXTURE_2D, _colorBuffer) );
+    GL( glBindTexture(GL_TEXTURE_2D, _depthBuffer) );
 
     /* Tell the shader which texture unit to use */
     _shader->attach();
-    _shader->setUniformTexture2D("fbo_texture", 0);
+    _shader->setUniformTexture2D("u_depthMap", 0);
 
-	setCustomParams();
+	GL( glDisable(GL_DEPTH_TEST) );
+	//GL( glEnable(GL_BLEND) );
+	//GL( glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA) );
 
     GL( glBindVertexArray(_vertexArray) );
     {
@@ -162,14 +139,15 @@ bool OpenGLFilterRenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width
     }
     GL( glBindVertexArray(0) );
 
-	unsetCustomParams();
+	//GL( glDisable(GL_BLEND) );
+	GL( glEnable(GL_DEPTH_TEST) );
 
     _shader->detach();
 
     return true;
 }
 
-void OpenGLFilterRenderTarget::clear()
+void OpenGLShadowMapRenderTarget::clear()
 {
     GL( glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer) );
     GL( glClearColor(_r, _g, _b, _a) );

@@ -20,6 +20,7 @@ class OpenGLSSAARenderTarget : public SSAARenderTarget
         ~OpenGLSSAARenderTarget();
         bool init(uint32_t width, uint32_t height, uint32_t factor);
         void bind();
+        void bindDepth();
         void unbind();
         bool blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height, bool bindMainFB = true);
         void clear();
