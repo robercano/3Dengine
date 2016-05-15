@@ -10,6 +10,7 @@
 #include "NormalShadowMapShader.hpp"
 #include "Camera.hpp"
 #include "FlyMotion.hpp"
+#include "Plane.hpp"
 
 #define PI 3.14159265358979323846
 
@@ -30,7 +31,7 @@ class ShadowsDemo : public GameHandler
 			Light *light1 = new Light(glm::vec3(3.5, 3.5, 4.5),
 									 glm::vec3(3.5, 3.5, 4.5),
 									 glm::vec3(3.5, 3.5, 4.5),
-									 glm::vec3(0.0, 300.0, 150.0));
+									 glm::vec3(-80.0, 300.0, 300.0));
 
             game->getWindowManager()->getWindowSize(&_width, &_height);
 
@@ -42,7 +43,7 @@ class ShadowsDemo : public GameHandler
 			}
 
 			_renderTargetNormal->init(_width, _height);
-			_renderTargetNormal->setClearColor(1.0, 1.0, 1.0, 1.0);
+			_renderTargetNormal->setClearColor(0.0, 0.0, 0.0, 1.0);
 
             /* Register the key and mouse listener */
 			std::vector<uint32_t> keys; // The keys should be read from a config file
@@ -87,6 +88,12 @@ class ShadowsDemo : public GameHandler
              * renderer API specific structures and uploads data to the graphics card */
             _model3D = game->getRenderer()->prepareModel3D(obj3D);
             _model3D->setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
+
+			/* Use a plane for the floor */
+			procedural::Plane plane;
+
+			_plane3D = game->getRenderer()->prepareModel3D(plane);
+			_plane3D->setScaleFactor(glm::vec3(500.0f, 1.0f, 500.0f));
 
             /* Create the game camera */
             _camera.setProjection(45, (float)_width, (float)_height, 0.1f, 1000.0f);
@@ -144,6 +151,14 @@ class ShadowsDemo : public GameHandler
 			_prevX = _inputManager._xMouse;
 			_prevY = _inputManager._yMouse;
 
+			/* Move the lights */
+			_angle += (float)(2*PI*elapsedMs/5000.0);
+			if (_angle > 2*PI) {
+				_angle -= (float)(2*PI);
+			}
+
+			_lights[0]->setPosition(glm::vec3(300.0*glm::sin(-_angle), 300.0, 300.0*glm::cos(-_angle)));
+
             return true;
         }
 
@@ -163,22 +178,16 @@ class ShadowsDemo : public GameHandler
 
 				_model3D->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 				game->getRenderer()->renderToShadowMap(*_model3D, *(*it), *_shaderShadow);
-				_model3D->setPosition(glm::vec3(0.0f, 0.0f, -50.0f));
-				game->getRenderer()->renderToShadowMap(*_model3D, *(*it), *_shaderShadow);
-				_model3D->setPosition(glm::vec3(0.0f, 0.0f, -100.0f));
-				game->getRenderer()->renderToShadowMap(*_model3D, *(*it), *_shaderShadow);
 			}
 
             /* Render all objects */
 			_model3D->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
             game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderBlinnLight, _lights, 0.2f, *_renderTargetNormal);
-			_model3D->setPosition(glm::vec3(0.0f, 0.0f, -50.0f));
-            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderBlinnLight, _lights, 0.2f, *_renderTargetNormal);
-			_model3D->setPosition(glm::vec3(0.0f, 0.0f, -100.0f));
-            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderBlinnLight, _lights, 0.2f, *_renderTargetNormal);
+			_plane3D->setPosition(glm::vec3(0.0f, -80.0f, 0.0f));
+            game->getRenderer()->renderModel3D(*_plane3D, _camera, *_shaderBlinnLight, _lights, 0.2f, *_renderTargetNormal);
 
 			_renderTargetNormal->blit();
-			//_lights[0]->getShadowMap()->blit(0, 0, _width, _height);
+			_lights[0]->getShadowMap()->blit(0, 0, _width, _height);
             return true;
         }
 
@@ -186,6 +195,7 @@ class ShadowsDemo : public GameHandler
         Camera             _camera;
 		FlyMotion          _cameraMotion;
         RendererModel3D    *_model3D;
+        RendererModel3D    *_plane3D;
         BlinnPhongShader *_shaderBlinnLight;
 		NormalShadowMapShader *_shaderShadow;
 		NOAARenderTarget   *_renderTargetNormal;
