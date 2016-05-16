@@ -29,6 +29,7 @@ class AntiaAliasingDemo : public GameHandler
 									 glm::vec3(5.0, 5.0, 5.0),
 									 glm::vec3(5.0, 5.0, 5.0),
 									 glm::vec3(50.0, 100.0, 50.0));
+			light->getShadowMap()->init(1, 1);
             _lights.push_back(light);
 
             game->getWindowManager()->getWindowSize(&_width, &_height);

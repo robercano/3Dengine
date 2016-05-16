@@ -113,18 +113,19 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
 			shader.setLight(numLights, *lights[numLights]);
 
 			/* Calculate adjusted shadow map matrix */
-			glm::mat4 shadowMVP = lights[numLights]->getOrthogonalMatrix() *
-				                  lights[numLights]->getViewMatrix() *
-								  model3D.getModelMatrix();
-			shadowMVP = biasMatrix * shadowMVP;
+			if (numLights == 0) {
+				glm::mat4 shadowMVP = lights[numLights]->getOrthogonalMatrix() *
+									  lights[numLights]->getViewMatrix() *
+									  model3D.getModelMatrix();
+				shadowMVP = biasMatrix * shadowMVP;
 
-			/* TODO: This has to be set in a matrix array */
-			shader.setUniformMat4("u_shadowMVPMatrix", shadowMVP);
-			shader.setUniformTexture2D("u_shadowMap", numLights+1);
+				/* TODO: This has to be set in a matrix array */
+				shader.setUniformMat4("u_shadowMVPMatrix", shadowMVP);
+				shader.setUniformTexture2D("u_shadowMap", numLights+1);
 
-			GL( glActiveTexture(GL_TEXTURE1) );
-			lights[numLights]->getShadowMap()->bindDepth();
-
+				GL( glActiveTexture(GL_TEXTURE1) );
+				lights[numLights]->getShadowMap()->bindDepth();
+			}
 		}
         shader.setUniformUint("u_numLights", numLights);
 

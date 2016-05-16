@@ -36,7 +36,7 @@ layout (std140) uniform Material {
 
 /* Texture and transformation matrices */
 uniform sampler2D u_diffuseMap;
-uniform sampler2D u_shadowMap;
+uniform sampler2DShadow u_shadowMap;
 uniform mat4      u_viewMatrix;
 uniform mat4      u_modelMatrix;
 uniform mat4      u_shadowMVPMatrix;
@@ -65,7 +65,7 @@ float sRGB2Linear(float c) {
         vec3 unnormL = u_light[n].position - io_fragVertex;                           \
                                                                                       \
         /* Attenuation */                                                             \
-        float attenuation = shadow / (1.0 + 0.00001 * pow(length(unnormL), 2));         \
+        float attenuation = shadow / (1.0 + 0.00001 * pow(length(unnormL), 2));       \
                                                                                       \
         /* Light vector to fragment */                                                \
         vec3 L = normalize(unnormL);                                                  \
@@ -96,10 +96,9 @@ void main()
     /* Accumulates the final intensities for the texel */
     vec3 lightAcc = vec3(0.0);
 	float shadow = 1.0f;
+	float bias = 0.05f;
 
-	if (texture(u_shadowMap, io_shadowCoord.xy).x < io_shadowCoord.z) {
-		shadow = 0.0f;
-	}
+	shadow = texture(u_shadowMap, vec3(io_shadowCoord.xy, (io_shadowCoord.z + bias)));
 
     /* For shaders on version 3.3 and earlier the uniform
        block must be indexed by a constant integral expression, which

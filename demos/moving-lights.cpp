@@ -35,6 +35,10 @@ class AntiaAliasingDemo : public GameHandler
                     glm::vec3(1.0, 1.0, 3.0),
                     glm::vec3(50.0, 200.0, 100.0));
 
+			light1->getShadowMap()->init(1, 1);
+			light2->getShadowMap()->init(1, 1);
+			light3->getShadowMap()->init(1, 1);
+
             _lights.push_back(light1);
             _lights.push_back(light2);
             _lights.push_back(light3);

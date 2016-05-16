@@ -31,7 +31,7 @@ class ShadowsDemo : public GameHandler
 			Light *light1 = new Light(glm::vec3(3.5, 3.5, 4.5),
 									 glm::vec3(3.5, 3.5, 4.5),
 									 glm::vec3(3.5, 3.5, 4.5),
-									 glm::vec3(-80.0, 300.0, 300.0));
+									 glm::vec3(-300.0, 300.0, 300.0));
 
             game->getWindowManager()->getWindowSize(&_width, &_height);
 
@@ -166,7 +166,6 @@ class ShadowsDemo : public GameHandler
         {
 			/* Apply the motion to the camera */
 			_cameraMotion.applyTo(_camera);
-
             _renderTargetNormal->clear();
 
 			/* Render the shadow map for each light */
@@ -183,11 +182,10 @@ class ShadowsDemo : public GameHandler
             /* Render all objects */
 			_model3D->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
             game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderBlinnLight, _lights, 0.2f, *_renderTargetNormal);
-			_plane3D->setPosition(glm::vec3(0.0f, -80.0f, 0.0f));
+			_plane3D->setPosition(glm::vec3(0.0f, -70.0f, 0.0f));
             game->getRenderer()->renderModel3D(*_plane3D, _camera, *_shaderBlinnLight, _lights, 0.2f, *_renderTargetNormal);
 
 			_renderTargetNormal->blit();
-			_lights[0]->getShadowMap()->blit(0, 0, _width, _height);
             return true;
         }
 
