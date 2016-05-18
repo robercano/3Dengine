@@ -8,13 +8,14 @@
 #include "ToonRenderTarget.hpp"
 #include "Camera.hpp"
 #include "FlyMotion.hpp"
+#include "PointLight.hpp"
 
 #define PI 3.14159265358979323846
 
-class AntiaAliasingDemo : public GameHandler
+class Demo : public GameHandler
 {
     public:
-        AntiaAliasingDemo() {
+        Demo() {
             _MouseSensibility = 10.0f;
 			_KeyboardSensibility = 0.1f;
 			_InvertMouse = 1.0;
@@ -25,10 +26,10 @@ class AntiaAliasingDemo : public GameHandler
 
         bool handleInit(Game *game)
         {
-			Light *light1 = new Light(glm::vec3(3.5, 3.5, 4.5),
-									 glm::vec3(3.5, 3.5, 4.5),
-									 glm::vec3(3.5, 3.5, 4.5),
-									 glm::vec3(75.0, 300.0, 150.0));
+			PointLight *light1 = new PointLight(glm::vec3(3.5, 3.5, 4.5),
+									            glm::vec3(3.5, 3.5, 4.5),
+												glm::vec3(3.5, 3.5, 4.5),
+												glm::vec3(75.0, 300.0, 150.0));
 
 			light1->getShadowMap()->init(1, 1);
 
@@ -106,7 +107,7 @@ class AntiaAliasingDemo : public GameHandler
             _model3D->setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
 
             /* Create the game camera */
-            _camera.setProjection(45, (float)_width, (float)_height, 0.1f, 1000.0f);
+            _camera.setProjection((float)_width, (float)_height, 0.1f, 1000.0f, 45.0f);
 			_cameraMotion.setPosition( glm::vec3(150.0f, 100.0f, 150.0f) );
             _cameraMotion.rotateYaw(-45.0f);
 
@@ -223,7 +224,7 @@ class AntiaAliasingDemo : public GameHandler
 int main()
 {
     Game *game;
-    AntiaAliasingDemo antiAliasingDemo;
+    Demo demo;
 
     game = new Game("Anti Aliasing Comparison demo");
     if (game == NULL) {
@@ -231,7 +232,7 @@ int main()
         return 1;
     }
 
-    game->setHandler(&antiAliasingDemo);
+    game->setHandler(&demo);
 #ifdef _WIN32
     game->setWindowSize(800, 600, false);
 #else

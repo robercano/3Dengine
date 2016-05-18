@@ -10,6 +10,7 @@
 #include "FXAA2RenderTarget.hpp"
 #include "Camera.hpp"
 #include "FlyMotion.hpp"
+#include "PointLight.hpp"
 
 #define PI 3.14159265358979323846
 
@@ -25,10 +26,10 @@ class AntiaAliasingDemo : public GameHandler
 
         bool handleInit(Game *game)
         {
-			Light *light = new Light(glm::vec3(5.0, 5.0, 5.0),
-									 glm::vec3(5.0, 5.0, 5.0),
-									 glm::vec3(5.0, 5.0, 5.0),
-									 glm::vec3(50.0, 100.0, 50.0));
+			PointLight *light = new PointLight(glm::vec3(5.0, 5.0, 5.0),
+					                           glm::vec3(5.0, 5.0, 5.0),
+											   glm::vec3(5.0, 5.0, 5.0),
+											   glm::vec3(50.0, 100.0, 50.0));
 			light->getShadowMap()->init(1, 1);
             _lights.push_back(light);
 
@@ -97,7 +98,7 @@ class AntiaAliasingDemo : public GameHandler
             _model3D->setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
 
             /* Create the game camera */
-            _camera.setProjection(45, (float)_width/2.0, (float)_height, 0.1f, 1000.0f);
+            _camera.setProjection((float)_width/2.0, (float)_height, 0.1f, 1000.0f, 45.0f);
 			_cameraMotion.setPosition( glm::vec3(150.0f, 100.0f, 150.0f) );
             _cameraMotion.rotateYaw(-45.0f);
 

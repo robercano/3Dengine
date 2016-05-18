@@ -11,6 +11,7 @@
 #include "Camera.hpp"
 #include "FlyMotion.hpp"
 #include "Plane.hpp"
+#include "PointLight.hpp"
 
 #define PI 3.14159265358979323846
 
@@ -28,10 +29,10 @@ class ShadowsDemo : public GameHandler
 
         bool handleInit(Game *game)
         {
-			Light *light1 = new Light(glm::vec3(3.5, 3.5, 4.5),
-									 glm::vec3(3.5, 3.5, 4.5),
-									 glm::vec3(3.5, 3.5, 4.5),
-									 glm::vec3(-300.0, 300.0, 300.0));
+			PointLight *light1 = new PointLight(glm::vec3(3.5, 3.5, 4.5),
+									            glm::vec3(3.5, 3.5, 4.5),
+									            glm::vec3(3.5, 3.5, 4.5),
+									            glm::vec3(-300.0, 300.0, 300.0));
 
             game->getWindowManager()->getWindowSize(&_width, &_height);
 
@@ -96,11 +97,11 @@ class ShadowsDemo : public GameHandler
 			_plane3D->setScaleFactor(glm::vec3(500.0f, 1.0f, 500.0f));
 
             /* Create the game camera */
-            _camera.setProjection(45, (float)_width, (float)_height, 0.1f, 1000.0f);
+            _camera.setProjection((float)_width, (float)_height, 0.1f, 1000.0f, 45.0f);
 			_cameraMotion.setPosition( glm::vec3(150.0f, 100.0f, 150.0f) );
             _cameraMotion.rotateYaw(-45.0f);
 
-			light1->setOrthogonal((float)_width/4.0f, (float)_height/4.0f, 0.1f, 1000.0f);
+			light1->setProjection((float)_width/4.0f, (float)_height/4.0f, 0.1f, 1000.0f);
 			light1->getShadowMap()->init(_width, _height);
 
             _lights.push_back(light1);
@@ -190,16 +191,16 @@ class ShadowsDemo : public GameHandler
         }
 
     private:
-        Camera             _camera;
-		FlyMotion          _cameraMotion;
-        RendererModel3D    *_model3D;
-        RendererModel3D    *_plane3D;
-        BlinnPhongShader *_shaderBlinnLight;
+        Camera                 _camera;
+		FlyMotion              _cameraMotion;
+        RendererModel3D       *_model3D;
+        RendererModel3D       *_plane3D;
+        BlinnPhongShader      *_shaderBlinnLight;
 		NormalShadowMapShader *_shaderShadow;
-		NOAARenderTarget   *_renderTargetNormal;
-        std::vector<Light*> _lights;
-		InputManager        _inputManager;
-        std::string         _current;
+		NOAARenderTarget      *_renderTargetNormal;
+        std::vector<Light*>    _lights;
+		InputManager           _inputManager;
+        std::string            _current;
 
         float _MouseSensibility;
         float _KeyboardSensibility;

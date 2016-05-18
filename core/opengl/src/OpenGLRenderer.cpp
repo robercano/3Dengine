@@ -80,7 +80,7 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
 			);
 
 	/* Calculate MVP matrix */
-	glm::mat4 MVP = camera.getProjectionMatrix() * camera.getViewMatrix() * model3D.getModelMatrix();
+	glm::mat4 MVP = camera.getPerspectiveMatrix() * camera.getViewMatrix() * model3D.getModelMatrix();
 
     /* Calculate normal matrix */
     glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(model3D.getModelMatrix())));

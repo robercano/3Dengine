@@ -26,7 +26,6 @@ CORE_FILES=Game.cpp InputManager.cpp WindowManager.cpp TimeManager.cpp \
 		   ShadowMapRenderTarget.cpp \
 		   Shader.cpp \
 		   BlinnPhongShader.cpp ToonLightingShader.cpp NormalShadowMapShader.cpp \
-		   Camera.cpp \
 		   FlyMotion.cpp FreeFlyMotion.cpp WalkingMotion.cpp
 
 UTILS_FILES=MathUtils.c ImageLoaders.c
