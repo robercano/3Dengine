@@ -12,7 +12,7 @@
 class PointLight : public Light
 {
 	public:
-//		PointLight(float attenuation = 1.0f) { _attenuation = attenuation; }
+		PointLight(float attenuation = 1.0f) { _attenuation = attenuation; }
 		PointLight(const glm::vec3 &ambient  = glm::vec3(0.0f, 0.0f, 0.0f),
 			       const glm::vec3 &diffuse  = glm::vec3(0.0f, 0.0f, 0.0f),
 			       const glm::vec3 &specular = glm::vec3(0.0f, 0.0f, 0.0f),
@@ -20,7 +20,7 @@ class PointLight : public Light
 			       float attenuation = -1.0f,
 			       float cutoff = -1.0f,
 			       float coneAngle = 360.0f) :
-			Light(ambient, diffuse, specular, position) {
+			Light(ambient, diffuse, specular, position, attenuation, cutoff, coneAngle) {
         }
 		~PointLight() { }
 };
