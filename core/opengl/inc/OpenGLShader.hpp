@@ -11,7 +11,6 @@
 #include <string>
 #include "Shader.hpp"
 #include "OpenGLShaderMaterial.hpp"
-#include "OpenGLShaderLight.hpp"
 
 class OpenGLShader : public virtual Shader
 {

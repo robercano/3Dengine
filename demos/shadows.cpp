@@ -12,6 +12,7 @@
 #include "FlyMotion.hpp"
 #include "Plane.hpp"
 #include "PointLight.hpp"
+#include "DirectLight.hpp"
 
 #define PI 3.14159265358979323846
 
@@ -29,10 +30,11 @@ class ShadowsDemo : public GameHandler
 
         bool handleInit(Game *game)
         {
-			PointLight *light1 = new PointLight(glm::vec3(3.5, 3.5, 4.5),
-									            glm::vec3(3.5, 3.5, 4.5),
-									            glm::vec3(3.5, 3.5, 4.5),
-									            glm::vec3(-300.0, 300.0, 300.0));
+			PointLight *light1 = new PointLight(glm::vec3(3.5f, 3.5f, 4.5f),
+									            glm::vec3(3.5f, 3.5f, 4.5f),
+									            glm::vec3(3.5f, 3.5f, 4.5f),
+									            glm::vec3(-300.0f, 300.0f, 300.0f));
+									            //glm::vec3(-300.0, 300.0, 300.0));
 
             game->getWindowManager()->getWindowSize(&_width, &_height);
 
@@ -170,7 +172,7 @@ class ShadowsDemo : public GameHandler
             _renderTargetNormal->clear();
 
 			/* Render the shadow map for each light */
-			for (std::vector<Light*>::iterator it = _lights.begin(); it != _lights.end(); ++it) {
+			for (std::vector<PointLight*>::iterator it = _lights.begin(); it != _lights.end(); ++it) {
 				/* TODO: lookAt the center of the calculated bounding box, but for
 				 * now this is enough */
 				(*it)->lookAt(_model3D->getPosition());
@@ -198,7 +200,7 @@ class ShadowsDemo : public GameHandler
         BlinnPhongShader      *_shaderBlinnLight;
 		NormalShadowMapShader *_shaderShadow;
 		NOAARenderTarget      *_renderTargetNormal;
-        std::vector<Light*>    _lights;
+        std::vector<PointLight*>    _lights;
 		InputManager           _inputManager;
         std::string            _current;
 

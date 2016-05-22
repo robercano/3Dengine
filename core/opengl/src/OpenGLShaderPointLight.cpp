@@ -1,5 +1,5 @@
 /**
- * @class	OpenGLShaderLight
+ * @class	OpenGLShaderPointLight
  * @brief	OpenGL material implemented as a block uniform to be used in
  *          a shader. Contains ambient, diffuse, specular, alpha and shininess
  *          components
@@ -7,33 +7,29 @@
  * @author	Roberto Cano (http://www.robertocano.es)
  */
 #include <string.h>
-#include "OpenGLShaderLight.hpp"
+#include "OpenGLShaderPointLight.hpp"
 #include <glm/glm.hpp>
 
-void OpenGLShaderLight::init(uint32_t bindingPoint, uint32_t lightIndex)
+void OpenGLShaderPointLight::init(uint32_t bindingPoint, uint32_t lightIndex)
 {
-    setBlockName("Light");
+    setBlockName("PointLight");
     setBindingPoint(bindingPoint);
     setBlockArrayIndex(lightIndex);
     addParamName("position");
-    addParamName("direction");
     addParamName("ambient");
     addParamName("diffuse");
     addParamName("specular");
-    addParamName("attenuation");
-    addParamName("cutoff");
-    addParamName("coneAngle");
+//    addParamName("attenuation");
+//    addParamName("cutoff");
 }
 
-void OpenGLShaderLight::copyLight(Light &light)
+void OpenGLShaderPointLight::copyLight(PointLight &light)
 {
     setParamValue("position",    light.getPosition());
-    setParamValue("direction",   light.getDirection());
     setParamValue("ambient",     light.getAmbient());
     setParamValue("diffuse",     light.getDiffuse());
     setParamValue("specular",    light.getSpecular());
-    setParamValue("attenuation", light.getAttenuation());
-    setParamValue("cutoff",      light.getCutoff());
-    setParamValue("coneAngle",   light.getConeAngle());
+//    setParamValue("attenuation", light.getAttenuation());
+//    setParamValue("cutoff",      light.getCutoff());
     bind();
 }

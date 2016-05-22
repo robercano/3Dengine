@@ -36,7 +36,7 @@ OPENGL_FILES=GLFWKeyManager.cpp GLFWMouseManager.cpp GLFWWindowManager.cpp \
 			 OpenGLRenderer.cpp OpenGLFilterRenderTarget.cpp \
              OpenGLMSAARenderTarget.cpp OpenGLSSAARenderTarget.cpp OpenGLFBRenderTarget.cpp \
 			 OpenGLShadowMapRenderTarget.cpp \
-             OpenGLShader.cpp OpenGLShaderMaterial.cpp OpenGLShaderLight.cpp OpenGLUniformBlock.cpp
+             OpenGLShader.cpp OpenGLShaderMaterial.cpp OpenGLShaderPointLight.cpp OpenGLUniformBlock.cpp
 #PROCEDURAL_FILES=Cube.cpp Icosahedron.cpp Plane.cpp Sphere.cpp
 PROCEDURAL_FILES=Plane.cpp
 
@@ -88,7 +88,11 @@ all: engine $(DEMO_TARGETS)
 
 engine: dirs $(LIBDIR)/$(LIBNAME)
 
-demos/%: demos/%.cpp $(LIBDIR)/$(LIBNAME)
+#demos/%: demos/%.cpp $(LIBDIR)/$(LIBNAME)
+#	@echo "- Compiling demo $@"
+#	@g++ $(CXXFLAGS) -o $@ $< $(LDFLAGS) 
+
+demos/shadows: demos/shadows.cpp $(LIBDIR)/$(LIBNAME)
 	@echo "- Compiling demo $@"
 	@g++ $(CXXFLAGS) -o $@ $< $(LDFLAGS) 
 

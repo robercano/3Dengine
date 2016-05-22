@@ -14,6 +14,7 @@
 #include "RendererModel3D.hpp"
 #include "LightingShader.hpp"
 #include "NormalShadowMapShader.hpp"
+#include "PointLight.hpp"
 #include "Camera.hpp"
 
 class Renderer
@@ -68,7 +69,7 @@ class Renderer
 		 * @param view			View matrix
 		 */
 		virtual bool renderModel3D(RendererModel3D &model, Camera &camera,
-                                   LightingShader &shader, std::vector<Light*> &lights, float ambientK,
+                                   LightingShader &shader, std::vector<PointLight*> &lights, float ambientK,
                                    RenderTarget &renderTarget, bool disableDepth = false) = 0;
 		virtual bool renderToShadowMap(RendererModel3D &model3D, Light &camera, NormalShadowMapShader &shader) = 0;
 

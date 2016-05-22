@@ -68,7 +68,7 @@ RendererModel3D *OpenGLRenderer::prepareModel3D(const Model3D &model)
 }
 
 bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
-                                   LightingShader &shader, std::vector<Light*> &lights, float ambientK,
+                                   LightingShader &shader, std::vector<PointLight*> &lights, float ambientK,
                                    RenderTarget &renderTarget, bool disableDepth)
 {
 	uint32_t numLights = 0;
@@ -110,7 +110,7 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
         shader.setUniformFloat("u_ambientK", ambientK);
 
 		for (numLights=0; numLights<lights.size(); ++numLights) {
-			shader.setLight(numLights, *lights[numLights]);
+			shader.setPointLight(numLights, *lights[numLights]);
 
 			/* Calculate adjusted shadow map matrix */
 			if (numLights == 0) {
@@ -127,7 +127,7 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
 				lights[numLights]->getShadowMap()->bindDepth();
 			}
 		}
-        shader.setUniformUint("u_numLights", numLights);
+        shader.setUniformUint("u_numPointLights", numLights);
 
         /* Draw the model */
         GL( glBindVertexArray(glObject.getVertexArrayID()) );

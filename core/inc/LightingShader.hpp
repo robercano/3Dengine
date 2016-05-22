@@ -5,7 +5,8 @@
 #pragma once
 
 #include "Shader.hpp"
-#include "Light.hpp"
+#include "PointLight.hpp"
+#include "DirectLight.hpp"
 #include "Material.hpp"
 
 /* virtual inheritance is used here because on one hand we want
@@ -26,6 +27,7 @@ class LightingShader : public virtual Shader
 {
 	public:
 		virtual uint32_t getMaxLights() = 0;
-		virtual void setLight(uint32_t numLight, Light &light) = 0;
+//		virutal void setDirectLight(DirectLight &directLight) = 0;
+		virtual void setPointLight(uint32_t numLight, PointLight &pointLight) = 0;
 		virtual void setMaterial(Material &material) = 0;
 };
