@@ -27,7 +27,7 @@ class LightingShader : public virtual Shader
 {
 	public:
 		virtual uint32_t getMaxLights() = 0;
-//		virutal void setDirectLight(DirectLight &directLight) = 0;
+		virtual void setDirectLight(DirectLight &directLight) = 0;
 		virtual void setPointLight(uint32_t numLight, PointLight &pointLight) = 0;
 		virtual void setMaterial(Material &material) = 0;
 };

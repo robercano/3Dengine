@@ -68,7 +68,9 @@ RendererModel3D *OpenGLRenderer::prepareModel3D(const Model3D &model)
 }
 
 bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
-                                   LightingShader &shader, std::vector<PointLight*> &lights, float ambientK,
+                                   LightingShader &shader,
+								   DirectLight *sun,
+								   std::vector<PointLight*> &lights, float ambientK,
                                    RenderTarget &renderTarget, bool disableDepth)
 {
 	uint32_t numLights = 0;
@@ -109,6 +111,27 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
         shader.setUniformTexture2D("u_diffuseMap", 0);
         shader.setUniformFloat("u_ambientK", ambientK);
 
+		/* Set the sun light */
+		if (sun != NULL) {
+			glm::mat4 shadowMVP = sun->getOrthogonalMatrix() *
+				                  sun->getViewMatrix() *
+								  model3D.getModelMatrix();
+			shadowMVP = biasMatrix * shadowMVP;
+
+			shader.setDirectLight(*sun);
+			shader.setUniformUint("u_numDirectLights", 1);
+
+			/* TODO: This has to be set in a matrix array */
+			shader.setUniformMat4("u_shadowMVPMatrix", shadowMVP);
+			shader.setUniformTexture2D("u_shadowMap", 1);
+
+			GL( glActiveTexture(GL_TEXTURE1) );
+			sun->getShadowMap()->bindDepth();
+		} else {
+			shader.setUniformUint("u_numDirectLights", 0);
+		}
+
+#if 0
 		for (numLights=0; numLights<lights.size(); ++numLights) {
 			shader.setPointLight(numLights, *lights[numLights]);
 
@@ -128,6 +151,9 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
 			}
 		}
         shader.setUniformUint("u_numPointLights", numLights);
+#else
+        shader.setUniformUint("u_numPointLights", 0);
+#endif
 
         /* Draw the model */
         GL( glBindVertexArray(glObject.getVertexArrayID()) );

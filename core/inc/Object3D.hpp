@@ -69,7 +69,7 @@ class Object3D
 		const glm::vec3 &getPosition() { return _position; }
 		const glm::mat4 &getOrientation() { return _orientation; }
 		const glm::vec3 &getScaleFactor() { return _scale; }
-		glm::vec4 getDirection()   { return glm::column(_orientation, 2); }
+		glm::vec3 getDirection()   { return glm::vec3(glm::column(_orientation, 2)); }
 
 		const glm::mat4 &getModelMatrix(void)
         {

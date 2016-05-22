@@ -33,8 +33,14 @@ class ShadowsDemo : public GameHandler
 			PointLight *light1 = new PointLight(glm::vec3(3.5f, 3.5f, 4.5f),
 									            glm::vec3(3.5f, 3.5f, 4.5f),
 									            glm::vec3(3.5f, 3.5f, 4.5f),
-									            glm::vec3(-300.0f, 300.0f, 300.0f));
-									            //glm::vec3(-300.0, 300.0, 300.0));
+									            glm::vec3(-100.0f, 100.0f, 100.0f),
+												0.0000099999f,
+												1000.0f);
+
+			_sun = new DirectLight(glm::vec3(2.0f, 2.0f, 2.0f),
+                                   glm::vec3(2.0f, 2.0f, 2.0f),
+								   glm::vec3(2.0f, 2.0f, 2.0f),
+								   glm::vec3(-100.0f, -100.0f, -100.0f));
 
             game->getWindowManager()->getWindowSize(&_width, &_height);
 
@@ -106,7 +112,12 @@ class ShadowsDemo : public GameHandler
 			light1->setProjection((float)_width/4.0f, (float)_height/4.0f, 0.1f, 1000.0f);
 			light1->getShadowMap()->init(_width, _height);
 
-            _lights.push_back(light1);
+			/* Hack to properly calculate direct light frustum */
+			_sun->setPosition(glm::vec3(100.0f, 100.0f, 100.0f));
+			_sun->setProjection((float)_width/4.0f, (float)_height/4.0f, 0.1f, 1000.0f);
+			_sun->getShadowMap()->init(_width, _height);
+
+            //_lights.push_back(light1);
 
             return true;
         }
@@ -160,7 +171,10 @@ class ShadowsDemo : public GameHandler
 				_angle -= (float)(2*PI);
 			}
 
-			_lights[0]->setPosition(glm::vec3(300.0*glm::sin(-_angle), 300.0, 300.0*glm::cos(-_angle)));
+			if (_lights.size() > 0) {
+				_lights[0]->setPosition(glm::vec3(300.0*glm::sin(-_angle), 300.0, 300.0*glm::cos(-_angle)));
+			}
+			_sun->setPosition(glm::vec3(300.0*glm::sin(-_angle), 300.0, 300.0*glm::cos(-_angle)));
 
             return true;
         }
@@ -171,6 +185,9 @@ class ShadowsDemo : public GameHandler
 			_cameraMotion.applyTo(_camera);
             _renderTargetNormal->clear();
 
+			_model3D->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+			_plane3D->setPosition(glm::vec3(0.0f, -70.0f, 0.0f));
+
 			/* Render the shadow map for each light */
 			for (std::vector<PointLight*>::iterator it = _lights.begin(); it != _lights.end(); ++it) {
 				/* TODO: lookAt the center of the calculated bounding box, but for
@@ -178,15 +195,17 @@ class ShadowsDemo : public GameHandler
 				(*it)->lookAt(_model3D->getPosition());
 				(*it)->getShadowMap()->clear();
 
-				_model3D->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 				game->getRenderer()->renderToShadowMap(*_model3D, *(*it), *_shaderShadow);
 			}
 
+			/* Render the shadow map for the sun */
+			_sun->lookAt(_model3D->getPosition());
+			_sun->getShadowMap()->clear();
+			game->getRenderer()->renderToShadowMap(*_model3D, *_sun, *_shaderShadow);
+
             /* Render all objects */
-			_model3D->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
-            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderBlinnLight, _lights, 0.2f, *_renderTargetNormal);
-			_plane3D->setPosition(glm::vec3(0.0f, -70.0f, 0.0f));
-            game->getRenderer()->renderModel3D(*_plane3D, _camera, *_shaderBlinnLight, _lights, 0.2f, *_renderTargetNormal);
+            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderBlinnLight, _sun, _lights, 0.2f, *_renderTargetNormal);
+            game->getRenderer()->renderModel3D(*_plane3D, _camera, *_shaderBlinnLight, _sun, _lights, 0.2f, *_renderTargetNormal);
 
 			_renderTargetNormal->blit();
             return true;
@@ -200,7 +219,8 @@ class ShadowsDemo : public GameHandler
         BlinnPhongShader      *_shaderBlinnLight;
 		NormalShadowMapShader *_shaderShadow;
 		NOAARenderTarget      *_renderTargetNormal;
-        std::vector<PointLight*>    _lights;
+        std::vector<PointLight*> _lights;
+		DirectLight            *_sun;
 		InputManager           _inputManager;
         std::string            _current;
 

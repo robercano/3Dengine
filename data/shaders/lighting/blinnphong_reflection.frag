@@ -13,12 +13,12 @@
 #define MAX_LIGHTS 10
 
 /* Direct light definition */
-//layout (std140) uniform DirectLight {
-//	vec3 direction;
-//    vec3 ambient;
-//    vec3 diffuse;
-//    vec3 specular;
-//} u_Directlight;
+layout (std140) uniform DirectLight {
+	vec3 direction;
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+} u_DirectLight;
 
 uniform uint u_numDirectLights; /* 0 or 1 */
 
@@ -72,46 +72,45 @@ float sRGB2Linear(float c) {
 }
 
 
-#define _ProcessPointLight(color, shadow, n, V)                                       \
-{                                                                                     \
-    if (n < u_numPointLights) {                                                       \
-		vec3 unnormL = u_PointLight[n].position - io_fragVertex;                      \
-                                                                                      \
-		float attenuation = shadow / (1.0 + 0.00001 * pow(length(unnormL), 2));       \
-                                                                                      \
-        /* Light vector to fragment */                                                \
-        vec3 L = normalize(unnormL);                                                  \
-                                                                                      \
-        /* Normalized half vector for Blinn-Phong */                                  \
-        vec3 H = normalize(L + V);                                                    \
-                                                                                      \
-        /* Ambient + Diffuse + Specular */                                            \
-        float Ia = clamp(u_ambientK, 0.0, 1.0);                                       \
-        float Id = clamp(dot(L, io_fragNormal), 0.0, 1.0);                            \
-        float Is = clamp(pow(dot(io_fragNormal, H), u_material.shininess), 0.0, 1.0); \
-                                                                                      \
-        vec3 colorAmbient  = u_PointLight[n].ambient*u_material.ambient*Ia;           \
-        vec3 colorDiffuse  = u_PointLight[n].diffuse*u_material.diffuse*Id;           \
-        vec3 colorSpecular = u_PointLight[n].specular*u_material.specular*Is;         \
-                                                                                      \
-        if (dot(L, io_fragNormal) <= 0) {                                             \
-            colorSpecular = vec3(0.0);                                                \
-        }                                                                             \
-                                                                                      \
-        /* Accumulate color components */                                             \
-        color += colorAmbient + attenuation*(colorDiffuse + colorSpecular);           \
-    }                                                                                 \
+#define _ProcessPointLight(color, shadow, n, V)                                           \
+{                                                                                         \
+    if (n < u_numPointLights) {                                                           \
+		vec3 unnormL = u_PointLight[n].position - io_fragVertex;                          \
+		float distanceToLight = length(unnormL);                                          \
+                                                                                          \
+		if (distanceToLight <= u_PointLight[n].cutoff) {                                  \
+			float attenuation = shadow / (1.0 + u_PointLight[n].attenuation * pow(length(unnormL), 2));\
+                                                                                          \
+			/* Light vector to fragment */                                                \
+			vec3 L = normalize(unnormL);                                                  \
+																						  \
+			/* Normalized half vector for Blinn-Phong */                                  \
+			vec3 H = normalize(L + V);                                                    \
+																						  \
+			/* Ambient + Diffuse + Specular */                                            \
+			float Ia = clamp(u_ambientK, 0.0, 1.0);                                       \
+			float Id = clamp(dot(L, io_fragNormal), 0.0, 1.0);                            \
+			float Is = clamp(pow(dot(io_fragNormal, H), u_material.shininess), 0.0, 1.0); \
+																						  \
+			vec3 colorAmbient  = u_PointLight[n].ambient*u_material.ambient*Ia;           \
+			vec3 colorDiffuse  = u_PointLight[n].diffuse*u_material.diffuse*Id;           \
+			vec3 colorSpecular = u_PointLight[n].specular*u_material.specular*Is;         \
+																						  \
+			if (dot(L, io_fragNormal) <= 0) {                                             \
+				colorSpecular = vec3(0.0);                                                \
+			}                                                                             \
+																						  \
+			/* Accumulate color components */                                             \
+			color += colorAmbient + attenuation*(colorDiffuse + colorSpecular);           \
+		}                                                                                 \
+    }                                                                                     \
 }
 
 #define _ProcessDirectLight(color, shadow, V)                                         \
 {                                                                                     \
 	if  (u_numDirectLights > 0) {                                                     \
-		vec3 unnormL = u_DirectLight[n].direction;                                    \
-																					  \
-		float attenuation = shadow;                                                   \
-																					  \
 		/* Light vector to fragment */                                                \
-		vec3 L = normalize(unnormL);                                                  \
+		vec3 L = normalize(u_DirectLight.direction);                                  \
 																					  \
 		/* Normalized half vector for Blinn-Phong */                                  \
 		vec3 H = normalize(L + V);                                                    \
@@ -121,16 +120,16 @@ float sRGB2Linear(float c) {
 		float Id = clamp(dot(L, io_fragNormal), 0.0, 1.0);                            \
 		float Is = clamp(pow(dot(io_fragNormal, H), u_material.shininess), 0.0, 1.0); \
 																					  \
-		vec3 colorAmbient  = u_DirectLight[n].ambient*u_material.ambient*Ia;          \
-		vec3 colorDiffuse  = u_DirectLight[n].diffuse*u_material.diffuse*Id;          \
-		vec3 colorSpecular = u_DirectLight[n].specular*u_material.specular*Is;        \
+		vec3 colorAmbient  = u_DirectLight.ambient*u_material.ambient*Ia;             \
+		vec3 colorDiffuse  = u_DirectLight.diffuse*u_material.diffuse*Id;             \
+		vec3 colorSpecular = u_DirectLight.specular*u_material.specular*Is;           \
 																					  \
 		if (dot(L, io_fragNormal) <= 0) {                                             \
 			colorSpecular = vec3(0.0);                                                \
 		}                                                                             \
 																					  \
 		/* Accumulate color components */                                             \
-		color += colorAmbient + attenuation*(colorDiffuse + colorSpecular);           \
+		color += colorAmbient + shadow*(colorDiffuse + colorSpecular);                \
 	}                                                                                 \
 }
 
@@ -143,7 +142,7 @@ void main()
 
 	shadow = texture(u_shadowMap, vec3(io_shadowCoord.xy, (io_shadowCoord.z + bias)));
 
-	//_ProcessDirectLight(lightAcc, shadow, io_viewVertex);
+	_ProcessDirectLight(lightAcc, shadow, io_viewVertex);
 
     /* For shaders on version 3.3 and earlier the uniform
        block must be indexed by a constant integral expression, which

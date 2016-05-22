@@ -19,8 +19,8 @@ void OpenGLShaderPointLight::init(uint32_t bindingPoint, uint32_t lightIndex)
     addParamName("ambient");
     addParamName("diffuse");
     addParamName("specular");
-//    addParamName("attenuation");
-//    addParamName("cutoff");
+    addParamName("attenuation");
+    addParamName("cutoff");
 }
 
 void OpenGLShaderPointLight::copyLight(PointLight &light)
@@ -29,7 +29,7 @@ void OpenGLShaderPointLight::copyLight(PointLight &light)
     setParamValue("ambient",     light.getAmbient());
     setParamValue("diffuse",     light.getDiffuse());
     setParamValue("specular",    light.getSpecular());
-//    setParamValue("attenuation", light.getAttenuation());
-//    setParamValue("cutoff",      light.getCutoff());
+    setParamValue("attenuation", light.getAttenuation());
+    setParamValue("cutoff",      light.getCutoff());
     bind();
 }
