@@ -176,7 +176,7 @@ const bool OpenGLShader::getAttributeID(const std::string &name, uint32_t *id)
     return *id != -1 ? true : false;
 }
 
-bool OpenGLShader::setUniformMat4(const std::string &name, const glm::mat4 &value)
+bool OpenGLShader::setUniformMat4(const std::string &name, const glm::mat4 value[], uint32_t numItems)
 {
 	std::map<std::string, uint32_t>::iterator it = _uniformNames.find(name);
 
@@ -184,11 +184,11 @@ bool OpenGLShader::setUniformMat4(const std::string &name, const glm::mat4 &valu
 		return false;
 	}
 
-	GL( glUniformMatrix4fv(it->second, 1, GL_FALSE, &value[0][0]) );
+	GL( glUniformMatrix4fv(it->second, 1, GL_FALSE, (GLfloat*)value) );
 	return true;
 }
 
-bool OpenGLShader::setUniformMat3(const std::string &name, const glm::mat3 &value)
+bool OpenGLShader::setUniformMat3(const std::string &name, const glm::mat3 value[], uint32_t numItems)
 {
 	std::map<std::string, uint32_t>::iterator it = _uniformNames.find(name);
 
@@ -196,7 +196,7 @@ bool OpenGLShader::setUniformMat3(const std::string &name, const glm::mat3 &valu
 		return false;
 	}
 
-	GL( glUniformMatrix3fv(it->second, 1, GL_FALSE, &value[0][0]) );
+	GL( glUniformMatrix3fv(it->second, 1, GL_FALSE, (GLfloat*)value) );
 	return true;
 }
 
@@ -210,6 +210,18 @@ bool OpenGLShader::setUniformTexture2D(const std::string &name, uint32_t unitID)
 	}
 
     GL( glUniform1i(it->second, unitID) );
+	return true;
+}
+
+bool OpenGLShader::setUniformTexture2DArray(const std::string &name, uint32_t unitIDs[], uint32_t numItems)
+{
+	std::map<std::string, uint32_t>::iterator it = _uniformNames.find(name);
+
+	if (it == _uniformNames.end()) {
+		return false;
+	}
+
+    GL( glUniform1iv(it->second, numItems, (GLint*)unitIDs) );
 	return true;
 }
 

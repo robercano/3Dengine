@@ -20,6 +20,8 @@ layout (std140) uniform DirectLight {
     vec3 specular;
 } u_DirectLight;
 
+uniform sampler2DShadow u_shadowMapDirectLight;
+in vec4 io_shadowCoordDirectLight;
 uniform uint u_numDirectLights; /* 0 or 1 */
 
 /* Point light definition */
@@ -32,6 +34,8 @@ layout (std140) uniform PointLight {
     vec3  specular;
 } u_PointLight[MAX_LIGHTS];
 
+uniform sampler2DShadow u_shadowMapPointLight[MAX_LIGHTS];
+in vec4 io_shadowCoordPointLight[MAX_LIGHTS];
 uniform uint u_numPointLights;
 
 /* Global scene ambient constant */
@@ -47,11 +51,9 @@ layout (std140) uniform Material {
 } u_material;
 
 /* Texture and transformation matrices */
-uniform sampler2D u_diffuseMap;
-uniform sampler2DShadow u_shadowMap;
-uniform mat4      u_viewMatrix;
-uniform mat4      u_modelMatrix;
-uniform mat4      u_shadowMVPMatrix;
+uniform sampler2D       u_diffuseMap;
+uniform mat4            u_viewMatrix;
+uniform mat4            u_modelMatrix;
 
 /* Input from vertex shader */
 in vec3 io_fragVertex;
@@ -59,7 +61,6 @@ in vec3 io_fragNormal;
 in vec2 io_fragUVCoord;
 in vec3 io_viewNormal;
 in vec3 io_viewVertex;
-in vec4 io_shadowCoord;
 
 /* Output of this shader */
 out vec4 o_color;
@@ -70,7 +71,6 @@ float sRGB2Linear(float c) {
     }
     return pow((c + 0.055)/1.055, 2.4);
 }
-
 
 #define _ProcessPointLight(color, shadow, n, V)                                           \
 {                                                                                         \
@@ -140,8 +140,8 @@ void main()
 	float shadow = 1.0f;
 	float bias = 0.05f;
 
-	shadow = texture(u_shadowMap, vec3(io_shadowCoord.xy, (io_shadowCoord.z + bias)));
-
+	/* Direct light */
+	shadow = texture(u_shadowMapDirectLight, vec3(io_shadowCoordDirectLight.xy, (io_shadowCoordDirectLight.z + bias)));
 	_ProcessDirectLight(lightAcc, shadow, io_viewVertex);
 
     /* For shaders on version 3.3 and earlier the uniform
@@ -153,8 +153,9 @@ void main()
 
 
         for (int i=0; i<nLights; ++i) {
+			shadow = texture(u_shadowMapPointLight[i], vec3(io_shadowCoordPointLight[i].xy, (io_shadowCoordPointLight[i].z + bias)));
             _ProcessPointLight(lightAcc, shadow, i, io_viewVertex);
-        }
+		}
 #else
         _ProcessPointLight(lightAcc, shadow, 0, io_viewVertex);
         _ProcessPointLight(lightAcc, shadow, 1, io_viewVertex);

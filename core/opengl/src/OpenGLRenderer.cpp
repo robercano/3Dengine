@@ -73,7 +73,6 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
 								   std::vector<PointLight*> &lights, float ambientK,
                                    RenderTarget &renderTarget, bool disableDepth)
 {
-	uint32_t numLights = 0;
 	glm::mat4 biasMatrix(
 			0.5, 0.0, 0.0, 0.0,
 			0.0, 0.5, 0.0, 0.0,
@@ -104,10 +103,10 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
         shader.attach();
 
         /* Send our transformation to the currently bound shader, in the "MVP" uniform */
-        shader.setUniformMat4("u_MVPMatrix", MVP);
-        shader.setUniformMat4("u_viewMatrix", camera.getViewMatrix());
-        shader.setUniformMat4("u_modelMatrix", model3D.getModelMatrix());
-        shader.setUniformMat3("u_normalMatrix", normalMatrix);
+        shader.setUniformMat4("u_MVPMatrix", &MVP);
+        shader.setUniformMat4("u_viewMatrix", &camera.getViewMatrix());
+        shader.setUniformMat4("u_modelMatrix", &model3D.getModelMatrix());
+        shader.setUniformMat3("u_normalMatrix", &normalMatrix);
         shader.setUniformTexture2D("u_diffuseMap", 0);
         shader.setUniformFloat("u_ambientK", ambientK);
 
@@ -122,8 +121,8 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
 			shader.setUniformUint("u_numDirectLights", 1);
 
 			/* TODO: This has to be set in a matrix array */
-			shader.setUniformMat4("u_shadowMVPMatrix", shadowMVP);
-			shader.setUniformTexture2D("u_shadowMap", 1);
+			shader.setUniformMat4("u_shadowMVPDirectLight", &shadowMVP);
+			shader.setUniformTexture2D("u_shadowMapDirectLight", 1);
 
 			GL( glActiveTexture(GL_TEXTURE1) );
 			sun->getShadowMap()->bindDepth();
@@ -131,29 +130,29 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
 			shader.setUniformUint("u_numDirectLights", 0);
 		}
 
-#if 0
-		for (numLights=0; numLights<lights.size(); ++numLights) {
-			shader.setPointLight(numLights, *lights[numLights]);
+		/* Point lights */
+		glm::mat4 shadowMVPArray[lights.size()];
+		GLuint texturesArray[lights.size()];
+
+		for (uint32_t numLight=0; numLight<lights.size(); ++numLight) {
+			shader.setPointLight(numLight, *lights[numLight]);
 
 			/* Calculate adjusted shadow map matrix */
-			if (numLights == 0) {
-				glm::mat4 shadowMVP = lights[numLights]->getOrthogonalMatrix() *
-									  lights[numLights]->getViewMatrix() *
-									  model3D.getModelMatrix();
-				shadowMVP = biasMatrix * shadowMVP;
+			glm::mat4 shadowMVP = lights[numLight]->getOrthogonalMatrix() *
+				                  lights[numLight]->getViewMatrix() *
+				                  model3D.getModelMatrix();
 
-				/* TODO: This has to be set in a matrix array */
-				shader.setUniformMat4("u_shadowMVPMatrix", shadowMVP);
-				shader.setUniformTexture2D("u_shadowMap", numLights+1);
+			shadowMVPArray[numLight] = biasMatrix * shadowMVP;
+			texturesArray[numLight] = numLight + 2;
 
-				GL( glActiveTexture(GL_TEXTURE1) );
-				lights[numLights]->getShadowMap()->bindDepth();
-			}
+			GL( glActiveTexture(GL_TEXTURE2 + numLight) );
+			lights[numLight]->getShadowMap()->bindDepth();
 		}
-        shader.setUniformUint("u_numPointLights", numLights);
-#else
-        shader.setUniformUint("u_numPointLights", 0);
-#endif
+
+		/* TODO: This has to be set in a matrix array */
+		shader.setUniformMat4("u_shadowMVPPointLight[0]", shadowMVPArray, lights.size());
+		shader.setUniformTexture2DArray("u_shadowMapPointLight[0]", texturesArray, lights.size());
+        shader.setUniformUint("u_numPointLights", lights.size());
 
         /* Draw the model */
         GL( glBindVertexArray(glObject.getVertexArrayID()) );
@@ -203,7 +202,7 @@ bool OpenGLRenderer::renderToShadowMap(RendererModel3D &model3D, Light &light, N
         shader.attach();
 
         /* Send our transformation to the currently bound shader, in the "MVP" uniform */
-        shader.setUniformMat4("u_MVPMatrix", MVP);
+        shader.setUniformMat4("u_MVPMatrix", &MVP);
 
         /* Draw the model */
         GL( glBindVertexArray(glObject.getVertexArrayID()) );

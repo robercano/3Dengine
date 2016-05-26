@@ -27,9 +27,10 @@ class OpenGLShader : public virtual Shader
 		const std::map<std::string, uint32_t> & getUniforms(void);
         const bool getUniformID(const std::string &name, uint32_t *id);
         const bool getAttributeID(const std::string &name, uint32_t *id);
-		bool setUniformMat4(const std::string &name, const glm::mat4 &value);
-		bool setUniformMat3(const std::string &name, const glm::mat3 &value);
+		bool setUniformMat4(const std::string &name, const glm::mat4 value[], uint32_t numItems = 1);
+		bool setUniformMat3(const std::string &name, const glm::mat3 value[], uint32_t numItems = 1);
         bool setUniformTexture2D(const std::string &name, uint32_t unitID);
+		bool setUniformTexture2DArray(const std::string &name, uint32_t unitIDs[], uint32_t numItems);
         bool setUniformFloat(const std::string &name, float value);
         bool setUniformUint(const std::string &name, uint32_t value);
         bool setUniformVec4(const std::string &name, glm::vec4 &value);

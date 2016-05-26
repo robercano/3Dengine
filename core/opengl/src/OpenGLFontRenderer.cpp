@@ -130,7 +130,7 @@ bool OpenGLFontRenderer::renderText(uint32_t x, uint32_t y, const char *text, gl
                               0.0f, 0.0f, 1.0f, 0.0f,
                               -1.0f, 1.0f, 0.0f, 1.0f);
 
-    _shader->setUniformMat4("glyphTransform", glyphTransform);
+    _shader->setUniformMat4("glyphTransform", &glyphTransform);
     _shader->setUniformTexture2D("glyph", 0);
     _shader->setUniformVec4("color", color);
 
