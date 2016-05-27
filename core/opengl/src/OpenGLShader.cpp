@@ -184,7 +184,7 @@ bool OpenGLShader::setUniformMat4(const std::string &name, const glm::mat4 value
 		return false;
 	}
 
-	GL( glUniformMatrix4fv(it->second, 1, GL_FALSE, (GLfloat*)value) );
+	GL( glUniformMatrix4fv(it->second, numItems, GL_FALSE, (GLfloat*)value) );
 	return true;
 }
 
@@ -196,7 +196,7 @@ bool OpenGLShader::setUniformMat3(const std::string &name, const glm::mat3 value
 		return false;
 	}
 
-	GL( glUniformMatrix3fv(it->second, 1, GL_FALSE, (GLfloat*)value) );
+	GL( glUniformMatrix3fv(it->second, numItems, GL_FALSE, (GLfloat*)value) );
 	return true;
 }
 

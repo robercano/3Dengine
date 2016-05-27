@@ -30,16 +30,28 @@ class ShadowsDemo : public GameHandler
 
         bool handleInit(Game *game)
         {
-			PointLight *light1 = new PointLight(glm::vec3(2.0f, 1.0f, 1.0f),
-									            glm::vec3(2.0f, 1.0f, 1.0f),
-									            glm::vec3(2.0f, 1.0f, 1.0f),
+			PointLight *light1 = new PointLight(glm::vec3(0.4f, 0.2f, 0.2f),
+									            glm::vec3(0.4f, 0.2f, 0.2f),
+									            glm::vec3(0.4f, 0.2f, 0.2f),
+									            glm::vec3(-100.0f, 100.0f, 100.0f),
+												0.0000099999f,
+												1000.0f);
+			PointLight *light2 = new PointLight(glm::vec3(0.5f, 1.0f, 0.5f),
+									            glm::vec3(0.5f, 1.0f, 0.5f),
+									            glm::vec3(0.5f, 1.0f, 0.5f),
+									            glm::vec3(-100.0f, 100.0f, 100.0f),
+												0.0000099999f,
+												1000.0f);
+			PointLight *light3 = new PointLight(glm::vec3(0.5f, 0.5f, 1.0f),
+									            glm::vec3(0.5f, 0.5f, 1.0f),
+									            glm::vec3(0.5f, 0.5f, 1.0f),
 									            glm::vec3(-100.0f, 100.0f, 100.0f),
 												0.0000099999f,
 												1000.0f);
 
-			_sun = new DirectLight(glm::vec3(1.0f, 1.0f, 1.0f),
-                                   glm::vec3(1.0f, 1.0f, 1.0f),
-								   glm::vec3(1.0f, 1.0f, 1.0f),
+			_sun = new DirectLight(glm::vec3(0.5f, 0.5f, 0.5f),
+                                   glm::vec3(0.5f, 0.5f, 0.5f),
+								   glm::vec3(0.5f, 0.5f, 0.5f),
 								   glm::vec3(-100.0f, -100.0f, -100.0f));
 
             game->getWindowManager()->getWindowSize(&_width, &_height);
@@ -111,6 +123,10 @@ class ShadowsDemo : public GameHandler
 
 			light1->setProjection((float)_width/4.0f, (float)_height/4.0f, 0.1f, 1000.0f);
 			light1->getShadowMap()->init(_width, _height);
+			light2->setProjection((float)_width/4.0f, (float)_height/4.0f, 0.1f, 1000.0f);
+			light2->getShadowMap()->init(_width, _height);
+			light3->setProjection((float)_width/4.0f, (float)_height/4.0f, 0.1f, 1000.0f);
+			light3->getShadowMap()->init(_width, _height);
 
 			/* TODO: Hack to properly calculate direct light frustum */
 			_sun->setPosition(glm::vec3(245.0f, 300.0f, 170.0f));
@@ -118,6 +134,8 @@ class ShadowsDemo : public GameHandler
 			_sun->getShadowMap()->init(_width, _height);
 
             _lights.push_back(light1);
+            _lights.push_back(light2);
+            _lights.push_back(light3);
 
             return true;
         }
@@ -166,13 +184,18 @@ class ShadowsDemo : public GameHandler
 			_prevY = _inputManager._yMouse;
 
 			/* Move the lights */
-			_angle += (float)(2*PI*elapsedMs/5000.0);
+			_angle += (float)(2*PI*elapsedMs/20000.0);
 			if (_angle > 2*PI) {
 				_angle -= (float)(2*PI);
 			}
 
-			if (_lights.size() > 0) {
-				_lights[0]->setPosition(glm::vec3(300.0*glm::sin(-_angle), 300.0, 300.0*glm::cos(-_angle)));
+			for (int i=0; i<_lights.size(); ++i) {
+				int sign = i%2 ? -1 : 1;
+				if (i == 0) {
+					_lights[i]->setPosition(glm::vec3(0.0, 300.0, 300.0*glm::cos((i+1)*sign*_angle)));
+				} else {
+					_lights[i]->setPosition(glm::vec3(300.0*glm::sin((i+1)*sign*_angle), 300.0, 300.0*glm::cos((i+1)*sign*_angle)));
+				}
 			}
 
             return true;

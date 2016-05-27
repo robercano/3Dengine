@@ -151,7 +151,6 @@ void main()
 #if GLSL_VERSION >= 440
         uint nLights = min(u_numPointLights, MAX_LIGHTS);
 
-
         for (int i=0; i<nLights; ++i) {
 			shadow = texture(u_shadowMapPointLight[i], vec3(io_shadowCoordPointLight[i].xy, (io_shadowCoordPointLight[i].z + bias)));
             _ProcessPointLight(lightAcc, shadow, i, io_viewVertex);
