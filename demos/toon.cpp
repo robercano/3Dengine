@@ -29,7 +29,9 @@ class Demo : public GameHandler
 			PointLight *light1 = new PointLight(glm::vec3(3.5, 3.5, 4.5),
 									            glm::vec3(3.5, 3.5, 4.5),
 												glm::vec3(3.5, 3.5, 4.5),
-												glm::vec3(75.0, 300.0, 150.0));
+												glm::vec3(75.0, 300.0, 150.0),
+												0.0000099999f,
+												1000.0f);
 
 			light1->getShadowMap()->init(1, 1);
 
@@ -184,11 +186,11 @@ class Demo : public GameHandler
 
             /* Render all objects */
 			_model3D->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
-            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderLight, _lights, 0.2f, *_renderTarget);
+            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderLight, NULL, _lights, 0.2f, *_renderTarget);
 			_model3D->setPosition(glm::vec3(0.0f, 0.0f, -50.0f));
-            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderLight, _lights, 0.2f, *_renderTarget);
+            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderLight, NULL, _lights, 0.2f, *_renderTarget);
 			_model3D->setPosition(glm::vec3(0.0f, 0.0f, -100.0f));
-            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderLight, _lights, 0.2f, *_renderTarget);
+            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderLight, NULL, _lights, 0.2f, *_renderTarget);
             game->getTextConsole()->gprintf("Current = %s\n", _current.c_str());
             game->getTextConsole()->gprintf("1=Normal, 2=ToonLight, 3=ToonLight+Filter\n");
 
@@ -207,7 +209,7 @@ class Demo : public GameHandler
 		FXAA2RenderTarget  *_renderTargetFXAA2;
 		ToonRenderTarget   *_renderTargetToon;
 		std::string         _renderTargetName;
-        std::vector<Light*> _lights;
+        std::vector<PointLight*> _lights;
 		InputManager        _inputManager;
         std::string         _current;
 

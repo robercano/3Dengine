@@ -29,7 +29,9 @@ class AntiaAliasingDemo : public GameHandler
 			PointLight *light = new PointLight(glm::vec3(5.0, 5.0, 5.0),
 					                           glm::vec3(5.0, 5.0, 5.0),
 											   glm::vec3(5.0, 5.0, 5.0),
-											   glm::vec3(50.0, 100.0, 50.0));
+											   glm::vec3(50.0, 100.0, 50.0),
+											   0.0000099999f,
+											   1000.0f);
 			light->getShadowMap()->init(1, 1);
             _lights.push_back(light);
 
@@ -169,8 +171,8 @@ class AntiaAliasingDemo : public GameHandler
             /* Render all objects */
 			_selectedTargetLeft->clear();
 			_selectedTargetRight->clear();
-            game->getRenderer()->renderModel3D(*_model3D, _camera, *_blinnPhongShader, _lights, 0.0, *_selectedTargetLeft);
-            game->getRenderer()->renderModel3D(*_model3D, _camera, *_blinnPhongShader, _lights, 0.0, *_selectedTargetRight);
+            game->getRenderer()->renderModel3D(*_model3D, _camera, *_blinnPhongShader, NULL, _lights, 0.0, *_selectedTargetLeft);
+            game->getRenderer()->renderModel3D(*_model3D, _camera, *_blinnPhongShader, NULL, _lights, 0.0, *_selectedTargetRight);
 
             _selectedTargetLeft->blit(0, 0, _width/2, _height);
             _selectedTargetRight->blit(_width/2, 0, _width/2, _height);
@@ -191,7 +193,7 @@ class AntiaAliasingDemo : public GameHandler
 		RenderTarget       *_selectedTargetLeft;
 		RenderTarget       *_selectedTargetRight;
 		std::string         _renderTargetName;
-        std::vector<Light*> _lights;
+        std::vector<PointLight*> _lights;
 		InputManager        _inputManager;
 
         float _MouseSensibility;
@@ -217,7 +219,7 @@ int main()
 #ifdef _WIN32
     game->setWindowSize(800, 600, false);
 #else
-    game->setWindowSize(1440, 900, true);
+    game->setWindowSize(2560, 1440, true);
 #endif
     game->setFPS(60);
 

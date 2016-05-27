@@ -90,11 +90,7 @@ all: engine $(DEMO_TARGETS)
 
 engine: dirs $(LIBDIR)/$(LIBNAME)
 
-#demos/%: demos/%.cpp $(LIBDIR)/$(LIBNAME)
-#	@echo "- Compiling demo $@"
-#	@g++ $(CXXFLAGS) -o $@ $< $(LDFLAGS) 
-
-demos/shadows: demos/shadows.cpp $(LIBDIR)/$(LIBNAME)
+demos/%: demos/%.cpp $(LIBDIR)/$(LIBNAME)
 	@echo "- Compiling demo $@"
 	@g++ $(CXXFLAGS) -o $@ $< $(LDFLAGS) 
 

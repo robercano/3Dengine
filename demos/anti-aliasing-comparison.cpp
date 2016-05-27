@@ -29,15 +29,21 @@ class AntiaAliasingDemo : public GameHandler
             PointLight *light1 = new PointLight(glm::vec3(5.0, 5.0, 5.0),
 					                            glm::vec3(5.0, 5.0, 5.0),
 												glm::vec3(5.0, 5.0, 5.0),
-												glm::vec3(0.0, 150.0, 50.0));
+												glm::vec3(0.0, 150.0, 50.0),
+												0.0000099999f,
+												1000.0f);
             PointLight *light2 = new PointLight(glm::vec3(0.0, 0.0, 3.0),
                                                 glm::vec3(0.0, 0.0, 3.0),
 												glm::vec3(0.0, 0.0, 3.0),
-												glm::vec3(50.0, 20.0, -150.0));
+												glm::vec3(50.0, 20.0, -150.0),
+												0.0000099999f,
+												1000.0f);
             PointLight *light3 = new PointLight(glm::vec3(3.0, 0.0, 3.0),
                                                 glm::vec3(1.0, 0.0, 1.0),
 												glm::vec3(1.0, 0.0, 1.0),
-												glm::vec3(30.0, 20.0, 0.0));
+												glm::vec3(30.0, 20.0, 0.0),
+												0.0000099999f,
+												1000.0f);
 
 			light1->getShadowMap()->init(1, 1);
 			light2->getShadowMap()->init(1, 1);
@@ -210,7 +216,7 @@ class AntiaAliasingDemo : public GameHandler
 
             /* Render all objects */
 			_selectedRenderTarget->clear();
-            game->getRenderer()->renderModel3D(*_model3D, _camera, *_blinnPhongShader, _lights, 0.0, *_selectedRenderTarget);
+            game->getRenderer()->renderModel3D(*_model3D, _camera, *_blinnPhongShader, NULL, _lights, 0.0, *_selectedRenderTarget);
 
             _selectedRenderTarget->blit(0, 0, _width, _height);
 
@@ -231,7 +237,7 @@ class AntiaAliasingDemo : public GameHandler
 		FXAA2RenderTarget  *_renderTargetFXAA2;
 		RenderTarget       *_selectedRenderTarget;
 		std::string         _renderTargetName;
-        std::vector<Light*> _lights;
+        std::vector<PointLight*> _lights;
 		InputManager        _inputManager;
 
         float _MouseSensibility;
