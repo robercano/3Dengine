@@ -112,7 +112,7 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
 
 		/* Set the sun light */
 		if (sun != NULL) {
-			glm::mat4 shadowMVP = sun->getOrthogonalMatrix() *
+			glm::mat4 shadowMVP = sun->getProjectionMatrix() *
 				                  sun->getViewMatrix() *
 								  model3D.getModelMatrix();
 			shadowMVP = biasMatrix * shadowMVP;
@@ -138,7 +138,7 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
 			shader.setPointLight(numLight, *lights[numLight]);
 
 			/* Calculate adjusted shadow map matrix */
-			glm::mat4 shadowMVP = lights[numLight]->getOrthogonalMatrix() *
+			glm::mat4 shadowMVP = lights[numLight]->getProjectionMatrix() *
 				                  lights[numLight]->getViewMatrix() *
 				                  model3D.getModelMatrix();
 
@@ -184,7 +184,7 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
 bool OpenGLRenderer::renderToShadowMap(RendererModel3D &model3D, Light &light, NormalShadowMapShader &shader)
 {
 	/* Calculate MVP matrix */
-	glm::mat4 MVP = light.getOrthogonalMatrix() * light.getViewMatrix() * model3D.getModelMatrix();
+	glm::mat4 MVP = light.getProjectionMatrix() * light.getViewMatrix() * model3D.getModelMatrix();
 
     /* Calculate normal matrix */
     glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(model3D.getModelMatrix())));

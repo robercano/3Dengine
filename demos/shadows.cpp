@@ -121,11 +121,11 @@ class ShadowsDemo : public GameHandler
 			_cameraMotion.setPosition( glm::vec3(150.0f, 100.0f, 150.0f) );
             _cameraMotion.rotateYaw(-45.0f);
 
-			light1->setProjection((float)_width/4.0f, (float)_height/4.0f, 0.1f, 1000.0f);
+			light1->setProjection((float)_width/4.0f, (float)_height/4.0f, 0.1f, 10000.0f);
 			light1->getShadowMap()->init(_width, _height);
-			light2->setProjection((float)_width/4.0f, (float)_height/4.0f, 0.1f, 1000.0f);
+			light2->setProjection((float)_width/4.0f, (float)_height/4.0f, 0.1f, 10000.0f);
 			light2->getShadowMap()->init(_width, _height);
-			light3->setProjection((float)_width/4.0f, (float)_height/4.0f, 0.1f, 1000.0f);
+			light3->setProjection((float)_width/4.0f, (float)_height/4.0f, 0.1f, 10000.0f);
 			light3->getShadowMap()->init(_width, _height);
 
 			/* TODO: Hack to properly calculate direct light frustum */
@@ -192,9 +192,9 @@ class ShadowsDemo : public GameHandler
 			for (int i=0; i<_lights.size(); ++i) {
 				int sign = i%2 ? -1 : 1;
 				if (i == 0) {
-					_lights[i]->setPosition(glm::vec3(0.0, 300.0, 300.0*glm::cos((i+1)*sign*_angle)));
+					_lights[i]->setPosition(glm::vec3(10.0, 300.0, 300.0*glm::cos((i+1)*sign*_angle)));
 				} else {
-					_lights[i]->setPosition(glm::vec3(300.0*glm::sin((i+1)*sign*_angle), 300.0, 300.0*glm::cos((i+1)*sign*_angle)));
+					_lights[i]->setPosition(glm::vec3(200.0*glm::sin((i+1)*sign*_angle), 200.0, 200.0*glm::cos((i+1)*sign*_angle)));
 				}
 			}
 
@@ -230,6 +230,7 @@ class ShadowsDemo : public GameHandler
             game->getRenderer()->renderModel3D(*_plane3D, _camera, *_shaderBlinnLight, _sun, _lights, 0.2f, *_renderTargetNormal);
 
 			_renderTargetNormal->blit();
+		//	_lights[1]->getShadowMap()->blit();
             return true;
         }
 

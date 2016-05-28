@@ -31,6 +31,8 @@ class PointLight : public Light
 		void setAttenuation(float attenuation) { _attenuation = attenuation; }
 		void setCutoff(float cutoff) { _cutoff = cutoff; }
 
+		const glm::mat4 &getProjectionMatrix() { return getPerspectiveMatrix(); }
+
 	protected:
 		float _attenuation;
 		float _cutoff;

@@ -152,7 +152,7 @@ void main()
         uint nLights = min(u_numPointLights, MAX_LIGHTS);
 
         for (int i=0; i<nLights; ++i) {
-			shadow = texture(u_shadowMapPointLight[i], vec3(io_shadowCoordPointLight[i].xy, (io_shadowCoordPointLight[i].z + bias)));
+			shadow = texture(u_shadowMapPointLight[i], vec3(io_shadowCoordPointLight[i].xy/io_shadowCoordPointLight[i].w, (io_shadowCoordPointLight[i].z + bias)/io_shadowCoordPointLight[i].w));
             _ProcessPointLight(lightAcc, shadow, i, io_viewVertex);
 		}
 #else

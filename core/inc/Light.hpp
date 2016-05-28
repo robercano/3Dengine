@@ -40,6 +40,8 @@ class Light : public Projection, public Object3D
 
 		RenderTarget *getShadowMap() { return _shadowMap; }
 
+		virtual const glm::mat4 &getProjectionMatrix() = 0;
+
 	protected:
         glm::vec3 _ambient;
         glm::vec3 _diffuse;

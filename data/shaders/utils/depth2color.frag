@@ -5,12 +5,12 @@
 #version 330 core
 
 in vec2 f_texcoord;
-uniform sampler2D u_depthMap;
+uniform sampler2DShadow u_depthMap;
 
 out vec4 fragColor;
 
-float zFar  = 1.0f;
-float zNear = 0.2f;
+float zFar  = 100.0f;
+float zNear = 1.0f;
 
 float LinearizeDepth(float z_b)
 {
@@ -21,5 +21,6 @@ float LinearizeDepth(float z_b)
 }
 
 void main(void) {
-    fragColor = vec4( vec3( LinearizeDepth(texture(u_depthMap, f_texcoord).x) ), 1.0f);
+	float shadow = texture(u_depthMap, vec3(f_texcoord, 1.0f));
+	fragColor = vec4(shadow, shadow, shadow, 1.0f);
 }

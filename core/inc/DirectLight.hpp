@@ -24,4 +24,6 @@ class DirectLight : public Light
 				setOrientation(glm::orientation(glm::normalize(direction), up));
         }
 		~DirectLight() { }
+
+		const glm::mat4 &getProjectionMatrix() { return getOrthogonalMatrix(); }
 };
