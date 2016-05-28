@@ -224,6 +224,65 @@ bool OpenGLRenderer::renderToShadowMap(RendererModel3D &model3D, Light &light, N
     return true;
 }
 
+bool OpenGLRenderer::renderLight(Light &light, Camera &camera, RenderTarget &renderTarget)
+{
+	glm::vec3 ambient = (light.getAmbient() + light.getDiffuse() + light.getSpecular()) / 3.0f;
+
+	Shader *shader = Shader::New();
+
+	std::string error;
+	if (shader->use("utils/render_light", error) != true) {
+		printf("ERROR loading utils/render_light shader: %s\n", error.c_str());
+		return false;
+	}
+
+	/* Calculate MVP matrix */
+	glm::mat4 MVP = camera.getPerspectiveMatrix() * camera.getViewMatrix() * light.getModelMatrix();
+
+    /* Calculate normal matrix */
+    glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(light.getModelMatrix())));
+
+	glEnable(GL_DEPTH_TEST);
+
+    /* Bind the render target */
+    renderTarget.bind();
+    {
+		GLuint lightPosVAO, lightPosVBO;
+
+        /* Bind program to upload the uniform */
+        shader->attach();
+
+        /* Send our transformation to the currently bound shader, in the "MVP" uniform */
+        shader->setUniformMat4("u_MVPMatrix", &MVP);
+		shader->setUniformVec3("u_lightColor", ambient);
+
+		GL( glGenVertexArrays(1, &lightPosVAO) );
+		GL( glBindVertexArray(lightPosVAO) );
+
+		GL( glGenBuffers(1, &lightPosVBO) );
+
+		GL( glBindBuffer(GL_ARRAY_BUFFER, lightPosVBO) );
+		GL( glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3), &light.getPosition()[0], GL_STATIC_DRAW) );
+
+		GL( glEnable(GL_PROGRAM_POINT_SIZE) );
+		GL( glDrawArrays(GL_POINTS, 0, 1) );
+
+		GL( glDisable(GL_PROGRAM_POINT_SIZE) );
+
+		GL( glBindVertexArray(0) );
+
+		GL( glDeleteBuffers(1, &lightPosVBO) );
+		GL( glDeleteVertexArrays(1, &lightPosVAO) );
+
+		/* Unbind */
+		shader->detach();
+    }
+    renderTarget.unbind();
+
+	Shader::Delete(shader);
+
+    return true;
+}
 bool OpenGLRenderer::resize(uint16_t width, uint16_t height)
 {
 	_width  = width;

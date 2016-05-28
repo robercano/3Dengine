@@ -30,7 +30,7 @@ class ShadowsDemo : public GameHandler
 
         bool handleInit(Game *game)
         {
-			PointLight *light1 = new PointLight(glm::vec3(0.4f, 0.2f, 0.2f),
+			PointLight *light1 = new PointLight(glm::vec3(1.0f, 1.0f, 0.2f),
 									            glm::vec3(0.4f, 0.2f, 0.2f),
 									            glm::vec3(0.4f, 0.2f, 0.2f),
 									            glm::vec3(-100.0f, 100.0f, 100.0f),
@@ -218,6 +218,7 @@ class ShadowsDemo : public GameHandler
 				(*it)->getShadowMap()->clear();
 
 				game->getRenderer()->renderToShadowMap(*_model3D, *(*it), *_shaderShadow);
+				game->getRenderer()->renderLight(*(*it), _camera, *_renderTargetNormal);
 			}
 
 			/* Render the shadow map for the sun */

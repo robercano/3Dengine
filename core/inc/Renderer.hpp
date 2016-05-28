@@ -75,6 +75,7 @@ class Renderer
 								   std::vector<PointLight*> &lights, float ambientK,
                                    RenderTarget &renderTarget, bool disableDepth = false) = 0;
 		virtual bool renderToShadowMap(RendererModel3D &model3D, Light &camera, NormalShadowMapShader &shader) = 0;
+		virtual bool renderLight(Light &light, Camera &camera, RenderTarget &renderTarget) = 0;
 
 		/**
 		 * Adjusts the renderer's display size

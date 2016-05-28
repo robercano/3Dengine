@@ -29,6 +29,7 @@ class OpenGLRenderer : public Renderer
 						   std::vector<PointLight*> &lights, float ambientK,
                            RenderTarget &renderTarget, bool disableDepth = false);
 		bool renderToShadowMap(RendererModel3D &model3D, Light &light, NormalShadowMapShader &shader);
+		bool renderLight(Light &light, Camera &camera, RenderTarget &renderTarget);
 		bool resize(uint16_t width, uint16_t height);
         void flush();
 
