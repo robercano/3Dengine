@@ -260,7 +260,7 @@ int main()
     }
 
     game->setHandler(&antiAliasingDemo);
-#ifdef _WIN32
+#if defined(_WIN32) || defined(__linux)
     game->setWindowSize(2560, 1440, false);
 #else
     game->setWindowSize(2560, 1440, true);

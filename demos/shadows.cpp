@@ -270,7 +270,7 @@ int main()
     }
 
     game->setHandler(&shadowsDemo);
-#ifdef _WIN32
+#if defined(_WIN32) || defined(__linux)
     game->setWindowSize(800, 600, false);
 #else
     game->setWindowSize(2560, 1440, true);
