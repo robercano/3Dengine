@@ -100,7 +100,7 @@ class AntiaAliasingDemo : public GameHandler
             _model3D->setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
 
             /* Create the game camera */
-            _camera.setProjection((float)_width/2.0, (float)_height, 0.1f, 1000.0f, 45.0f);
+            _camera.setProjection((float)_width/2.0f, (float)_height, 0.1f, 1000.0f, 45.0f);
 			_cameraMotion.setPosition( glm::vec3(150.0f, 100.0f, 150.0f) );
             _cameraMotion.rotateYaw(-45.0f);
 

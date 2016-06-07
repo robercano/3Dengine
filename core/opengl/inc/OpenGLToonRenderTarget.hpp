@@ -32,7 +32,7 @@ class OpenGLToonRenderTarget : public ToonRenderTarget, public OpenGLFilterRende
 		void setCustomParams(void)
 		{
 			float nearFrag = 2.0f * (_far - _near) / 1000.0f;
-			float distantFrag = 16.0*nearFrag;
+			float distantFrag = 16.0f*nearFrag;
 
 			GL( glActiveTexture(GL_TEXTURE1) );
 			GL( glBindTexture(GL_TEXTURE_2D, _depthBuffer) );

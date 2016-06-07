@@ -189,7 +189,7 @@ class ShadowsDemo : public GameHandler
 				_angle -= (float)(2*PI);
 			}
 
-			for (int i=0; i<_lights.size(); ++i) {
+			for (int i=0; i<(int)_lights.size(); ++i) {
 				int sign = i%2 ? -1 : 1;
 				if (i == 0) {
 					_lights[i]->setPosition(glm::vec3(10.0, 300.0, 300.0*glm::cos((i+1)*sign*_angle)));

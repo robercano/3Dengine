@@ -12,8 +12,8 @@ using namespace std;
 
 Plane::Plane(uint32_t horizontal, uint32_t vertical)
 {
-	float hDiv = horizontal - 1;
-	float vDiv = vertical   - 1;
+	float hDiv = (float)(horizontal - 1);
+	float vDiv = (float)(vertical   - 1);
 
 	/*
 	 * For each row of vertices of the plane two indices are needed
@@ -23,13 +23,13 @@ Plane::Plane(uint32_t horizontal, uint32_t vertical)
 	 * row does have to generate more triangles
 	 */
 	_modelData.resize(horizontal*vertical);
-	_modelIndices.resize(2*3*hDiv*vDiv);
+	_modelIndices.resize((size_t)(2*3*hDiv*vDiv));
 
 	Model3D::VertexData *data = &_modelData[0];
 
 	/* Generate the plane vertices */
-	for (int i=0, count=0; i<vertical; ++i) {
-		for (int j=0; j<horizontal; ++j) {
+	for (unsigned int i=0, count=0; i<vertical; ++i) {
+		for (unsigned int j=0; j<horizontal; ++j) {
 			data[count].vertex = glm::vec3(-0.5f + j/hDiv, 0.0f, -0.5 + i/vDiv);
 			data[count].normal = glm::vec3(0.0f, 1.0f, 0.0f);
 			data[count].uvcoord = glm::vec2(j/hDiv, 1.0f - i/vDiv);
@@ -39,8 +39,8 @@ Plane::Plane(uint32_t horizontal, uint32_t vertical)
 
 	/* Generate the indices */
 	uint32_t *index = &_modelIndices[0];
-	for (int i=0, count=0; i<vertical-1; ++i) {
-		for (int j=0; j<horizontal-1; ++j) {
+	for (unsigned int i=0, count=0; i<vertical-1; ++i) {
+		for (unsigned int j=0; j<horizontal-1; ++j) {
 			index[count++] = j + i;
 			index[count++] = j + i + horizontal;
 			index[count++] = j + i + 1;

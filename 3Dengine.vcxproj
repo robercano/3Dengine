@@ -79,7 +79,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>3rdparty\;core\inc;core\opengl\inc;3rdparty\windows\include\freetype2\;utils\inc\;3rdparty\windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>3rdparty\;core\inc;core\opengl\inc;3rdparty\windows\include\freetype2\;utils\inc\;3rdparty\windows\include;core\procedural\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <TargetMachine>MachineX86</TargetMachine>
@@ -127,12 +127,14 @@
     <ClCompile Include="core\opengl\src\OpenGLMSAARenderTarget.cpp" />
     <ClCompile Include="core\opengl\src\OpenGLRenderer.cpp" />
     <ClCompile Include="core\opengl\src\OpenGLShader.cpp" />
-    <ClCompile Include="core\opengl\src\OpenGLShaderLight.cpp" />
+    <ClCompile Include="core\opengl\src\OpenGLShaderDirectLight.cpp" />
     <ClCompile Include="core\opengl\src\OpenGLShaderMaterial.cpp" />
+    <ClCompile Include="core\opengl\src\OpenGLShaderPointLight.cpp" />
+    <ClCompile Include="core\opengl\src\OpenGLShadowMapRenderTarget.cpp" />
     <ClCompile Include="core\opengl\src\OpenGLSSAARenderTarget.cpp" />
     <ClCompile Include="core\opengl\src\OpenGLUniformBlock.cpp" />
+    <ClCompile Include="core\procedural\src\Plane.cpp" />
     <ClCompile Include="core\src\BlinnPhongShader.cpp" />
-    <ClCompile Include="core\src\Camera.cpp" />
     <ClCompile Include="core\src\FBRenderTarget.cpp" />
     <ClCompile Include="core\src\FlyMotion.cpp" />
     <ClCompile Include="core\src\FontRenderer.cpp" />
@@ -145,9 +147,11 @@
     <ClCompile Include="core\src\Model3D.cpp" />
     <ClCompile Include="core\src\MSAARenderTarget.cpp" />
     <ClCompile Include="core\src\NOAARenderTarget.cpp" />
+    <ClCompile Include="core\src\NormalShadowMapShader.cpp" />
     <ClCompile Include="core\src\OBJFormat.cpp" />
     <ClCompile Include="core\src\Renderer.cpp" />
     <ClCompile Include="core\src\Shader.cpp" />
+    <ClCompile Include="core\src\ShadowMapRenderTarget.cpp" />
     <ClCompile Include="core\src\SSAARenderTarget.cpp" />
     <ClCompile Include="core\src\TextConsole.cpp" />
     <ClCompile Include="core\src\TimeManager.cpp" />
@@ -344,6 +348,7 @@
     <ClInclude Include="3rdparty\windows\include\zlib.h" />
     <ClInclude Include="core\inc\BlinnPhongShader.hpp" />
     <ClInclude Include="core\inc\Camera.hpp" />
+    <ClInclude Include="core\inc\DirectLight.hpp" />
     <ClInclude Include="core\inc\FBRenderTarget.hpp" />
     <ClInclude Include="core\inc\FlyMotion.hpp" />
     <ClInclude Include="core\inc\FontRenderer.hpp" />
@@ -362,12 +367,16 @@
     <ClInclude Include="core\inc\MouseManager.hpp" />
     <ClInclude Include="core\inc\MSAARenderTarget.hpp" />
     <ClInclude Include="core\inc\NOAARenderTarget.hpp" />
+    <ClInclude Include="core\inc\NormalShadowMapShader.hpp" />
     <ClInclude Include="core\inc\Object3D.hpp" />
     <ClInclude Include="core\inc\OBJFormat.hpp" />
+    <ClInclude Include="core\inc\PointLight.hpp" />
+    <ClInclude Include="core\inc\Projection.hpp" />
     <ClInclude Include="core\inc\Renderer.hpp" />
     <ClInclude Include="core\inc\RendererModel3D.hpp" />
     <ClInclude Include="core\inc\RenderTarget.hpp" />
     <ClInclude Include="core\inc\Shader.hpp" />
+    <ClInclude Include="core\inc\ShadowMapRenderTarget.hpp" />
     <ClInclude Include="core\inc\SSAARenderTarget.hpp" />
     <ClInclude Include="core\inc\TextConsole.hpp" />
     <ClInclude Include="core\inc\Texture.hpp" />
@@ -392,14 +401,19 @@
     <ClInclude Include="core\opengl\inc\OpenGLModel3D.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLMSAARenderTarget.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLNOAARenderTarget.hpp" />
+    <ClInclude Include="core\opengl\inc\OpenGLNormalShadowMapShader.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLRenderer.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLShader.hpp" />
+    <ClInclude Include="core\opengl\inc\OpenGLShaderDirectLight.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLShaderLight.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLShaderMaterial.hpp" />
+    <ClInclude Include="core\opengl\inc\OpenGLShaderPointLight.hpp" />
+    <ClInclude Include="core\opengl\inc\OpenGLShadowMapRenderTarget.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLSSAARenderTarget.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLToonLightingShader.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLToonRenderTarget.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLUniformBlock.hpp" />
+    <ClInclude Include="core\procedural\inc\Plane.hpp" />
     <ClInclude Include="utils\inc\ImageLoaders.h" />
     <ClInclude Include="utils\inc\MathUtils.h" />
   </ItemGroup>

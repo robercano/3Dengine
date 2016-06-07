@@ -131,8 +131,8 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
 		}
 
 		/* Point lights */
-		glm::mat4 shadowMVPArray[lights.size()];
-		GLuint texturesArray[lights.size()];
+		glm::mat4 *shadowMVPArray = new glm::mat4[lights.size()];
+		GLuint *texturesArray = new GLuint[lights.size()];
 
 		for (uint32_t numLight=0; numLight<lights.size(); ++numLight) {
 			shader.setPointLight(numLight, *lights[numLight]);
@@ -148,6 +148,9 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
 			GL( glActiveTexture(GL_TEXTURE2 + numLight) );
 			lights[numLight]->getShadowMap()->bindDepth();
 		}
+
+		delete[] shadowMVPArray;
+		delete[] texturesArray;
 
 		/* TODO: This has to be set in a matrix array */
 		shader.setUniformMat4("u_shadowMVPPointLight[0]", shadowMVPArray, lights.size());
