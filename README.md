@@ -9,18 +9,25 @@ This is a demo 3D engine set to showcase my 3D graphics and system programming s
 
 You need to install the following packages in order to compile the package:
 
-    sudo apt-get install g++ cmake libglew-dev libjpeg-dev libglfw-dev xorg-dev
+    sudo apt-get install g++ cmake libglew-dev libjpeg-dev xorg-dev
+
+libglfw3 package is also needed but it does not come with Ubuntu 14.04 LTS. Please visit the GLFW3 website to
+see how to compile and link the library.
 
 Then you can compile the demos with:
 
-	make clean demos
+	make clean all
 
 The binaries will be created in the demo directory.
+
+### Windows
+
+TODO
 
 ## Current set of features
 
 * Class hierarchy designed to support different rendering APIs (OpenGL, DirectX)
-* Implementation aimed to be cross-platform with minimal porting effort (Linux and Mac supported, Windows on the way)
+* Cross-platform: Linux, Windows and OSX supported
 * OpenGL renderer (based on GLFW and GLEW)
 * Input manager (keyboard and mouse for now)
 * Window manager (based on GLFW)
@@ -31,27 +38,30 @@ The binaries will be created in the demo directory.
     FXAA2 is my own implementation of FXAA based on Timothy Lottes paper
 * Text rendering using TrueType fonts
 * Walk, Fly and FreeFly cameras implemented with quaternions
-* Goraud and flat illumination shaders
+* Goraud and flat illumination shaders (perhaps outdated, only goraud is used)
 * Phong and Blinn-Phong reflection model shaders
 * Simple shader demo effect for render targets (waves)
-* Dynamic lights support
+* Dynamic lights support: point light, spot light and direct light
+* Shadow map support for all dynamic lights
+* Common game loop with input, time and screen management
 
 # Current set of demos
 * Anti-aliasing methods showcase demo (FXAA, FXAA2, MSAA and SSAA)
 * FXAA and FXAA2 side by side comparison
-* Dynamic lights demo
+* Point lights demo
 * Toon shader demo
+* Shadow maps demos with direct light, point light and spot light
 
 ## In the pipeline
-* Windows support
-* Shadow mapping
+* Scene support so user can define a scene and rendering happens automatically from the camera view
+* Automatic shadow map frustum calculation for shadow map rendering
+* Cascade shadow maps
 * Ambient occlusion
 * Mipmaps support
-* Refactoring for common game loop
 * OBJ object importer tool: it converts from OBJ to custom binary format for the engine
 * Bump-mapping
 * Portals implementation
-* More shaders effect like bloom effect
+* More shaders effects like bloom effect
 * Extra anti-aliasing filters: CMAA, TXAA, MLAA
 * Anisotropic filtering support and showcase
 * Deferred rendering pipeline
