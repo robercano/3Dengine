@@ -179,6 +179,8 @@ class Demo : public GameHandler
 
         bool handleRender(Game *game)
         {
+			std::vector<SpotLight*> empty;
+
 			/* Apply the motion to the camera */
 			_cameraMotion.applyTo(_camera);
 
@@ -186,11 +188,11 @@ class Demo : public GameHandler
 
             /* Render all objects */
 			_model3D->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
-            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderLight, NULL, _lights, 0.2f, *_renderTarget);
+            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderLight, NULL, _lights, empty, 0.2f, *_renderTarget);
 			_model3D->setPosition(glm::vec3(0.0f, 0.0f, -50.0f));
-            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderLight, NULL, _lights, 0.2f, *_renderTarget);
+            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderLight, NULL, _lights, empty, 0.2f, *_renderTarget);
 			_model3D->setPosition(glm::vec3(0.0f, 0.0f, -100.0f));
-            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderLight, NULL, _lights, 0.2f, *_renderTarget);
+            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderLight, NULL, _lights, empty, 0.2f, *_renderTarget);
             game->getTextConsole()->gprintf("Current = %s\n", _current.c_str());
             game->getTextConsole()->gprintf("1=Normal, 2=ToonLight, 3=ToonLight+Filter\n");
 
@@ -235,7 +237,7 @@ int main()
     }
 
     game->setHandler(&demo);
-#if defined(_WIN32) || defined(__linux)
+#if defined(_WIN32)
     game->setWindowSize(800, 600, false);
 #else
     game->setWindowSize(2560, 1440, true);

@@ -11,6 +11,7 @@
 #include "Camera.hpp"
 #include "FlyMotion.hpp"
 #include "PointLight.hpp"
+#include "SpotLight.hpp"
 
 #define PI 3.14159265358979323846
 
@@ -165,14 +166,16 @@ class AntiaAliasingDemo : public GameHandler
 
         bool handleRender(Game *game)
         {
+			std::vector<SpotLight*> empty;
+
 			/* Apply the motion to the camera */
 			_cameraMotion.applyTo(_camera);
 
             /* Render all objects */
 			_selectedTargetLeft->clear();
 			_selectedTargetRight->clear();
-            game->getRenderer()->renderModel3D(*_model3D, _camera, *_blinnPhongShader, NULL, _lights, 0.0, *_selectedTargetLeft);
-            game->getRenderer()->renderModel3D(*_model3D, _camera, *_blinnPhongShader, NULL, _lights, 0.0, *_selectedTargetRight);
+            game->getRenderer()->renderModel3D(*_model3D, _camera, *_blinnPhongShader, NULL, _lights, empty, 0.0, *_selectedTargetLeft);
+            game->getRenderer()->renderModel3D(*_model3D, _camera, *_blinnPhongShader, NULL, _lights, empty, 0.0, *_selectedTargetRight);
 
             _selectedTargetLeft->blit(0, 0, _width/2, _height);
             _selectedTargetRight->blit(_width/2, 0, _width/2, _height);
@@ -216,7 +219,7 @@ int main()
     }
 
     game->setHandler(&antiAliasingDemo);
-#if defined(_WIN32) || defined(__linux)
+#if defined(_WIN32)
     game->setWindowSize(800, 600, false);
 #else
     game->setWindowSize(2560, 1440, true);

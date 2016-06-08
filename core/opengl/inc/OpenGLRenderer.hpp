@@ -26,7 +26,9 @@ class OpenGLRenderer : public Renderer
 		bool renderModel3D(RendererModel3D &model, Camera &camera,
                            LightingShader &shader,
 						   DirectLight *sun,
-						   std::vector<PointLight*> &lights, float ambientK,
+						   std::vector<PointLight*> &pointLights,
+						   std::vector<SpotLight*> &spotLights,
+						   float ambientK,
                            RenderTarget &renderTarget, bool disableDepth = false);
 		bool renderToShadowMap(RendererModel3D &model3D, Light &light, NormalShadowMapShader &shader);
 		bool renderLight(Light &light, Camera &camera, RenderTarget &renderTarget);

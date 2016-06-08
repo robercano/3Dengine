@@ -14,6 +14,7 @@
 #include "RendererModel3D.hpp"
 #include "LightingShader.hpp"
 #include "NormalShadowMapShader.hpp"
+#include "SpotLight.hpp"
 #include "PointLight.hpp"
 #include "DirectLight.hpp"
 #include "Camera.hpp"
@@ -72,7 +73,9 @@ class Renderer
 		virtual bool renderModel3D(RendererModel3D &model, Camera &camera,
                                    LightingShader &shader,
 								   DirectLight *sun,
-								   std::vector<PointLight*> &lights, float ambientK,
+								   std::vector<PointLight*> &pointLights,
+								   std::vector<SpotLight*> &spotLights,
+								   float ambientK,
                                    RenderTarget &renderTarget, bool disableDepth = false) = 0;
 		virtual bool renderToShadowMap(RendererModel3D &model3D, Light &camera, NormalShadowMapShader &shader) = 0;
 		virtual bool renderLight(Light &light, Camera &camera, RenderTarget &renderTarget) = 0;

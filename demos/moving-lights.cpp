@@ -166,12 +166,14 @@ class AntiaAliasingDemo : public GameHandler
 
         bool handleRender(Game *game)
         {
+			std::vector<SpotLight*> empty;
+
 			/* Apply the motion to the camera */
 			_cameraMotion.applyTo(_camera);
 
             /* Render all objects */
 			_renderTargetFXAA2->clear();
-            game->getRenderer()->renderModel3D(*_model3D, _camera, *_blinnPhongShader, NULL, _lights, 0.0, *_renderTargetFXAA2);
+            game->getRenderer()->renderModel3D(*_model3D, _camera, *_blinnPhongShader, NULL, _lights, empty, 0.0, *_renderTargetFXAA2);
 
             _renderTargetFXAA2->blit(0, 0, _width, _height);
             return true;
@@ -208,7 +210,7 @@ int main()
     }
 
     game->setHandler(&antiAliasingDemo);
-#if defined(_WIN32) || defined(__linux)
+#if defined(_WIN32)
     game->setWindowSize(800, 600, false);
 #else
     game->setWindowSize(2560, 1440, true);

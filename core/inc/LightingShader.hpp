@@ -6,6 +6,7 @@
 
 #include "Shader.hpp"
 #include "PointLight.hpp"
+#include "SpotLight.hpp"
 #include "DirectLight.hpp"
 #include "Material.hpp"
 
@@ -29,5 +30,6 @@ class LightingShader : public virtual Shader
 		virtual uint32_t getMaxLights() = 0;
 		virtual void setDirectLight(DirectLight &directLight) = 0;
 		virtual void setPointLight(uint32_t numLight, PointLight &pointLight) = 0;
+		virtual void setSpotLight(uint32_t numLight, SpotLight &pointLight) = 0;
 		virtual void setMaterial(Material &material) = 0;
 };

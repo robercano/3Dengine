@@ -11,6 +11,7 @@
 #include "Camera.hpp"
 #include "FlyMotion.hpp"
 #include "Plane.hpp"
+#include "SpotLight.hpp"
 #include "PointLight.hpp"
 #include "DirectLight.hpp"
 
@@ -26,6 +27,16 @@ class ShadowsDemo : public GameHandler
 			_prevX = 0xFFFFFF;
 			_prevY = 0xFFFFFF;
 			_angle = 0.0;
+			_enableDirectLight = true;
+			_enableSpotLight = true;
+			_enablePointLight = true;
+			_key1Pressed = false;
+			_key2Pressed = false;
+			_key3Pressed = false;
+			_key4Pressed = false;
+			_key5Pressed = false;
+			_animateSun = false;
+			_moonlight = true;
         }
 
         bool handleInit(Game *game)
@@ -49,9 +60,18 @@ class ShadowsDemo : public GameHandler
 												0.0000099999f,
 												1000.0f);
 
-			_sun = new DirectLight(glm::vec3(0.5f, 0.5f, 0.5f),
-                                   glm::vec3(0.5f, 0.5f, 0.5f),
-								   glm::vec3(0.5f, 0.5f, 0.5f),
+			SpotLight *light4 = new SpotLight(glm::vec3(2.0f, 0.5f, 0.5f),
+									          glm::vec3(2.0f, 0.5f, 0.5f),
+									          glm::vec3(2.0f, 0.5f, 0.5f),
+									          glm::vec3(160.0f, 170.0f, 0.0f),
+											  15.0f,
+											  3.0f,
+											  0.0000099999f,
+											  1000.0f);
+
+			_sun = new DirectLight(glm::vec3(0.4f, 0.4f, 0.4f),
+                                   glm::vec3(0.4f, 0.4f, 0.4f),
+								   glm::vec3(0.4f, 0.4f, 0.f),
 								   glm::vec3(-100.0f, -100.0f, -100.0f));
 
             game->getWindowManager()->getWindowSize(&_width, &_height);
@@ -127,15 +147,19 @@ class ShadowsDemo : public GameHandler
 			light2->getShadowMap()->init(_width, _height);
 			light3->setProjection((float)_width/4.0f, (float)_height/4.0f, 0.1f, 10000.0f);
 			light3->getShadowMap()->init(_width, _height);
+			light4->setProjection((float)_width/4.0f, (float)_height/4.0f, 0.1f, 10000.0f);
+			light4->getShadowMap()->init(_width, _height);
 
 			/* TODO: Hack to properly calculate direct light frustum */
 			_sun->setPosition(glm::vec3(245.0f, 300.0f, 170.0f));
 			_sun->setProjection((float)_width/4.0f, (float)_height/4.0f, 0.1f, 1000.0f);
 			_sun->getShadowMap()->init(_width, _height);
 
-            _lights.push_back(light1);
-            _lights.push_back(light2);
-            _lights.push_back(light3);
+            _pointLights.push_back(light1);
+            _pointLights.push_back(light2);
+            _pointLights.push_back(light3);
+
+			_spotLights.push_back(light4);
 
             return true;
         }
@@ -161,6 +185,30 @@ class ShadowsDemo : public GameHandler
             if (_inputManager._keys['R']) {
                 game->resetStats();
             }
+            if (_inputManager._keys['1'] && _key1Pressed == false) {
+                _enableDirectLight = !_enableDirectLight;
+            }
+			_key1Pressed = _inputManager._keys['1'];
+
+            if (_inputManager._keys['2'] && _key2Pressed == false) {
+                _enableSpotLight = !_enableSpotLight;
+            }
+			_key2Pressed = _inputManager._keys['2'];
+
+            if (_inputManager._keys['3'] && _key3Pressed == false) {
+                _enablePointLight = !_enablePointLight;
+            }
+			_key3Pressed = _inputManager._keys['3'];
+
+            if (_inputManager._keys['4'] && _key4Pressed == false) {
+                _animateSun= !_animateSun;
+            }
+			_key4Pressed = _inputManager._keys['4'];
+
+            if (_inputManager._keys['5'] && _key5Pressed == false) {
+                _moonlight = !_moonlight;
+            }
+			_key5Pressed = _inputManager._keys['5'];
 
 			/* Mouse */
 			if (_prevX == 0xFFFFFF) {
@@ -189,13 +237,43 @@ class ShadowsDemo : public GameHandler
 				_angle -= (float)(2*PI);
 			}
 
-			for (int i=0; i<(int)_lights.size(); ++i) {
+			for (int i=0; i<(int)_pointLights.size(); ++i) {
 				int sign = i%2 ? -1 : 1;
 				if (i == 0) {
-					_lights[i]->setPosition(glm::vec3(10.0, 300.0, 300.0*glm::cos((i+1)*sign*_angle)));
+					_pointLights[i]->setPosition(glm::vec3(10.0, 300.0, 300.0*glm::cos((i+1)*sign*_angle)));
 				} else {
-					_lights[i]->setPosition(glm::vec3(200.0*glm::sin((i+1)*sign*_angle), 200.0, 200.0*glm::cos((i+1)*sign*_angle)));
+					_pointLights[i]->setPosition(glm::vec3(200.0*glm::sin((i+1)*sign*_angle), 200.0, 200.0*glm::cos((i+1)*sign*_angle)));
 				}
+			}
+
+			for (int i=0; i<(int)_spotLights.size(); ++i) {
+				int sign = i%2 ? -1 : 1;
+				if (i == 1) {
+					_spotLights[i]->setPosition(glm::vec3(20.0, 200.0, 200.0*glm::cos((i+1)*sign*_angle)));
+				} else {
+					_spotLights[i]->setPosition(glm::vec3(240.0*glm::sin((i+1)*sign*_angle), 250.0, 260.0*glm::cos((i+1)*sign*_angle)));
+				}
+			}
+
+			if (_animateSun) {
+				float sunDial = 0.8;
+				float sunAngle = PI/2.0f + ((_angle<=PI ? _angle : 2*PI - _angle) - PI/2.0f) * sunDial;
+
+				_sun->setPosition(glm::vec3(200.0f*glm::cos(sunAngle),
+							      200.0f*glm::sin(sunAngle),
+							      -150.0f));
+			} else {
+				_sun->setPosition(glm::vec3(-200.0f, 200.0f, -150.0f));
+			}
+
+			if (_moonlight) {
+				_sun->setAmbient(glm::vec3(0.4f, 0.4f, 0.4f));
+				_sun->setDiffuse(glm::vec3(0.4f, 0.4f, 0.4f));
+				_sun->setSpecular(glm::vec3(0.4f, 0.4f, 0.4f));
+			} else {
+				_sun->setAmbient(glm::vec3(1.4f, 1.4f, 1.1f));
+				_sun->setDiffuse(glm::vec3(1.4f, 1.4f, 1.1f));
+				_sun->setSpecular(glm::vec3(1.4f, 1.4f, 1.1f));
 			}
 
             return true;
@@ -203,6 +281,9 @@ class ShadowsDemo : public GameHandler
 
         bool handleRender(Game *game)
         {
+			std::vector<PointLight*> _emptyPointLights;
+			std::vector<SpotLight*> _emptySpotLights;
+
 			/* Apply the motion to the camera */
 			_cameraMotion.applyTo(_camera);
             _renderTargetNormal->clear();
@@ -211,27 +292,56 @@ class ShadowsDemo : public GameHandler
 			_plane3D->setPosition(glm::vec3(0.0f, -70.0f, 0.0f));
 
 			/* Render the shadow map for each light */
-			for (std::vector<PointLight*>::iterator it = _lights.begin(); it != _lights.end(); ++it) {
-				/* TODO: lookAt the center of the calculated bounding box, but for
-				 * now this is enough */
-				(*it)->lookAt(_model3D->getPosition());
-				(*it)->getShadowMap()->clear();
+			if (_enablePointLight) {
+				for (std::vector<PointLight*>::iterator it = _pointLights.begin(); it != _pointLights.end(); ++it) {
+					/* TODO: lookAt the center of the calculated bounding box, but for
+					 * now this is enough */
+					(*it)->lookAt(_model3D->getPosition());
+					(*it)->getShadowMap()->clear();
 
-				game->getRenderer()->renderToShadowMap(*_model3D, *(*it), *_shaderShadow);
-				game->getRenderer()->renderLight(*(*it), _camera, *_renderTargetNormal);
+					game->getRenderer()->renderToShadowMap(*_model3D, *(*it), *_shaderShadow);
+					game->getRenderer()->renderLight(*(*it), _camera, *_renderTargetNormal);
+				}
+			}
+			if (_enableSpotLight) {
+				for (std::vector<SpotLight*>::iterator it = _spotLights.begin(); it != _spotLights.end(); ++it) {
+					/* TODO: lookAt the center of the calculated bounding box, but for
+					 * now this is enough */
+					(*it)->lookAt(_model3D->getPosition());
+					(*it)->getShadowMap()->clear();
+
+					game->getRenderer()->renderToShadowMap(*_model3D, *(*it), *_shaderShadow);
+					game->getRenderer()->renderLight(*(*it), _camera, *_renderTargetNormal);
+				}
 			}
 
 			/* Render the shadow map for the sun */
-			_sun->lookAt(_model3D->getPosition());
-			_sun->getShadowMap()->clear();
-			game->getRenderer()->renderToShadowMap(*_model3D, *_sun, *_shaderShadow);
+			if (_enableDirectLight) {
+				_sun->lookAt(_model3D->getPosition());
+				_sun->getShadowMap()->clear();
+				game->getRenderer()->renderToShadowMap(*_model3D, *_sun, *_shaderShadow);
+			}
 
             /* Render all objects */
-            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderBlinnLight, _sun, _lights, 0.2f, *_renderTargetNormal);
-            game->getRenderer()->renderModel3D(*_plane3D, _camera, *_shaderBlinnLight, _sun, _lights, 0.2f, *_renderTargetNormal);
+            game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderBlinnLight,
+					                           _enableDirectLight ? _sun : NULL,
+					                           _enablePointLight ? _pointLights : _emptyPointLights,
+											   _enableSpotLight ? _spotLights : _emptySpotLights,
+					                           0.2f, *_renderTargetNormal);
+            game->getRenderer()->renderModel3D(*_plane3D, _camera, *_shaderBlinnLight,
+					                           _enableDirectLight ? _sun : NULL,
+					                           _enablePointLight ? _pointLights : _emptyPointLights,
+											   _enableSpotLight ? _spotLights : _emptySpotLights,
+											   0.2f, *_renderTargetNormal);
 
 			_renderTargetNormal->blit();
-		//	_lights[1]->getShadowMap()->blit();
+			//_spotLights[0]->getShadowMap()->blit();
+			//
+            game->getTextConsole()->gprintf("1=DirectLight %s, 2=SpotLight %s, 3=PointLights %s, 4=Move Sun %s, 5=Moonlight/Daylight\n",
+					                        _enableDirectLight ? "Off" : "On",
+					                        _enableSpotLight ? "Off" : "On",
+					                        _enablePointLight ? "Off" : "On",
+											_animateSun ? "Off" : "On");
             return true;
         }
 
@@ -243,7 +353,8 @@ class ShadowsDemo : public GameHandler
         BlinnPhongShader      *_shaderBlinnLight;
 		NormalShadowMapShader *_shaderShadow;
 		NOAARenderTarget      *_renderTargetNormal;
-        std::vector<PointLight*> _lights;
+        std::vector<PointLight*> _pointLights;
+        std::vector<SpotLight*> _spotLights;
 		DirectLight            *_sun;
 		InputManager           _inputManager;
         std::string            _current;
@@ -256,6 +367,16 @@ class ShadowsDemo : public GameHandler
         uint32_t _width;
         uint32_t _height;
 		float _angle;
+		bool _enableDirectLight,
+			 _enableSpotLight,
+			 _enablePointLight;
+		bool _key1Pressed,
+			 _key2Pressed,
+			 _key3Pressed,
+			 _key4Pressed,
+			 _key5Pressed;
+		bool _animateSun;
+		bool _moonlight;
 };
 
 int main()
@@ -270,7 +391,7 @@ int main()
     }
 
     game->setHandler(&shadowsDemo);
-#if defined(_WIN32) || defined(__linux)
+#if defined(_WIN32)
     game->setWindowSize(800, 600, false);
 #else
     game->setWindowSize(2560, 1440, true);

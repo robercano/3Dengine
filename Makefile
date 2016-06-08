@@ -37,7 +37,7 @@ OPENGL_FILES=GLFWKeyManager.cpp GLFWMouseManager.cpp GLFWWindowManager.cpp \
              OpenGLMSAARenderTarget.cpp OpenGLSSAARenderTarget.cpp OpenGLFBRenderTarget.cpp \
 			 OpenGLShadowMapRenderTarget.cpp \
              OpenGLShader.cpp OpenGLShaderMaterial.cpp \
-			 OpenGLShaderPointLight.cpp OpenGLShaderDirectLight.cpp \
+			 OpenGLShaderPointLight.cpp OpenGLShaderSpotLight.cpp OpenGLShaderDirectLight.cpp \
 			 OpenGLUniformBlock.cpp
 #PROCEDURAL_FILES=Cube.cpp Icosahedron.cpp Plane.cpp Sphere.cpp
 PROCEDURAL_FILES=Plane.cpp

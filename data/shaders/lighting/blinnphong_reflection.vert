@@ -3,7 +3,7 @@
 //
 #version 330 core
 
-#define MAX_LIGHTS 10u
+#define MAX_LIGHTS 4u
 
 layout(location = 0) in vec3 in_vertex;
 layout(location = 1) in vec3 in_normal;
@@ -23,6 +23,10 @@ out vec3 io_viewVertex;
 uniform uint u_numPointLights;
 out vec4 io_shadowCoordPointLight[MAX_LIGHTS];
 uniform mat4 u_shadowMVPPointLight[MAX_LIGHTS];
+
+uniform uint u_numSpotLights;
+out vec4 io_shadowCoordSpotLight[MAX_LIGHTS];
+uniform mat4 u_shadowMVPSpotLight[MAX_LIGHTS];
 
 out vec4 io_shadowCoordDirectLight;
 uniform mat4 u_shadowMVPDirectLight;
@@ -51,5 +55,11 @@ void main()
 
 	for (uint i=0u; i<nLights; ++i) {
 		io_shadowCoordPointLight[i] = u_shadowMVPPointLight[i] * vec4(in_vertex, 1.0f);
+	}
+
+	nLights = min(u_numSpotLights, MAX_LIGHTS);
+
+	for (uint i=0u; i<nLights; ++i) {
+		io_shadowCoordSpotLight[i] = u_shadowMVPSpotLight[i] * vec4(in_vertex, 1.0f);
 	}
 }

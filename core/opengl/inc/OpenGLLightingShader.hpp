@@ -8,6 +8,7 @@
 #include "OpenGLShader.hpp"
 #include "LightingShader.hpp"
 #include "OpenGLShaderPointLight.hpp"
+#include "OpenGLShaderSpotLight.hpp"
 #include "OpenGLShaderDirectLight.hpp"
 
 #pragma warning( disable : 4250 )
@@ -31,7 +32,7 @@
 class OpenGLLightingShader : public virtual LightingShader, public OpenGLShader
 {
 	public:
-		static const uint32_t MAX_LIGHTS=10;
+		static const uint32_t MAX_LIGHTS=4;
 
 		bool init()
 		{
@@ -59,6 +60,14 @@ class OpenGLLightingShader : public virtual LightingShader, public OpenGLShader
 				}
 			}
 
+			for (uint32_t i=0; i<MAX_LIGHTS; ++i) {
+				_spotLights[i].init(bindingPoint++, i);
+				if (_spotLights[i].prepareForShader(_programID) != true) {
+					printf("ERROR preparing spot light %d for blinnphong_reflection shader\n", i);
+					return false;
+				}
+			}
+
 			detach();
 			return true;
 		}
@@ -82,6 +91,15 @@ class OpenGLLightingShader : public virtual LightingShader, public OpenGLShader
 			_pointLights[numLight].copyLight(pointLight);
 		}
 
+		void setSpotLight(uint32_t numLight, SpotLight &spotLight)
+		{
+			if (numLight >= MAX_LIGHTS) {
+				printf("ERROR light number %d higher than max. %d in blinnphong_reflection shader\n", numLight, MAX_LIGHTS);
+				return;
+			}
+			_spotLights[numLight].copyLight(spotLight);
+		}
+
 		void setMaterial(Material &material)
 		{
 			_material.copyMaterial(material);
@@ -91,5 +109,5 @@ class OpenGLLightingShader : public virtual LightingShader, public OpenGLShader
 		OpenGLShaderMaterial    _material;
 		OpenGLShaderDirectLight _directLight;
 		OpenGLShaderPointLight  _pointLights[MAX_LIGHTS];
-//		OpenGLShaderSpotLight _spotLights[MAX_LIGHTS];
+		OpenGLShaderSpotLight   _spotLights[MAX_LIGHTS];
 };

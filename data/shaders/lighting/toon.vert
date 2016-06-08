@@ -3,6 +3,8 @@
 //
 #version 330 core
 
+#define MAX_LIGHTS 4u
+
 layout(location = 0) in vec3 in_vertex;
 layout(location = 1) in vec3 in_normal;
 layout(location = 2) in vec2 in_uvcoord;
@@ -17,6 +19,17 @@ out vec3 io_fragNormal;
 out vec2 io_fragUVCoord;
 out vec3 io_viewNormal;
 out vec3 io_viewVertex;
+
+uniform uint u_numPointLights;
+out vec4 io_shadowCoordPointLight[MAX_LIGHTS];
+uniform mat4 u_shadowMVPPointLight[MAX_LIGHTS];
+
+uniform uint u_numSpotLights;
+out vec4 io_shadowCoordSpotLight[MAX_LIGHTS];
+uniform mat4 u_shadowMVPSpotLight[MAX_LIGHTS];
+
+out vec4 io_shadowCoordDirectLight;
+uniform mat4 u_shadowMVPDirectLight;
 
 void main()
 {
@@ -35,4 +48,18 @@ void main()
     /* Clip-space coordinates */
 	gl_Position = u_MVPMatrix * vec4(in_vertex, 1.0f);
 
+	/* Shadow-map coordinate */
+	io_shadowCoordDirectLight = u_shadowMVPDirectLight * vec4(in_vertex, 1.0f);
+
+	uint nLights = min(u_numPointLights, MAX_LIGHTS);
+
+	for (uint i=0u; i<nLights; ++i) {
+		io_shadowCoordPointLight[i] = u_shadowMVPPointLight[i] * vec4(in_vertex, 1.0f);
+	}
+
+	nLights = min(u_numSpotLights, MAX_LIGHTS);
+
+	for (uint i=0u; i<nLights; ++i) {
+		io_shadowCoordSpotLight[i] = u_shadowMVPSpotLight[i] * vec4(in_vertex, 1.0f);
+	}
 }

@@ -14,7 +14,7 @@
 #version 400 core
 
 #define GLSL_VERSION 440
-#define MAX_LIGHTS 10
+#define MAX_LIGHTS 4
 
 /* Effect strength of the shader. It ranges from -1.0..1.0 and
    determines how much border is added to the model */
@@ -49,6 +49,23 @@ layout (std140) uniform PointLight {
 uniform sampler2DShadow u_shadowMapPointLight[MAX_LIGHTS];
 in vec4 io_shadowCoordPointLight[MAX_LIGHTS];
 uniform uint u_numPointLights;
+
+/* Spotlight definition */
+layout (std140) uniform SpotLight {
+    vec3  position;
+    vec3  direction;
+	float coneAngle;
+	float conePenumbra;
+	float attenuation;
+	float cutoff;
+    vec3  ambient;
+    vec3  diffuse;
+    vec3  specular;
+} u_SpotLight[MAX_LIGHTS];
+
+uniform sampler2DShadow u_shadowMapSpotLight[MAX_LIGHTS];
+in vec4 io_shadowCoordSpotLight[MAX_LIGHTS];
+uniform uint u_numSpotLights;
 
 /* Global scene ambient constant */
 uniform float u_ambientK;
@@ -130,6 +147,46 @@ float toonify(float intensity)
     }                                                                                     \
 }
 
+#define _ProcessSpotLight(color, shadow, n, V)                                                       \
+{                                                                                                    \
+    if (n < u_numSpotLights) {                                                                       \
+		vec3 unnormL = u_SpotLight[n].position - io_fragVertex;                                      \
+		float distanceToLight = length(unnormL);                                                     \
+                                                                                                     \
+		if (distanceToLight <= u_SpotLight[n].cutoff) {                                              \
+			/* Light vector to fragment */                                                           \
+			vec3 L = normalize(unnormL);                                                             \
+                                                                                                     \
+			float lightToSurfaceAngle = degrees(acos(dot(-L, normalize(u_SpotLight[n].direction)))); \
+                                                                                                     \
+            if (lightToSurfaceAngle <= u_SpotLight[n].coneAngle) {                                   \
+                                                                                                     \
+			    float attenuation = shadow / (1.0 + u_SpotLight[n].attenuation * pow(length(unnormL), 2));\
+				attenuation *= (1.0f - lightToSurfaceAngle/u_SpotLight[n].coneAngle);                \
+                                                                                                     \
+			    /* Normalized half vector for Blinn-Phong */                                         \
+			    vec3 H = normalize(L + V);                                                           \
+																						             \
+			    /* Ambient + Diffuse + Specular */                                                   \
+			    float Ia = toonify(clamp(u_ambientK, 0.0, 1.0));                                      \
+			    float Id = toonify(clamp(dot(L, io_fragNormal), 0.0, 1.0));                           \
+			    float Is = toonify(clamp(pow(dot(io_fragNormal, H), u_material.shininess), 0.0, 1.0));\
+																						             \
+		    	vec3 colorAmbient  = u_SpotLight[n].ambient*u_material.ambient*Ia;                   \
+			    vec3 colorDiffuse  = u_SpotLight[n].diffuse*u_material.diffuse*Id;                   \
+			    vec3 colorSpecular = u_SpotLight[n].specular*u_material.specular*Is;                 \
+																						             \
+			    if (dot(L, io_fragNormal) <= 0) {                                                    \
+				    colorSpecular = vec3(0.0);                                                       \
+			    }                                                                                    \
+																						             \
+			    /* Accumulate color components */                                                    \
+			    color += colorAmbient + attenuation*(colorDiffuse + colorSpecular);                  \
+		    }                                                                                        \
+        }                                                                                            \
+    }                                                                                                \
+}
+
 #define _ProcessDirectLight(color, shadow, V)                                         \
 {                                                                                     \
 	if  (u_numDirectLights > 0) {                                                     \
@@ -192,6 +249,13 @@ void main()
 			shadow = texture(u_shadowMapPointLight[i], vec3(io_shadowCoordPointLight[i].xy, (io_shadowCoordPointLight[i].z + bias)));
 			_ProcessPointLight(lightAcc, shadow, i, io_viewVertex);
 		}
+
+		nLights = min(u_numSpotLights, MAX_LIGHTS);
+
+        for (int i=0; i<nLights; ++i) {
+			shadow = texture(u_shadowMapSpotLight[i], vec3(io_shadowCoordSpotLight[i].xy/io_shadowCoordSpotLight[i].w, (io_shadowCoordSpotLight[i].z + bias)/io_shadowCoordSpotLight[i].w));
+            _ProcessSpotLight(lightAcc, shadow, i, io_viewVertex);
+		}
 #else
         _ProcessPointLight(lightAcc, 0, io_viewVertex);
         _ProcessPointLight(lightAcc, 1, io_viewVertex);
@@ -202,6 +266,16 @@ void main()
         _ProcessPointLight(lightAcc, 7, io_viewVertex);
         _ProcessPointLight(lightAcc, 8, io_viewVertex);
         _ProcessPointLight(lightAcc, 9, io_viewVertex);
+
+        _ProcessSpotLight(lightAcc, shadow, 0, io_viewVertex);
+        _ProcessSpotLight(lightAcc, shadow, 1, io_viewVertex);
+        _ProcessSpotLight(lightAcc, shadow, 2, io_viewVertex);
+        _ProcessSpotLight(lightAcc, shadow, 4, io_viewVertex);
+        _ProcessSpotLight(lightAcc, shadow, 5, io_viewVertex);
+        _ProcessSpotLight(lightAcc, shadow, 6, io_viewVertex);
+        _ProcessSpotLight(lightAcc, shadow, 7, io_viewVertex);
+        _ProcessSpotLight(lightAcc, shadow, 8, io_viewVertex);
+        _ProcessSpotLight(lightAcc, shadow, 9, io_viewVertex);
 #endif
     }
 

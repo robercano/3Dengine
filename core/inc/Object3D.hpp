@@ -62,6 +62,8 @@ class Object3D
 		{
 			glm::vec3 up(0.0f, 1.0f, 0.0f);
 
+			// TODO: possible problem with lights not rendering shadow map correctly
+			// when view vector is aligned with up vector
 			_view = glm::lookAt(_position, at, up);
             _modelValid = false;
             _viewValid = true;
@@ -69,7 +71,7 @@ class Object3D
 		const glm::vec3 &getPosition() { return _position; }
 		const glm::mat4 &getOrientation() { return _orientation; }
 		const glm::vec3 &getScaleFactor() { return _scale; }
-		glm::vec3 getDirection()   { return glm::vec3(glm::column(_orientation, 2)); }
+		glm::vec3 getDirection()   { return -glm::vec3(glm::row(getViewMatrix(), 2)); }
 
 		const glm::mat4 &getModelMatrix(void)
         {

@@ -70,7 +70,9 @@ RendererModel3D *OpenGLRenderer::prepareModel3D(const Model3D &model)
 bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
                                    LightingShader &shader,
 								   DirectLight *sun,
-								   std::vector<PointLight*> &lights, float ambientK,
+								   std::vector<PointLight*> &pointLights,
+								   std::vector<SpotLight*> &spotLights,
+								   float ambientK,
                                    RenderTarget &renderTarget, bool disableDepth)
 {
 	glm::mat4 biasMatrix(
@@ -79,6 +81,7 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
 			0.0, 0.0, 0.5, 0.0,
 			0.5, 0.5, 0.5, 1.0
 			);
+	GLuint textureUnit = 0;
 
 	/* Calculate MVP matrix */
 	glm::mat4 MVP = camera.getPerspectiveMatrix() * camera.getViewMatrix() * model3D.getModelMatrix();
@@ -107,7 +110,7 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
         shader.setUniformMat4("u_viewMatrix", &camera.getViewMatrix());
         shader.setUniformMat4("u_modelMatrix", &model3D.getModelMatrix());
         shader.setUniformMat3("u_normalMatrix", &normalMatrix);
-        shader.setUniformTexture2D("u_diffuseMap", 0);
+        shader.setUniformTexture2D("u_diffuseMap", textureUnit++);
         shader.setUniformFloat("u_ambientK", ambientK);
 
 		/* Set the sun light */
@@ -122,40 +125,75 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
 
 			/* TODO: This has to be set in a matrix array */
 			shader.setUniformMat4("u_shadowMVPDirectLight", &shadowMVP);
-			shader.setUniformTexture2D("u_shadowMapDirectLight", 1);
+			shader.setUniformTexture2D("u_shadowMapDirectLight", textureUnit);
 
-			GL( glActiveTexture(GL_TEXTURE1) );
+			GL( glActiveTexture(GL_TEXTURE0 + textureUnit) );
 			sun->getShadowMap()->bindDepth();
+
+			textureUnit++;
 		} else {
 			shader.setUniformUint("u_numDirectLights", 0);
 		}
 
 		/* Point lights */
-		glm::mat4 *shadowMVPArray = new glm::mat4[lights.size()];
-		GLuint *texturesArray = new GLuint[lights.size()];
+		glm::mat4 *shadowMVPArray = new glm::mat4[pointLights.size()];
+		GLuint *texturesArray = new GLuint[pointLights.size()];
 
-		for (uint32_t numLight=0; numLight<lights.size(); ++numLight) {
-			shader.setPointLight(numLight, *lights[numLight]);
+		for (uint32_t numLight=0; numLight<pointLights.size(); ++numLight) {
+			shader.setPointLight(numLight, *pointLights[numLight]);
 
 			/* Calculate adjusted shadow map matrix */
-			glm::mat4 shadowMVP = lights[numLight]->getProjectionMatrix() *
-				                  lights[numLight]->getViewMatrix() *
+			glm::mat4 shadowMVP = pointLights[numLight]->getProjectionMatrix() *
+				                  pointLights[numLight]->getViewMatrix() *
 				                  model3D.getModelMatrix();
 
 			shadowMVPArray[numLight] = biasMatrix * shadowMVP;
-			texturesArray[numLight] = numLight + 2;
+			texturesArray[numLight] = textureUnit;
 
-			GL( glActiveTexture(GL_TEXTURE2 + numLight) );
-			lights[numLight]->getShadowMap()->bindDepth();
+			GL( glActiveTexture(GL_TEXTURE0 + textureUnit) );
+			pointLights[numLight]->getShadowMap()->bindDepth();
+
+			textureUnit++;
 		}
 
+		/* TODO: This has to be set in a matrix array */
+		shader.setUniformMat4("u_shadowMVPPointLight[0]", shadowMVPArray, pointLights.size());
+		shader.setUniformTexture2DArray("u_shadowMapPointLight[0]", texturesArray, pointLights.size());
+        shader.setUniformUint("u_numPointLights", pointLights.size());
+
+		/* Free the resources */
 		delete[] shadowMVPArray;
 		delete[] texturesArray;
 
+		/* Spotlights */
+		shadowMVPArray = new glm::mat4[spotLights.size()];
+		texturesArray = new GLuint[spotLights.size()];
+
+		for (uint32_t numLight=0; numLight<spotLights.size(); ++numLight) {
+			shader.setSpotLight(numLight, *spotLights[numLight]);
+
+			/* Calculate adjusted shadow map matrix */
+			glm::mat4 shadowMVP = spotLights[numLight]->getProjectionMatrix() *
+				                  spotLights[numLight]->getViewMatrix() *
+				                  model3D.getModelMatrix();
+
+			shadowMVPArray[numLight] = biasMatrix * shadowMVP;
+			texturesArray[numLight] = textureUnit;
+
+			GL( glActiveTexture(GL_TEXTURE0 + textureUnit) );
+			spotLights[numLight]->getShadowMap()->bindDepth();
+
+			textureUnit++;
+		}
+
 		/* TODO: This has to be set in a matrix array */
-		shader.setUniformMat4("u_shadowMVPPointLight[0]", shadowMVPArray, lights.size());
-		shader.setUniformTexture2DArray("u_shadowMapPointLight[0]", texturesArray, lights.size());
-        shader.setUniformUint("u_numPointLights", lights.size());
+		shader.setUniformMat4("u_shadowMVPSpotLight[0]", shadowMVPArray, spotLights.size());
+		shader.setUniformTexture2DArray("u_shadowMapSpotLight[0]", texturesArray, spotLights.size());
+        shader.setUniformUint("u_numSpotLights", spotLights.size());
+
+		/* Free the resources */
+		delete[] shadowMVPArray;
+		delete[] texturesArray;
 
         /* Draw the model */
         GL( glBindVertexArray(glObject.getVertexArrayID()) );
