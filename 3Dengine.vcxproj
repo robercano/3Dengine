@@ -130,6 +130,7 @@
     <ClCompile Include="core\opengl\src\OpenGLShaderDirectLight.cpp" />
     <ClCompile Include="core\opengl\src\OpenGLShaderMaterial.cpp" />
     <ClCompile Include="core\opengl\src\OpenGLShaderPointLight.cpp" />
+    <ClCompile Include="core\opengl\src\OpenGLShaderSpotLight.cpp" />
     <ClCompile Include="core\opengl\src\OpenGLShadowMapRenderTarget.cpp" />
     <ClCompile Include="core\opengl\src\OpenGLSSAARenderTarget.cpp" />
     <ClCompile Include="core\opengl\src\OpenGLUniformBlock.cpp" />
@@ -408,6 +409,7 @@
     <ClInclude Include="core\opengl\inc\OpenGLShaderLight.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLShaderMaterial.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLShaderPointLight.hpp" />
+    <ClInclude Include="core\opengl\inc\OpenGLShaderSpotLight.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLShadowMapRenderTarget.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLSSAARenderTarget.hpp" />
     <ClInclude Include="core\opengl\inc\OpenGLToonLightingShader.hpp" />

@@ -256,8 +256,8 @@ class ShadowsDemo : public GameHandler
 			}
 
 			if (_animateSun) {
-				float sunDial = 0.8;
-				float sunAngle = PI/2.0f + ((_angle<=PI ? _angle : 2*PI - _angle) - PI/2.0f) * sunDial;
+				float sunDial = 0.8f;
+				float sunAngle = (float)(PI/2.0f) + ((_angle<=PI ? _angle : (float)(2.0f*PI) - _angle) - (float)(PI/2.0f)) * sunDial;
 
 				_sun->setPosition(glm::vec3(200.0f*glm::cos(sunAngle),
 							      200.0f*glm::sin(sunAngle),
