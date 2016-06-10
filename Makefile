@@ -100,7 +100,7 @@ dirs:
 
 $(LIBDIR)/$(LIBNAME): $(OBJECTS)
 	@echo "- Generating $@...\c"
-	@$(CXX) $(SHAREDGEN) -o $@ $(OBJECTS) -lglfw
+	@$(CXX) $(SHAREDGEN) -o $@ $(OBJECTS)
 	@echo "done"
 
 -include $(OBJECTS:.o=.d)

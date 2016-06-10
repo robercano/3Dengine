@@ -11,14 +11,26 @@ You need to install the following packages in order to compile the package:
 
     sudo apt-get install g++ cmake libglew-dev libjpeg-dev xorg-dev
 
-libglfw3 package is also needed but it does not come with Ubuntu 14.04 LTS. Please visit the GLFW3 website to
-see how to compile and link the library.
+libglfw3 package is also needed but it does not come with Ubuntu 14.04 LTS. You can download GLFW 3.2 [here](https://github.com/glfw/glfw/releases/download/3.2/glfw-3.2.zip).
+
+Unzip the package, go into the library directory and perform the following commands:
+
+    cmake .
+    make
+    sudo make install
+    sudo ldconfig
 
 Then you can compile the demos with:
 
 	make clean all
 
-The binaries will be created in the demo directory.
+The binaries will be created in the demos directory. To run them just:
+
+    ./demos/shadows
+    ./demos/toon
+
+And so on. It is important that the running directory is the root of the git repo as the
+data assets are referenced from there.
 
 ### Windows
 
