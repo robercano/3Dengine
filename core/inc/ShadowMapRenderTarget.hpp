@@ -14,9 +14,9 @@
 
 class ShadowMapRenderTarget : public virtual RenderTarget
 {
-	public:
-        static ShadowMapRenderTarget *New();
-        static void Delete(ShadowMapRenderTarget *target);
+  public:
+    static ShadowMapRenderTarget *New();
+    static void Delete(ShadowMapRenderTarget *target);
 
-        virtual ~ShadowMapRenderTarget() {}
+    virtual ~ShadowMapRenderTarget() {}
 };

@@ -10,34 +10,34 @@
 
 namespace procedural
 {
-    class Icosahedron : public Object3D
-    {
-        public:
-            /** Object3D methods */
-            bool init();
-            bool destroy();
-            uint32_t getVertexArrayIndex();
+class Icosahedron : public Object3D
+{
+  public:
+    /** Object3D methods */
+    bool init();
+    bool destroy();
+    uint32_t getVertexArrayIndex();
 
-        private:
-            /**
-             * Vertex array object ID
-             */
-            uint32_t _gVAO;
+  private:
+    /**
+     * Vertex array object ID
+     */
+    uint32_t _gVAO;
 
-            /**
-             * Vertex buffer object for vertices
-             */
-            uint32_t _verticesVBO;
+    /**
+     * Vertex buffer object for vertices
+     */
+    uint32_t _verticesVBO;
 
-            /**
-             * Vertex buffer object for colors
-             */
-            uint32_t _colorsVBO;
+    /**
+     * Vertex buffer object for colors
+     */
+    uint32_t _colorsVBO;
 
-            /**
-             * Vertex buffer object for indices
-             */
-            uint32_t _indicesVBO;
-    };
+    /**
+     * Vertex buffer object for indices
+     */
+    uint32_t _indicesVBO;
+};
 
 } /* namespace procedural */

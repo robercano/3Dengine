@@ -4,8 +4,8 @@
  *
  * @author	Roberto Cano (http://www.robertocano.es)
  */
-#include <limits>
 #include "Model3D.hpp"
+#include <limits>
 
 void Model3D::_calculateCenterOfMass(glm::vec3 &cm)
 {

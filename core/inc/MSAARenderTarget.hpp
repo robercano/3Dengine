@@ -14,10 +14,10 @@
 
 class MSAARenderTarget : public RenderTarget
 {
-	public:
-        static MSAARenderTarget *New();
-        static void Delete(MSAARenderTarget *target);
-        static uint32_t getMaxSamples();
+  public:
+    static MSAARenderTarget *New();
+    static void Delete(MSAARenderTarget *target);
+    static uint32_t getMaxSamples();
 
-        virtual ~MSAARenderTarget() {}
+    virtual ~MSAARenderTarget() {}
 };

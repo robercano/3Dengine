@@ -6,21 +6,13 @@
  *
  * @author	Roberto Cano (http://www.robertocano.es)
  */
-#include <string.h>
 #include "InputManager.hpp"
+#include <string.h>
 
-InputManager::InputManager()
-{
-	memset(_keys, false, sizeof _keys);
-}
-
-void InputManager::processKey(uint32_t key, bool state)
-{
-	_keys[key] = state;
-}
-
+InputManager::InputManager() { memset(_keys, false, sizeof _keys); }
+void InputManager::processKey(uint32_t key, bool state) { _keys[key] = state; }
 void InputManager::processMouse(int32_t x, int32_t y)
 {
-	_xMouse = x;
-	_yMouse = y;
+    _xMouse = x;
+    _yMouse = y;
 }

@@ -6,22 +6,22 @@
  *
  * @author	Roberto Cano (http://www.robertocano.es)
  */
-#include <stdio.h>
 #include <stdarg.h>
+#include <stdio.h>
 
-#include "TextConsole.hpp"
 #include "NOAARenderTarget.hpp"
+#include "TextConsole.hpp"
 
 #define FONT_INTERLINE_DISTANCE 4
-#define SCREEN_TOP_MARGIN  5
+#define SCREEN_TOP_MARGIN 5
 #define SCREEN_LEFT_MARGIN 5
 
 bool TextConsole::init(std::string &fontPath, uint32_t fontSize, uint32_t width, uint32_t height)
 {
     NOAARenderTarget *target = NOAARenderTarget::New();
-	if (target == NULL) {
-		return false;
-	}
+    if (target == NULL) {
+        return false;
+    }
 
     if (target->init(width, height) != true) {
         NOAARenderTarget::Delete(target);
@@ -56,11 +56,7 @@ bool TextConsole::init(std::string &fontPath, uint32_t fontSize, uint32_t width,
     return true;
 }
 
-void TextConsole::setForegroundColor(float r, float g, float b, float a)
-{
-    _foreground = glm::vec4(r, g, b, a);
-}
-
+void TextConsole::setForegroundColor(float r, float g, float b, float a) { _foreground = glm::vec4(r, g, b, a); }
 void TextConsole::setBackgroundColor(float r, float g, float b, float a)
 {
     _background = glm::vec4(r, g, b, a);
@@ -79,16 +75,16 @@ int TextConsole::gprintf(const char *format, ...)
 {
     char buffer[256];
     va_list args;
-    va_start (args, format);
-    vsnprintf (buffer, sizeof buffer, format, args);
-    va_end (args);
+    va_start(args, format);
+    vsnprintf(buffer, sizeof buffer, format, args);
+    va_end(args);
 
     char line[256];
     uint32_t linePos = 0;
     char tab[] = "    ";
     uint32_t xSize = _xPos, i;
 
-    for (i=0; buffer[i] != '\0'; ++i) {
+    for (i = 0; buffer[i] != '\0'; ++i) {
         /* Parse the lines */
         uint32_t dummy, advance;
         _font->getBitmap(buffer[i], dummy, dummy, dummy, dummy, advance);
@@ -102,14 +98,13 @@ int TextConsole::gprintf(const char *format, ...)
             xSize += (sizeof tab - 1) * advance;
             _xPos = xSize;
         }
-        if (buffer[i] == '\n' ||
-            (xSize + advance) > _renderTarget->getWidth()) {
+        if (buffer[i] == '\n' || (xSize + advance) > _renderTarget->getWidth()) {
             line[linePos] = '\0';
             /* Weird formula to adjust interline space.
              * Just to make it around 4 pixels for a 14 pixels
              * font */
             _fontRenderer->renderText(_xPos, _yPos, line, _foreground, *_renderTarget);
-            _yPos += 4*_fontSize/3;
+            _yPos += 4 * _fontSize / 3;
             linePos = 0;
             xSize = SCREEN_LEFT_MARGIN;
             _xPos = SCREEN_LEFT_MARGIN;
@@ -128,7 +123,4 @@ int TextConsole::gprintf(const char *format, ...)
     return 0;
 }
 
-void TextConsole::blit()
-{
-    _renderTarget->blit();
-}
+void TextConsole::blit() { _renderTarget->blit(); }

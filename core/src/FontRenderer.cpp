@@ -7,12 +7,5 @@
 #include "FontRenderer.hpp"
 #include "OpenGLFontRenderer.hpp"
 
-FontRenderer *FontRenderer::New(void)
-{
-    return new OpenGLFontRenderer();
-}
-
-void FontRenderer::Delete(FontRenderer *fontRenderer)
-{
-    delete fontRenderer;
-}
+FontRenderer *FontRenderer::New(void) { return new OpenGLFontRenderer(); }
+void FontRenderer::Delete(FontRenderer *fontRenderer) { delete fontRenderer; }

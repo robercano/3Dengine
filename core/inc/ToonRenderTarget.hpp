@@ -16,19 +16,17 @@
 
 class ToonRenderTarget : public virtual RenderTarget
 {
-	public:
-        static ToonRenderTarget *New();
-        static void Delete(ToonRenderTarget *target);
+  public:
+    static ToonRenderTarget *New();
+    static void Delete(ToonRenderTarget *target);
 
-		void setNear(float near) { _near = near; }
-		void setFar(float far) { _far = far; }
-		void setBorderColor(const glm::vec4 &color) { _color = color; }
-
-	protected:
-		ToonRenderTarget() : _near(0.1f), _far(1000.0f), _color(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)) {}
-        virtual ~ToonRenderTarget() {}
-
-		float _near;
-		float _far;
-		glm::vec4 _color;
+    void setNear(float near) { _near = near; }
+    void setFar(float far) { _far = far; }
+    void setBorderColor(const glm::vec4 &color) { _color = color; }
+  protected:
+    ToonRenderTarget() : _near(0.1f), _far(1000.0f), _color(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)) {}
+    virtual ~ToonRenderTarget() {}
+    float _near;
+    float _far;
+    glm::vec4 _color;
 };

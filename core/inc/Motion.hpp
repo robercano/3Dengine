@@ -10,7 +10,7 @@
 
 class Motion
 {
-	public:
-		virtual void applyTo(Object3D &obj) = 0;
-		virtual void reset() = 0;
+  public:
+    virtual void applyTo(Object3D &obj) = 0;
+    virtual void reset() = 0;
 };

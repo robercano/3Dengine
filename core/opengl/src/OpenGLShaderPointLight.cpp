@@ -6,8 +6,8 @@
  *
  * @author	Roberto Cano (http://www.robertocano.es)
  */
-#include <string.h>
 #include "OpenGLShaderPointLight.hpp"
+#include <string.h>
 #include <glm/glm.hpp>
 
 void OpenGLShaderPointLight::init(uint32_t bindingPoint, uint32_t lightIndex)
@@ -25,11 +25,11 @@ void OpenGLShaderPointLight::init(uint32_t bindingPoint, uint32_t lightIndex)
 
 void OpenGLShaderPointLight::copyLight(PointLight &light)
 {
-    setParamValue("position",    light.getPosition());
-    setParamValue("ambient",     light.getAmbient());
-    setParamValue("diffuse",     light.getDiffuse());
-    setParamValue("specular",    light.getSpecular());
+    setParamValue("position", light.getPosition());
+    setParamValue("ambient", light.getAmbient());
+    setParamValue("diffuse", light.getDiffuse());
+    setParamValue("specular", light.getSpecular());
     setParamValue("attenuation", light.getAttenuation());
-    setParamValue("cutoff",      light.getCutoff());
+    setParamValue("cutoff", light.getCutoff());
     bind();
 }

@@ -8,19 +8,18 @@
 #pragma once
 
 #include <stdint.h>
-#include <OpenGL.h>
+#include "OpenGL.h"
 #include "TimeManager.hpp"
 
 class GLFWTimeManager : public TimeManager
 {
-	public:
-		/**
-		 * Destructor of the class
-		 */
-		~GLFWTimeManager(void) {}
-
-		/**
-		 * Retrieves the elapsed milliseconds
-		 */
-        double getElapsedMs() { return glfwGetTime() * 1000.0; }
+  public:
+    /**
+     * Destructor of the class
+     */
+    ~GLFWTimeManager(void) {}
+    /**
+     * Retrieves the elapsed milliseconds
+     */
+    double getElapsedMs() { return glfwGetTime() * 1000.0; }
 };

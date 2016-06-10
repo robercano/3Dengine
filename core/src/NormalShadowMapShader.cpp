@@ -6,13 +6,5 @@
 #include "NormalShadowMapShader.hpp"
 #include "OpenGLNormalShadowMapShader.hpp"
 
-NormalShadowMapShader *NormalShadowMapShader::New(void)
-{
-    return new OpenGLNormalShadowMapShader();
-}
-
-void NormalShadowMapShader::Delete(NormalShadowMapShader *target)
-{
-    delete target;
-}
-
+NormalShadowMapShader *NormalShadowMapShader::New(void) { return new OpenGLNormalShadowMapShader(); }
+void NormalShadowMapShader::Delete(NormalShadowMapShader *target) { delete target; }

@@ -21,7 +21,7 @@
  */
 class ToonLightingShader : public virtual LightingShader
 {
-	public:
-        static ToonLightingShader *New();
-        static void Delete(ToonLightingShader *target);
+  public:
+    static ToonLightingShader *New();
+    static void Delete(ToonLightingShader *target);
 };

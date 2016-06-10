@@ -21,7 +21,7 @@
  */
 class BlinnPhongShader : public virtual LightingShader
 {
-	public:
-        static BlinnPhongShader *New();
-        static void Delete(BlinnPhongShader *target);
+  public:
+    static BlinnPhongShader *New();
+    static void Delete(BlinnPhongShader *target);
 };

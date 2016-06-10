@@ -11,32 +11,31 @@
  */
 #pragma once
 
-#include "OpenGL.h"
-#include "Shader.hpp"
 #include "FXAA2RenderTarget.hpp"
+#include "OpenGL.h"
 #include "OpenGLFilterRenderTarget.hpp"
+#include "Shader.hpp"
 
-#pragma warning( disable : 4250 )
+#pragma warning(disable : 4250)
 
 class OpenGLFXAA2RenderTarget : public FXAA2RenderTarget, public OpenGLFilterRenderTarget
 {
-	private:
-		bool customInit() {
-			std::string error;
-			if (_shader->use("anti-aliasing/fxaa", error) == false) {
-				printf("ERROR loading shader anti-aliasing/fxaa: %s\n", error.c_str());
-				return false;
-			}
-			return true;
-		}
-		void setCustomParams(void)
-		{
-			glm::vec2 rpcFrame(1.0f/_width, 1.0f/_height);
-			_shader->setUniformVec2("f_rpcFrame", rpcFrame);
-			__( glDisable(GL_BLEND) );
-			__( glDisable(GL_DEPTH_TEST) );
-		}
-		void unsetCustomParams(void) {
-			glEnable(GL_DEPTH_TEST);
-		}
+  private:
+    bool customInit()
+    {
+        std::string error;
+        if (_shader->use("anti-aliasing/fxaa", error) == false) {
+            printf("ERROR loading shader anti-aliasing/fxaa: %s\n", error.c_str());
+            return false;
+        }
+        return true;
+    }
+    void setCustomParams(void)
+    {
+        glm::vec2 rpcFrame(1.0f / _width, 1.0f / _height);
+        _shader->setUniformVec2("f_rpcFrame", rpcFrame);
+        __(glDisable(GL_BLEND));
+        __(glDisable(GL_DEPTH_TEST));
+    }
+    void unsetCustomParams(void) { glEnable(GL_DEPTH_TEST); }
 };

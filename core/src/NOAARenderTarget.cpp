@@ -12,13 +12,5 @@
 #include "NOAARenderTarget.hpp"
 #include "OpenGLNOAARenderTarget.hpp"
 
-NOAARenderTarget *NOAARenderTarget::New(void)
-{
-    return new OpenGLNOAARenderTarget();
-}
-
-void NOAARenderTarget::Delete(NOAARenderTarget *target)
-{
-    delete target;
-}
-
+NOAARenderTarget *NOAARenderTarget::New(void) { return new OpenGLNOAARenderTarget(); }
+void NOAARenderTarget::Delete(NOAARenderTarget *target) { delete target; }

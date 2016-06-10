@@ -13,26 +13,26 @@
 
 class FreeFlyMotion : public Motion
 {
-	public:
-		FreeFlyMotion();
+  public:
+    FreeFlyMotion();
 
-		void applyTo(Object3D &obj);
-		void reset();
+    void applyTo(Object3D &obj);
+    void reset();
 
-		void setPosition(const glm::vec3 &pos);
-		void forward(float amount);
-		void right(float amount);
-		void up(float amount);
-		void rotatePitch(float angle);
-		void rotateYaw(float angle);
-		void rotateRoll(float angle);
+    void setPosition(const glm::vec3 &pos);
+    void forward(float amount);
+    void right(float amount);
+    void up(float amount);
+    void rotatePitch(float angle);
+    void rotateYaw(float angle);
+    void rotateRoll(float angle);
 
-	private:
-		glm::vec4 _forward;
-		glm::vec4 _up;
-		glm::vec4 _right;
-		float _yaw, _pitch, _roll;
-		float _forwardAmount, _rightAmount, _upAmount;
-		glm::vec3 _position;
-		bool _recalculate;
+  private:
+    glm::vec4 _forward;
+    glm::vec4 _up;
+    glm::vec4 _right;
+    float _yaw, _pitch, _roll;
+    float _forwardAmount, _rightAmount, _upAmount;
+    glm::vec3 _position;
+    bool _recalculate;
 };

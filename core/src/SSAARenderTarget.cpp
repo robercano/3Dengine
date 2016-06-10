@@ -12,13 +12,5 @@
 #include "SSAARenderTarget.hpp"
 #include "OpenGLSSAARenderTarget.hpp"
 
-SSAARenderTarget *SSAARenderTarget::New(void)
-{
-    return new OpenGLSSAARenderTarget();
-}
-
-void SSAARenderTarget::Delete(SSAARenderTarget *target)
-{
-    delete target;
-}
-
+SSAARenderTarget *SSAARenderTarget::New(void) { return new OpenGLSSAARenderTarget(); }
+void SSAARenderTarget::Delete(SSAARenderTarget *target) { delete target; }

@@ -12,13 +12,5 @@
 #include "ToonRenderTarget.hpp"
 #include "OpenGLToonRenderTarget.hpp"
 
-ToonRenderTarget *ToonRenderTarget::New(void)
-{
-    return new OpenGLToonRenderTarget();
-}
-
-void ToonRenderTarget::Delete(ToonRenderTarget *target)
-{
-    delete target;
-}
-
+ToonRenderTarget *ToonRenderTarget::New(void) { return new OpenGLToonRenderTarget(); }
+void ToonRenderTarget::Delete(ToonRenderTarget *target) { delete target; }

@@ -6,8 +6,8 @@
  *
  * @author	Roberto Cano (http://www.robertocano.es)
  */
-#include <string.h>
 #include "OpenGLShaderMaterial.hpp"
+#include <string.h>
 #include <glm/glm.hpp>
 
 void OpenGLShaderMaterial::init(uint32_t bindingPoint)
@@ -23,10 +23,10 @@ void OpenGLShaderMaterial::init(uint32_t bindingPoint)
 
 void OpenGLShaderMaterial::copyMaterial(Material &material)
 {
-    setParamValue("ambient",   material.getAmbient());
-    setParamValue("diffuse",   material.getDiffuse());
-    setParamValue("specular",  material.getSpecular());
-    setParamValue("alpha",     material.getAlpha());
+    setParamValue("ambient", material.getAmbient());
+    setParamValue("diffuse", material.getDiffuse());
+    setParamValue("specular", material.getSpecular());
+    setParamValue("alpha", material.getAlpha());
     setParamValue("shininess", material.getShininess());
     bind();
 }

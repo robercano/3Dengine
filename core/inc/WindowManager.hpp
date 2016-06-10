@@ -6,111 +6,110 @@
  */
 #pragma once
 
-#include <string>
 #include <stdint.h>
+#include <string>
 #include "KeyManager.hpp"
 #include "MouseManager.hpp"
 #include "Renderer.hpp"
 
 class WindowManager
 {
-	public:
-		/**
-		 * Window Manager factory
-		 *
-		 * @return Pointer to a the requested window manager or NULL
-		 */
-		static WindowManager *GetInstance(void);
+  public:
+    /**
+     * Window Manager factory
+     *
+     * @return Pointer to a the requested window manager or NULL
+     */
+    static WindowManager *GetInstance(void);
 
-		/**
-		 * Window Manager disposal
-		 *
-		 * @param	wmanager	Window manager to be disposed
-		 */
-		static void DisposeInstance();
+    /**
+     * Window Manager disposal
+     *
+     * @param	wmanager	Window manager to be disposed
+     */
+    static void DisposeInstance();
 
-		/**
-		 * Gets the associated key manager
-		 *
-		 * @return The key manager or NULL if no manager is available
-		 */
-		virtual KeyManager *getKeyManager() = 0;
+    /**
+     * Gets the associated key manager
+     *
+     * @return The key manager or NULL if no manager is available
+     */
+    virtual KeyManager *getKeyManager() = 0;
 
-		/**
-		 * Gets the associated mouse manager
-		 *
-		 * @return The mouse manager or NULL if no manager is available
-		 */
-		virtual MouseManager *getMouseManager() = 0;
+    /**
+     * Gets the associated mouse manager
+     *
+     * @return The mouse manager or NULL if no manager is available
+     */
+    virtual MouseManager *getMouseManager() = 0;
 
-		/**
-		 * Destructor of the class
-		 */
-		virtual ~WindowManager(void) {}
+    /**
+     * Destructor of the class
+     */
+    virtual ~WindowManager(void) {}
+    /**
+     * Initializes the window manager
+     * @details	Prepares the window manager to be used. After calling
+     *          this method the rest of the methods can be called
+     *
+     * @return	true or false
+     */
+    virtual bool init(void) = 0;
 
-		/**
-		 * Initializes the window manager
-		 * @details	Prepares the window manager to be used. After calling
-		 *          this method the rest of the methods can be called
-		 *
-		 * @return	true or false
-		 */
-		virtual bool init(void) = 0;
+    /**
+     * Creates a new window
+     *
+     * @param	name		Title of the window
+     * @param	width		Width of the window
+     * @param	height		Height of the window
+     * @param	fullscreen	Set the window to fullscreen
+     *
+     * @return  true or false
+     */
+    virtual bool createWindow(std::string &name, uint16_t width, uint16_t height, bool fullscreen = false) = 0;
 
-		/**
-		 * Creates a new window
-		 *
-		 * @param	name		Title of the window
-		 * @param	width		Width of the window
-		 * @param	height		Height of the window
-		 * @param	fullscreen	Set the window to fullscreen
-		 *
-		 * @return  true or false
-		 */
-		virtual bool createWindow(std::string &name, uint16_t width, uint16_t height, bool fullscreen = false) = 0;
+    /**
+     * Called when the window must be resized
+     *
+     * @param	width	Width of the window
+     * @param	height	Height of the window
+     *
+     * @return  true or false
+     */
+    virtual bool resize(uint16_t width, uint16_t height) = 0;
 
-		/**
-		 * Called when the window must be resized
-		 *
-		 * @param	width	Width of the window
-		 * @param	height	Height of the window
-		 *
-		 * @return  true or false
-		 */
-		virtual bool resize(uint16_t width, uint16_t height) = 0;
+    /**
+     * Sets a new renderer to handle display requests
+     *
+     * @param	renderer	Renderer that will handle display/reshape requests
+     *
+     * @return	true or false
+     */
+    virtual bool setRenderer(Renderer *renderer) = 0;
 
-		/**
-		 * Sets a new renderer to handle display requests
-		 *
-		 * @param	renderer	Renderer that will handle display/reshape requests
-		 *
-		 * @return	true or false
-		 */
-		virtual bool setRenderer(Renderer *renderer) = 0;
+    /**
+     * Retrieves the actual size of the window
+     *
+     * @param width  Output width of the current window
+     * @param height Output height of the current window
+     *
+     * @return true or false
+     */
+    virtual bool getWindowSize(uint32_t *width, uint32_t *height) = 0;
 
-        /**
-         * Retrieves the actual size of the window
-         *
-         * @param width  Output width of the current window
-         * @param height Output height of the current window
-         *
-         * @return true or false
-         */
-        virtual bool getWindowSize(uint32_t *width, uint32_t *height) = 0;
+    /**
+     * Swaps the double buffer
+     */
+    virtual void swapBuffers(void) = 0;
 
-		/**
-		 * Swaps the double buffer
-		 */
-		virtual void swapBuffers(void) = 0;
+    /**
+     * Polls for input events
+     */
+    virtual void poll(void) = 0;
 
-		/**
-		 * Polls for input events
-		 */
-		virtual void poll(void) = 0;
-
-	private:
-		/**
-		 * Current window manager
-		 */
-		static WindowManager *_windowManager;
+  private:
+    /**
+     * Current window manager
+     */
+    static WindowManager *_windowManager;
 };

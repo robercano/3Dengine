@@ -11,42 +11,42 @@
 #pragma once
 
 #include "OpenGL.h"
-#include "Shader.hpp"
 #include "SSAARenderTarget.hpp"
+#include "Shader.hpp"
 
 class OpenGLSSAARenderTarget : public SSAARenderTarget
 {
-	public:
-        ~OpenGLSSAARenderTarget();
-        bool init(uint32_t width, uint32_t height, uint32_t factor);
-        void bind();
-        void bindDepth();
-        void unbind();
-        bool blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height, bool bindMainFB = true);
-        void clear();
+  public:
+    ~OpenGLSSAARenderTarget();
+    bool init(uint32_t width, uint32_t height, uint32_t factor);
+    void bind();
+    void bindDepth();
+    void unbind();
+    bool blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height, bool bindMainFB = true);
+    void clear();
 
-    private:
-        /**
-         * Frame buffer object ID to reference
-         * both the color buffer and the depth buffer
-         */
-        GLuint _frameBuffer;
+  private:
+    /**
+     * Frame buffer object ID to reference
+     * both the color buffer and the depth buffer
+     */
+    GLuint _frameBuffer;
 
-        /**
-         * Frame buffer texture to hold the color buffer
-         */
-        GLuint _colorBuffer;
+    /**
+     * Frame buffer texture to hold the color buffer
+     */
+    GLuint _colorBuffer;
 
-        /**
-         * Render buffer object to hold the depth buffer
-         */
-        GLuint _depthBuffer;
+    /**
+     * Render buffer object to hold the depth buffer
+     */
+    GLuint _depthBuffer;
 
-        /**
-         * Render target vertices buffer
-         */
-        GLuint _vertexArray;
-        GLuint _vertexBuffer;
+    /**
+     * Render target vertices buffer
+     */
+    GLuint _vertexArray;
+    GLuint _vertexBuffer;
 
-        uint32_t _factor;
+    uint32_t _factor;
 };

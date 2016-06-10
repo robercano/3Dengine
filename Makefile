@@ -1,6 +1,6 @@
 #
-# Roberto Sosa Cano
-# Copyright 2013
+#Roberto Sosa Cano
+#Copyright 2013
 #
 
 ### Project name
@@ -13,7 +13,7 @@ CXX=g++
 CC=gcc
 
 #
-# Files to be compiled
+#Files to be compiled
 #
 VPATH=core/src:core/opengl/src:core/procedural/src:utils/src
 
@@ -39,7 +39,7 @@ OPENGL_FILES=GLFWKeyManager.cpp GLFWMouseManager.cpp GLFWWindowManager.cpp \
              OpenGLShader.cpp OpenGLShaderMaterial.cpp \
 			 OpenGLShaderPointLight.cpp OpenGLShaderSpotLight.cpp OpenGLShaderDirectLight.cpp \
 			 OpenGLUniformBlock.cpp
-#PROCEDURAL_FILES=Cube.cpp Icosahedron.cpp Plane.cpp Sphere.cpp
+#PROCEDURAL_FILES = Cube.cpp Icosahedron.cpp Plane.cpp Sphere.cpp
 PROCEDURAL_FILES=Plane.cpp
 
 FILES=$(CORE_FILES) $(OPENGL_FILES) $(PROCEDURAL_FILES) $(UTILS_FILES)
@@ -53,7 +53,7 @@ LIBNAME=lib$(PROJECT).$(SHAREDEXT)
 
 DEMODIR=demos
 
-# Mac OS alternate cmdline link options
+#Mac OS alternate cmdline link options
 ifeq ($(UNAME), Darwin)
 LDFLAGS= -Llib -lengine -L/opt/X11/lib -lfreetype -lglew -lglfw3 -ljpeg -framework Cocoa -framework OpenGL -framework IOKit -fPIC
 FLAGS=-I/opt/X11/include -I/opt/X11/include/freetype2/ -Wno-deprecated-register
@@ -69,14 +69,14 @@ PREFIX=/usr/local/lib
 endif
 
 #
-# Compilation flags
+#Compilation flags
 #
 FLAGS+=-Werror -MMD -fPIC -Icore/inc -Icore/opengl/inc -Icore/procedural/inc -Iutils/inc -I3rdparty -g -DDEBUG_OPENGL_PIPELINE
 CXXFLAGS=$(FLAGS) -std=c++11
 CFLAGS=$(FLAGS) -std=c11
 
 #
-# Demos
+#Demos
 #
 DEMO_FILES=$(shell \ls demos/*.cpp)
 DEMO_TARGETS=$(DEMO_FILES:.cpp=)
@@ -84,9 +84,12 @@ DEMO_TARGETS=$(DEMO_FILES:.cpp=)
 #
 # Main rules
 #
-.PHONY: demos
+.PHONY: demos format
 
-all: engine $(DEMO_TARGETS)
+all: format engine $(DEMO_TARGETS)
+
+format:
+	@if test -n "`which clang-format`"; then echo "- Formating sources"; git ls-files -m | xargs clang-format -i; fi
 
 engine: dirs $(LIBDIR)/$(LIBNAME)
 

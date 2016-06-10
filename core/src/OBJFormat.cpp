@@ -4,33 +4,33 @@
  *
  * @author	Roberto Cano (http://www.robertocano.es)
  */
+#include "OBJFormat.hpp"
 #include <stdio.h>
-#include <vector>
-#include <string>
 #include <string.h>
 #include <glm/glm.hpp>
-#include "OBJFormat.hpp"
+#include <string>
+#include <vector>
 #include "ImageLoaders.h"
 
 using namespace std;
 
 bool OBJFormat::load(const string &filename)
 {
-    std::vector< glm::vec3 > vertices;
-    std::vector< glm::vec3 > normals;
-    std::vector< glm::vec2 > uvcoords;
-    std::map< std::string, Material >::iterator it;
+    std::vector<glm::vec3> vertices;
+    std::vector<glm::vec3> normals;
+    std::vector<glm::vec2> uvcoords;
+    std::map<std::string, Material>::iterator it;
     bool ret = true;
     uint32_t i;
     uint32_t numFaces = 0;
     uint8_t *texture = NULL;
     uint32_t texWidth, texHeight, texBytesPerPixel;
     std::vector<bool> positionSet;
-	int t=0;
+    int t = 0;
 
-    std::map< std::string, std::vector<uint32_t> > indices;
-    std::map< std::string, Material >              materials;
-    std::map< std::string, Texture >               textures;
+    std::map<std::string, std::vector<uint32_t> > indices;
+    std::map<std::string, Material> materials;
+    std::map<std::string, Texture> textures;
 
     std::vector<uint32_t> *activeIndices = NULL;
 
@@ -39,7 +39,7 @@ bool OBJFormat::load(const string &filename)
 
     /* Open the materials file */
     FILE *file = fopen(matFile.c_str(), "r");
-    if (file == NULL)  {
+    if (file == NULL) {
         printf("ERROR cannot open file %s\n", matFile.c_str());
         return false;
     }
@@ -102,27 +102,27 @@ bool OBJFormat::load(const string &filename)
                 }
                 /* map_Kd */
                 if (strncmp(line, "map_Kd ", 7) == 0) {
-                    std::string texname = filename + std::string("/") + std::string(line+7);
+                    std::string texname = filename + std::string("/") + std::string(line + 7);
 
-                    if (strcmp(line+7, "null") != 0) {
+                    if (strcmp(line + 7, "null") != 0) {
                         /* Load the texture */
-						if (texname.compare(texname.length() - 4, std::string::npos, ".png") == 0) {
-							if (loadPNG(texname.c_str(), &texture, &texWidth, &texHeight, &texBytesPerPixel) != 0) {
-								printf("ERROR loading PNG texture %s\n", texname.c_str());
-								ret = false;
-								goto error_exit;
-							}
-						} else if (texname.compare(texname.length() - 4, std::string::npos, ".jpg") == 0) {
-							if (loadJPEG(texname.c_str(), &texture, &texWidth, &texHeight, &texBytesPerPixel) != 0) {
-								printf("ERROR loading JPEG texture %s\n", texname.c_str());
-								ret = false;
-								goto error_exit;
-							}
-						} else {
-							fprintf(stderr, "ERROR texture format not supported\n");
-							ret = false;
-							goto error_exit;
-						}
+                        if (texname.compare(texname.length() - 4, std::string::npos, ".png") == 0) {
+                            if (loadPNG(texname.c_str(), &texture, &texWidth, &texHeight, &texBytesPerPixel) != 0) {
+                                printf("ERROR loading PNG texture %s\n", texname.c_str());
+                                ret = false;
+                                goto error_exit;
+                            }
+                        } else if (texname.compare(texname.length() - 4, std::string::npos, ".jpg") == 0) {
+                            if (loadJPEG(texname.c_str(), &texture, &texWidth, &texHeight, &texBytesPerPixel) != 0) {
+                                printf("ERROR loading JPEG texture %s\n", texname.c_str());
+                                ret = false;
+                                goto error_exit;
+                            }
+                        } else {
+                            fprintf(stderr, "ERROR texture format not supported\n");
+                            ret = false;
+                            goto error_exit;
+                        }
                     } else {
                         texture = NULL;
                         texWidth = 0;
@@ -136,7 +136,7 @@ bool OBJFormat::load(const string &filename)
             /* Add the new material */
             indices[matName] = std::vector<uint32_t>();
             materials[matName] = Material(ambient, diffuse, specular, 1.0, shininess);
-            textures[matName]  = Texture(texture, texWidth, texHeight, texBytesPerPixel);
+            textures[matName] = Texture(texture, texWidth, texHeight, texBytesPerPixel);
 
             free(texture);
         }
@@ -148,7 +148,7 @@ bool OBJFormat::load(const string &filename)
 
     /* Open the geometry file */
     file = fopen(geoFile.c_str(), "r");
-    if (file == NULL)  {
+    if (file == NULL) {
         printf("ERROR cannot open file %s\n", geoFile.c_str());
         return false;
     }
@@ -161,7 +161,7 @@ bool OBJFormat::load(const string &filename)
         }
 
         /* vertices */
-        if (line[0] == 'v' && line[1]==' ') {
+        if (line[0] == 'v' && line[1] == ' ') {
             glm::vec3 vertex;
             res = sscanf(line + 2, "%f %f %f", &vertex.x, &vertex.y, &vertex.z);
             if (res != 3) {
@@ -220,27 +220,23 @@ bool OBJFormat::load(const string &filename)
         /* Faces */
         if (line[0] == 'f' && line[1] == ' ') {
             unsigned int vertexIndex[3], uvIndex[3], normalIndex[3];
-            int matches = sscanf(line + 2, "%d/%d/%d %d/%d/%d %d/%d/%d",
-                                 &vertexIndex[0], &uvIndex[0], &normalIndex[0],
-                                 &vertexIndex[1], &uvIndex[1], &normalIndex[1],
-                                 &vertexIndex[2], &uvIndex[2], &normalIndex[2] );
-            if (matches != 9){
+            int matches = sscanf(line + 2, "%d/%d/%d %d/%d/%d %d/%d/%d", &vertexIndex[0], &uvIndex[0], &normalIndex[0], &vertexIndex[1],
+                                 &uvIndex[1], &normalIndex[1], &vertexIndex[2], &uvIndex[2], &normalIndex[2]);
+            if (matches != 9) {
                 printf("ERROR OBJ file format is not correct for this loader %d\n", matches);
                 ret = false;
                 goto error_exit;
             }
 
             /* Fill the indices for each triangle */
-            for (i=0; i<3; ++i) {
+            for (i = 0; i < 3; ++i) {
                 uint32_t vertexIdx = vertexIndex[i] - 1;
                 uint32_t normalIdx = normalIndex[i] - 1;
-                uint32_t uvIdx     = uvIndex[i] - 1;
-                uint32_t dataIdx   = vertexIdx;
+                uint32_t uvIdx = uvIndex[i] - 1;
+                uint32_t dataIdx = vertexIdx;
 
                 if (positionSet[dataIdx] == true) {
-                    if (_modelData[dataIdx].normal != normals[normalIdx] ||
-                        _modelData[dataIdx].uvcoord != uvcoords[uvIdx]) {
-
+                    if (_modelData[dataIdx].normal != normals[normalIdx] || _modelData[dataIdx].uvcoord != uvcoords[uvIdx]) {
                         dataIdx = _modelData.size();
                         _modelData.resize(_modelData.size() + 1);
                         positionSet.resize(positionSet.size() + 1, false);
@@ -248,8 +244,8 @@ bool OBJFormat::load(const string &filename)
                 }
 
                 if (positionSet[dataIdx] == false) {
-                    _modelData[dataIdx].vertex  = vertices[vertexIdx];
-                    _modelData[dataIdx].normal  = normals[normalIdx];
+                    _modelData[dataIdx].vertex = vertices[vertexIdx];
+                    _modelData[dataIdx].normal = normals[normalIdx];
                     _modelData[dataIdx].uvcoord = uvcoords[uvIdx];
 
                     positionSet[vertexIdx] = true;
@@ -265,7 +261,7 @@ bool OBJFormat::load(const string &filename)
     }
 
     /* Now consolidate the data */
-    for (it=materials.begin(); it!=materials.end(); ++it) {
+    for (it = materials.begin(); it != materials.end(); ++it) {
         _materials.push_back(it->second);
         _textures.push_back(textures[it->first]);
 
@@ -283,7 +279,7 @@ bool OBJFormat::load(const string &filename)
     /* And finally normalize the vertices */
     normalize();
 
-    printf("Loaded %s with %zu vertices and %zu faces\n", filename.c_str(), _modelData.size(), _modelIndices.size()/3);
+    printf("Loaded %s with %zu vertices and %zu faces\n", filename.c_str(), _modelData.size(), _modelIndices.size() / 3);
 
 error_exit:
     fclose(file);

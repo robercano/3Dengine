@@ -27,26 +27,26 @@ FreeTypeFont::~FreeTypeFont()
 
 bool FreeTypeFont::init(const string &font_path, uint32_t size)
 {
-   if (FT_Init_FreeType(&_ftLibrary) != 0) {
-       return false;
-   }
+    if (FT_Init_FreeType(&_ftLibrary) != 0) {
+        return false;
+    }
 
-   if (FT_New_Face(_ftLibrary, font_path.c_str(), 0, &_ftFace) != 0) {
-       return false;
-   }
+    if (FT_New_Face(_ftLibrary, font_path.c_str(), 0, &_ftFace) != 0) {
+        return false;
+    }
 
-   /* As explained in NeHe tutorial we need to multiply by 64
-    * to achieve 1 unit pixel height as height is specified
-    * as 1/64th of a pixel */
-   FT_Set_Char_Size(_ftFace, size << 6, size << 6, FREETYPE_FONT_DPI, FREETYPE_FONT_DPI);
+    /* As explained in NeHe tutorial we need to multiply by 64
+     * to achieve 1 unit pixel height as height is specified
+     * as 1/64th of a pixel */
+    FT_Set_Char_Size(_ftFace, size << 6, size << 6, FREETYPE_FONT_DPI, FREETYPE_FONT_DPI);
 
-   _size = size;
+    _size = size;
 
-   return true;
+    return true;
 }
 
-const uint8_t *FreeTypeFont::getBitmap(char letter, uint32_t &width, uint32_t &height,
-                                       uint32_t &offsetLeft, uint32_t &offsetTop, uint32_t &advance)
+const uint8_t *FreeTypeFont::getBitmap(char letter, uint32_t &width, uint32_t &height, uint32_t &offsetLeft, uint32_t &offsetTop,
+                                       uint32_t &advance)
 {
     FT_Glyph glyph;
 
@@ -54,7 +54,7 @@ const uint8_t *FreeTypeFont::getBitmap(char letter, uint32_t &width, uint32_t &h
         return NULL;
     }
 
-    bool check =false;
+    bool check = false;
     if (_ftGlyphCache[letter] == (FT_BitmapGlyph)NULL) {
         /* Load the glyph into the cache */
         if (FT_Load_Glyph(_ftFace, FT_Get_Char_Index(_ftFace, letter), FT_LOAD_DEFAULT) != 0) {

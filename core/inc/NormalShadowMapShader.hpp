@@ -8,7 +8,7 @@
 
 class NormalShadowMapShader : public virtual Shader
 {
-	public:
-        static NormalShadowMapShader *New();
-        static void Delete(NormalShadowMapShader *target);
+  public:
+    static NormalShadowMapShader *New();
+    static void Delete(NormalShadowMapShader *target);
 };

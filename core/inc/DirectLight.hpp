@@ -12,18 +12,15 @@
 
 class DirectLight : public Light
 {
-	public:
-		DirectLight(const glm::vec3 &ambient,
-			        const glm::vec3 &diffuse,
-			        const glm::vec3 &specular,
-			        const glm::vec3 &direction) :
-			Light(ambient, diffuse, specular) {
-				glm::vec3 up(0.0f, 1.0f, 0.0f);
+  public:
+    DirectLight(const glm::vec3 &ambient, const glm::vec3 &diffuse, const glm::vec3 &specular, const glm::vec3 &direction)
+        : Light(ambient, diffuse, specular)
+    {
+        glm::vec3 up(0.0f, 1.0f, 0.0f);
 
-				/* Set the rotation according to the direction */
-				setOrientation(glm::orientation(glm::normalize(direction), up));
-        }
-		~DirectLight() { }
-
-		const glm::mat4 &getProjectionMatrix() { return getOrthogonalMatrix(); }
+        /* Set the rotation according to the direction */
+        setOrientation(glm::orientation(glm::normalize(direction), up));
+    }
+    ~DirectLight() {}
+    const glm::mat4 &getProjectionMatrix() { return getOrthogonalMatrix(); }
 };

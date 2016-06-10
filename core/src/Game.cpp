@@ -21,16 +21,16 @@ void Game::setFPS(uint32_t FPS, bool unbound)
 
 void Game::resetStats()
 {
-	_minRenderFrameMs = 1000000;
-	_maxRenderFrameMs = 0;
-	for (int i=0; i<sizeof _avgRenderMs / sizeof *_avgRenderMs; ++i) {
-		_avgRenderMs[i] = 1000.0;
-	}
+    _minRenderFrameMs = 1000000;
+    _maxRenderFrameMs = 0;
+    for (int i = 0; i < sizeof _avgRenderMs / sizeof *_avgRenderMs; ++i) {
+        _avgRenderMs[i] = 1000.0;
+    }
 }
 
 bool Game::init()
 {
-	resetStats();
+    resetStats();
 
     _windowManager = WindowManager::GetInstance();
     if (_windowManager == NULL) {
@@ -59,7 +59,7 @@ bool Game::init()
     _windowManager->createWindow(_name, _width, _height, _fullscreen);
     _windowManager->getWindowSize(&_width, &_height);
 
-    _renderer->init();	// only after creating the window
+    _renderer->init();  // only after creating the window
 
     _windowManager->setRenderer(_renderer);
 
@@ -94,14 +94,13 @@ bool Game::loop()
     uint32_t avgRenderMsIdx = 0;
     float totalAvgTime = 0;
     float renderAdjustment = 0;
-    float dueTime = 1000.0f/_targetFPS;
+    float dueTime = 1000.0f / _targetFPS;
     float FPS = 0.0f;
 
     /* Main loop */
     renderBegin = renderEnd = tickNow = _timer->getElapsedMs();
 
-    while (true)
-    {
+    while (true) {
         /* Read window events */
         _windowManager->poll();
 
@@ -122,14 +121,13 @@ bool Game::loop()
          * we should account for variations in the render time due to changes of the
          * game engine assets (camera, rendering distance, geometry) and also to
          * account for the jitter in the GPU/CPU when rendering the same scene */
-        if (_unboundFPS == true || (renderElapsedMs + totalAvgTime*jitterAdj >= dueTime)) {
-
+        if (_unboundFPS == true || (renderElapsedMs + totalAvgTime * jitterAdj >= dueTime)) {
             _console.clear();
             if (_gameHandler->handleRender(this) != true) {
                 fprintf(stderr, "ERROR handling render callback");
             }
             _console.gprintf("FPS: %d\n", (int)FPS);
-            _console.gprintf("Upper FPS: %d\n", (int)(1000.0/totalAvgTime));
+            _console.gprintf("Upper FPS: %d\n", (int)(1000.0 / totalAvgTime));
             _console.gprintf("Avg. Render: %.2fms (%.2fms)\n", totalAvgTime, dueTime);
             _console.blit();
 
@@ -158,7 +156,7 @@ bool Game::loop()
             /* Check if we are really late, that means we are dropping
              * frames. In this case re-adjust the render adjustment and
              * the elapsed time. Have to check how costly that fmod is... */
-            if (renderFrameMs > dueTime*jitterAdj) {
+            if (renderFrameMs > dueTime * jitterAdj) {
                 fprintf(stderr, "Droping frames...(%.2f, %.2f)\n", renderFrameMs, dueTime);
             }
 
@@ -171,23 +169,23 @@ bool Game::loop()
             }
 
             _avgRenderMs[avgRenderMsIdx] = renderFrameMs;
-            avgRenderMsIdx = (avgRenderMsIdx + 1) % (sizeof _avgRenderMs/sizeof *_avgRenderMs);
+            avgRenderMsIdx = (avgRenderMsIdx + 1) % (sizeof _avgRenderMs / sizeof *_avgRenderMs);
 
             /* Calculate the average FPS */
-            for (uint32_t i=0; i<_targetFPS; ++i) {
+            for (uint32_t i = 0; i < _targetFPS; ++i) {
                 totalAvgTime += _avgRenderMs[i];
             }
             totalAvgTime /= _targetFPS;
 
             /* Render elapsed time should be also averaged to get a good
              * estimation, but for now this will do */
-            FPS = (float)(1000.0f/(totalAvgTime + renderElapsedMs));
+            FPS = (float)(1000.0f / (totalAvgTime + renderElapsedMs));
         }
     }
 
-    fprintf(stderr, "Average FPS: %d\n", (int)(1000.0/totalAvgTime));
-    fprintf(stderr, "Minimum FPS: %d\n", (int)(1000.0/_maxRenderFrameMs));
-    fprintf(stderr, "Maximum FPS: %d\n", (int)(1000.0/_minRenderFrameMs));
+    fprintf(stderr, "Average FPS: %d\n", (int)(1000.0 / totalAvgTime));
+    fprintf(stderr, "Minimum FPS: %d\n", (int)(1000.0 / _maxRenderFrameMs));
+    fprintf(stderr, "Maximum FPS: %d\n", (int)(1000.0 / _minRenderFrameMs));
 
     return true;
 }

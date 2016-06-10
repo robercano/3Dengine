@@ -8,13 +8,13 @@
  */
 #pragma once
 
+#include "Material.hpp"
 #include "OpenGL.h"
 #include "OpenGLUniformBlock.hpp"
-#include "Material.hpp"
 
 class OpenGLShaderMaterial : public OpenGLUniformBlock
 {
-	public:
-        void init(uint32_t bindingPoint);
-        void copyMaterial(Material &material);
+  public:
+    void init(uint32_t bindingPoint);
+    void copyMaterial(Material &material);
 };

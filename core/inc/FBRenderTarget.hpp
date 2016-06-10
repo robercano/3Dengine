@@ -14,9 +14,9 @@
 
 class FBRenderTarget : public RenderTarget
 {
-	public:
-        static FBRenderTarget *New();
-        static void Delete(FBRenderTarget *target);
+  public:
+    static FBRenderTarget *New();
+    static void Delete(FBRenderTarget *target);
 
-        virtual ~FBRenderTarget() {}
+    virtual ~FBRenderTarget() {}
 };

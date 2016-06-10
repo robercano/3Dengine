@@ -11,12 +11,5 @@
 
 using namespace std;
 
-TrueTypeFont *TrueTypeFont::New(void)
-{
-    return new FreeTypeFont();
-}
-
-void TrueTypeFont::Delete(TrueTypeFont *font)
-{
-    delete font;
-}
+TrueTypeFont *TrueTypeFont::New(void) { return new FreeTypeFont(); }
+void TrueTypeFont::Delete(TrueTypeFont *font) { delete font; }

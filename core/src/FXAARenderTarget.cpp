@@ -12,13 +12,5 @@
 #include "FXAARenderTarget.hpp"
 #include "OpenGLFXAARenderTarget.hpp"
 
-FXAARenderTarget *FXAARenderTarget::New(void)
-{
-    return new OpenGLFXAARenderTarget();
-}
-
-void FXAARenderTarget::Delete(FXAARenderTarget *target)
-{
-    delete target;
-}
-
+FXAARenderTarget *FXAARenderTarget::New(void) { return new OpenGLFXAARenderTarget(); }
+void FXAARenderTarget::Delete(FXAARenderTarget *target) { delete target; }

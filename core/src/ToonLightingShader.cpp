@@ -6,13 +6,5 @@
 #include "ToonLightingShader.hpp"
 #include "OpenGLToonLightingShader.hpp"
 
-ToonLightingShader *ToonLightingShader::New(void)
-{
-    return new OpenGLToonLightingShader();
-}
-
-void ToonLightingShader::Delete(ToonLightingShader *target)
-{
-    delete target;
-}
-
+ToonLightingShader *ToonLightingShader::New(void) { return new OpenGLToonLightingShader(); }
+void ToonLightingShader::Delete(ToonLightingShader *target) { delete target; }

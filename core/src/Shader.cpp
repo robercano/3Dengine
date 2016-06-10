@@ -8,12 +8,5 @@
 #include "Shader.hpp"
 #include "OpenGLShader.hpp"
 
-Shader *Shader::New(void)
-{
-    return new OpenGLShader();
-}
-
-void Shader::Delete(Shader *shader)
-{
-    delete shader;
-}
+Shader *Shader::New(void) { return new OpenGLShader(); }
+void Shader::Delete(Shader *shader) { delete shader; }

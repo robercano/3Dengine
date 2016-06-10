@@ -13,7 +13,7 @@
 
 class OpenGLShaderSpotLight : public OpenGLUniformBlock
 {
-	public:
-        void init(uint32_t bindingPoint, uint32_t lightIndex);
-        void copyLight(SpotLight &light);
+  public:
+    void init(uint32_t bindingPoint, uint32_t lightIndex);
+    void copyLight(SpotLight &light);
 };

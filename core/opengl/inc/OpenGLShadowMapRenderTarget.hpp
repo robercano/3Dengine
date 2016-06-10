@@ -16,35 +16,35 @@
 
 class OpenGLShadowMapRenderTarget : public ShadowMapRenderTarget
 {
-	public:
-        ~OpenGLShadowMapRenderTarget();
-        bool init(uint32_t width, uint32_t height, uint32_t maxSamples);
-        void bind();
-        void bindDepth();
-        void unbind();
-        bool blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height, bool bindMainFB = true);
-        void clear();
+  public:
+    ~OpenGLShadowMapRenderTarget();
+    bool init(uint32_t width, uint32_t height, uint32_t maxSamples);
+    void bind();
+    void bindDepth();
+    void unbind();
+    bool blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height, bool bindMainFB = true);
+    void clear();
 
-	private:
-        /**
-         * Frame buffer object ID to reference
-         * both the color buffer and the depth buffer
-         */
-        GLuint _frameBuffer;
+  private:
+    /**
+     * Frame buffer object ID to reference
+     * both the color buffer and the depth buffer
+     */
+    GLuint _frameBuffer;
 
-        /**
-         * Render buffer object to hold the depth buffer
-         */
-        GLuint _depthBuffer;
+    /**
+     * Render buffer object to hold the depth buffer
+     */
+    GLuint _depthBuffer;
 
-        /**
-         * Render target vertices buffer
-         */
-        GLuint _vertexArray;
-        GLuint _vertexBuffer;
+    /**
+     * Render target vertices buffer
+     */
+    GLuint _vertexArray;
+    GLuint _vertexBuffer;
 
-        /**
-         * Shader for the target rendering to screen
-         */
-        Shader *_shader;
+    /**
+     * Shader for the target rendering to screen
+     */
+    Shader *_shader;
 };

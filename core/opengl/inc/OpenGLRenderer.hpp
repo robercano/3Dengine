@@ -12,37 +12,33 @@
 
 class OpenGLRenderer : public Renderer
 {
-	public:
-		/**
-		 * Renderer methods
-		 */
-		void init(void);
-        const char *getName();
-        const char *getVersion();
-        const char *getVendor();
-        const char *getShaderVersion();
-		Shader * newShader(void);
-        RendererModel3D *prepareModel3D(const Model3D &model);
-		bool renderModel3D(RendererModel3D &model, Camera &camera,
-                           LightingShader &shader,
-						   DirectLight *sun,
-						   std::vector<PointLight*> &pointLights,
-						   std::vector<SpotLight*> &spotLights,
-						   float ambientK,
-                           RenderTarget &renderTarget, bool disableDepth = false);
-		bool renderToShadowMap(RendererModel3D &model3D, Light &light, NormalShadowMapShader &shader);
-		bool renderLight(Light &light, Camera &camera, RenderTarget &renderTarget);
-		bool resize(uint16_t width, uint16_t height);
-        void flush();
+  public:
+    /**
+     * Renderer methods
+     */
+    void init(void);
+    const char *getName();
+    const char *getVersion();
+    const char *getVendor();
+    const char *getShaderVersion();
+    Shader *newShader(void);
+    RendererModel3D *prepareModel3D(const Model3D &model);
+    bool renderModel3D(RendererModel3D &model, Camera &camera, LightingShader &shader, DirectLight *sun,
+                       std::vector<PointLight *> &pointLights, std::vector<SpotLight *> &spotLights, float ambientK,
+                       RenderTarget &renderTarget, bool disableDepth = false);
+    bool renderToShadowMap(RendererModel3D &model3D, Light &light, NormalShadowMapShader &shader);
+    bool renderLight(Light &light, Camera &camera, RenderTarget &renderTarget);
+    bool resize(uint16_t width, uint16_t height);
+    void flush();
 
-	private:
-		/**
-		 * Width of the display
-		 */
-		uint16_t _width;
+  private:
+    /**
+     * Width of the display
+     */
+    uint16_t _width;
 
-		/**
-		 * Height of the display
-		 */
-		uint16_t _height;
+    /**
+     * Height of the display
+     */
+    uint16_t _height;
 };

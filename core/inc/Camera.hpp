@@ -9,12 +9,12 @@
  */
 #pragma once
 
-#include "Projection.hpp"
 #include "Object3D.hpp"
+#include "Projection.hpp"
 
 class Camera : public Projection, public Object3D
 {
-	public:
-		Camera() {}
-		~Camera() {}
+  public:
+    Camera() {}
+    ~Camera() {}
 };

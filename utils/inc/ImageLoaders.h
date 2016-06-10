@@ -7,6 +7,8 @@
 #pragma once
 
 #include <stdint.h>
+#include <stdio.h>   // Because jpeg.h does not include it for FILE *sighs*
+#include <stdlib.h>  // Because jpeg.h does not include it for size_t *sighs*
 
 #ifdef __cplusplus
 extern "C" {

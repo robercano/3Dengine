@@ -14,23 +14,23 @@
 
 class FlyMotion : public Motion
 {
-	public:
-		FlyMotion();
+  public:
+    FlyMotion();
 
-		void applyTo(Object3D &obj);
-		void reset();
+    void applyTo(Object3D &obj);
+    void reset();
 
-		void setPosition(const glm::vec3 &pos);
-		void forward(float amount);
-		void right(float amount);
-		void rotatePitch(float angle);
-		void rotateYaw(float angle);
+    void setPosition(const glm::vec3 &pos);
+    void forward(float amount);
+    void right(float amount);
+    void rotatePitch(float angle);
+    void rotateYaw(float angle);
 
-	private:
-		glm::vec4 _forward;
-		glm::vec4 _up;
-		glm::vec4 _right;
-		float _yaw, _pitch;
-		float _forwardAmount, _rightAmount;
-		glm::vec3 _position;
+  private:
+    glm::vec4 _forward;
+    glm::vec4 _up;
+    glm::vec4 _right;
+    float _yaw, _pitch;
+    float _forwardAmount, _rightAmount;
+    glm::vec3 _position;
 };

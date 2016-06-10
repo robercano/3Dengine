@@ -12,13 +12,5 @@
 #include "ShadowMapRenderTarget.hpp"
 #include "OpenGLShadowMapRenderTarget.hpp"
 
-ShadowMapRenderTarget *ShadowMapRenderTarget::New(void)
-{
-    return new OpenGLShadowMapRenderTarget();
-}
-
-void ShadowMapRenderTarget::Delete(ShadowMapRenderTarget *target)
-{
-    delete target;
-}
-
+ShadowMapRenderTarget *ShadowMapRenderTarget::New(void) { return new OpenGLShadowMapRenderTarget(); }
+void ShadowMapRenderTarget::Delete(ShadowMapRenderTarget *target) { delete target; }

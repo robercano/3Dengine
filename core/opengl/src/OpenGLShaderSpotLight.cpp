@@ -6,8 +6,8 @@
  *
  * @author	Roberto Cano (http://www.robertocano.es)
  */
-#include <string.h>
 #include "OpenGLShaderSpotLight.hpp"
+#include <string.h>
 #include <glm/glm.hpp>
 
 void OpenGLShaderSpotLight::init(uint32_t bindingPoint, uint32_t lightIndex)
@@ -28,14 +28,14 @@ void OpenGLShaderSpotLight::init(uint32_t bindingPoint, uint32_t lightIndex)
 
 void OpenGLShaderSpotLight::copyLight(SpotLight &light)
 {
-    setParamValue("position",    light.getPosition());
-    setParamValue("direction",   light.getDirection());
-    setParamValue("ambient",     light.getAmbient());
-    setParamValue("diffuse",     light.getDiffuse());
-    setParamValue("specular",    light.getSpecular());
-    setParamValue("coneAngle",   light.getConeAngle());
-    setParamValue("conePenumbra",light.getConePenumbra());
+    setParamValue("position", light.getPosition());
+    setParamValue("direction", light.getDirection());
+    setParamValue("ambient", light.getAmbient());
+    setParamValue("diffuse", light.getDiffuse());
+    setParamValue("specular", light.getSpecular());
+    setParamValue("coneAngle", light.getConeAngle());
+    setParamValue("conePenumbra", light.getConePenumbra());
     setParamValue("attenuation", light.getAttenuation());
-    setParamValue("cutoff",      light.getCutoff());
+    setParamValue("cutoff", light.getCutoff());
     bind();
 }

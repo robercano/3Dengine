@@ -6,36 +6,35 @@
  */
 #pragma once
 
-#include <string>
 #include <stdint.h>
+#include <string>
 
 class TimeManager
 {
-	public:
-		/**
-		 * Time Manager factory
-		 *
-		 * @return Pointer to a the requested time manager or NULL
-		 */
-		static TimeManager *GetInstance(void);
+  public:
+    /**
+     * Time Manager factory
+     *
+     * @return Pointer to a the requested time manager or NULL
+     */
+    static TimeManager *GetInstance(void);
 
-		/**
-		 * Time Manager disposal
-		 */
-		static void DisposeInstance();
+    /**
+     * Time Manager disposal
+     */
+    static void DisposeInstance();
 
-        virtual ~TimeManager() {}
+    virtual ~TimeManager() {}
+    /**
+     * Retrieves the current elapsed time in milliseconds
+     *
+     * @return The elapsed time in milliseconds
+     */
+    virtual double getElapsedMs() = 0;
 
-		/**
-		 * Retrieves the current elapsed time in milliseconds
-		 *
-		 * @return The elapsed time in milliseconds
-		 */
-		virtual double getElapsedMs() = 0;
-
-	private:
-		/**
-		 * Current time manager
-		 */
-		static TimeManager *_timeManager;
+  private:
+    /**
+     * Current time manager
+     */
+    static TimeManager *_timeManager;
 };

@@ -10,9 +10,9 @@
 
 #include "TrueTypeFont.hpp"
 
-#include <vector>
-#include <string>
 #include <stdint.h>
+#include <string>
+#include <vector>
 
 // FreeType Headers
 #include <ft2build.h>
@@ -24,17 +24,16 @@
 
 class FreeTypeFont : public TrueTypeFont
 {
-    public:
-        FreeTypeFont();
-        ~FreeTypeFont();
-        bool init(const std::string &font_path, uint32_t size);
-        const uint8_t *getBitmap(char letter, uint32_t &width, uint32_t &height,
-                                 uint32_t &offsetLeft, uint32_t &offsetTop, uint32_t &advance);
+  public:
+    FreeTypeFont();
+    ~FreeTypeFont();
+    bool init(const std::string &font_path, uint32_t size);
+    const uint8_t *getBitmap(char letter, uint32_t &width, uint32_t &height, uint32_t &offsetLeft, uint32_t &offsetTop, uint32_t &advance);
 
-    private:
-        uint32_t                    _size;
-        FT_Library                  _ftLibrary;
-        FT_Face                     _ftFace;
-        std::vector<FT_BitmapGlyph> _ftGlyphCache;
-        std::vector<uint32_t>       _advanceCache;
+  private:
+    uint32_t _size;
+    FT_Library _ftLibrary;
+    FT_Face _ftFace;
+    std::vector<FT_BitmapGlyph> _ftGlyphCache;
+    std::vector<uint32_t> _advanceCache;
 };

@@ -12,13 +12,5 @@
 #include "FBRenderTarget.hpp"
 #include "OpenGLFBRenderTarget.hpp"
 
-FBRenderTarget *FBRenderTarget::New(void)
-{
-    return new OpenGLFBRenderTarget();
-}
-
-void FBRenderTarget::Delete(FBRenderTarget *target)
-{
-    delete target;
-}
-
+FBRenderTarget *FBRenderTarget::New(void) { return new OpenGLFBRenderTarget(); }
+void FBRenderTarget::Delete(FBRenderTarget *target) { delete target; }

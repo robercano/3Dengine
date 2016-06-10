@@ -5,8 +5,8 @@
  *
  * @author	Roberto Cano (http://www.robertocano.es)
  */
-#include <string.h>
 #include "OpenGLShaderDirectLight.hpp"
+#include <string.h>
 #include <glm/glm.hpp>
 
 void OpenGLShaderDirectLight::init(uint32_t bindingPoint)
@@ -22,8 +22,8 @@ void OpenGLShaderDirectLight::init(uint32_t bindingPoint)
 void OpenGLShaderDirectLight::copyLight(DirectLight &light)
 {
     setParamValue("direction", light.getDirection());
-    setParamValue("ambient",   light.getAmbient());
-    setParamValue("diffuse",   light.getDiffuse());
-    setParamValue("specular",  light.getSpecular());
+    setParamValue("ambient", light.getAmbient());
+    setParamValue("diffuse", light.getDiffuse());
+    setParamValue("specular", light.getSpecular());
     bind();
 }

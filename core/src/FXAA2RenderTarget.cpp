@@ -12,13 +12,5 @@
 #include "FXAA2RenderTarget.hpp"
 #include "OpenGLFXAA2RenderTarget.hpp"
 
-FXAA2RenderTarget *FXAA2RenderTarget::New(void)
-{
-    return new OpenGLFXAA2RenderTarget();
-}
-
-void FXAA2RenderTarget::Delete(FXAA2RenderTarget *target)
-{
-    delete target;
-}
-
+FXAA2RenderTarget *FXAA2RenderTarget::New(void) { return new OpenGLFXAA2RenderTarget(); }
+void FXAA2RenderTarget::Delete(FXAA2RenderTarget *target) { delete target; }
