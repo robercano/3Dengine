@@ -12,37 +12,37 @@
 
 OpenGLMSAARenderTarget::~OpenGLMSAARenderTarget()
 {
-    GL( glDeleteBuffers(1, &_vertexBuffer) );
-    GL( glDeleteVertexArrays(1, &_vertexArray) );
-    GL( glDeleteTextures(1, &_colorBuffer) );
-    GL( glDeleteRenderbuffers(1, &_depthBuffer) );
-    GL( glDeleteFramebuffers(1, &_frameBuffer) );
+    __( glDeleteBuffers(1, &_vertexBuffer) );
+    __( glDeleteVertexArrays(1, &_vertexArray) );
+    __( glDeleteTextures(1, &_colorBuffer) );
+    __( glDeleteRenderbuffers(1, &_depthBuffer) );
+    __( glDeleteFramebuffers(1, &_frameBuffer) );
 }
 
 bool OpenGLMSAARenderTarget::init(uint32_t width, uint32_t height, uint32_t samples)
 {
     /* Texture buffer */
-    GL( glGenTextures(1, &_colorBuffer) );
-    GL( glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, _colorBuffer) );
+    __( glGenTextures(1, &_colorBuffer) );
+    __( glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, _colorBuffer) );
     {
-        GL( glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, GL_RGBA8, width, height, GL_TRUE) );
+        __( glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, GL_RGBA8, width, height, GL_TRUE) );
     }
-    GL( glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0) );
+    __( glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0) );
 
     /* Depth buffer */
-    GL( glGenRenderbuffers(1, &_depthBuffer) );
-    GL( glBindRenderbuffer(GL_RENDERBUFFER, _depthBuffer) );
+    __( glGenRenderbuffers(1, &_depthBuffer) );
+    __( glBindRenderbuffer(GL_RENDERBUFFER, _depthBuffer) );
     {
-        GL( glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, GL_DEPTH_COMPONENT32, width, height) );
+        __( glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, GL_DEPTH_COMPONENT32, width, height) );
     }
-    GL( glBindRenderbuffer(GL_RENDERBUFFER, 0) );
+    __( glBindRenderbuffer(GL_RENDERBUFFER, 0) );
 
     /* Framebuffer to link everything together */
-    GL( glGenFramebuffers(1, &_frameBuffer) );
-    GL( glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer) );
+    __( glGenFramebuffers(1, &_frameBuffer) );
+    __( glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer) );
     {
-        GL( glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, _colorBuffer, 0) );
-        GL( glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthBuffer) );
+        __( glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, _colorBuffer, 0) );
+        __( glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthBuffer) );
 
         GLenum status;
         if ((status = glCheckFramebufferStatus(GL_FRAMEBUFFER)) != GL_FRAMEBUFFER_COMPLETE) {
@@ -50,7 +50,7 @@ bool OpenGLMSAARenderTarget::init(uint32_t width, uint32_t height, uint32_t samp
             return false;
         }
     }
-    GL( glBindFramebuffer(GL_FRAMEBUFFER, 0) );
+    __( glBindFramebuffer(GL_FRAMEBUFFER, 0) );
 
     /* Generate the render target surface */
     GLfloat verticesData[8] = {
@@ -60,16 +60,16 @@ bool OpenGLMSAARenderTarget::init(uint32_t width, uint32_t height, uint32_t samp
         1,  1,
     };
 
-	GL( glGenVertexArrays(1, &_vertexArray) );
-	GL( glBindVertexArray(_vertexArray) );
+	__( glGenVertexArrays(1, &_vertexArray) );
+	__( glBindVertexArray(_vertexArray) );
     {
-        GL( glGenBuffers(1, &_vertexBuffer) );
-        GL( glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer) );
+        __( glGenBuffers(1, &_vertexBuffer) );
+        __( glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer) );
         {
-            GL( glBufferData(GL_ARRAY_BUFFER, sizeof verticesData, verticesData, GL_STATIC_DRAW) );
+            __( glBufferData(GL_ARRAY_BUFFER, sizeof verticesData, verticesData, GL_STATIC_DRAW) );
 
-            GL( glEnableVertexAttribArray(0) );
-            GL( glVertexAttribPointer(
+            __( glEnableVertexAttribArray(0) );
+            __( glVertexAttribPointer(
                     0,        // attribute
                     2,        // number of elements per vertex, here (x,y)
                     GL_FLOAT, // the type of each element
@@ -78,9 +78,9 @@ bool OpenGLMSAARenderTarget::init(uint32_t width, uint32_t height, uint32_t samp
                     0         // offset of first element
                     ) );
         }
-        GL( glBindBuffer(GL_ARRAY_BUFFER, 0) );
+        __( glBindBuffer(GL_ARRAY_BUFFER, 0) );
     }
-    GL( glBindVertexArray(0) );
+    __( glBindVertexArray(0) );
 
     _width = width;
     _height = height;
@@ -89,26 +89,26 @@ bool OpenGLMSAARenderTarget::init(uint32_t width, uint32_t height, uint32_t samp
 
 void OpenGLMSAARenderTarget::bind()
 {
-    GL( glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer) );
-    GL( glEnable(GL_MULTISAMPLE) );
-    GL( glViewport(0, 0, _width, _height) );
+    __( glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer) );
+    __( glEnable(GL_MULTISAMPLE) );
+    __( glViewport(0, 0, _width, _height) );
 }
 
 void OpenGLMSAARenderTarget::bindDepth()
 {
-	GL( glBindTexture(GL_TEXTURE_2D, _depthBuffer) );
+	__( glBindTexture(GL_TEXTURE_2D, _depthBuffer) );
 }
 
 void OpenGLMSAARenderTarget::unbind()
 {
-    GL( glDisable(GL_MULTISAMPLE) );
-    GL( glBindFramebuffer(GL_FRAMEBUFFER, 0) );
+    __( glDisable(GL_MULTISAMPLE) );
+    __( glBindFramebuffer(GL_FRAMEBUFFER, 0) );
 }
 
 uint32_t OpenGLMSAARenderTarget::getMaxSamples()
 {
     GLint samples;
-    GL( glGetIntegerv(GL_MAX_SAMPLES, &samples) );
+    __( glGetIntegerv(GL_MAX_SAMPLES, &samples) );
     return (uint32_t)samples;
 }
 
@@ -118,20 +118,20 @@ bool OpenGLMSAARenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, 
         fprintf(stderr, "ERROR in OpenGLMSAARenderTarget::blit() different size for src and dest\n");
         return false;
     }
-    GL( glBindFramebuffer(GL_READ_FRAMEBUFFER, _frameBuffer) );
+    __( glBindFramebuffer(GL_READ_FRAMEBUFFER, _frameBuffer) );
 	if (bindMainFB) {
-		GL( glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0) );
+		__( glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0) );
 	}
     /* As this is a multi-sample buffer source and destination rectangles must be of
      * the same size, thus we always use GL_NEAREST and blit color and depth at the same time */
-    GL( glBlitFramebuffer(0, 0, _width, _height, dstX, dstY, width, height, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST) );
-    GL( glBindFramebuffer(GL_READ_FRAMEBUFFER, 0) );
+    __( glBlitFramebuffer(0, 0, _width, _height, dstX, dstY, width, height, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST) );
+    __( glBindFramebuffer(GL_READ_FRAMEBUFFER, 0) );
     return true;
 }
 
 void OpenGLMSAARenderTarget::clear()
 {
-    GL( glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer) );
-    GL( glClearColor(_r, _g, _b, _a) );
-    GL( glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) );
+    __( glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer) );
+    __( glClearColor(_r, _g, _b, _a) );
+    __( glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) );
 }

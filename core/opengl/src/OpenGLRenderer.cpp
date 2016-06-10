@@ -11,24 +11,24 @@
 
 void OpenGLRenderer::init()
 {
-	GL( glClearColor(0.0, 0.0, 0.0, 1.0) );
-	GL( glEnable(GL_DEPTH_TEST) );
-	GL( glEnable(GL_CULL_FACE) );
-	GL( glEnable(GL_BLEND) );
-    GL( glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA) );
+	__( glClearColor(0.0, 0.0, 0.0, 1.0) );
+	__( glEnable(GL_DEPTH_TEST) );
+	__( glEnable(GL_CULL_FACE) );
+	__( glEnable(GL_BLEND) );
+    __( glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA) );
     /* There seems to be a bug with sRGB default framebuffer, as
      * the buffer is always linear, but if we enable this the
      * drivers are doing the linear->sRGB conversion anyway!
      * So don't enable it for now, we will have to compensate
      * in the shaders */
-    //GL( glEnable(GL_FRAMEBUFFER_SRGB) );
-	GL( glCullFace(GL_BACK) );
-    GL( glDisable(GL_DITHER) );
-    GL( glDisable(GL_LINE_SMOOTH) );
-    GL( glDisable(GL_POLYGON_SMOOTH) );
-    GL( glHint(GL_POLYGON_SMOOTH_HINT, GL_DONT_CARE) );
+    //__( glEnable(GL_FRAMEBUFFER_SRGB) );
+	__( glCullFace(GL_BACK) );
+    __( glDisable(GL_DITHER) );
+    __( glDisable(GL_LINE_SMOOTH) );
+    __( glDisable(GL_POLYGON_SMOOTH) );
+    __( glHint(GL_POLYGON_SMOOTH_HINT, GL_DONT_CARE) );
 #define GL_MULTISAMPLE_ARB 0x809D
-    GL( glDisable(GL_MULTISAMPLE_ARB)  );
+    __( glDisable(GL_MULTISAMPLE_ARB)  );
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glDepthRangef(0.1f, 1000.0f);
 }
@@ -100,7 +100,7 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
     /* Bind the render target */
     renderTarget.bind();
     {
-        GL( glEnable(GL_MULTISAMPLE) );
+        __( glEnable(GL_MULTISAMPLE) );
 
         /* Bind program to upload the uniform */
         shader.attach();
@@ -127,7 +127,7 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
 			shader.setUniformMat4("u_shadowMVPDirectLight", &shadowMVP);
 			shader.setUniformTexture2D("u_shadowMapDirectLight", textureUnit);
 
-			GL( glActiveTexture(GL_TEXTURE0 + textureUnit) );
+			__( glActiveTexture(GL_TEXTURE0 + textureUnit) );
 			sun->getShadowMap()->bindDepth();
 
 			textureUnit++;
@@ -150,7 +150,7 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
 			shadowMVPArray[numLight] = biasMatrix * shadowMVP;
 			texturesArray[numLight] = textureUnit;
 
-			GL( glActiveTexture(GL_TEXTURE0 + textureUnit) );
+			__( glActiveTexture(GL_TEXTURE0 + textureUnit) );
 			pointLights[numLight]->getShadowMap()->bindDepth();
 
 			textureUnit++;
@@ -180,7 +180,7 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
 			shadowMVPArray[numLight] = biasMatrix * shadowMVP;
 			texturesArray[numLight] = textureUnit;
 
-			GL( glActiveTexture(GL_TEXTURE0 + textureUnit) );
+			__( glActiveTexture(GL_TEXTURE0 + textureUnit) );
 			spotLights[numLight]->getShadowMap()->bindDepth();
 
 			textureUnit++;
@@ -196,9 +196,9 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
 		delete[] texturesArray;
 
         /* Draw the model */
-        GL( glBindVertexArray(glObject.getVertexArrayID()) );
+        __( glBindVertexArray(glObject.getVertexArrayID()) );
         {
-			GL( glActiveTexture(GL_TEXTURE0) );
+			__( glActiveTexture(GL_TEXTURE0) );
 
             std::vector<Material> materials   = glObject.getMaterials();
             std::vector<uint32_t> texturesIDs = glObject.getTextures();
@@ -206,13 +206,13 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera,
             std::vector<uint32_t> count       = glObject.getIndicesCount();
 
             for (size_t  i=0; i<materials.size(); ++i) {
-                GL( glBindTexture(GL_TEXTURE_2D, texturesIDs[i]) );
+                __( glBindTexture(GL_TEXTURE_2D, texturesIDs[i]) );
                 shader.setMaterial(materials[i]);
 
-                GL( glDrawElements(GL_TRIANGLES, count[i], GL_UNSIGNED_INT, (void*)(offset[i] * sizeof(GLuint))) );
+                __( glDrawElements(GL_TRIANGLES, count[i], GL_UNSIGNED_INT, (void*)(offset[i] * sizeof(GLuint))) );
             }
         }
-        GL( glBindVertexArray(0) );
+        __( glBindVertexArray(0) );
 
         /* Unbind */
         shader.detach();
@@ -246,16 +246,16 @@ bool OpenGLRenderer::renderToShadowMap(RendererModel3D &model3D, Light &light, N
         shader.setUniformMat4("u_MVPMatrix", &MVP);
 
         /* Draw the model */
-        GL( glBindVertexArray(glObject.getVertexArrayID()) );
+        __( glBindVertexArray(glObject.getVertexArrayID()) );
         {
             std::vector<uint32_t> offset      = glObject.getIndicesOffsets();
             std::vector<uint32_t> count       = glObject.getIndicesCount();
 
             for (size_t i=0; i<count.size(); ++i) {
-                GL( glDrawElements(GL_TRIANGLES, count[i], GL_UNSIGNED_INT, (void*)(offset[i] * sizeof(GLuint))) );
+                __( glDrawElements(GL_TRIANGLES, count[i], GL_UNSIGNED_INT, (void*)(offset[i] * sizeof(GLuint))) );
             }
         }
-        GL( glBindVertexArray(0) );
+        __( glBindVertexArray(0) );
 
         /* Unbind */
         shader.detach();
@@ -297,23 +297,23 @@ bool OpenGLRenderer::renderLight(Light &light, Camera &camera, RenderTarget &ren
         shader->setUniformMat4("u_MVPMatrix", &MVP);
 		shader->setUniformVec3("u_lightColor", ambient);
 
-		GL( glGenVertexArrays(1, &lightPosVAO) );
-		GL( glBindVertexArray(lightPosVAO) );
+		__( glGenVertexArrays(1, &lightPosVAO) );
+		__( glBindVertexArray(lightPosVAO) );
 
-		GL( glGenBuffers(1, &lightPosVBO) );
+		__( glGenBuffers(1, &lightPosVBO) );
 
-		GL( glBindBuffer(GL_ARRAY_BUFFER, lightPosVBO) );
-		GL( glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3), &light.getPosition()[0], GL_STATIC_DRAW) );
+		__( glBindBuffer(GL_ARRAY_BUFFER, lightPosVBO) );
+		__( glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3), &light.getPosition()[0], GL_STATIC_DRAW) );
 
-		GL( glEnable(GL_PROGRAM_POINT_SIZE) );
-		GL( glDrawArrays(GL_POINTS, 0, 1) );
+		__( glEnable(GL_PROGRAM_POINT_SIZE) );
+		__( glDrawArrays(GL_POINTS, 0, 1) );
 
-		GL( glDisable(GL_PROGRAM_POINT_SIZE) );
+		__( glDisable(GL_PROGRAM_POINT_SIZE) );
 
-		GL( glBindVertexArray(0) );
+		__( glBindVertexArray(0) );
 
-		GL( glDeleteBuffers(1, &lightPosVBO) );
-		GL( glDeleteVertexArrays(1, &lightPosVAO) );
+		__( glDeleteBuffers(1, &lightPosVBO) );
+		__( glDeleteVertexArrays(1, &lightPosVAO) );
 
 		/* Unbind */
 		shader->detach();

@@ -33,8 +33,8 @@ class OpenGLFXAARenderTarget : public FXAARenderTarget, public OpenGLFilterRende
 		{
 			glm::vec2 rpcFrame(1.0f/_width, 1.0f/_height);
 			_shader->setUniformVec2("f_rpcFrame", rpcFrame);
-			GL( glDisable(GL_BLEND) );
-			GL( glDisable(GL_DEPTH_TEST) );
+			__( glDisable(GL_BLEND) );
+			__( glDisable(GL_DEPTH_TEST) );
 		}
 		void unsetCustomParams(void) {
 			glEnable(GL_DEPTH_TEST);

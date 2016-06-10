@@ -20,7 +20,7 @@ OpenGLShader::OpenGLShader(void) : _programID(0)
 OpenGLShader::~OpenGLShader(void)
 {
 	_deleteShadersIDs();
-	GL( glDeleteProgram(_programID) );
+	__( glDeleteProgram(_programID) );
 }
 
 bool OpenGLShader::use(const std::string &path, std::string &error)
@@ -41,7 +41,7 @@ bool OpenGLShader::loadVertexShader(const std::string &filename, std::string &er
 {
 	GLuint shaderObjectID;
 
-    GL( shaderObjectID = glCreateShader(GL_VERTEX_SHADER) );
+    __( shaderObjectID = glCreateShader(GL_VERTEX_SHADER) );
 
 	return _loadShader(shaderObjectID, filename, error);
 }
@@ -50,7 +50,7 @@ bool OpenGLShader::loadFragmentShader(const std::string &filename, std::string &
 {
 	GLuint shaderObjectID;
 
-    GL( shaderObjectID = glCreateShader(GL_FRAGMENT_SHADER) );
+    __( shaderObjectID = glCreateShader(GL_FRAGMENT_SHADER) );
 
 	return _loadShader(shaderObjectID, filename, error);
 }
@@ -87,19 +87,19 @@ bool OpenGLShader::_loadShader(uint32_t shaderObjectID, const std::string &filen
 	shaderText[size] = 0;
 	fclose(shader);
 
-	GL( glShaderSource(shaderObjectID, 1, (const GLchar **)&shaderText, NULL) );
-	GL( glCompileShader(shaderObjectID) );
+	__( glShaderSource(shaderObjectID, 1, (const GLchar **)&shaderText, NULL) );
+	__( glCompileShader(shaderObjectID) );
 
 	delete[] shaderText;
 
 	/* Get compilation status */
-	GL( glGetShaderiv(shaderObjectID, GL_COMPILE_STATUS, &result) );
+	__( glGetShaderiv(shaderObjectID, GL_COMPILE_STATUS, &result) );
 	if (result == GL_FALSE) {
 		int32_t infoLogLength;
-		GL( glGetShaderiv(shaderObjectID, GL_INFO_LOG_LENGTH, &infoLogLength) );
+		__( glGetShaderiv(shaderObjectID, GL_INFO_LOG_LENGTH, &infoLogLength) );
 
 		error.resize(infoLogLength + 1);
-		GL( glGetShaderInfoLog(shaderObjectID, infoLogLength, NULL, const_cast<GLchar*>(error.c_str())) );
+		__( glGetShaderInfoLog(shaderObjectID, infoLogLength, NULL, const_cast<GLchar*>(error.c_str())) );
 
 		return false;
 	}
@@ -112,23 +112,23 @@ bool OpenGLShader::linkProgram(std::string &error)
 {
 	GLint result = GL_FALSE;
 
-	GL( _programID = glCreateProgram() );
+	__( _programID = glCreateProgram() );
 
 	std::vector<uint32_t>::iterator it;
 	for (it=_shadersIDs.begin(); it != _shadersIDs.end(); ++it) {
-		GL( glAttachShader(_programID, *it) );
+		__( glAttachShader(_programID, *it) );
 	}
 
 	/* Link the program */
-	GL( glLinkProgram(_programID) );
-	GL( glGetProgramiv(_programID, GL_LINK_STATUS, &result) );
+	__( glLinkProgram(_programID) );
+	__( glGetProgramiv(_programID, GL_LINK_STATUS, &result) );
 
 	if (result == GL_FALSE) {
 		int32_t infoLogLength;
-		GL( glGetProgramiv(_programID, GL_INFO_LOG_LENGTH, &infoLogLength) );
+		__( glGetProgramiv(_programID, GL_INFO_LOG_LENGTH, &infoLogLength) );
 
 		error.resize(infoLogLength + 1);
-		GL( glGetProgramInfoLog(_programID, infoLogLength, NULL, const_cast<GLchar*>(error.c_str())) );
+		__( glGetProgramInfoLog(_programID, infoLogLength, NULL, const_cast<GLchar*>(error.c_str())) );
 
 		return false;
 	}
@@ -143,13 +143,13 @@ bool OpenGLShader::linkProgram(std::string &error)
 
 bool OpenGLShader::attach(void)
 {
-	GL( glUseProgram(_programID) );
+	__( glUseProgram(_programID) );
     return true;
 }
 
 bool OpenGLShader::detach(void)
 {
-	GL( glUseProgram(0) );
+	__( glUseProgram(0) );
     return true;
 }
 
@@ -172,7 +172,7 @@ const bool OpenGLShader::getUniformID(const std::string &name, uint32_t *id)
 
 const bool OpenGLShader::getAttributeID(const std::string &name, uint32_t *id)
 {
-    GL( *id = glGetAttribLocation( _programID, name.c_str()) );
+    __( *id = glGetAttribLocation( _programID, name.c_str()) );
     return *id != -1 ? true : false;
 }
 
@@ -184,7 +184,7 @@ bool OpenGLShader::setUniformMat4(const std::string &name, const glm::mat4 value
 		return false;
 	}
 
-	GL( glUniformMatrix4fv(it->second, numItems, GL_FALSE, (GLfloat*)value) );
+	__( glUniformMatrix4fv(it->second, numItems, GL_FALSE, (GLfloat*)value) );
 	return true;
 }
 
@@ -196,7 +196,7 @@ bool OpenGLShader::setUniformMat3(const std::string &name, const glm::mat3 value
 		return false;
 	}
 
-	GL( glUniformMatrix3fv(it->second, numItems, GL_FALSE, (GLfloat*)value) );
+	__( glUniformMatrix3fv(it->second, numItems, GL_FALSE, (GLfloat*)value) );
 	return true;
 }
 
@@ -209,7 +209,7 @@ bool OpenGLShader::setUniformTexture2D(const std::string &name, uint32_t unitID)
 		return false;
 	}
 
-    GL( glUniform1i(it->second, unitID) );
+    __( glUniform1i(it->second, unitID) );
 	return true;
 }
 
@@ -221,7 +221,7 @@ bool OpenGLShader::setUniformTexture2DArray(const std::string &name, uint32_t un
 		return false;
 	}
 
-    GL( glUniform1iv(it->second, numItems, (GLint*)unitIDs) );
+    __( glUniform1iv(it->second, numItems, (GLint*)unitIDs) );
 	return true;
 }
 
@@ -233,7 +233,7 @@ bool OpenGLShader::setUniformFloat(const std::string &name, float value)
 		return false;
 	}
 
-    GL( glUniform1f(it->second, value) );
+    __( glUniform1f(it->second, value) );
     return true;
 }
 
@@ -245,7 +245,7 @@ bool OpenGLShader::setUniformUint(const std::string &name, uint32_t value)
 		return false;
 	}
 
-    GL( glUniform1ui(it->second, value) );
+    __( glUniform1ui(it->second, value) );
     return true;
 }
 
@@ -257,7 +257,7 @@ bool OpenGLShader::setUniformVec4(const std::string &name, glm::vec4 &value)
 		return false;
 	}
 
-    GL( glUniform4fv(it->second, 1, &value[0]) );
+    __( glUniform4fv(it->second, 1, &value[0]) );
     return true;
 }
 
@@ -269,7 +269,7 @@ bool OpenGLShader::setUniformVec3(const std::string &name, glm::vec3 &value)
 		return false;
 	}
 
-    GL( glUniform3fv(it->second, 1, &value[0]) );
+    __( glUniform3fv(it->second, 1, &value[0]) );
     return true;
 }
 
@@ -281,7 +281,7 @@ bool OpenGLShader::setUniformVec2(const std::string &name, glm::vec2 &value)
 		return false;
 	}
 
-    GL( glUniform2fv(it->second, 1, &value[0]) );
+    __( glUniform2fv(it->second, 1, &value[0]) );
     return true;
 }
 
@@ -289,7 +289,7 @@ void OpenGLShader::_deleteShadersIDs(void)
 {
 	std::vector<uint32_t>::iterator it;
 	for (it=_shadersIDs.begin(); it != _shadersIDs.end(); ++it) {
-		GL( glDeleteShader(*it) );
+		__( glDeleteShader(*it) );
 	}
 	_shadersIDs.clear();
 }
@@ -299,7 +299,7 @@ void OpenGLShader::_buildUniformsMap(void)
 	_uniformNames.clear();
 
 	int32_t count, i;
-	GL( glGetProgramiv(_programID, GL_ACTIVE_UNIFORMS, &count) );
+	__( glGetProgramiv(_programID, GL_ACTIVE_UNIFORMS, &count) );
 
 	for (i=0; i<count; ++i) {
 		char uniformName[128];
@@ -307,12 +307,12 @@ void OpenGLShader::_buildUniformsMap(void)
         GLenum type;
 
 		/* Get uniform name */
-		GL( glGetActiveUniform(_programID, i, sizeof uniformName, NULL, &size, &type, uniformName) );
+		__( glGetActiveUniform(_programID, i, sizeof uniformName, NULL, &size, &type, uniformName) );
 
 		/* Get location */
 		uint32_t uniformID;
 
-        GL( uniformID = glGetUniformLocation(_programID, uniformName) );
+        __( uniformID = glGetUniformLocation(_programID, uniformName) );
 
 		/* Save in map */
 		_uniformNames[uniformName] = uniformID; }

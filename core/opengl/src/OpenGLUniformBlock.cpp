@@ -53,7 +53,7 @@ bool OpenGLUniformBlock::prepareForShader(GLuint programID)
         accessName = _blockName + std::string("[") + std::to_string(_blockArrayIndex) + std::string("]");
     }
 
-    GL( _blockIndex = glGetUniformBlockIndex(programID, accessName.c_str()) );
+    __( _blockIndex = glGetUniformBlockIndex(programID, accessName.c_str()) );
     if (_blockIndex == GL_INVALID_INDEX) {
         fprintf(stderr, "ERROR OpenGLUniformBlock bad block index for block: %s\n", accessName.c_str());
         ret = false;
@@ -61,8 +61,8 @@ bool OpenGLUniformBlock::prepareForShader(GLuint programID)
     }
 
 
-    GL( glGetActiveUniformBlockiv(programID, _blockIndex, GL_UNIFORM_BLOCK_DATA_SIZE, &_blockSize) );
-    GL( glGetUniformIndices(programID, _paramsFullName.size(), names, indices) );
+    __( glGetActiveUniformBlockiv(programID, _blockIndex, GL_UNIFORM_BLOCK_DATA_SIZE, &_blockSize) );
+    __( glGetUniformIndices(programID, _paramsFullName.size(), names, indices) );
     for (size_t i=0; i<_paramsOffsets.size(); ++i) {
         if (indices[i] == GL_INVALID_INDEX) {
             fprintf(stderr, "ERROR OpenGLUniformBlock could not get all indices\n");
@@ -75,7 +75,7 @@ bool OpenGLUniformBlock::prepareForShader(GLuint programID)
     _paramsBuffer = new GLubyte[_blockSize];
 
     /* Retrieve the offsets */
-    GL( glGetActiveUniformsiv(programID, _paramsFullName.size(), indices, GL_UNIFORM_OFFSET, offsets) );
+    __( glGetActiveUniformsiv(programID, _paramsFullName.size(), indices, GL_UNIFORM_OFFSET, offsets) );
 
     /* Associate them with their names */
     for (size_t i=0; i<_paramsFullName.size(); ++i) {
@@ -83,10 +83,10 @@ bool OpenGLUniformBlock::prepareForShader(GLuint programID)
         _paramsOffsets[baseName] = offsets[i];
     }
 
-    GL( glGenBuffers(1, &_uniformBufferObj) );
-    GL( glBindBuffer(GL_UNIFORM_BUFFER, _uniformBufferObj) );
-    GL( glBufferData(GL_UNIFORM_BUFFER, _blockSize, NULL, GL_DYNAMIC_DRAW) );
-    GL( glBindBufferBase(GL_UNIFORM_BUFFER, _bindingPoint, _uniformBufferObj) );
+    __( glGenBuffers(1, &_uniformBufferObj) );
+    __( glBindBuffer(GL_UNIFORM_BUFFER, _uniformBufferObj) );
+    __( glBufferData(GL_UNIFORM_BUFFER, _blockSize, NULL, GL_DYNAMIC_DRAW) );
+    __( glBindBufferBase(GL_UNIFORM_BUFFER, _bindingPoint, _uniformBufferObj) );
 
     _linkedToShader = true;
     _programID = programID;
@@ -101,8 +101,8 @@ error:
 
 void OpenGLUniformBlock::bind()
 {
-    GL( glBindBuffer(GL_UNIFORM_BUFFER, _uniformBufferObj) );
-    GL( glBufferSubData(GL_UNIFORM_BUFFER, 0, _blockSize, _paramsBuffer) );
-    GL( glBindBuffer(GL_UNIFORM_BUFFER, 0) );
-    GL( glUniformBlockBinding(_programID, _blockIndex, _bindingPoint) );
+    __( glBindBuffer(GL_UNIFORM_BUFFER, _uniformBufferObj) );
+    __( glBufferSubData(GL_UNIFORM_BUFFER, 0, _blockSize, _paramsBuffer) );
+    __( glBindBuffer(GL_UNIFORM_BUFFER, 0) );
+    __( glUniformBlockBinding(_programID, _blockIndex, _bindingPoint) );
 }

@@ -33,7 +33,7 @@
  * problems in OpenGL pipeline
  */
 #ifdef DEBUG_OPENGL_PIPELINE
-#define GL( call ) \
+#define __( call ) \
     { \
         glGetError(); \
         call; \
@@ -44,7 +44,7 @@
         } \
     }
 #else
-#define GL( call ) call
+#define __( call ) call
 #endif
 
 #define GL_CHECKPOINT() \
