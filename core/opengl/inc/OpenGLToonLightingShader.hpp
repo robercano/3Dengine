@@ -1,5 +1,11 @@
 /**
  * @class	OpenGLToonLightingShader
+ *
+ * @brief   This class re-uses the Blinn-Phong shader but it enables
+ *          the toon lighting by setting the corresponding flag to 1. This
+ *          is done this way so we can re-use most of the Blinn-Phong shader
+ *          code
+ *
  * @author	Roberto Cano (http://www.robertocano.es)
  */
 #pragma once
@@ -19,11 +25,16 @@ class OpenGLToonLightingShader : public virtual ToonLightingShader, public OpenG
     {
         std::string error;
 
-        if (use("lighting/toon", error) != true) {
-            printf("ERROR loading shader lighting/toon: %s\n", error.c_str());
+        if (use("lighting/blinnphong_reflection", error) != true) {
+            printf("ERROR loading shader lighting/blinnphong_reflection: %s\n", error.c_str());
             return false;
         }
 
         return OpenGLLightingShader::init();
     }
+
+	void setCustomParams()
+	{
+		setUniformUint("u_enableToon", 1);
+	}
 };

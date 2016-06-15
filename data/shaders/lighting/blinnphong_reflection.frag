@@ -5,6 +5,10 @@
    Fully implemented using the formulas, no code has been
    copied from any other source
 
+   The toonify flag enables creates a discreet lighting where
+   groups of values are moved to fixed intensity values, thus
+   creating a sort of flat lighting
+
    @author Roberto Cano
 */
 #version 400 core
@@ -72,6 +76,9 @@ uniform sampler2D       u_diffuseMap;
 uniform mat4            u_viewMatrix;
 uniform mat4            u_modelMatrix;
 
+/* Flag to enable toon shadowing */
+uniform uint u_enableToon;
+
 /* Input from vertex shader */
 in vec3 io_fragVertex;
 in vec3 io_fragNormal;
@@ -87,6 +94,20 @@ float sRGB2Linear(float c) {
         return c/12.92;
     }
     return pow((c + 0.055)/1.055, 2.4);
+}
+
+float toonify(float intensity)
+{
+	if (u_enableToon == 1) {
+		if (intensity < 0.0001) return 0.0;
+		else if (intensity < 0.25) return 0.125;
+		else if (intensity < 0.5) return 0.375;
+		else if (intensity < 0.75) return 0.625;
+		else if (intensity < 0.99) return 0.875;
+		else return 1.0;
+	} else {
+		return intensity;
+	}
 }
 
 #define _ProcessPointLight(color, shadow, n, V)                                           \
@@ -105,9 +126,9 @@ float sRGB2Linear(float c) {
 			vec3 H = normalize(L + V);                                                    \
 																						  \
 			/* Ambient + Diffuse + Specular */                                            \
-			float Ia = clamp(u_ambientK, 0.0, 1.0);                                       \
-			float Id = clamp(dot(L, io_fragNormal), 0.0, 1.0);                            \
-			float Is = clamp(pow(dot(io_fragNormal, H), u_material.shininess), 0.0, 1.0); \
+			float Ia = toonify(clamp(u_ambientK, 0.0, 1.0));                                       \
+			float Id = toonify(clamp(dot(L, io_fragNormal), 0.0, 1.0));                            \
+			float Is = toonify(clamp(pow(dot(io_fragNormal, H), u_material.shininess), 0.0, 1.0)); \
 																						  \
 			vec3 colorAmbient  = u_PointLight[n].ambient*u_material.ambient*Ia;           \
 			vec3 colorDiffuse  = u_PointLight[n].diffuse*u_material.diffuse*Id;           \
@@ -144,9 +165,9 @@ float sRGB2Linear(float c) {
 			    vec3 H = normalize(L + V);                                                           \
 																						             \
 			    /* Ambient + Diffuse + Specular */                                                   \
-			    float Ia = clamp(u_ambientK, 0.0, 1.0);                                              \
-			    float Id = clamp(dot(L, io_fragNormal), 0.0, 1.0);                                   \
-			    float Is = clamp(pow(dot(io_fragNormal, H), u_material.shininess), 0.0, 1.0);        \
+			    float Ia = toonify(clamp(u_ambientK, 0.0, 1.0));                                      \
+			    float Id = toonify(clamp(dot(L, io_fragNormal), 0.0, 1.0));                           \
+			    float Is = toonify(clamp(pow(dot(io_fragNormal, H), u_material.shininess), 0.0, 1.0));\
 																						             \
 		    	vec3 colorAmbient  = u_SpotLight[n].ambient*u_material.ambient*Ia;                   \
 			    vec3 colorDiffuse  = u_SpotLight[n].diffuse*u_material.diffuse*Id;                   \
@@ -173,9 +194,9 @@ float sRGB2Linear(float c) {
 		vec3 H = normalize(L + V);                                                    \
 																					  \
 		/* Ambient + Diffuse + Specular */                                            \
-		float Ia = clamp(u_ambientK, 0.0, 1.0);                                       \
-		float Id = clamp(dot(L, io_fragNormal), 0.0, 1.0);                            \
-		float Is = clamp(pow(dot(io_fragNormal, H), u_material.shininess), 0.0, 1.0); \
+		float Ia = toonify(clamp(u_ambientK, 0.0, 1.0));                                       \
+		float Id = toonify(clamp(dot(L, io_fragNormal), 0.0, 1.0));                            \
+		float Is = toonify(clamp(pow(dot(io_fragNormal, H), u_material.shininess), 0.0, 1.0)); \
 																					  \
 		vec3 colorAmbient  = u_DirectLight.ambient*u_material.ambient*Ia;             \
 		vec3 colorDiffuse  = u_DirectLight.diffuse*u_material.diffuse*Id;             \

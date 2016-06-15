@@ -277,6 +277,11 @@ bool OpenGLShader::setUniformVec2(const std::string &name, glm::vec2 &value)
     return true;
 }
 
+void OpenGLShader::setCustomParams()
+{
+	/* Empty on purpose */
+}
+
 void OpenGLShader::_deleteShadersIDs(void)
 {
     std::vector<uint32_t>::iterator it;

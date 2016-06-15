@@ -36,6 +36,7 @@ class OpenGLShader : public virtual Shader
     bool setUniformVec4(const std::string &name, glm::vec4 &value);
     bool setUniformVec3(const std::string &name, glm::vec3 &value);
     bool setUniformVec2(const std::string &name, glm::vec2 &value);
+	virtual void setCustomParams(void);
 
   protected:
     bool _loadShader(uint32_t shaderObjectID, const std::string &filename, std::string &error);

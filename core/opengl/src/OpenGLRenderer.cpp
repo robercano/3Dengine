@@ -124,7 +124,6 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera, Lig
             textureUnit++;
         }
 
-        /* TODO: This has to be set in a matrix array */
         shader.setUniformMat4("u_shadowMVPPointLight[0]", shadowMVPArray, pointLights.size());
         shader.setUniformTexture2DArray("u_shadowMapPointLight[0]", texturesArray, pointLights.size());
         shader.setUniformUint("u_numPointLights", pointLights.size());
@@ -153,7 +152,6 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera, Lig
             textureUnit++;
         }
 
-        /* TODO: This has to be set in a matrix array */
         shader.setUniformMat4("u_shadowMVPSpotLight[0]", shadowMVPArray, spotLights.size());
         shader.setUniformTexture2DArray("u_shadowMapSpotLight[0]", texturesArray, spotLights.size());
         shader.setUniformUint("u_numSpotLights", spotLights.size());
@@ -180,6 +178,9 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera, Lig
             }
         }
         __(glBindVertexArray(0));
+
+		/* Set the shader custom parameters */
+		shader.setCustomParams();
 
         /* Unbind */
         shader.detach();
