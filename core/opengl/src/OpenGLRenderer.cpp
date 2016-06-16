@@ -179,8 +179,8 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera, Lig
         }
         __(glBindVertexArray(0));
 
-		/* Set the shader custom parameters */
-		shader.setCustomParams();
+        /* Set the shader custom parameters */
+        shader.setCustomParams();
 
         /* Unbind */
         shader.detach();

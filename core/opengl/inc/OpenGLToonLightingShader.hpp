@@ -33,8 +33,5 @@ class OpenGLToonLightingShader : public virtual ToonLightingShader, public OpenG
         return OpenGLLightingShader::init();
     }
 
-	void setCustomParams()
-	{
-		setUniformUint("u_enableToon", 1);
-	}
+    void setCustomParams() { setUniformUint("u_enableToon", 1); }
 };

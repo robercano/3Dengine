@@ -116,8 +116,8 @@ class Shader
     virtual bool setUniformVec3(const std::string &name, glm::vec3 &value) = 0;
     virtual bool setUniformVec2(const std::string &name, glm::vec2 &value) = 0;
 
-	/**
-	 * Sets custom parameters only known by the implementer class
-	 */
-	virtual void setCustomParams(void) = 0;
+    /**
+     * Sets custom parameters only known by the implementer class
+     */
+    virtual void setCustomParams(void) = 0;
 };

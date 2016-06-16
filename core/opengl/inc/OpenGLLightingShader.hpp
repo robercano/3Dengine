@@ -93,8 +93,7 @@ class OpenGLLightingShader : public virtual LightingShader, public OpenGLShader
     }
 
     void setMaterial(Material &material) { _material.copyMaterial(material); }
-
-	virtual void setCustomParams() = 0;
+    virtual void setCustomParams() = 0;
 
   private:
     OpenGLShaderMaterial _material;

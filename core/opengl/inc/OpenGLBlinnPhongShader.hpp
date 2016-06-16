@@ -27,8 +27,5 @@ class OpenGLBlinnPhongShader : public virtual BlinnPhongShader, public OpenGLLig
         return OpenGLLightingShader::init();
     }
 
-	void setCustomParams()
-	{
-		setUniformUint("u_enableToon", 0);
-	}
+    void setCustomParams() { setUniformUint("u_enableToon", 0); }
 };
