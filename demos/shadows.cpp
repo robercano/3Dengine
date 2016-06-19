@@ -363,7 +363,7 @@ int main()
 #if defined(_WIN32)
     game->setWindowSize(800, 600, false);
 #else
-    game->setWindowSize(800, 600, false);
+    game->setWindowSize(800, 600, true);
 #endif
     game->setFPS(60);
 
@@ -373,5 +373,8 @@ int main()
     }
 
     game->loop();
+
+	delete game;
+
     return 0;
 }

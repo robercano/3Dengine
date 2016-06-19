@@ -6,6 +6,13 @@
  */
 #include "Game.hpp"
 
+Game::~Game()
+{
+	TimeManager::DisposeInstance();
+	Renderer::DisposeInstance();
+	WindowManager::DisposeInstance();
+}
+
 void Game::setWindowSize(uint32_t width, uint32_t height, bool fullscreen)
 {
     _width = width;

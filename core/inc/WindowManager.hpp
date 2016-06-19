@@ -47,6 +47,7 @@ class WindowManager
      * Destructor of the class
      */
     virtual ~WindowManager(void) {}
+
     /**
      * Initializes the window manager
      * @details	Prepares the window manager to be used. After calling
@@ -58,6 +59,9 @@ class WindowManager
 
     /**
      * Creates a new window
+	 *
+	 * If either width or height are 0, then the manager will detect the current
+	 * desktop resolution and set that value for width and height
      *
      * @param	name		Title of the window
      * @param	width		Width of the window
@@ -66,7 +70,7 @@ class WindowManager
      *
      * @return  true or false
      */
-    virtual bool createWindow(std::string &name, uint16_t width, uint16_t height, bool fullscreen = false) = 0;
+    virtual bool createWindow(std::string &name, uint16_t width = 0, uint16_t height = 0, bool fullscreen = true) = 0;
 
     /**
      * Called when the window must be resized
