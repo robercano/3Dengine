@@ -15,7 +15,7 @@ GLFWWindowManager::~GLFWWindowManager()
 {
     GLFWMouseManager::DisposeMouseManager();
     GLFWKeyManager::DisposeKeyManager();
-	glfwDestroyWindow(_window);
+    glfwDestroyWindow(_window);
     glfwTerminate();
 }
 
@@ -34,26 +34,25 @@ bool GLFWWindowManager::createWindow(std::string &name, uint16_t width, uint16_t
 {
     _width = width;
     _height = height;
-	_fullscreen = fullscreen;
+    _fullscreen = fullscreen;
 
-	/* Detect the current resolution of the primary monitor */
-	GLFWmonitor *primary = glfwGetPrimaryMonitor();
-	if (primary == NULL) {
-		fprintf(stderr, "Failed to detect primary monitor\n");
-		return false;
-	}
+    /* Detect the current resolution of the primary monitor */
+    GLFWmonitor *primary = glfwGetPrimaryMonitor();
+    if (primary == NULL) {
+        fprintf(stderr, "Failed to detect primary monitor\n");
+        return false;
+    }
 
-	const GLFWvidmode *videoMode = glfwGetVideoMode(primary);
-	if (videoMode == NULL) {
-		fprintf(stderr, "Failed to detect primary monitor video mode\n");
-		return false;
-	}
+    const GLFWvidmode *videoMode = glfwGetVideoMode(primary);
+    if (videoMode == NULL) {
+        fprintf(stderr, "Failed to detect primary monitor video mode\n");
+        return false;
+    }
 
-
-	if (width == 0 || height == 0) {
-		width = videoMode->width;
-		height = videoMode->height;
-	}
+    if (width == 0 || height == 0) {
+        width = videoMode->width;
+        height = videoMode->height;
+    }
 
     /* Request OpenGL 3.2 */
     // glfwWindowHint(GLFW_FSAA_SAMPLES, 4);

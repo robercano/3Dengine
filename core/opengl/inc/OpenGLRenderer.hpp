@@ -28,7 +28,7 @@ class OpenGLRenderer : public Renderer
                        RenderTarget &renderTarget, bool disableDepth = false);
     bool renderToShadowMap(RendererModel3D &model3D, Light &light, NormalShadowMapShader &shader);
     bool renderLight(Light &light, Camera &camera, RenderTarget &renderTarget);
-	bool renderBoundingBox(BoundingBox &box, const glm::vec3 &color, Camera &camera, RenderTarget &renderTarget);
+    bool renderBoundingBox(BoundingBox &box, const glm::vec3 &color, Camera &camera, RenderTarget &renderTarget);
     bool resize(uint16_t width, uint16_t height);
     void flush();
 

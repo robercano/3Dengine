@@ -31,7 +31,7 @@ class Game
 {
   public:
     Game(const std::string &name) : _name(name), _gameHandler(NULL), _minRenderFrameMs(10000000.0f), _maxRenderFrameMs(0.0f) {}
-	~Game();
+    ~Game();
     void setHandler(GameHandler *gameHandler) { _gameHandler = gameHandler; }
     void setWindowSize(uint32_t width, uint32_t height, bool fullscreen = false);
     void setFPS(uint32_t FPS, bool unbound = false);

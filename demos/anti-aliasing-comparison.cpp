@@ -264,7 +264,7 @@ int main()
 
     game->loop();
 
-	delete game;
+    delete game;
 
     return 0;
 }

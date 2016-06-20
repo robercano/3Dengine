@@ -277,7 +277,7 @@ bool OBJFormat::load(const string &filename)
     }
 
     /* And finally normalize the vertices */
-	normalize();
+    normalize();
 
     printf("Loaded %s with %zu vertices and %zu faces\n", filename.c_str(), _modelData.size(), _modelIndices.size() / 3);
 

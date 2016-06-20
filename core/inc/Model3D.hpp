@@ -63,7 +63,6 @@ class Model3D : public Object3D
      * Destructor
      */
     virtual ~Model3D() {}
-
     /**
      * Normalizes all vertex data in the Model3D
      *
@@ -73,7 +72,7 @@ class Model3D : public Object3D
      * a model from disk which hasn't been imported before in the engine so the user can
      * make sure the model will be visible on screen
      */
-	void normalize();
+    void normalize();
 
     /**
      * Getter
@@ -89,17 +88,15 @@ class Model3D : public Object3D
     const std::vector<Texture> &getTextures() const { return _textures; }
     const std::vector<uint32_t> &getIndicesOffsets() const { return _indicesOffsets; }
     const std::vector<uint32_t> &getIndicesCount() const { return _indicesCount; }
-
   protected:
     /**
      * Constructor
      */
     Model3D() {}
-
-	/**
-	 * Methods from Object3D class
-	 */
-	void _calculateBoundingVolumes();
+    /**
+     * Methods from Object3D class
+     */
+    void _calculateBoundingVolumes();
 
     std::vector<Model3D::VertexData> _modelData; /**< Data containing the vertex position, normal and UV coordinates */
     std::vector<Material> _materials;            /**< List of materials used in the model */

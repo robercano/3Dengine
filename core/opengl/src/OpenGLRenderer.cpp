@@ -29,7 +29,7 @@ void OpenGLRenderer::init()
     __(glHint(GL_POLYGON_SMOOTH_HINT, GL_DONT_CARE));
 #define GL_MULTISAMPLE_ARB 0x809D
     __(glDisable(GL_MULTISAMPLE_ARB));
-     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glDepthRangef(0.1f, 1000.0f);
 }
 
@@ -238,7 +238,7 @@ bool OpenGLRenderer::renderLight(Light &light, Camera &camera, RenderTarget &ren
 {
     glm::vec3 ambient = (light.getAmbient() + light.getDiffuse() + light.getSpecular()) / 3.0f;
 
-	/* TODO: Create this in the renderer so it does not have to be created every time */
+    /* TODO: Create this in the renderer so it does not have to be created every time */
     Shader *shader = Shader::New();
 
     std::string error;
@@ -294,7 +294,7 @@ bool OpenGLRenderer::renderLight(Light &light, Camera &camera, RenderTarget &ren
 
 bool OpenGLRenderer::renderBoundingBox(BoundingBox &box, const glm::vec3 &color, Camera &camera, RenderTarget &renderTarget)
 {
-	/* TODO: Create this in the renderer so it does not have to be created every time */
+    /* TODO: Create this in the renderer so it does not have to be created every time */
     Shader *shader = Shader::New();
 
     std::string error;
@@ -303,69 +303,55 @@ bool OpenGLRenderer::renderBoundingBox(BoundingBox &box, const glm::vec3 &color,
         return false;
     }
 
-	/* Generate the box triangles */
-	GLfloat boxFaces[] = {
-		/* First face */
-		box.getMin().x, box.getMin().y, box.getMin().z,
-		box.getMin().x, box.getMin().y, box.getMax().z,
-		box.getMin().x, box.getMax().y, box.getMax().z,
+    /* Generate the box triangles */
+    GLfloat boxFaces[] = {/* First face */
+                          box.getMin().x, box.getMin().y, box.getMin().z, box.getMin().x, box.getMin().y, box.getMax().z, box.getMin().x,
+                          box.getMax().y, box.getMax().z,
 
-		box.getMin().x, box.getMin().y, box.getMin().z,
-		box.getMin().x, box.getMax().y, box.getMax().z,
-		box.getMin().x, box.getMax().y, box.getMin().z,
+                          box.getMin().x, box.getMin().y, box.getMin().z, box.getMin().x, box.getMax().y, box.getMax().z, box.getMin().x,
+                          box.getMax().y, box.getMin().z,
 
-		/* Second face */
-		box.getMin().x, box.getMin().y, box.getMin().z,
-		box.getMax().x, box.getMin().y, box.getMin().z,
-		box.getMax().x, box.getMin().y, box.getMax().z,
+                          /* Second face */
+                          box.getMin().x, box.getMin().y, box.getMin().z, box.getMax().x, box.getMin().y, box.getMin().z, box.getMax().x,
+                          box.getMin().y, box.getMax().z,
 
-		box.getMin().x, box.getMin().y, box.getMin().z,
-		box.getMax().x, box.getMin().y, box.getMax().z,
-		box.getMin().x, box.getMin().y, box.getMax().z,
+                          box.getMin().x, box.getMin().y, box.getMin().z, box.getMax().x, box.getMin().y, box.getMax().z, box.getMin().x,
+                          box.getMin().y, box.getMax().z,
 
-		/* Third face */
-		box.getMin().x, box.getMin().y, box.getMin().z,
-		box.getMin().x, box.getMax().y, box.getMin().z,
-		box.getMax().x, box.getMax().y, box.getMin().z,
+                          /* Third face */
+                          box.getMin().x, box.getMin().y, box.getMin().z, box.getMin().x, box.getMax().y, box.getMin().z, box.getMax().x,
+                          box.getMax().y, box.getMin().z,
 
-		box.getMin().x, box.getMin().y, box.getMin().z,
-		box.getMax().x, box.getMax().y, box.getMin().z,
-		box.getMax().x, box.getMin().y, box.getMin().z,
+                          box.getMin().x, box.getMin().y, box.getMin().z, box.getMax().x, box.getMax().y, box.getMin().z, box.getMax().x,
+                          box.getMin().y, box.getMin().z,
 
-		/* Fourth face */
-		box.getMax().x, box.getMax().y, box.getMax().z,
-		box.getMax().x, box.getMin().y, box.getMax().z,
-		box.getMax().x, box.getMin().y, box.getMin().z,
+                          /* Fourth face */
+                          box.getMax().x, box.getMax().y, box.getMax().z, box.getMax().x, box.getMin().y, box.getMax().z, box.getMax().x,
+                          box.getMin().y, box.getMin().z,
 
-		box.getMax().x, box.getMax().y, box.getMax().z,
-		box.getMax().x, box.getMin().y, box.getMin().z,
-		box.getMax().x, box.getMax().y, box.getMin().z,
+                          box.getMax().x, box.getMax().y, box.getMax().z, box.getMax().x, box.getMin().y, box.getMin().z, box.getMax().x,
+                          box.getMax().y, box.getMin().z,
 
-		/* Fifth face */
-		box.getMax().x, box.getMax().y, box.getMax().z,
-		box.getMax().x, box.getMax().y, box.getMin().z,
-		box.getMin().x, box.getMax().y, box.getMin().z,
+                          /* Fifth face */
+                          box.getMax().x, box.getMax().y, box.getMax().z, box.getMax().x, box.getMax().y, box.getMin().z, box.getMin().x,
+                          box.getMax().y, box.getMin().z,
 
-		box.getMax().x, box.getMax().y, box.getMax().z,
-		box.getMin().x, box.getMax().y, box.getMin().z,
-		box.getMin().x, box.getMax().y, box.getMax().z,
+                          box.getMax().x, box.getMax().y, box.getMax().z, box.getMin().x, box.getMax().y, box.getMin().z, box.getMin().x,
+                          box.getMax().y, box.getMax().z,
 
-		/* Sixth face */
-		box.getMax().x, box.getMax().y, box.getMax().z,
-		box.getMin().x, box.getMax().y, box.getMax().z,
-		box.getMin().x, box.getMin().y, box.getMax().z,
+                          /* Sixth face */
+                          box.getMax().x, box.getMax().y, box.getMax().z, box.getMin().x, box.getMax().y, box.getMax().z, box.getMin().x,
+                          box.getMin().y, box.getMax().z,
 
-		box.getMax().x, box.getMax().y, box.getMax().z,
-		box.getMin().x, box.getMin().y, box.getMax().z,
-		box.getMax().x, box.getMin().y, box.getMax().z
-	};
+                          box.getMax().x, box.getMax().y, box.getMax().z, box.getMin().x, box.getMin().y, box.getMax().z, box.getMax().x,
+                          box.getMin().y, box.getMax().z};
 
     /* Calculate MVP matrix, bounding box coordinates are already in world coordinates */
     glm::mat4 MVP = camera.getPerspectiveMatrix() * camera.getViewMatrix();
 
     glEnable(GL_DEPTH_TEST);
     __(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
-	__(glEnable(GL_LINE_SMOOTH));
+    __(glEnable(GL_LINE_SMOOTH));
     __(glDisable(GL_CULL_FACE));
 
     /* Bind the render target */
@@ -378,7 +364,7 @@ bool OpenGLRenderer::renderBoundingBox(BoundingBox &box, const glm::vec3 &color,
 
         /* Send our transformation to the currently bound shader, in the "MVP" uniform */
         shader->setUniformMat4("u_MVPMatrix", &MVP);
-        shader->setUniformVec3("u_boxColor", const_cast<glm::vec3&>(color));
+        shader->setUniformVec3("u_boxColor", const_cast<glm::vec3 &>(color));
 
         __(glGenVertexArrays(1, &boxPosVAO));
         __(glBindVertexArray(boxPosVAO));
@@ -389,16 +375,16 @@ bool OpenGLRenderer::renderBoundingBox(BoundingBox &box, const glm::vec3 &color,
 
         __(glBufferData(GL_ARRAY_BUFFER, sizeof boxFaces, boxFaces, GL_STATIC_DRAW));
 
-		__(glEnableVertexAttribArray(0));
-		__(glVertexAttribPointer(0,         // attribute. No particular reason for 0, but must match the layout in the shader.
-								 3,         // size
-								 GL_FLOAT,  // type
-								 GL_FALSE,  // normalized?
-								 0,         // stride
-								 (void *)0  // array buffer offset
-					             ));
+        __(glEnableVertexAttribArray(0));
+        __(glVertexAttribPointer(0,         // attribute. No particular reason for 0, but must match the layout in the shader.
+                                 3,         // size
+                                 GL_FLOAT,  // type
+                                 GL_FALSE,  // normalized?
+                                 0,         // stride
+                                 (void *)0  // array buffer offset
+                                 ));
 
-        __(glDrawArrays(GL_TRIANGLES, 0, sizeof boxFaces/(3*sizeof *boxFaces)));
+        __(glDrawArrays(GL_TRIANGLES, 0, sizeof boxFaces / (3 * sizeof *boxFaces)));
 
         __(glBindVertexArray(0));
 

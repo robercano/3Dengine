@@ -109,10 +109,10 @@ class ShadowsDemo : public GameHandler
          * renderer API specific structures and uploads data to the graphics card */
         _model3D = game->getRenderer()->prepareModel3D(obj3D);
         _model3D->setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
-		obj3D.setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
+        obj3D.setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
 
-		glm::vec3 angles(0.0f, 45.0f, 0.0f);
-		glm::quat rot = glm::quat(angles);
+        glm::vec3 angles(0.0f, 45.0f, 0.0f);
+        glm::quat rot = glm::quat(angles);
         _model3D->rotate(glm::toMat4(rot));
         obj3D.rotate(glm::toMat4(rot));
 
@@ -315,8 +315,8 @@ class ShadowsDemo : public GameHandler
         game->getRenderer()->renderModel3D(*_plane3D, _camera, *_shaderBlinnLight, _enableDirectLight ? _sun : NULL,
                                            _enablePointLight ? _pointLights : _emptyPointLights,
                                            _enableSpotLight ? _spotLights : _emptySpotLights, 0.2f, *_renderTargetNormal);
-		game->getRenderer()->renderBoundingBox(obj3D.getAABB(), glm::vec3(0.0f, 0.0f, 1.0f), _camera, *_renderTargetNormal);
-		game->getRenderer()->renderBoundingBox(obj3D.getOOBB(), glm::vec3(0.0f, 1.0f, 0.0f), _camera, *_renderTargetNormal);
+        game->getRenderer()->renderBoundingBox(obj3D.getAABB(), glm::vec3(0.0f, 0.0f, 1.0f), _camera, *_renderTargetNormal);
+        game->getRenderer()->renderBoundingBox(obj3D.getOOBB(), glm::vec3(0.0f, 1.0f, 0.0f), _camera, *_renderTargetNormal);
 
         _renderTargetNormal->blit();
         //_spotLights[0]->getShadowMap()->blit();
@@ -328,7 +328,7 @@ class ShadowsDemo : public GameHandler
     }
 
   private:
-	OBJFormat obj3D;
+    OBJFormat obj3D;
     Camera _camera;
     FlyMotion _cameraMotion;
     RendererModel3D *_model3D;
@@ -371,7 +371,7 @@ int main()
 #if defined(_WIN32)
     game->setWindowSize(800, 600, false);
 #else
-    game->setWindowSize(2560, 1440,true);
+    game->setWindowSize(2560, 1440, true);
 #endif
     game->setFPS(60);
 
@@ -382,7 +382,7 @@ int main()
 
     game->loop();
 
-	delete game;
+    delete game;
 
     return 0;
 }

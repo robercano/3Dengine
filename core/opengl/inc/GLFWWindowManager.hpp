@@ -105,9 +105,9 @@ class GLFWWindowManager : public WindowManager
      */
     static void handle_resize(GLFWwindow *w, int width, int height);
 
-	/**
-	 * Window handle
-	 */
+    /**
+     * Window handle
+     */
     GLFWwindow *_window;
 
     /**
@@ -120,10 +120,10 @@ class GLFWWindowManager : public WindowManager
      */
     uint16_t _height;
 
-	/**
-	 * Fullscreen was requested
-	 */
-	bool _fullscreen;
+    /**
+     * Fullscreen was requested
+     */
+    bool _fullscreen;
 
     /**
      * Renderer associated to this manager

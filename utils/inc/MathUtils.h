@@ -7,9 +7,8 @@
 
 #include <stdint.h>
 
-namespace MathUtils {
-
+namespace MathUtils
+{
 uint32_t clp2(uint32_t x);
 float restrictAngle(float angle);
-
 }

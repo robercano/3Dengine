@@ -28,8 +28,8 @@ class Object3D
         , _model(glm::mat4(1.0f))
         , _modelValid(true)
         , _viewValid(true)
-		, _aabbValid(true)
-		, _oobbValid(true)
+        , _aabbValid(true)
+        , _oobbValid(true)
     {
     }
 
@@ -45,7 +45,7 @@ class Object3D
         _position += amount;
         _modelValid = false;
         _viewValid = false;
-		_aabbValid = false;
+        _aabbValid = false;
     }
 
     /**
@@ -60,7 +60,7 @@ class Object3D
         _orientation = rotation * _orientation;
         _modelValid = false;
         _viewValid = false;
-		_aabbValid = false;
+        _aabbValid = false;
     }
 
     /**
@@ -76,8 +76,8 @@ class Object3D
         _scale *= factor;
         _modelValid = false;
         _viewValid = false;
-		_aabbValid = false;
-		_oobbValid = false;
+        _aabbValid = false;
+        _oobbValid = false;
     }
 
     /**
@@ -100,7 +100,7 @@ class Object3D
         _modelValid = true;
         _viewValid = true;
 
-		_aabbValid = false;
+        _aabbValid = false;
     }
 
     /**
@@ -114,7 +114,7 @@ class Object3D
         _modelValid = false;
         _viewValid = false;
 
-		_aabbValid = false;
+        _aabbValid = false;
     }
     void setOrientation(const glm::mat4 &orientation)
     {
@@ -122,15 +122,15 @@ class Object3D
         _modelValid = false;
         _viewValid = false;
 
-		_aabbValid = false;
+        _aabbValid = false;
     }
     void setScaleFactor(const glm::vec3 &factor)
     {
         _scale = factor;
         _modelValid = false;
         _viewValid = false;
-		_aabbValid = false;
-		_oobbValid = false;
+        _aabbValid = false;
+        _oobbValid = false;
     }
 
     /**
@@ -179,78 +179,80 @@ class Object3D
         return _view;
     }
 
-	BoundingSphere &getBoundingSphere()
-	{
-		if (_oobbValid == false) {
-			_calculateBoundingVolumes();
-			_oobbValid = true;
-		}
-		if (_aabbValid == false) {
-			_updateBoundingVolumes();
-			_aabbValid = true;
-		}
-		return _boundingSphere;
-	}
+    BoundingSphere &getBoundingSphere()
+    {
+        if (_oobbValid == false) {
+            _calculateBoundingVolumes();
+            _oobbValid = true;
+        }
+        if (_aabbValid == false) {
+            _updateBoundingVolumes();
+            _aabbValid = true;
+        }
+        return _boundingSphere;
+    }
 
-	BoundingBox &getAABB() {
-		if (_oobbValid == false) {
-			_calculateBoundingVolumes();
-			_oobbValid = true;
-		}
-		if (_aabbValid == false) {
-			_updateBoundingVolumes();
-			_aabbValid = true;
-		}
-		return _aabb;
-	}
-	BoundingBox &getOOBB() {
-		if (_oobbValid == false) {
-			_calculateBoundingVolumes();
-			_oobbValid = true;
-		}
-		if (_aabbValid == false) {
-			_updateBoundingVolumes();
-			_aabbValid = true;
-		}
-		return _oobb;
-	}
+    BoundingBox &getAABB()
+    {
+        if (_oobbValid == false) {
+            _calculateBoundingVolumes();
+            _oobbValid = true;
+        }
+        if (_aabbValid == false) {
+            _updateBoundingVolumes();
+            _aabbValid = true;
+        }
+        return _aabb;
+    }
+    BoundingBox &getOOBB()
+    {
+        if (_oobbValid == false) {
+            _calculateBoundingVolumes();
+            _oobbValid = true;
+        }
+        if (_aabbValid == false) {
+            _updateBoundingVolumes();
+            _aabbValid = true;
+        }
+        return _oobb;
+    }
 
   protected:
-	/**
-	 * Calculates the bounding volumes for a Model3D
-	 *
-	 * The bounding volumes include the BoundingSphere, the OOBB and the AABB.
-	 * This performs a full recalculation of all the volumes assuming no prior
-	 * information can be reused
-	 *
-	 * This method must be overriden in inheriting classes to calculate the
-	 * proper bounding volumes based on the inheriting class data
-	 */
-	virtual void _calculateBoundingVolumes() { /* empty */ }
+    /**
+     * Calculates the bounding volumes for a Model3D
+     *
+     * The bounding volumes include the BoundingSphere, the OOBB and the AABB.
+     * This performs a full recalculation of all the volumes assuming no prior
+     * information can be reused
+     *
+     * This method must be overriden in inheriting classes to calculate the
+     * proper bounding volumes based on the inheriting class data
+     */
+    virtual void _calculateBoundingVolumes() { /* empty */}
 
-	/**
-	 * Updates the bounding volumes of a model. In this case the AABB
-	 * is used to speed up the calculation of the bounding sphere and the
-	 * OOBB
-	 *
-	 * Fast calculation idea copied from
-	 *    http://zeuxcg.org/2010/10/17/aabb-from-obb-with-component-wise-abs/
-	 */
-	void _updateBoundingVolumes()
-	{
-		glm::vec3 center = (_oobb.getMin() + _oobb.getMax())/2.0f;
-		glm::vec3 extent = (_oobb.getMax() - _oobb.getMin())/2.0f;
+    /**
+     * Updates the bounding volumes of a model. In this case the AABB
+     * is used to speed up the calculation of the bounding sphere and the
+     * OOBB
+     *
+     * Fast calculation idea copied from
+     *    http://zeuxcg.org/2010/10/17/aabb-from-obb-with-component-wise-abs/
+     */
+    void _updateBoundingVolumes()
+    {
+        glm::vec3 center = (_oobb.getMin() + _oobb.getMax()) / 2.0f;
+        glm::vec3 extent = (_oobb.getMax() - _oobb.getMin()) / 2.0f;
 
-		glm::vec3 newCenter = glm::vec3(_orientation * glm::vec4(center, 1.0f));
-		glm::vec3 newExtent = glm::vec3(_orientation * glm::vec4(extent, 1.0f));
+        glm::vec3 newCenter = glm::vec3(_orientation * glm::vec4(center, 1.0f));
+        glm::vec3 newExtent = glm::vec3(_orientation * glm::vec4(extent, 1.0f));
 
-		glm::vec3 min = newCenter - newExtent;
-		glm::vec3 max = newCenter + newExtent;
+        glm::vec3 min = newCenter - newExtent;
+        glm::vec3 max = newCenter + newExtent;
 
-		_aabb.setMin(newCenter - newExtent);
-		_aabb.setMax(newCenter + newExtent);
-		_boundingSphere.setRadius(glm::length(newExtent));
-	}
+        _aabb.setMin(newCenter - newExtent);
+        _aabb.setMax(newCenter + newExtent);
+        _boundingSphere.setRadius(glm::length(newExtent));
+    }
 
     glm::vec3 _position;    /**< Position of the object in world coordinates */
     glm::mat4 _orientation; /**< Orientation of the object as a quaternion */
@@ -260,10 +262,9 @@ class Object3D
     bool _modelValid;       /**< If true, current model matrix is cached and does not need recalculation */
     bool _viewValid;        /**< If true, current view matrix is cached and does not need recalculation */
 
-	BoundingSphere _boundingSphere; /**< Bounding sphere containing all model's vertices */
-	BoundingBox    _aabb;           /**< Axis-aligned bounding box containing all model's vertices */
-	BoundingBox    _oobb;           /**< Object-oriented bounding box containing all model's vertices */
-	bool _aabbValid;                /**< Indicates if the cached information for the AABB is still valid */
-	bool _oobbValid;                /**< Indicates if the cached information for the AABB is still valid */
-
+    BoundingSphere _boundingSphere; /**< Bounding sphere containing all model's vertices */
+    BoundingBox _aabb;              /**< Axis-aligned bounding box containing all model's vertices */
+    BoundingBox _oobb;              /**< Object-oriented bounding box containing all model's vertices */
+    bool _aabbValid;                /**< Indicates if the cached information for the AABB is still valid */
+    bool _oobbValid;                /**< Indicates if the cached information for the AABB is still valid */
 };

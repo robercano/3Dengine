@@ -9,6 +9,7 @@
 #include <glm/glm.hpp>
 #include <string>
 #include <vector>
+#include "BoundingBox.hpp"
 #include "Camera.hpp"
 #include "DirectLight.hpp"
 #include "LightingShader.hpp"
@@ -18,7 +19,6 @@
 #include "RenderTarget.hpp"
 #include "RendererModel3D.hpp"
 #include "SpotLight.hpp"
-#include "BoundingBox.hpp"
 
 class Renderer
 {
