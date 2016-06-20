@@ -5,7 +5,7 @@
  */
 #include "MathUtils.h"
 
-uint32_t clp2(uint32_t x)
+uint32_t MathUtils::clp2(uint32_t x)
 {
     x--;
     x |= (x >> 1);
@@ -16,7 +16,7 @@ uint32_t clp2(uint32_t x)
     return x + 1;
 }
 
-float restrictAngle(float angle)
+float MathUtils::restrictAngle(float angle)
 {
     if (angle >= 360.0)
         angle -= 360.0;

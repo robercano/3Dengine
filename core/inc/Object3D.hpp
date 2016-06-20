@@ -12,6 +12,8 @@
 #include <glm/gtc/matrix_access.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include "BoundingBox.hpp"
+#include "BoundingSphere.hpp"
 
 class Object3D
 {
@@ -26,6 +28,8 @@ class Object3D
         , _model(glm::mat4(1.0f))
         , _modelValid(true)
         , _viewValid(true)
+		, _aabbValid(true)
+		, _oobbValid(true)
     {
     }
 
@@ -41,6 +45,7 @@ class Object3D
         _position += amount;
         _modelValid = false;
         _viewValid = false;
+		_aabbValid = false;
     }
 
     /**
@@ -55,6 +60,7 @@ class Object3D
         _orientation = rotation * _orientation;
         _modelValid = false;
         _viewValid = false;
+		_aabbValid = false;
     }
 
     /**
@@ -70,6 +76,8 @@ class Object3D
         _scale *= factor;
         _modelValid = false;
         _viewValid = false;
+		_aabbValid = false;
+		_oobbValid = false;
     }
 
     /**
@@ -91,6 +99,8 @@ class Object3D
 
         _modelValid = true;
         _viewValid = true;
+
+		_aabbValid = false;
     }
 
     /**
@@ -103,18 +113,24 @@ class Object3D
         _position = position;
         _modelValid = false;
         _viewValid = false;
+
+		_aabbValid = false;
     }
     void setOrientation(const glm::mat4 &orientation)
     {
         _orientation = orientation;
         _modelValid = false;
         _viewValid = false;
+
+		_aabbValid = false;
     }
     void setScaleFactor(const glm::vec3 &factor)
     {
         _scale = factor;
         _modelValid = false;
         _viewValid = false;
+		_aabbValid = false;
+		_oobbValid = false;
     }
 
     /**
@@ -163,7 +179,52 @@ class Object3D
         return _view;
     }
 
+	BoundingSphere &getBoundingSphere()
+	{
+		if (_oobbValid == false) {
+			_calculateBoundingVolumes();
+		}
+		if (_aabbValid == false) {
+			_updateBoundingVolumes();
+		}
+			return _boundingSphere; }
+	BoundingBox &getAABB() { return _aabb; }
+	BoundingBox &getOOBB() { return _oobb; }
+
   protected:
+	/**
+	 * Calculates the bounding volumes for a Model3D
+	 *
+	 * The bounding volumes include the BoundingSphere, the OOBB and the AABB.
+	 * This performs a full recalculation of all the volumes assuming no prior
+	 * information can be reused
+	 *
+	 * This method must be overriden in inheriting classes to calculate the
+	 * proper bounding volumes based on the inheriting class data
+	 */
+	virtual void _calculateBoundingVolumes() { /* empty */ }
+
+	/**
+	 * Updates the bounding volumes of a model. In this case the AABB
+	 * is used to speed up the calculation of the bounding sphere and the
+	 * OOBB
+	 *
+	 * Fast calculation idea copied from
+	 *    http://zeuxcg.org/2010/10/17/aabb-from-obb-with-component-wise-abs/
+	 */
+	void _updateBoundingVolumes()
+	{
+		glm::vec3 center = (_aabb.getMin() + _aabb.getMax())/2.0f;
+		glm::vec3 extent = (_aabb.getMax() - _aabb.getMin())/2.0f;
+
+		glm::vec3 newCenter = glm::vec3(_orientation * glm::vec4(center, 1.0f));
+		glm::vec3 newExtent = glm::vec3(_orientation * glm::vec4(extent, 1.0f));
+
+		_aabb.setMin(newCenter - newExtent);
+		_aabb.setMax(newCenter + newExtent);
+		_boundingSphere.setRadius(glm::length(newExtent));
+	}
+
     glm::vec3 _position;    /**< Position of the object in world coordinates */
     glm::mat4 _orientation; /**< Orientation of the object as a quaternion */
     glm::vec3 _scale;       /**< Scale factors for each axis XYZ */
@@ -171,4 +232,11 @@ class Object3D
     glm::mat4 _view;        /**< Current view matrix of the object */
     bool _modelValid;       /**< If true, current model matrix is cached and does not need recalculation */
     bool _viewValid;        /**< If true, current view matrix is cached and does not need recalculation */
+
+	BoundingSphere _boundingSphere; /**< Bounding sphere containing all model's vertices */
+	BoundingBox    _aabb;           /**< Axis-aligned bounding box containing all model's vertices */
+	BoundingBox    _oobb;           /**< Object-oriented bounding box containing all model's vertices */
+	bool _aabbValid;                /**< Indicates if the cached information for the AABB is still valid */
+	bool _oobbValid;                /**< Indicates if the cached information for the AABB is still valid */
+
 };

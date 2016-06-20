@@ -7,13 +7,9 @@
 
 #include <stdint.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace MathUtils {
 
 uint32_t clp2(uint32_t x);
 float restrictAngle(float angle);
 
-#ifdef __cplusplus
 }
-#endif

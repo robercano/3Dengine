@@ -63,8 +63,9 @@ class Model3D : public Object3D
      * Destructor
      */
     virtual ~Model3D() {}
+
     /**
-     * Normalizes all vertex data in the model
+     * Normalizes all vertex data in the Model3D
      *
      * This method calculates the center of mass of all vertices in the model
      * and then normalizes all vertices with respect to this CoM so the maximum length
@@ -72,7 +73,7 @@ class Model3D : public Object3D
      * a model from disk which hasn't been imported before in the engine so the user can
      * make sure the model will be visible on screen
      */
-    void normalize();
+	void normalize();
 
     /**
      * Getter
@@ -88,21 +89,18 @@ class Model3D : public Object3D
     const std::vector<Texture> &getTextures() const { return _textures; }
     const std::vector<uint32_t> &getIndicesOffsets() const { return _indicesOffsets; }
     const std::vector<uint32_t> &getIndicesCount() const { return _indicesCount; }
+
   protected:
     /**
      * Constructor
      */
     Model3D() {}
-    /**
-     * Convenience function to calculate the center of mass of the model
-     *
-     * It loops through all vertices in the model assuming the same weight for
-     * all of them and then finds the center of mass
-     *
-     * @param cm   Out parameter containing the center of mass for the current
-     *             set of vertices
-     */
-    void _calculateCenterOfMass(glm::vec3 &cm);
+
+	/**
+	 * Methods from Object3D class
+	 */
+	void _calculateBoundingVolumes();
+	void _updateBoundingVolumes();
 
     std::vector<Model3D::VertexData> _modelData; /**< Data containing the vertex position, normal and UV coordinates */
     std::vector<Material> _materials;            /**< List of materials used in the model */

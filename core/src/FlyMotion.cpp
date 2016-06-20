@@ -53,5 +53,5 @@ void FlyMotion::reset()
 void FlyMotion::setPosition(const glm::vec3 &pos) { _position = pos; }
 void FlyMotion::forward(float amount) { _forwardAmount += amount; }
 void FlyMotion::right(float amount) { _rightAmount += amount; }
-void FlyMotion::rotatePitch(float angle) { _pitch = restrictAngle(_pitch + angle); }
-void FlyMotion::rotateYaw(float angle) { _yaw = restrictAngle(_yaw + angle); }
+void FlyMotion::rotatePitch(float angle) { _pitch = MathUtils::restrictAngle(_pitch + angle); }
+void FlyMotion::rotateYaw(float angle) { _yaw = MathUtils::restrictAngle(_yaw + angle); }

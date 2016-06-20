@@ -87,18 +87,18 @@ void FreeFlyMotion::up(float amount)
 
 void FreeFlyMotion::rotatePitch(float angle)
 {
-    _pitch = restrictAngle(_pitch + angle);
+    _pitch = MathUtils::restrictAngle(_pitch + angle);
     _recalculate = true;
 }
 
 void FreeFlyMotion::rotateYaw(float angle)
 {
-    _yaw = restrictAngle(_yaw + angle);
+    _yaw = MathUtils::restrictAngle(_yaw + angle);
     _recalculate = true;
 }
 
 void FreeFlyMotion::rotateRoll(float angle)
 {
-    _roll = restrictAngle(_roll + angle);
+    _roll = MathUtils::restrictAngle(_roll + angle);
     _recalculate = true;
 }

@@ -28,7 +28,7 @@ CORE_FILES=Game.cpp InputManager.cpp WindowManager.cpp TimeManager.cpp \
 		   BlinnPhongShader.cpp ToonLightingShader.cpp NormalShadowMapShader.cpp \
 		   FlyMotion.cpp FreeFlyMotion.cpp WalkingMotion.cpp
 
-UTILS_FILES=MathUtils.c ImageLoaders.c
+UTILS_FILES=MathUtils.cpp ImageLoaders.c
 
 OPENGL_FILES=GLFWKeyManager.cpp GLFWMouseManager.cpp GLFWWindowManager.cpp \
 			 OpenGLModel3D.cpp \

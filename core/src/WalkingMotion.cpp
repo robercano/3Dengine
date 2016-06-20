@@ -56,5 +56,5 @@ void WalkingMotion::reset()
 void WalkingMotion::setPosition(const glm::vec3 &pos) { _position = pos; }
 void WalkingMotion::forward(float amount) { _forwardAmount += amount; }
 void WalkingMotion::right(float amount) { _rightAmount += amount; }
-void WalkingMotion::rotatePitch(float angle) { _pitch = restrictAngle(_pitch + angle); }
-void WalkingMotion::rotateYaw(float angle) { _yaw = restrictAngle(_yaw + angle); }
+void WalkingMotion::rotatePitch(float angle) { _pitch = MathUtils::restrictAngle(_pitch + angle); }
+void WalkingMotion::rotateYaw(float angle) { _yaw = MathUtils::restrictAngle(_yaw + angle); }
