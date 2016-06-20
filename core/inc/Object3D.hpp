@@ -183,13 +183,37 @@ class Object3D
 	{
 		if (_oobbValid == false) {
 			_calculateBoundingVolumes();
+			_oobbValid = true;
 		}
 		if (_aabbValid == false) {
 			_updateBoundingVolumes();
+			_aabbValid = true;
 		}
-			return _boundingSphere; }
-	BoundingBox &getAABB() { return _aabb; }
-	BoundingBox &getOOBB() { return _oobb; }
+		return _boundingSphere;
+	}
+
+	BoundingBox &getAABB() {
+		if (_oobbValid == false) {
+			_calculateBoundingVolumes();
+			_oobbValid = true;
+		}
+		if (_aabbValid == false) {
+			_updateBoundingVolumes();
+			_aabbValid = true;
+		}
+		return _aabb;
+	}
+	BoundingBox &getOOBB() {
+		if (_oobbValid == false) {
+			_calculateBoundingVolumes();
+			_oobbValid = true;
+		}
+		if (_aabbValid == false) {
+			_updateBoundingVolumes();
+			_aabbValid = true;
+		}
+		return _oobb;
+	}
 
   protected:
 	/**
@@ -214,11 +238,14 @@ class Object3D
 	 */
 	void _updateBoundingVolumes()
 	{
-		glm::vec3 center = (_aabb.getMin() + _aabb.getMax())/2.0f;
-		glm::vec3 extent = (_aabb.getMax() - _aabb.getMin())/2.0f;
+		glm::vec3 center = (_oobb.getMin() + _oobb.getMax())/2.0f;
+		glm::vec3 extent = (_oobb.getMax() - _oobb.getMin())/2.0f;
 
 		glm::vec3 newCenter = glm::vec3(_orientation * glm::vec4(center, 1.0f));
 		glm::vec3 newExtent = glm::vec3(_orientation * glm::vec4(extent, 1.0f));
+
+		glm::vec3 min = newCenter - newExtent;
+		glm::vec3 max = newCenter + newExtent;
 
 		_aabb.setMin(newCenter - newExtent);
 		_aabb.setMax(newCenter + newExtent);

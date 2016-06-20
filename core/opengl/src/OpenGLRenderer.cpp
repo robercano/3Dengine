@@ -29,7 +29,7 @@ void OpenGLRenderer::init()
     __(glHint(GL_POLYGON_SMOOTH_HINT, GL_DONT_CARE));
 #define GL_MULTISAMPLE_ARB 0x809D
     __(glDisable(GL_MULTISAMPLE_ARB));
-    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glDepthRangef(0.1f, 1000.0f);
 }
 
@@ -68,6 +68,7 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera, Lig
     } else {
         glEnable(GL_DEPTH_TEST);
     }
+
     /* Bind the render target */
     renderTarget.bind();
     {
@@ -237,6 +238,7 @@ bool OpenGLRenderer::renderLight(Light &light, Camera &camera, RenderTarget &ren
 {
     glm::vec3 ambient = (light.getAmbient() + light.getDiffuse() + light.getSpecular()) / 3.0f;
 
+	/* TODO: Create this in the renderer so it does not have to be created every time */
     Shader *shader = Shader::New();
 
     std::string error;
@@ -247,9 +249,6 @@ bool OpenGLRenderer::renderLight(Light &light, Camera &camera, RenderTarget &ren
 
     /* Calculate MVP matrix */
     glm::mat4 MVP = camera.getPerspectiveMatrix() * camera.getViewMatrix() * light.getModelMatrix();
-
-    /* Calculate normal matrix */
-    glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(light.getModelMatrix())));
 
     glEnable(GL_DEPTH_TEST);
 
@@ -292,6 +291,133 @@ bool OpenGLRenderer::renderLight(Light &light, Camera &camera, RenderTarget &ren
 
     return true;
 }
+
+bool OpenGLRenderer::renderBoundingBox(BoundingBox &box, const glm::vec3 &color, Camera &camera, RenderTarget &renderTarget)
+{
+	/* TODO: Create this in the renderer so it does not have to be created every time */
+    Shader *shader = Shader::New();
+
+    std::string error;
+    if (shader->use("utils/render_boundingbox", error) != true) {
+        printf("ERROR loading utils/render_boundingbox shader: %s\n", error.c_str());
+        return false;
+    }
+
+	/* Generate the box triangles */
+	GLfloat boxFaces[] = {
+		/* First face */
+		box.getMin().x, box.getMin().y, box.getMin().z,
+		box.getMin().x, box.getMin().y, box.getMax().z,
+		box.getMin().x, box.getMax().y, box.getMax().z,
+
+		box.getMin().x, box.getMin().y, box.getMin().z,
+		box.getMin().x, box.getMax().y, box.getMax().z,
+		box.getMin().x, box.getMax().y, box.getMin().z,
+
+		/* Second face */
+		box.getMin().x, box.getMin().y, box.getMin().z,
+		box.getMax().x, box.getMin().y, box.getMin().z,
+		box.getMax().x, box.getMin().y, box.getMax().z,
+
+		box.getMin().x, box.getMin().y, box.getMin().z,
+		box.getMax().x, box.getMin().y, box.getMax().z,
+		box.getMin().x, box.getMin().y, box.getMax().z,
+
+		/* Third face */
+		box.getMin().x, box.getMin().y, box.getMin().z,
+		box.getMin().x, box.getMax().y, box.getMin().z,
+		box.getMax().x, box.getMax().y, box.getMin().z,
+
+		box.getMin().x, box.getMin().y, box.getMin().z,
+		box.getMax().x, box.getMax().y, box.getMin().z,
+		box.getMax().x, box.getMin().y, box.getMin().z,
+
+		/* Fourth face */
+		box.getMax().x, box.getMax().y, box.getMax().z,
+		box.getMax().x, box.getMin().y, box.getMax().z,
+		box.getMax().x, box.getMin().y, box.getMin().z,
+
+		box.getMax().x, box.getMax().y, box.getMax().z,
+		box.getMax().x, box.getMin().y, box.getMin().z,
+		box.getMax().x, box.getMax().y, box.getMin().z,
+
+		/* Fifth face */
+		box.getMax().x, box.getMax().y, box.getMax().z,
+		box.getMax().x, box.getMax().y, box.getMin().z,
+		box.getMin().x, box.getMax().y, box.getMin().z,
+
+		box.getMax().x, box.getMax().y, box.getMax().z,
+		box.getMin().x, box.getMax().y, box.getMin().z,
+		box.getMin().x, box.getMax().y, box.getMax().z,
+
+		/* Sixth face */
+		box.getMax().x, box.getMax().y, box.getMax().z,
+		box.getMin().x, box.getMax().y, box.getMax().z,
+		box.getMin().x, box.getMin().y, box.getMax().z,
+
+		box.getMax().x, box.getMax().y, box.getMax().z,
+		box.getMin().x, box.getMin().y, box.getMax().z,
+		box.getMax().x, box.getMin().y, box.getMax().z
+	};
+
+    /* Calculate MVP matrix, bounding box coordinates are already in world coordinates */
+    glm::mat4 MVP = camera.getPerspectiveMatrix() * camera.getViewMatrix();
+
+    glEnable(GL_DEPTH_TEST);
+    __(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
+	__(glEnable(GL_LINE_SMOOTH));
+    __(glDisable(GL_CULL_FACE));
+
+    /* Bind the render target */
+    renderTarget.bind();
+    {
+        GLuint boxPosVAO, boxPosVBO;
+
+        /* Bind program to upload the uniform */
+        shader->attach();
+
+        /* Send our transformation to the currently bound shader, in the "MVP" uniform */
+        shader->setUniformMat4("u_MVPMatrix", &MVP);
+        shader->setUniformVec3("u_boxColor", const_cast<glm::vec3&>(color));
+
+        __(glGenVertexArrays(1, &boxPosVAO));
+        __(glBindVertexArray(boxPosVAO));
+
+        __(glGenBuffers(1, &boxPosVBO));
+
+        __(glBindBuffer(GL_ARRAY_BUFFER, boxPosVBO));
+
+        __(glBufferData(GL_ARRAY_BUFFER, sizeof boxFaces, boxFaces, GL_STATIC_DRAW));
+
+		__(glEnableVertexAttribArray(0));
+		__(glVertexAttribPointer(0,         // attribute. No particular reason for 0, but must match the layout in the shader.
+								 3,         // size
+								 GL_FLOAT,  // type
+								 GL_FALSE,  // normalized?
+								 0,         // stride
+								 (void *)0  // array buffer offset
+					             ));
+
+        __(glDrawArrays(GL_TRIANGLES, 0, sizeof boxFaces/(3*sizeof *boxFaces)));
+
+        __(glBindVertexArray(0));
+
+        __(glDeleteBuffers(1, &boxPosVBO));
+        __(glDeleteVertexArrays(1, &boxPosVAO));
+
+        /* Unbind */
+        shader->detach();
+    }
+    renderTarget.unbind();
+
+    __(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
+    __(glEnable(GL_CULL_FACE));
+
+    Shader::Delete(shader);
+
+    return true;
+}
+
 bool OpenGLRenderer::resize(uint16_t width, uint16_t height)
 {
     _width = width;

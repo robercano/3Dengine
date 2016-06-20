@@ -100,7 +100,6 @@ class Model3D : public Object3D
 	 * Methods from Object3D class
 	 */
 	void _calculateBoundingVolumes();
-	void _updateBoundingVolumes();
 
     std::vector<Model3D::VertexData> _modelData; /**< Data containing the vertex position, normal and UV coordinates */
     std::vector<Material> _materials;            /**< List of materials used in the model */

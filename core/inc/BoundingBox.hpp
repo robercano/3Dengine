@@ -20,7 +20,7 @@ class BoundingBox
 	BoundingBox() :
 		_min(glm::vec3(-1.0f, -1.0f, -1.0f)),
 		_max(glm::vec3(1.0f, 1.0f, 1.0f)) {}
-    BoundingBox(const glm::vec3 &max, const glm::vec3 &min) :
+    BoundingBox(const glm::vec3 &min, const glm::vec3 &max) :
      _min(min),
 	 _max(max) {}
 

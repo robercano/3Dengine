@@ -18,6 +18,7 @@
 #include "RenderTarget.hpp"
 #include "RendererModel3D.hpp"
 #include "SpotLight.hpp"
+#include "BoundingBox.hpp"
 
 class Renderer
 {
@@ -74,6 +75,7 @@ class Renderer
                                RenderTarget &renderTarget, bool disableDepth = false) = 0;
     virtual bool renderToShadowMap(RendererModel3D &model3D, Light &camera, NormalShadowMapShader &shader) = 0;
     virtual bool renderLight(Light &light, Camera &camera, RenderTarget &renderTarget) = 0;
+    virtual bool renderBoundingBox(BoundingBox &box, const glm::vec3 &color, Camera &camera, RenderTarget &renderTarget) = 0;
 
     /**
      * Adjusts the renderer's display size
