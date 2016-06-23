@@ -162,7 +162,7 @@
     <ClCompile Include="core\src\WalkingMotion.cpp" />
     <ClCompile Include="core\src\WindowManager.cpp" />
     <ClCompile Include="utils\src\ImageLoaders.c" />
-    <ClCompile Include="utils\src\MathUtils.c" />
+    <ClCompile Include="utils\src\MathUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3rdparty\glm\core\func_common.hpp" />
