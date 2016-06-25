@@ -30,4 +30,9 @@ class FBRenderTarget : public RenderTarget
      * @param target  Pointer to the allocated FBRenderTarget
      */
     static void Delete(FBRenderTarget *target);
+
+    /**
+     * Destructor
+     */
+    virtual ~FBRenderTarget() {}
 };

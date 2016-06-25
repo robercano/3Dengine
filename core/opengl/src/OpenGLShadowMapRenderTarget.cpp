@@ -141,5 +141,6 @@ void OpenGLShadowMapRenderTarget::clear()
 {
     __(glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer));
     __(glClearColor(_r, _g, _b, _a));
+    __(glClearDepth(1.0f));
     __(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }

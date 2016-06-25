@@ -40,6 +40,11 @@ class FontRenderer
     static void Delete(FontRenderer *fontRenderer);
 
     /**
+     * Destructor
+     */
+    virtual ~FontRenderer() {}
+
+    /**
      * Sets the new font to be used for rendering
      *
      * @param font  The new font to be used for rendering

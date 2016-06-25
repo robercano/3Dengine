@@ -42,4 +42,9 @@ class OpenGLRenderer : public Renderer
      * Height of the display
      */
     uint16_t _height;
+
+    /**
+     * Dummy texture for some GLSL 3.30 workaround
+     */
+    unsigned int _dummyTexture;
 };

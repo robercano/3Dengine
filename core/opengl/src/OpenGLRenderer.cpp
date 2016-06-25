@@ -8,6 +8,7 @@
 #include "OpenGLModel3D.hpp"
 #include "OpenGLRenderer.hpp"
 #include "OpenGLShader.hpp"
+#include "OpenGLLightingShader.hpp"
 
 void OpenGLRenderer::init()
 {
@@ -30,7 +31,23 @@ void OpenGLRenderer::init()
 #define GL_MULTISAMPLE_ARB 0x809D
     __(glDisable(GL_MULTISAMPLE_ARB));
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glDepthRangef(0.1f, 1000.0f);
+    __(glDepthRangef(0.1f, 1000.0f));
+
+    /* Generate a fake texture to fullfill GLSL 3.3 requirement
+     * on some cards that need all samplers to be bound to a valid
+     * texture, even if they are not used */
+    __(glGenTextures(1, &_dummyTexture));
+
+    /* TODO: Once we use our own format, this should not be needed */
+    __(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
+    __(glBindTexture(GL_TEXTURE_2D, _dummyTexture));
+    {
+        __(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+        __(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+        __(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
+        __(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
+    }
+    __(glBindTexture(GL_TEXTURE_2D, 0));
 }
 
 const char *OpenGLRenderer::getName() { return (const char *)glGetString(GL_RENDERER); }
@@ -53,6 +70,7 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera, Lig
 {
     glm::mat4 biasMatrix(0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.5, 0.5, 0.5, 1.0);
     GLuint textureUnit = 0;
+    GLuint dummyTextureUnit = 0;
 
     /* Calculate MVP matrix */
     glm::mat4 MVP = camera.getPerspectiveMatrix() * camera.getViewMatrix() * model3D.getModelMatrix();
@@ -85,6 +103,11 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera, Lig
         shader.setUniformTexture2D("u_diffuseMap", textureUnit++);
         shader.setUniformFloat("u_ambientK", ambientK);
 
+        /* Activate and bind unit 0 for the dummy texture */
+        dummyTextureUnit = textureUnit++;
+        __(glActiveTexture(GL_TEXTURE0 + dummyTextureUnit));
+        __(glBindTexture(GL_TEXTURE_2D, _dummyTexture));
+
         /* Set the sun light */
         if (sun != NULL) {
             glm::mat4 shadowMVP = sun->getProjectionMatrix() * sun->getViewMatrix() * model3D.getModelMatrix();
@@ -103,11 +126,12 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera, Lig
             textureUnit++;
         } else {
             shader.setUniformUint("u_numDirectLights", 0);
+            shader.setUniformTexture2D("u_shadowMapDirectLight", dummyTextureUnit);
         }
 
         /* Point lights */
         glm::mat4 *shadowMVPArray = new glm::mat4[pointLights.size()];
-        GLuint *texturesArray = new GLuint[pointLights.size()];
+        GLuint texturesArray[OpenGLLightingShader::MAX_LIGHTS];
 
         for (uint32_t numLight = 0; numLight < pointLights.size(); ++numLight) {
             shader.setPointLight(numLight, *pointLights[numLight]);
@@ -124,18 +148,19 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera, Lig
 
             textureUnit++;
         }
+        for (uint32_t numLight = pointLights.size(); numLight < OpenGLLightingShader::MAX_LIGHTS; ++numLight) {
+            texturesArray[numLight] = dummyTextureUnit;
+        }
 
         shader.setUniformMat4("u_shadowMVPPointLight[0]", shadowMVPArray, pointLights.size());
-        shader.setUniformTexture2DArray("u_shadowMapPointLight[0]", texturesArray, pointLights.size());
+        shader.setUniformTexture2DArray("u_shadowMapPointLight[0]", texturesArray, OpenGLLightingShader::MAX_LIGHTS);
         shader.setUniformUint("u_numPointLights", pointLights.size());
 
         /* Free the resources */
         delete[] shadowMVPArray;
-        delete[] texturesArray;
 
         /* Spotlights */
         shadowMVPArray = new glm::mat4[spotLights.size()];
-        texturesArray = new GLuint[spotLights.size()];
 
         for (uint32_t numLight = 0; numLight < spotLights.size(); ++numLight) {
             shader.setSpotLight(numLight, *spotLights[numLight]);
@@ -152,14 +177,16 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera, Lig
 
             textureUnit++;
         }
+        for (uint32_t numLight = spotLights.size(); numLight < OpenGLLightingShader::MAX_LIGHTS; ++numLight) {
+            texturesArray[numLight] = dummyTextureUnit;
+        }
 
         shader.setUniformMat4("u_shadowMVPSpotLight[0]", shadowMVPArray, spotLights.size());
-        shader.setUniformTexture2DArray("u_shadowMapSpotLight[0]", texturesArray, spotLights.size());
+        shader.setUniformTexture2DArray("u_shadowMapSpotLight[0]", texturesArray, OpenGLLightingShader::MAX_LIGHTS);
         shader.setUniformUint("u_numSpotLights", spotLights.size());
 
         /* Free the resources */
         delete[] shadowMVPArray;
-        delete[] texturesArray;
 
         /* Draw the model */
         __(glBindVertexArray(glObject.getVertexArrayID()));
