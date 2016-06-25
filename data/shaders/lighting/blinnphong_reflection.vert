@@ -1,8 +1,9 @@
 //
 // Roberto Cano (http://www.robertocano.es)
 //
-#version 330 core
+#version 400 core
 
+#define GLSL_VERSION 400
 #define MAX_LIGHTS 4u
 
 layout(location = 0) in vec3 in_vertex;
@@ -31,6 +32,20 @@ uniform mat4 u_shadowMVPSpotLight[MAX_LIGHTS];
 out vec4 io_shadowCoordDirectLight;
 uniform mat4 u_shadowMVPDirectLight;
 
+#define _CalculatePointLight(n)                                                         \
+{                                                                                       \
+    if (n < u_numPointLights) {                                                         \
+		io_shadowCoordPointLight[n] = u_shadowMVPPointLight[n] * vec4(in_vertex, 1.0f); \
+    }                                                                                   \
+}
+
+#define _CalculateSpotLight(n)                                                        \
+{                                                                                     \
+    if (n < u_numSpotLights) {                                                        \
+        io_shadowCoordSpotLight[n] = u_shadowMVPSpotLight[n] * vec4(in_vertex, 1.0f); \
+    }                                                                                 \
+}
+
 void main()
 {
 	/* Calculate the normal matrix - account for non-uniform scale */
@@ -51,6 +66,7 @@ void main()
 	/* Shadow-map coordinate */
 	io_shadowCoordDirectLight = u_shadowMVPDirectLight * vec4(in_vertex, 1.0f);
 
+#if GLSL_VERSION >= 400
 	uint nLights = min(u_numPointLights, MAX_LIGHTS);
 
 	for (uint i=0u; i<nLights; ++i) {
@@ -62,4 +78,15 @@ void main()
 	for (uint i=0u; i<nLights; ++i) {
 		io_shadowCoordSpotLight[i] = u_shadowMVPSpotLight[i] * vec4(in_vertex, 1.0f);
 	}
+#else
+    _CalculatePointLight(0u);
+    _CalculatePointLight(1u);
+    _CalculatePointLight(2u);
+    _CalculatePointLight(3u);
+
+    _CalculateSpotLight(0u);
+    _CalculateSpotLight(1u);
+    _CalculateSpotLight(2u);
+    _CalculateSpotLight(3u);
+#endif
 }

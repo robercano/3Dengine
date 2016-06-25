@@ -13,7 +13,7 @@
 */
 #version 400 core
 
-#define GLSL_VERSION 440
+#define GLSL_VERSION 400
 #define MAX_LIGHTS 4
 
 /* Direct light definition */
@@ -98,7 +98,7 @@ float sRGB2Linear(float c) {
 
 float toonify(float intensity)
 {
-	if (u_enableToon == 1) {
+	if (u_enableToon == 1u) {
 		if (intensity < 0.0001) return 0.0;
 		else if (intensity < 0.25) return 0.125;
 		else if (intensity < 0.5) return 0.375;
@@ -110,9 +110,10 @@ float toonify(float intensity)
 	}
 }
 
-#define _ProcessPointLight(color, shadow, n, V)                                           \
+#define _ProcessPointLight(color, n, V)                                                   \
 {                                                                                         \
     if (n < u_numPointLights) {                                                           \
+        float shadow = texture(u_shadowMapPointLight[n], vec3(io_shadowCoordPointLight[n].xy/io_shadowCoordPointLight[n].w, (io_shadowCoordPointLight[n].z + bias)/io_shadowCoordPointLight[n].w)); \
 		vec3 unnormL = u_PointLight[n].position - io_fragVertex;                          \
 		float distanceToLight = length(unnormL);                                          \
                                                                                           \
@@ -144,9 +145,10 @@ float toonify(float intensity)
     }                                                                                     \
 }
 
-#define _ProcessSpotLight(color, shadow, n, V)                                                       \
+#define _ProcessSpotLight(color, n, V)                                                       \
 {                                                                                                    \
     if (n < u_numSpotLights) {                                                                       \
+        float shadow = texture(u_shadowMapSpotLight[n], vec3(io_shadowCoordSpotLight[n].xy/io_shadowCoordSpotLight[n].w, (io_shadowCoordSpotLight[n].z + bias)/io_shadowCoordSpotLight[n].w)); \
 		vec3 unnormL = u_SpotLight[n].position - io_fragVertex;                                      \
 		float distanceToLight = length(unnormL);                                                     \
                                                                                                      \
@@ -184,11 +186,12 @@ float toonify(float intensity)
     }                                                                                                \
 }
 
-#define _ProcessDirectLight(color, shadow, V)                                         \
+#define _ProcessDirectLight(color, V)                                                 \
 {                                                                                     \
-	if  (u_numDirectLights > 0) {                                                     \
+	if  (u_numDirectLights > 0u) {                                                    \
+        float shadow = texture(u_shadowMapDirectLight, vec3(io_shadowCoordDirectLight.xy, (io_shadowCoordDirectLight.z + bias))); \
 		/* Light vector to fragment */                                                \
-		vec3 L = normalize(-u_DirectLight.direction);                                  \
+		vec3 L = normalize(-u_DirectLight.direction);                                 \
 																					  \
 		/* Normalized half vector for Blinn-Phong */                                  \
 		vec3 H = normalize(L + V);                                                    \
@@ -219,8 +222,7 @@ void main()
 	float bias = 0.05f;
 
 	/* Direct light */
-	shadow = texture(u_shadowMapDirectLight, vec3(io_shadowCoordDirectLight.xy, (io_shadowCoordDirectLight.z + bias)));
-	_ProcessDirectLight(lightAcc, shadow, io_viewVertex);
+	_ProcessDirectLight(lightAcc, io_viewVertex);
 
     /* For shaders on version 3.3 and earlier the uniform
        block must be indexed by a constant integral expression, which
@@ -228,38 +230,24 @@ void main()
        of a handy loop */
 #if GLSL_VERSION >= 440
         uint nLights = min(u_numPointLights, MAX_LIGHTS);
-
         for (int i=0; i<nLights; ++i) {
-			shadow = texture(u_shadowMapPointLight[i], vec3(io_shadowCoordPointLight[i].xy/io_shadowCoordPointLight[i].w, (io_shadowCoordPointLight[i].z + bias)/io_shadowCoordPointLight[i].w));
-            _ProcessPointLight(lightAcc, shadow, i, io_viewVertex);
+            _ProcessPointLight(lightAcc, i, io_viewVertex);
 		}
 
 		nLights = min(u_numSpotLights, MAX_LIGHTS);
-
         for (int i=0; i<nLights; ++i) {
-			shadow = texture(u_shadowMapSpotLight[i], vec3(io_shadowCoordSpotLight[i].xy/io_shadowCoordSpotLight[i].w, (io_shadowCoordSpotLight[i].z + bias)/io_shadowCoordSpotLight[i].w));
-            _ProcessSpotLight(lightAcc, shadow, i, io_viewVertex);
+            _ProcessSpotLight(lightAcc, i, io_viewVertex);
 		}
 #else
-        _ProcessPointLight(lightAcc, shadow, 0, io_viewVertex);
-        _ProcessPointLight(lightAcc, shadow, 1, io_viewVertex);
-        _ProcessPointLight(lightAcc, shadow, 2, io_viewVertex);
-        _ProcessPointLight(lightAcc, shadow, 4, io_viewVertex);
-        _ProcessPointLight(lightAcc, shadow, 5, io_viewVertex);
-        _ProcessPointLight(lightAcc, shadow, 6, io_viewVertex);
-        _ProcessPointLight(lightAcc, shadow, 7, io_viewVertex);
-        _ProcessPointLight(lightAcc, shadow, 8, io_viewVertex);
-        _ProcessPointLight(lightAcc, shadow, 9, io_viewVertex);
+        _ProcessPointLight(lightAcc, 0u, io_viewVertex);
+        _ProcessPointLight(lightAcc, 1u, io_viewVertex);
+        _ProcessPointLight(lightAcc, 2u, io_viewVertex);
+        _ProcessPointLight(lightAcc, 3u, io_viewVertex);
 
-        _ProcessSpotLight(lightAcc, shadow, 0, io_viewVertex);
-        _ProcessSpotLight(lightAcc, shadow, 1, io_viewVertex);
-        _ProcessSpotLight(lightAcc, shadow, 2, io_viewVertex);
-        _ProcessSpotLight(lightAcc, shadow, 4, io_viewVertex);
-        _ProcessSpotLight(lightAcc, shadow, 5, io_viewVertex);
-        _ProcessSpotLight(lightAcc, shadow, 6, io_viewVertex);
-        _ProcessSpotLight(lightAcc, shadow, 7, io_viewVertex);
-        _ProcessSpotLight(lightAcc, shadow, 8, io_viewVertex);
-        _ProcessSpotLight(lightAcc, shadow, 9, io_viewVertex);
+        _ProcessSpotLight(lightAcc, 0u, io_viewVertex);
+        _ProcessSpotLight(lightAcc, 1u, io_viewVertex);
+        _ProcessSpotLight(lightAcc, 2u, io_viewVertex);
+        _ProcessSpotLight(lightAcc, 3u, io_viewVertex);
 #endif
 
 	o_color = vec4(vec3(texture(u_diffuseMap, io_fragUVCoord)) * lightAcc, u_material.alpha);
