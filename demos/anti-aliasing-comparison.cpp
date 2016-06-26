@@ -7,7 +7,6 @@
 #include "Game.hpp"
 #include "MSAARenderTarget.hpp"
 #include "NOAARenderTarget.hpp"
-#include "OBJFormat.hpp"
 #include "OpenGL.h"
 #include "PointLight.hpp"
 #include "SSAARenderTarget.hpp"

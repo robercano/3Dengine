@@ -4,7 +4,6 @@
 #include "FXAA2RenderTarget.hpp"
 #include "FlyMotion.hpp"
 #include "Game.hpp"
-#include "OBJFormat.hpp"
 #include "OpenGL.h"
 #include "PointLight.hpp"
 #include "ToonLightingShader.hpp"
