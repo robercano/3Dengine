@@ -5,11 +5,14 @@
  * @author	Roberto Cano (http://www.robertocano.es)
  */
 #include "OpenGL.h"
+#include "Logging.hpp"
 #include "ModelLoaders.hpp"
 #include "OpenGLLightingShader.hpp"
 #include "OpenGLModel3D.hpp"
 #include "OpenGLRenderer.hpp"
 #include "OpenGLShader.hpp"
+
+using namespace Logging;
 
 void OpenGLRenderer::init()
 {
@@ -108,6 +111,8 @@ bool OpenGLRenderer::renderModel3D(Model3D &model3D, Camera &camera, LightingSha
 
     /* Calculate MVP matrix */
     glm::mat4 MVP = camera.getPerspectiveMatrix() * camera.getViewMatrix() * model3D.getModelMatrix();
+
+    log("Model3D matrix", model3D.getModelMatrix());
 
     /* Calculate normal matrix */
     glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(model3D.getModelMatrix())));
@@ -353,7 +358,7 @@ bool OpenGLRenderer::renderLight(Light &light, Camera &camera, RenderTarget &ren
     return true;
 }
 
-bool OpenGLRenderer::renderBoundingBox(BoundingBox &box, const glm::vec3 &color, Camera &camera, RenderTarget &renderTarget)
+bool OpenGLRenderer::renderBoundingBox(const BoundingBox &box, const glm::vec3 &color, Camera &camera, RenderTarget &renderTarget)
 {
     /* TODO: Create this in the renderer so it does not have to be created every time */
     Shader *shader = Shader::New();
@@ -463,6 +468,14 @@ bool OpenGLRenderer::renderBoundingBox(BoundingBox &box, const glm::vec3 &color,
     Shader::Delete(shader);
 
     return true;
+}
+
+bool OpenGLRenderer::renderModelBoundingBoxes(Model3D &model, Camera &camera, RenderTarget &renderTarget)
+{
+    if (renderBoundingBox(model.getAABB(), glm::vec3(0.0f, 0.0f, 1.0f), camera, renderTarget) == false) {
+        return false;
+    }
+    return renderBoundingBox(model.getOOBB(), glm::vec3(0.0f, 1.0f, 0.0f), camera, renderTarget);
 }
 
 bool OpenGLRenderer::resize(uint16_t width, uint16_t height)

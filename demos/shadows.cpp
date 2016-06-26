@@ -303,8 +303,6 @@ class ShadowsDemo : public GameHandler
         game->getRenderer()->renderModel3D(*_plane3D, _camera, *_shaderBlinnLight, _enableDirectLight ? _sun : NULL,
                                            _enablePointLight ? _pointLights : _emptyPointLights,
                                            _enableSpotLight ? _spotLights : _emptySpotLights, 0.2f, *_renderTargetNormal);
-        game->getRenderer()->renderBoundingBox(_model3D->getAABB(), glm::vec3(0.0f, 0.0f, 1.0f), _camera, *_renderTargetNormal);
-        game->getRenderer()->renderBoundingBox(_model3D->getOOBB(), glm::vec3(0.0f, 1.0f, 0.0f), _camera, *_renderTargetNormal);
 
         _renderTargetNormal->blit();
         //_spotLights[0]->getShadowMap()->blit();

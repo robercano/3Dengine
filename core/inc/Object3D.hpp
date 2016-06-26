@@ -14,6 +14,9 @@
 #include <glm/gtc/quaternion.hpp>
 #include "BoundingBox.hpp"
 #include "BoundingSphere.hpp"
+#include "Logging.hpp"
+
+using namespace Logging;
 
 class Object3D
 {
@@ -28,8 +31,8 @@ class Object3D
         , _model(glm::mat4(1.0f))
         , _modelValid(true)
         , _viewValid(true)
-        , _aabbValid(true)
-        , _oobbValid(true)
+        , _oobbBaseValid(false)
+        , _boundingVolumesValid(false)
     {
     }
 
@@ -45,7 +48,6 @@ class Object3D
         _position += amount;
         _modelValid = false;
         _viewValid = false;
-        _aabbValid = false;
     }
 
     /**
@@ -60,7 +62,6 @@ class Object3D
         _orientation = rotation * _orientation;
         _modelValid = false;
         _viewValid = false;
-        _aabbValid = false;
     }
 
     /**
@@ -76,8 +77,6 @@ class Object3D
         _scale *= factor;
         _modelValid = false;
         _viewValid = false;
-        _aabbValid = false;
-        _oobbValid = false;
     }
 
     /**
@@ -99,8 +98,7 @@ class Object3D
 
         _modelValid = true;
         _viewValid = true;
-
-        _aabbValid = false;
+        _boundingVolumesValid = false;
     }
 
     /**
@@ -114,7 +112,6 @@ class Object3D
         _modelValid = false;
         _viewValid = false;
 
-        _aabbValid = false;
     }
     void setOrientation(const glm::mat4 &orientation)
     {
@@ -122,15 +119,12 @@ class Object3D
         _modelValid = false;
         _viewValid = false;
 
-        _aabbValid = false;
     }
     void setScaleFactor(const glm::vec3 &factor)
     {
         _scale = factor;
         _modelValid = false;
         _viewValid = false;
-        _aabbValid = false;
-        _oobbValid = false;
     }
 
     /**
@@ -158,6 +152,7 @@ class Object3D
         if (_modelValid == false) {
             _model = glm::scale(glm::translate(glm::mat4(), _position) * _orientation, _scale);
             _modelValid = true;
+            _boundingVolumesValid = false;
         }
         return _model;
     }
@@ -181,38 +176,38 @@ class Object3D
 
     BoundingSphere &getBoundingSphere()
     {
-        if (_oobbValid == false) {
+        if (_oobbBaseValid == false) {
             _calculateBoundingVolumes();
-            _oobbValid = true;
+            _oobbBaseValid = true;
         }
-        if (_aabbValid == false) {
+        if (_boundingVolumesValid == false || _modelValid == false) {
             _updateBoundingVolumes();
-            _aabbValid = true;
+            _boundingVolumesValid = true;
         }
         return _boundingSphere;
     }
 
-    BoundingBox &getAABB()
+    const BoundingBox &getAABB()
     {
-        if (_oobbValid == false) {
+        if (_oobbBaseValid == false) {
             _calculateBoundingVolumes();
-            _oobbValid = true;
+            _oobbBaseValid = true;
         }
-        if (_aabbValid == false) {
+        if (_boundingVolumesValid == false || _modelValid == false) {
             _updateBoundingVolumes();
-            _aabbValid = true;
+            _boundingVolumesValid = true;
         }
         return _aabb;
     }
-    BoundingBox &getOOBB()
+    const BoundingBox &getOOBB()
     {
-        if (_oobbValid == false) {
+        if (_oobbBaseValid == false) {
             _calculateBoundingVolumes();
-            _oobbValid = true;
+            _oobbBaseValid = true;
         }
-        if (_aabbValid == false) {
+        if (_boundingVolumesValid == false || _modelValid == false) {
             _updateBoundingVolumes();
-            _aabbValid = true;
+            _boundingVolumesValid = true;
         }
         return _oobb;
     }
@@ -240,6 +235,9 @@ class Object3D
      */
     void _updateBoundingVolumes()
     {
+        log("_updateBoundingVolumes", getModelMatrix());
+        _oobb = _oobbBase * getModelMatrix();
+
         glm::vec3 center = (_oobb.getMin() + _oobb.getMax()) / 2.0f;
         glm::vec3 extent = (_oobb.getMax() - _oobb.getMin()) / 2.0f;
 
@@ -263,8 +261,9 @@ class Object3D
     bool _viewValid;        /**< If true, current view matrix is cached and does not need recalculation */
 
     BoundingSphere _boundingSphere; /**< Bounding sphere containing all model's vertices */
-    BoundingBox _aabb;              /**< Axis-aligned bounding box containing all model's vertices */
+    BoundingBox _oobbBase;          /**< Base object-oriented bounding box used to calculate the transformed OOBB*/
     BoundingBox _oobb;              /**< Object-oriented bounding box containing all model's vertices */
-    bool _aabbValid;                /**< Indicates if the cached information for the AABB is still valid */
-    bool _oobbValid;                /**< Indicates if the cached information for the AABB is still valid */
+    BoundingBox _aabb;              /**< Axis-aligned bounding box containing all model's vertices */
+    bool _oobbBaseValid;            /**< Indicates if the cached information for the base OOBB is still valid */
+    bool _boundingVolumesValid;     /**< Indicates if the cached information for the OOBB and AABB is still valid */
 };

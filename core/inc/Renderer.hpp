@@ -80,7 +80,8 @@ class Renderer
                                RenderTarget &renderTarget, bool disableDepth = false) = 0;
     virtual bool renderToShadowMap(Model3D &model3D, Light &camera, NormalShadowMapShader &shader) = 0;
     virtual bool renderLight(Light &light, Camera &camera, RenderTarget &renderTarget) = 0;
-    virtual bool renderBoundingBox(BoundingBox &box, const glm::vec3 &color, Camera &camera, RenderTarget &renderTarget) = 0;
+    virtual bool renderBoundingBox(const BoundingBox &box, const glm::vec3 &color, Camera &camera, RenderTarget &renderTarget) = 0;
+    virtual bool renderModelBoundingBoxes(Model3D &model, Camera &camera, RenderTarget &renderTarget) = 0;
 
     /**
      * Adjusts the renderer's display size

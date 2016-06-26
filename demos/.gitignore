@@ -3,6 +3,7 @@ fxaa-comparison
 moving-lights
 toon
 shadows
+boundingbox
 game-class-demo
 *.dSYM
 *.d

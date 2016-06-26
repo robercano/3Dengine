@@ -84,17 +84,9 @@ void Model3D::_calculateBoundingVolumes()
         }
     }
 
-    /* Apply scale factor */
-    minX *= getScaleFactor().x;
-    minY *= getScaleFactor().y;
-    minZ *= getScaleFactor().z;
-    maxX *= getScaleFactor().x;
-    maxY *= getScaleFactor().y;
-    maxZ *= getScaleFactor().z;
-
     /* Set the final values */
-    _oobb.setMin(glm::vec3(minX, minY, minZ));
-    _oobb.setMax(glm::vec3(maxX, maxY, maxZ));
+    _oobbBase.setMin(glm::vec3(minX, minY, minZ));
+    _oobbBase.setMax(glm::vec3(maxX, maxY, maxZ));
 
     _updateBoundingVolumes();
 }
