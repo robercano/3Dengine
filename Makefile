@@ -107,7 +107,7 @@ $(LIBDIR)/$(LIBNAME): $(OBJECTS)
 
 $(OBJDIR)/%.o: %.cpp
 	@echo "- Compiling $<..."
-	@clang-format -i $<
+	@if test -n "`which clang-format`"; then clang-format -i $<; fi
 	@$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 $(OBJDIR)/%.o: %.c
