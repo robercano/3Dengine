@@ -1,20 +1,21 @@
 /**
- * @class OBJLoader
- * @brief OBJ format loader
+ * @class ModelLoaders
+ * @brief Various format loaders
  *
  * @author	Roberto Cano (http://www.robertocano.es)
  */
-#include "OBJFormat.hpp"
+#include "ModelLoaders.hpp"
 #include <stdio.h>
 #include <string.h>
 #include <glm/glm.hpp>
+#include <map>
 #include <string>
 #include <vector>
 #include "ImageLoaders.h"
 
 using namespace std;
 
-bool OBJFormat::load(const string &filename)
+bool ModelLoaders::LoadOBJModel(Model3D &model, const string &name)
 {
     std::vector<glm::vec3> vertices;
     std::vector<glm::vec3> normals;
@@ -34,8 +35,8 @@ bool OBJFormat::load(const string &filename)
 
     std::vector<uint32_t> *activeIndices = NULL;
 
-    std::string matFile = filename + "/material.mtl";
-    std::string geoFile = filename + "/geometry.obj";
+    std::string matFile = name + "/material.mtl";
+    std::string geoFile = name + "/geometry.obj";
 
     /* Open the materials file */
     FILE *file = fopen(matFile.c_str(), "r");
@@ -102,7 +103,7 @@ bool OBJFormat::load(const string &filename)
                 }
                 /* map_Kd */
                 if (strncmp(line, "map_Kd ", 7) == 0) {
-                    std::string texname = filename + std::string("/") + std::string(line + 7);
+                    std::string texname = name + std::string("/") + std::string(line + 7);
 
                     if (strcmp(line + 7, "null") != 0) {
                         /* Load the texture */
@@ -195,7 +196,7 @@ bool OBJFormat::load(const string &filename)
     fseek(file, SEEK_SET, 0);
 
     /* Allocate size for the final data */
-    _modelData.resize(vertices.size());
+    model._modelData.resize(vertices.size());
     positionSet.resize(vertices.size(), false);
 
     /* Now parse the groups and the faces */
@@ -236,17 +237,17 @@ bool OBJFormat::load(const string &filename)
                 uint32_t dataIdx = vertexIdx;
 
                 if (positionSet[dataIdx] == true) {
-                    if (_modelData[dataIdx].normal != normals[normalIdx] || _modelData[dataIdx].uvcoord != uvcoords[uvIdx]) {
-                        dataIdx = _modelData.size();
-                        _modelData.resize(_modelData.size() + 1);
+                    if (model._modelData[dataIdx].normal != normals[normalIdx] || model._modelData[dataIdx].uvcoord != uvcoords[uvIdx]) {
+                        dataIdx = model._modelData.size();
+                        model._modelData.resize(model._modelData.size() + 1);
                         positionSet.resize(positionSet.size() + 1, false);
                     }
                 }
 
                 if (positionSet[dataIdx] == false) {
-                    _modelData[dataIdx].vertex = vertices[vertexIdx];
-                    _modelData[dataIdx].normal = normals[normalIdx];
-                    _modelData[dataIdx].uvcoord = uvcoords[uvIdx];
+                    model._modelData[dataIdx].vertex = vertices[vertexIdx];
+                    model._modelData[dataIdx].normal = normals[normalIdx];
+                    model._modelData[dataIdx].uvcoord = uvcoords[uvIdx];
 
                     positionSet[vertexIdx] = true;
                 }
@@ -262,24 +263,24 @@ bool OBJFormat::load(const string &filename)
 
     /* Now consolidate the data */
     for (it = materials.begin(); it != materials.end(); ++it) {
-        _materials.push_back(it->second);
-        _textures.push_back(textures[it->first]);
+        model._materials.push_back(it->second);
+        model._textures.push_back(textures[it->first]);
 
         std::vector<uint32_t> *idx = &indices[it->first];
 
-        _indicesOffsets.push_back(_modelIndices.size());
+        model._indicesOffsets.push_back(model._modelIndices.size());
 
         /* Append to the final indices vector */
-        _modelIndices.reserve(_modelIndices.size() + idx->size());
-        _modelIndices.insert(_modelIndices.end(), idx->begin(), idx->end());
+        model._modelIndices.reserve(model._modelIndices.size() + idx->size());
+        model._modelIndices.insert(model._modelIndices.end(), idx->begin(), idx->end());
 
-        _indicesCount.push_back(idx->size());
+        model._indicesCount.push_back(idx->size());
     }
 
     /* And finally normalize the vertices */
-    normalize();
+    model.normalize();
 
-    printf("Loaded %s with %zu vertices and %zu faces\n", filename.c_str(), _modelData.size(), _modelIndices.size() / 3);
+    printf("Loaded %s with %zu vertices and %zu faces\n", name.c_str(), model._modelData.size(), model._modelIndices.size() / 3);
 
 error_exit:
     fclose(file);

@@ -18,7 +18,7 @@ CC=gcc
 VPATH=core/src:core/opengl/src:core/procedural/src:utils/src
 
 CORE_FILES=Game.cpp InputManager.cpp WindowManager.cpp TimeManager.cpp \
-		   OBJFormat.cpp \
+		   ModelLoaders.cpp \
 		   Model3D.cpp \
 		   TextConsole.cpp TrueTypeFont.cpp FreeTypeFont.cpp FontRenderer.cpp \
            Renderer.cpp NOAARenderTarget.cpp MSAARenderTarget.cpp SSAARenderTarget.cpp \
@@ -84,12 +84,9 @@ DEMO_TARGETS=$(DEMO_FILES:.cpp=)
 #
 # Main rules
 #
-.PHONY: demos format
+.PHONY: demos
 
-all: format engine $(DEMO_TARGETS)
-
-format:
-	@if test -n "`which clang-format`"; then echo "- Formating sources"; git ls-files -m | xargs clang-format -i; fi
+all: engine $(DEMO_TARGETS)
 
 engine: dirs $(LIBDIR)/$(LIBNAME)
 
@@ -110,6 +107,7 @@ $(LIBDIR)/$(LIBNAME): $(OBJECTS)
 
 $(OBJDIR)/%.o: %.cpp
 	@echo "- Compiling $<..."
+	@clang-format -i $<
 	@$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 $(OBJDIR)/%.o: %.c

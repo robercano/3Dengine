@@ -98,16 +98,7 @@ class ShadowsDemo : public GameHandler
         }
 
         /* Load the geometry */
-        std::string meshPath = "data/objects/daxter";
-
-        if (obj3D.load(meshPath) == false) {
-            printf("ERROR loading OBJ file\n");
-            return false;
-        }
-
-        /* Wrap the geometry for the renderer, this typically generates any
-         * renderer API specific structures and uploads data to the graphics card */
-        _model3D = game->getRenderer()->prepareModel3D(obj3D);
+        _model3D = game->getRenderer()->loadModelOBJ("data/objects/daxter");
         _model3D->setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
         obj3D.setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
 
@@ -119,7 +110,7 @@ class ShadowsDemo : public GameHandler
         /* Use a plane for the floor */
         procedural::Plane plane;
 
-        _plane3D = game->getRenderer()->prepareModel3D(plane);
+        _plane3D = game->getRenderer()->prepareModel(plane);
         _plane3D->setScaleFactor(glm::vec3(500.0f, 1.0f, 500.0f));
 
         /* Create the game camera */
@@ -331,8 +322,8 @@ class ShadowsDemo : public GameHandler
     OBJFormat obj3D;
     Camera _camera;
     FlyMotion _cameraMotion;
-    RendererModel3D *_model3D;
-    RendererModel3D *_plane3D;
+    Model3D *_model3D;
+    Model3D *_plane3D;
     BlinnPhongShader *_shaderBlinnLight;
     NormalShadowMapShader *_shaderShadow;
     NOAARenderTarget *_renderTargetNormal;

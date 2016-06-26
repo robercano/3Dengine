@@ -108,17 +108,7 @@ class AntiaAliasingDemo : public GameHandler
         }
 
         /* Load the geometry */
-        std::string meshPath = "data/objects/deadpool";
-
-        OBJFormat obj3D;
-        if (obj3D.load(meshPath) == false) {
-            printf("ERROR loading OBJ file\n");
-            return false;
-        }
-
-        /* Wrap the geometry for the renderer, this typically generates any
-         * renderer API specific structures and uploads data to the graphics card */
-        _model3D = game->getRenderer()->prepareModel3D(obj3D);
+        _model3D = game->getRenderer()->loadModelOBJ("data/objects/deadpool");
         _model3D->setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
 
         /* Create the game camera */
@@ -218,7 +208,7 @@ class AntiaAliasingDemo : public GameHandler
   private:
     Camera _camera;
     FlyMotion _cameraMotion;
-    RendererModel3D *_model3D;
+    Model3D *_model3D;
     BlinnPhongShader *_blinnPhongShader;
     NOAARenderTarget *_renderTargetNOAA;
     MSAARenderTarget *_renderTargetMSAA;

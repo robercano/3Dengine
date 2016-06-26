@@ -51,6 +51,11 @@ class Model3D : public Object3D
 {
   public:
     /**
+     * Friend ModelLoaders class to allow for internal data manipulation
+     */
+    friend class ModelLoaders;
+
+    /**
      * Vertex data of the model
      */
     typedef struct {
@@ -63,6 +68,7 @@ class Model3D : public Object3D
      * Destructor
      */
     virtual ~Model3D() {}
+
     /**
      * Normalizes all vertex data in the Model3D
      *

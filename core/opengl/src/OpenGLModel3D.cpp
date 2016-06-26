@@ -8,7 +8,7 @@
 #include "OpenGLModel3D.hpp"
 #include "OpenGL.h"
 
-bool OpenGLModel3D::init(const Model3D &model)
+bool OpenGLModel3D::prepare()
 {
     uint32_t offset;
 
@@ -21,8 +21,7 @@ bool OpenGLModel3D::init(const Model3D &model)
         __(glBindBuffer(GL_ARRAY_BUFFER, _vertexDataVBO));
         {
             /* Upload the data for this buffer */
-            __(glBufferData(GL_ARRAY_BUFFER, model.getVertexData().size() * sizeof model.getVertexData()[0], &(model.getVertexData()[0]),
-                            GL_STATIC_DRAW));
+            __(glBufferData(GL_ARRAY_BUFFER, getVertexData().size() * sizeof getVertexData()[0], &(getVertexData()[0]), GL_STATIC_DRAW));
 
             /* First attribute contains the vertex coordinates */
             __(glEnableVertexAttribArray(0));
@@ -62,14 +61,14 @@ bool OpenGLModel3D::init(const Model3D &model)
         __(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indicesBO));
         {
             /* Upload the data */
-            __(glBufferData(GL_ELEMENT_ARRAY_BUFFER, model.getIndexData().size() * sizeof(model.getIndexData()[0]),
-                            &(model.getIndexData()[0]), GL_STATIC_DRAW));
+            __(glBufferData(GL_ELEMENT_ARRAY_BUFFER, getIndexData().size() * sizeof(getIndexData()[0]), &(getIndexData()[0]),
+                            GL_STATIC_DRAW));
         }
     }
     __(glBindVertexArray(0));
 
     /* TODO: Upload the textures */
-    const std::vector<Texture> &textures = model.getTextures();
+    const std::vector<Texture> &textures = getTextures();
 
     _texturesIDs.resize(textures.size());
     __(glGenTextures(textures.size(), &_texturesIDs[0]));
@@ -89,10 +88,6 @@ bool OpenGLModel3D::init(const Model3D &model)
         }
     }
     __(glBindTexture(GL_TEXTURE_2D, 0));
-
-    _materials = model.getMaterials();
-    _indicesOffsets = model.getIndicesOffsets();
-    _indicesCount = model.getIndicesCount();
 
     return true;
 }

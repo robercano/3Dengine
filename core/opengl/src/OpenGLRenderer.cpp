@@ -5,10 +5,11 @@
  * @author	Roberto Cano (http://www.robertocano.es)
  */
 #include "OpenGL.h"
+#include "ModelLoaders.hpp"
+#include "OpenGLLightingShader.hpp"
 #include "OpenGLModel3D.hpp"
 #include "OpenGLRenderer.hpp"
 #include "OpenGLShader.hpp"
-#include "OpenGLLightingShader.hpp"
 
 void OpenGLRenderer::init()
 {
@@ -55,16 +56,49 @@ const char *OpenGLRenderer::getVersion() { return (const char *)glGetString(GL_V
 const char *OpenGLRenderer::getVendor() { return (const char *)glGetString(GL_VENDOR); }
 const char *OpenGLRenderer::getShaderVersion() { return (const char *)glGetString(GL_SHADING_LANGUAGE_VERSION); }
 Shader *OpenGLRenderer::newShader(void) { return new OpenGLShader(); }
-RendererModel3D *OpenGLRenderer::prepareModel3D(const Model3D &model)
+Model3D *OpenGLRenderer::loadModelOBJ(const std::string &modelName)
 {
-    OpenGLModel3D *glObject = new OpenGLModel3D();
-    if (glObject != NULL) {
-        glObject->init(model);
+    OpenGLModel3D *model = new OpenGLModel3D();
+    if (model == NULL) {
+        fprintf(stderr, "ERROR allocating memory for OpenGLModel3D\n");
+        return NULL;
     }
-    return glObject;
+
+    if (ModelLoaders::LoadOBJModel(*model, modelName) == false) {
+        fprintf(stderr, "ERROR loading model %s into an OpenGLModel3D\n", modelName.c_str());
+        delete model;
+        return NULL;
+    }
+
+    if (model->prepare() == false) {
+        fprintf(stderr, "ERROR preparing OpenGL arrays for model %s\n", modelName.c_str());
+        delete model;
+        return NULL;
+    }
+
+    return model;
 }
 
-bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera, LightingShader &shader, DirectLight *sun,
+Model3D *OpenGLRenderer::prepareModel(const Model3D &source)
+{
+    OpenGLModel3D *model = new OpenGLModel3D();
+    if (model == NULL) {
+        fprintf(stderr, "ERROR allocating memory for OpenGLModel3D\n");
+        return NULL;
+    }
+
+    *((Model3D *)model) = source;
+
+    if (model->prepare() == false) {
+        fprintf(stderr, "ERROR preparing OpenGL arrays for model copied from other model\n");
+        delete model;
+        return NULL;
+    }
+
+    return model;
+}
+
+bool OpenGLRenderer::renderModel3D(Model3D &model3D, Camera &camera, LightingShader &shader, DirectLight *sun,
                                    std::vector<PointLight *> &pointLights, std::vector<SpotLight *> &spotLights, float ambientK,
                                    RenderTarget &renderTarget, bool disableDepth)
 {
@@ -194,7 +228,7 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera, Lig
             __(glActiveTexture(GL_TEXTURE0));
 
             std::vector<Material> materials = glObject.getMaterials();
-            std::vector<uint32_t> texturesIDs = glObject.getTextures();
+            std::vector<uint32_t> texturesIDs = glObject.getTexturesIDs();
             std::vector<uint32_t> offset = glObject.getIndicesOffsets();
             std::vector<uint32_t> count = glObject.getIndicesCount();
 
@@ -218,7 +252,7 @@ bool OpenGLRenderer::renderModel3D(RendererModel3D &model3D, Camera &camera, Lig
     return true;
 }
 
-bool OpenGLRenderer::renderToShadowMap(RendererModel3D &model3D, Light &light, NormalShadowMapShader &shader)
+bool OpenGLRenderer::renderToShadowMap(Model3D &model3D, Light &light, NormalShadowMapShader &shader)
 {
     /* Calculate MVP matrix */
     glm::mat4 MVP = light.getProjectionMatrix() * light.getViewMatrix() * model3D.getModelMatrix();
