@@ -112,8 +112,6 @@ bool OpenGLRenderer::renderModel3D(Model3D &model3D, Camera &camera, LightingSha
     /* Calculate MVP matrix */
     glm::mat4 MVP = camera.getPerspectiveMatrix() * camera.getViewMatrix() * model3D.getModelMatrix();
 
-    log("Model3D matrix", model3D.getModelMatrix());
-
     /* Calculate normal matrix */
     glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(model3D.getModelMatrix())));
 
@@ -358,7 +356,8 @@ bool OpenGLRenderer::renderLight(Light &light, Camera &camera, RenderTarget &ren
     return true;
 }
 
-bool OpenGLRenderer::renderBoundingBox(const BoundingBox &box, const glm::vec3 &color, Camera &camera, RenderTarget &renderTarget)
+bool OpenGLRenderer::renderBoundingBox(const BoundingBox &box, const glm::mat4 &modelMatrix, const glm::vec3 &color, Camera &camera,
+                                       RenderTarget &renderTarget)
 {
     /* TODO: Create this in the renderer so it does not have to be created every time */
     Shader *shader = Shader::New();
@@ -413,9 +412,9 @@ bool OpenGLRenderer::renderBoundingBox(const BoundingBox &box, const glm::vec3 &
                           box.getMin().y, box.getMax().z};
 
     /* Calculate MVP matrix, bounding box coordinates are already in world coordinates */
-    glm::mat4 MVP = camera.getPerspectiveMatrix() * camera.getViewMatrix();
+    glm::mat4 MVP = camera.getPerspectiveMatrix() * camera.getViewMatrix() * modelMatrix;
 
-    glEnable(GL_DEPTH_TEST);
+    __(glEnable(GL_DEPTH_TEST));
     __(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
     __(glEnable(GL_LINE_SMOOTH));
     __(glDisable(GL_CULL_FACE));
@@ -470,12 +469,31 @@ bool OpenGLRenderer::renderBoundingBox(const BoundingBox &box, const glm::vec3 &
     return true;
 }
 
-bool OpenGLRenderer::renderModelBoundingBoxes(Model3D &model, Camera &camera, RenderTarget &renderTarget)
+bool OpenGLRenderer::renderModelBoundingBoxes(Model3D &model, Camera &camera, RenderTarget &renderTarget, bool showSphere, bool showAABB,
+                                              bool showOOBB)
 {
-    if (renderBoundingBox(model.getAABB(), glm::vec3(0.0f, 0.0f, 1.0f), camera, renderTarget) == false) {
-        return false;
+    if (showSphere) {
+        float radius = model.getBoundingSphere().getRadius();
+        glm::vec3 radiusVec(radius, radius, radius);
+        glm::vec3 position = model.getPosition();
+
+        BoundingBox sphere(position - radiusVec, position + radiusVec);
+
+        if (renderBoundingBox(sphere, glm::mat4(1.0f), glm::vec3(1.0f, 0.0f, 0.0f), camera, renderTarget) == false) {
+            return false;
+        }
     }
-    return renderBoundingBox(model.getOOBB(), glm::vec3(0.0f, 1.0f, 0.0f), camera, renderTarget);
+    if (showAABB) {
+        if (renderBoundingBox(model.getAABB(), glm::mat4(1.0f), glm::vec3(0.0f, 1.0f, 0.0f), camera, renderTarget) == false) {
+            return false;
+        }
+    }
+    if (showOOBB) {
+        if (renderBoundingBox(model.getOOBB(), model.getModelMatrix(), glm::vec3(0.0f, 0.0f, 1.0f), camera, renderTarget) == false) {
+            return false;
+        }
+    }
+    return true;
 }
 
 bool OpenGLRenderer::resize(uint16_t width, uint16_t height)

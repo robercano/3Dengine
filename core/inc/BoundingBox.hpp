@@ -23,12 +23,12 @@ class BoundingBox
     const glm::vec3 &getMax() const { return _max; }
     void setMin(const glm::vec3 &min) { _min = min; }
     void setMax(const glm::vec3 &max) { _max = max; }
-    BoundingBox operator*(const glm::mat4 &transform)
+    BoundingBox operator*(const glm::mat3 &transform)
     {
         BoundingBox tmp;
 
-        tmp._min = glm::vec3(transform * glm::vec4(_min, 1.0f));
-        tmp._max = glm::vec3(transform * glm::vec4(_max, 1.0f));
+        tmp._min = transform * _min;
+        tmp._max = transform * _max;
 
         return tmp;
     }

@@ -31,7 +31,7 @@ class Object3D
         , _model(glm::mat4(1.0f))
         , _modelValid(true)
         , _viewValid(true)
-        , _oobbBaseValid(false)
+        , _oobbValid(false)
         , _boundingVolumesValid(false)
     {
     }
@@ -176,9 +176,9 @@ class Object3D
 
     BoundingSphere &getBoundingSphere()
     {
-        if (_oobbBaseValid == false) {
+        if (_oobbValid == false) {
             _calculateBoundingVolumes();
-            _oobbBaseValid = true;
+            _oobbValid = true;
         }
         if (_boundingVolumesValid == false || _modelValid == false) {
             _updateBoundingVolumes();
@@ -189,9 +189,9 @@ class Object3D
 
     const BoundingBox &getAABB()
     {
-        if (_oobbBaseValid == false) {
+        if (_oobbValid == false) {
             _calculateBoundingVolumes();
-            _oobbBaseValid = true;
+            _oobbValid = true;
         }
         if (_boundingVolumesValid == false || _modelValid == false) {
             _updateBoundingVolumes();
@@ -201,9 +201,9 @@ class Object3D
     }
     const BoundingBox &getOOBB()
     {
-        if (_oobbBaseValid == false) {
+        if (_oobbValid == false) {
             _calculateBoundingVolumes();
-            _oobbBaseValid = true;
+            _oobbValid = true;
         }
         if (_boundingVolumesValid == false || _modelValid == false) {
             _updateBoundingVolumes();
@@ -235,14 +235,17 @@ class Object3D
      */
     void _updateBoundingVolumes()
     {
-        log("_updateBoundingVolumes", getModelMatrix());
-        _oobb = _oobbBase * getModelMatrix();
+        glm::mat4 model = getModelMatrix();
+        glm::mat4 absModel(glm::abs(model[0][0]), glm::abs(model[0][1]), glm::abs(model[0][2]), glm::abs(model[0][3]),
+                           glm::abs(model[1][0]), glm::abs(model[1][1]), glm::abs(model[1][2]), glm::abs(model[1][3]),
+                           glm::abs(model[2][0]), glm::abs(model[2][1]), glm::abs(model[2][2]), glm::abs(model[2][3]),
+                           glm::abs(model[3][0]), glm::abs(model[3][1]), glm::abs(model[3][2]), glm::abs(model[3][3]));
 
         glm::vec3 center = (_oobb.getMin() + _oobb.getMax()) / 2.0f;
         glm::vec3 extent = (_oobb.getMax() - _oobb.getMin()) / 2.0f;
 
-        glm::vec3 newCenter = glm::vec3(_orientation * glm::vec4(center, 1.0f));
-        glm::vec3 newExtent = glm::vec3(_orientation * glm::vec4(extent, 1.0f));
+        glm::vec3 newCenter = glm::vec3(model * glm::vec4(center, 1.0f));
+        glm::vec3 newExtent = glm::vec3(absModel * glm::vec4(extent, 0.0f));
 
         glm::vec3 min = newCenter - newExtent;
         glm::vec3 max = newCenter + newExtent;
@@ -261,9 +264,8 @@ class Object3D
     bool _viewValid;        /**< If true, current view matrix is cached and does not need recalculation */
 
     BoundingSphere _boundingSphere; /**< Bounding sphere containing all model's vertices */
-    BoundingBox _oobbBase;          /**< Base object-oriented bounding box used to calculate the transformed OOBB*/
     BoundingBox _oobb;              /**< Object-oriented bounding box containing all model's vertices */
     BoundingBox _aabb;              /**< Axis-aligned bounding box containing all model's vertices */
-    bool _oobbBaseValid;            /**< Indicates if the cached information for the base OOBB is still valid */
+    bool _oobbValid;                /**< Indicates if the cached information for the base OOBB is still valid */
     bool _boundingVolumesValid;     /**< Indicates if the cached information for the OOBB and AABB is still valid */
 };

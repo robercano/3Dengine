@@ -85,8 +85,8 @@ void Model3D::_calculateBoundingVolumes()
     }
 
     /* Set the final values */
-    _oobbBase.setMin(glm::vec3(minX, minY, minZ));
-    _oobbBase.setMax(glm::vec3(maxX, maxY, maxZ));
+    _oobb.setMin(glm::vec3(minX, minY, minZ));
+    _oobb.setMax(glm::vec3(maxX, maxY, maxZ));
 
     _updateBoundingVolumes();
 }

@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtx/transform.hpp>
 #include "BlinnPhongShader.hpp"
 #include "Camera.hpp"
 #include "DirectLight.hpp"
@@ -13,6 +15,9 @@
 #include "SpotLight.hpp"
 #include "ToonLightingShader.hpp"
 #include "ToonRenderTarget.hpp"
+#include "Logging.hpp"
+
+using namespace Logging;
 
 #define PI 3.14159265358979323846
 
@@ -26,6 +31,12 @@ class ShadowsDemo : public GameHandler
         _InvertMouse = 1.0;
         _prevX = 0xFFFFFF;
         _prevY = 0xFFFFFF;
+        _angle = 0.0f;
+        _key1Pressed = false;
+        _enableMovement = true;
+        _enableSphere = true;
+        _enableAABB = true;
+        _enableOOBB = true;
     }
 
     bool handleInit(Game *game)
@@ -38,7 +49,7 @@ class ShadowsDemo : public GameHandler
         /* Setup the normal render target for the shadow mapping */
         _renderTargetNormal = NOAARenderTarget::New();
         if (_renderTargetNormal == NULL) {
-            fprintf(stderr, "ERROR allocating normal render target\n");
+            log("ERROR allocating normal render target\n");
             return false;
         }
 
@@ -66,31 +77,34 @@ class ShadowsDemo : public GameHandler
         /* Create a Blinn-phong shader for the geometry */
         _shaderBlinnLight = BlinnPhongShader::New();
         if (_shaderBlinnLight->init() == false) {
-            printf("ERROR initializing toon lighting shader\n");
+            log("ERROR initializing toon lighting shader\n");
             return false;
         }
         _shaderShadow = NormalShadowMapShader::New();
         if (_shaderShadow->init() == false) {
-            printf("ERROR initializing shadow map shader\n");
+            log("ERROR initializing shadow map shader\n");
             return false;
         }
 
         /* Load the geometry */
-        _model3D = game->getRenderer()->loadModelOBJ("data/objects/daxter");
-        _model3D->setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
+        _model1 = game->getRenderer()->loadModelOBJ("data/objects/daxter");
+        _model1->setScaleFactor(glm::vec3(50.0f, 50.0f, 50.0f));
+        _model1->setPosition(glm::vec3(100.0f, 0.0f, 0.0f));
 
-        glm::vec3 angles(0.0f, 45.0f, 0.0f);
-        glm::quat rot = glm::quat(angles);
-        _model3D->rotate(glm::toMat4(rot));
-        _model3D->setPosition(glm::vec3(100.0f, 0.0f, 0.0f));
+        _model2 = game->getRenderer()->loadModelOBJ("data/objects/deadpool");
+        _model2->setScaleFactor(glm::vec3(50.0f, 50.0f, 50.0f));
+        _model2->setPosition(glm::vec3(100.0f, 0.0f, 0.0f));
 
+        _model3 = game->getRenderer()->loadModelOBJ("data/objects/deadpool");
+        _model3->setScaleFactor(glm::vec3(50.0f, 50.0f, 50.0f));
+        _model3->setPosition(glm::vec3(100.0f, 0.0f, 0.0f));
 
         /* Use a plane for the floor */
         procedural::Plane plane;
 
-        _plane3D = game->getRenderer()->prepareModel(plane);
-        _plane3D->setScaleFactor(glm::vec3(500.0f, 1.0f, 500.0f));
-        _plane3D->setPosition(glm::vec3(0.0f, -70.0f, 0.0f));
+        _plane = game->getRenderer()->prepareModel(plane);
+        _plane->setScaleFactor(glm::vec3(500.0f, 1.0f, 500.0f));
+        _plane->setPosition(glm::vec3(0.0f, -70.0f, 0.0f));
 
         /* Create the game camera */
         _camera.setProjection((float)_width, (float)_height, 0.1f, 1000.0f, 45.0f);
@@ -125,6 +139,23 @@ class ShadowsDemo : public GameHandler
         if (_inputManager._keys['R']) {
             game->resetStats();
         }
+        if (_inputManager._keys['1'] && _key1Pressed == false) {
+            _enableMovement = !_enableMovement;
+        }
+        _key1Pressed = _inputManager._keys['1'];
+        if (_inputManager._keys['2'] && _key2Pressed == false) {
+            _enableSphere = !_enableSphere;
+        }
+        _key2Pressed = _inputManager._keys['2'];
+        if (_inputManager._keys['3'] && _key3Pressed == false) {
+            _enableAABB = !_enableAABB;
+        }
+        _key3Pressed = _inputManager._keys['3'];
+        if (_inputManager._keys['4'] && _key4Pressed == false) {
+            _enableOOBB = !_enableOOBB;
+        }
+        _key4Pressed = _inputManager._keys['4'];
+
         /* Mouse */
         if (_prevX == 0xFFFFFF) {
             _prevX = _inputManager._xMouse;
@@ -146,6 +177,26 @@ class ShadowsDemo : public GameHandler
         _prevX = _inputManager._xMouse;
         _prevY = _inputManager._yMouse;
 
+        /* Move and rotate the model */
+        if (_enableMovement) {
+            _angle += (float)(2.0f * PI * elapsedMs / 10000.0f);
+            if (_angle > 2.0f * PI) {
+                _angle -= (float)(2.0f * PI);
+            }
+
+            glm::quat orientation = glm::quat(glm::vec3(0.0f, _angle, 0.0f));
+            _model1->setOrientation(glm::toMat4(orientation));
+            _model1->setPosition(glm::vec3(150.0f + 50.0f*glm::cos(_angle), 0.0, 50.0f*glm::sin(_angle)));
+
+            orientation = glm::quat(glm::vec3(0.0f, -_angle, 0.0f));
+            _model2->setOrientation(glm::toMat4(orientation));
+            _model2->setPosition(glm::vec3(-50.0f + 50.0f*glm::cos(-_angle), 0.0, 50.0f*glm::sin(-_angle)));
+
+            orientation = glm::quat(glm::vec3(0.0f, _angle, 0.0f));
+            _model3->setOrientation(glm::toMat4(orientation));
+            _model3->setPosition(glm::vec3(50.0f*glm::cos(_angle), 0.0, 160.0f + 50.0f*glm::sin(_angle)));
+        }
+
         return true;
     }
 
@@ -159,24 +210,38 @@ class ShadowsDemo : public GameHandler
         _renderTargetNormal->clear();
 
         /* Render the shadow map for the sun */
-        _sun->lookAt(_model3D->getPosition());
+        _sun->lookAt(glm::vec3(0.0f, 0.0f, 0.0f));
         _sun->getShadowMap()->clear();
-        game->getRenderer()->renderToShadowMap(*_model3D, *_sun, *_shaderShadow);
+        game->getRenderer()->renderToShadowMap(*_model1, *_sun, *_shaderShadow);
+        game->getRenderer()->renderToShadowMap(*_model2, *_sun, *_shaderShadow);
+        game->getRenderer()->renderToShadowMap(*_model3, *_sun, *_shaderShadow);
 
         /* Render all objects */
-        game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderBlinnLight, _sun, _emptyPointLights, _emptySpotLights, 0.2f, *_renderTargetNormal);
-        game->getRenderer()->renderModel3D(*_plane3D, _camera, *_shaderBlinnLight, _sun, _emptyPointLights, _emptySpotLights, 0.2f, *_renderTargetNormal);
-        game->getRenderer()->renderModelBoundingBoxes(*_model3D, _camera, *_renderTargetNormal);
+        game->getRenderer()->renderModel3D(*_model1, _camera, *_shaderBlinnLight, _sun, _emptyPointLights, _emptySpotLights, 0.4f, *_renderTargetNormal);
+        game->getRenderer()->renderModel3D(*_model2, _camera, *_shaderBlinnLight, _sun, _emptyPointLights, _emptySpotLights, 0.4f, *_renderTargetNormal);
+        game->getRenderer()->renderModel3D(*_model3, _camera, *_shaderBlinnLight, _sun, _emptyPointLights, _emptySpotLights, 0.4f, *_renderTargetNormal);
+        game->getRenderer()->renderModel3D(*_plane, _camera, *_shaderBlinnLight, _sun, _emptyPointLights, _emptySpotLights, 0.4f, *_renderTargetNormal);
+
+        game->getRenderer()->renderModelBoundingBoxes(*_model1, _camera, *_renderTargetNormal, _enableSphere, _enableAABB, _enableOOBB);
+        game->getRenderer()->renderModelBoundingBoxes(*_model2, _camera, *_renderTargetNormal, _enableSphere, _enableAABB, _enableOOBB);
+        game->getRenderer()->renderModelBoundingBoxes(*_model3, _camera, *_renderTargetNormal, _enableSphere, _enableAABB, _enableOOBB);
 
         _renderTargetNormal->blit();
+
+        game->getTextConsole()->gprintf("1=Movement %s, 2=Sphere %s, 3=AABB %s, 4=OOBB %s\n",
+                _enableMovement ? "Off" : "On",
+                _enableSphere ? "Off" : "On",
+                _enableAABB ? "Off" : "On",
+                _enableOOBB ? "Off" : "On");
+        game->getTextConsole()->gprintf("Red=Sphere, Green=AABB, Blue=OOBB\n");
         return true;
     }
 
   private:
     Camera _camera;
     FlyMotion _cameraMotion;
-    Model3D *_model3D;
-    Model3D *_plane3D;
+    Model3D *_model1, *_model2, *_model3;
+    Model3D *_plane;
     BlinnPhongShader *_shaderBlinnLight;
     NormalShadowMapShader *_shaderShadow;
     NOAARenderTarget *_renderTargetNormal;
@@ -191,6 +256,10 @@ class ShadowsDemo : public GameHandler
     int32_t _prevY;
     uint32_t _width;
     uint32_t _height;
+    float _angle;
+    bool _key1Pressed, _key2Pressed, _key3Pressed, _key4Pressed;
+    bool _enableMovement;
+    bool _enableSphere, _enableAABB, _enableOOBB;
 };
 
 int main()
@@ -200,7 +269,7 @@ int main()
 
     game = new Game("Anti Aliasing Comparison demo");
     if (game == NULL) {
-        fprintf(stderr, "ERROR creating new game\n");
+        log("ERROR creating new game\n");
         return 1;
     }
 
@@ -213,7 +282,7 @@ int main()
     game->setFPS(60);
 
     if (game->init() == false) {
-        fprintf(stderr, "ERROR initializing game\n");
+        log("ERROR initializing game\n");
         return 1;
     }
 
