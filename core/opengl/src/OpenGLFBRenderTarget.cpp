@@ -10,9 +10,12 @@
  */
 #include "OpenGL.h"
 #include <glm/gtc/matrix_transform.hpp>
+#include "Logging.hpp"
 #include "OpenGLFBRenderTarget.hpp"
 #include "Renderer.hpp"
 #include "WindowManager.hpp"
+
+using namespace Logging;
 
 OpenGLFBRenderTarget::~OpenGLFBRenderTarget()
 {
@@ -54,7 +57,7 @@ bool OpenGLFBRenderTarget::init(uint32_t width, uint32_t height, uint32_t maxSam
 
         GLenum status;
         if ((status = glCheckFramebufferStatus(GL_FRAMEBUFFER)) != GL_FRAMEBUFFER_COMPLETE) {
-            printf("ERROR OpenGLRenderTarget::init %d\n", status);
+            log("ERROR OpenGLRenderTarget::init %d\n", status);
             return false;
         }
     }

@@ -8,6 +8,7 @@
  */
 #include "OpenGL.h"
 #include <glm/gtc/matrix_transform.hpp>
+#include "Logging.hpp"
 #include "OpenGLFilterRenderTarget.hpp"
 #include "Renderer.hpp"
 #include "WindowManager.hpp"
@@ -76,7 +77,7 @@ bool OpenGLFilterRenderTarget::init(uint32_t width, uint32_t height, uint32_t ma
 
         GLenum status;
         if ((status = glCheckFramebufferStatus(GL_FRAMEBUFFER)) != GL_FRAMEBUFFER_COMPLETE) {
-            printf("ERROR OpenGLRenderTarget::init %d\n", status);
+            log("ERROR OpenGLRenderTarget::init %d\n", status);
             return false;
         }
     }

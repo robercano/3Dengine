@@ -6,6 +6,7 @@
  */
 #include "OpenGLFontRenderer.hpp"
 #include <string.h>
+#include "Logging.hpp"
 #include "MathUtils.h"
 #include "OpenGL.h"
 #include "Renderer.hpp"
@@ -86,7 +87,7 @@ bool OpenGLFontRenderer::setFont(TrueTypeFont *font)
 
     std::string error;
     if (_shader->use("text/glyph", error) == false) {
-        printf("ERROR compiling shader text/glyph: %s\n", error.c_str());
+        log("ERROR compiling shader text/glyph: %s\n", error.c_str());
         return 1;
     }
 

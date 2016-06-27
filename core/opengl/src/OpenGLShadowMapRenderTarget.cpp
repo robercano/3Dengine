@@ -8,6 +8,7 @@
  */
 #include "OpenGL.h"
 #include <glm/gtc/matrix_transform.hpp>
+#include "Logging.hpp"
 #include "OpenGLShadowMapRenderTarget.hpp"
 #include "Renderer.hpp"
 #include "WindowManager.hpp"
@@ -46,7 +47,7 @@ bool OpenGLShadowMapRenderTarget::init(uint32_t width, uint32_t height, uint32_t
 
         GLenum status;
         if ((status = glCheckFramebufferStatus(GL_FRAMEBUFFER)) != GL_FRAMEBUFFER_COMPLETE) {
-            printf("ERROR OpenGLRenderTarget::init %d\n", status);
+            log("ERROR OpenGLRenderTarget::init %d\n", status);
             return false;
         }
     }
@@ -86,7 +87,7 @@ bool OpenGLShadowMapRenderTarget::init(uint32_t width, uint32_t height, uint32_t
 
     std::string error;
     if (_shader->use("utils/depth2color", error) == false) {
-        printf("ERROR loading shader utils/depth2color: %s\n", error.c_str());
+        log("ERROR loading shader utils/depth2color: %s\n", error.c_str());
         return false;
     }
 

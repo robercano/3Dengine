@@ -8,6 +8,9 @@
  */
 #include "OpenGLUniformBlock.hpp"
 #include <string.h>
+#include "Logging.hpp"
+
+using namespace Logging;
 
 OpenGLUniformBlock::OpenGLUniformBlock()
     : _programID(0)
@@ -61,7 +64,7 @@ bool OpenGLUniformBlock::prepareForShader(GLuint programID)
 
     __(_blockIndex = glGetUniformBlockIndex(programID, accessName.c_str()));
     if (_blockIndex == GL_INVALID_INDEX) {
-        fprintf(stderr, "ERROR OpenGLUniformBlock bad block index for block: %s\n", accessName.c_str());
+        log("ERROR OpenGLUniformBlock bad block index for block: %s\n", accessName.c_str());
         ret = false;
         goto error;
     }
@@ -70,7 +73,7 @@ bool OpenGLUniformBlock::prepareForShader(GLuint programID)
     __(glGetUniformIndices(programID, _paramsFullName.size(), names, indices));
     for (size_t i = 0; i < _paramsOffsets.size(); ++i) {
         if (indices[i] == GL_INVALID_INDEX) {
-            fprintf(stderr, "ERROR OpenGLUniformBlock could not get all indices\n");
+            log("ERROR OpenGLUniformBlock could not get all indices\n");
             ret = false;
             goto error;
         }

@@ -63,18 +63,18 @@ Model3D *OpenGLRenderer::loadModelOBJ(const std::string &modelName)
 {
     OpenGLModel3D *model = new OpenGLModel3D();
     if (model == NULL) {
-        fprintf(stderr, "ERROR allocating memory for OpenGLModel3D\n");
+        log("ERROR allocating memory for OpenGLModel3D\n");
         return NULL;
     }
 
     if (ModelLoaders::LoadOBJModel(*model, modelName) == false) {
-        fprintf(stderr, "ERROR loading model %s into an OpenGLModel3D\n", modelName.c_str());
+        log("ERROR loading model %s into an OpenGLModel3D\n", modelName.c_str());
         delete model;
         return NULL;
     }
 
     if (model->prepare() == false) {
-        fprintf(stderr, "ERROR preparing OpenGL arrays for model %s\n", modelName.c_str());
+        log("ERROR preparing OpenGL arrays for model %s\n", modelName.c_str());
         delete model;
         return NULL;
     }
@@ -86,14 +86,14 @@ Model3D *OpenGLRenderer::prepareModel(const Model3D &source)
 {
     OpenGLModel3D *model = new OpenGLModel3D();
     if (model == NULL) {
-        fprintf(stderr, "ERROR allocating memory for OpenGLModel3D\n");
+        log("ERROR allocating memory for OpenGLModel3D\n");
         return NULL;
     }
 
     *((Model3D *)model) = source;
 
     if (model->prepare() == false) {
-        fprintf(stderr, "ERROR preparing OpenGL arrays for model copied from other model\n");
+        log("ERROR preparing OpenGL arrays for model copied from other model\n");
         delete model;
         return NULL;
     }
@@ -309,7 +309,7 @@ bool OpenGLRenderer::renderLight(Light &light, Camera &camera, RenderTarget &ren
 
     std::string error;
     if (shader->use("utils/render_light", error) != true) {
-        printf("ERROR loading utils/render_light shader: %s\n", error.c_str());
+        log("ERROR loading utils/render_light shader: %s\n", error.c_str());
         return false;
     }
 
@@ -365,7 +365,7 @@ bool OpenGLRenderer::renderBoundingBox(const BoundingBox &box, const glm::vec3 &
 
     std::string error;
     if (shader->use("utils/render_boundingbox", error) != true) {
-        printf("ERROR loading utils/render_boundingbox shader: %s\n", error.c_str());
+        log("ERROR loading utils/render_boundingbox shader: %s\n", error.c_str());
         return false;
     }
 

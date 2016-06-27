@@ -24,7 +24,7 @@ MouseManager *GLFWWindowManager::getMouseManager() { return GLFWMouseManager::Ge
 bool GLFWWindowManager::init()
 {
     if (!glfwInit()) {
-        fprintf(stderr, "Failed to initialize GLFW\n");
+        log("Failed to initialize GLFW\n");
         return false;
     }
     return true;
@@ -39,13 +39,13 @@ bool GLFWWindowManager::createWindow(std::string &name, uint16_t width, uint16_t
     /* Detect the current resolution of the primary monitor */
     GLFWmonitor *primary = glfwGetPrimaryMonitor();
     if (primary == NULL) {
-        fprintf(stderr, "Failed to detect primary monitor\n");
+        log("Failed to detect primary monitor\n");
         return false;
     }
 
     const GLFWvidmode *videoMode = glfwGetVideoMode(primary);
     if (videoMode == NULL) {
-        fprintf(stderr, "Failed to detect primary monitor video mode\n");
+        log("Failed to detect primary monitor video mode\n");
         return false;
     }
 
@@ -70,7 +70,7 @@ bool GLFWWindowManager::createWindow(std::string &name, uint16_t width, uint16_t
     /* Initialize GLEW */
     glewExperimental = true;  // Needed for core profile
     if (glewInit() != GLEW_OK) {
-        fprintf(stderr, "Failed to initialize GLEW\n");
+        log("Failed to initialize GLEW\n");
         return false;
     }
 

@@ -9,8 +9,11 @@
  * @author	Roberto Cano (http://www.robertocano.es)
  */
 #include "OpenGL.h"
+#include "Logging.hpp"
 #include "OpenGLSSAARenderTarget.hpp"
 #include "Renderer.hpp"
+
+using namespace Logging;
 
 OpenGLSSAARenderTarget::~OpenGLSSAARenderTarget()
 {
@@ -55,7 +58,7 @@ bool OpenGLSSAARenderTarget::init(uint32_t width, uint32_t height, uint32_t fact
 
         GLenum status;
         if ((status = glCheckFramebufferStatus(GL_FRAMEBUFFER)) != GL_FRAMEBUFFER_COMPLETE) {
-            printf("ERROR OpenGLRenderTarget::init %d\n", status);
+            log("ERROR OpenGLRenderTarget::init %d\n", status);
             return false;
         }
     }

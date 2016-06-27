@@ -7,8 +7,11 @@
  * @author	Roberto Cano (http://www.robertocano.es)
  */
 #include "OpenGL.h"
+#include "Logging.hpp"
 #include "OpenGLMSAARenderTarget.hpp"
 #include "Renderer.hpp"
+
+using namespace Logging;
 
 OpenGLMSAARenderTarget::~OpenGLMSAARenderTarget()
 {
@@ -46,7 +49,7 @@ bool OpenGLMSAARenderTarget::init(uint32_t width, uint32_t height, uint32_t samp
 
         GLenum status;
         if ((status = glCheckFramebufferStatus(GL_FRAMEBUFFER)) != GL_FRAMEBUFFER_COMPLETE) {
-            printf("ERROR OpenGLRenderTarget::init %d\n", status);
+            log("ERROR OpenGLRenderTarget::init %d\n", status);
             return false;
         }
     }

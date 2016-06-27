@@ -2,12 +2,13 @@
 #include <GL/glfw.h>
 #include <string.h>
 #include <glm/glm.hpp>
-using namespace glm;
 #include <string>
-
 #include "Sphere.hpp"
+#include "Logging.hpp"
 
+using namespace Logging;
 using namespace procedural;
+using namespace glm;
 
 static uint32_t numIndices = 0;
 bool Sphere::init()
@@ -165,7 +166,7 @@ bool Sphere::init()
 
     vertNum++;
 
-    fprintf(stderr, "Vertices: %d, allocated: %d, H*V: %d, top: %d, bottom: %d\n", vertNum, horizontal * vertical + top + bottom,
+    log(stderr, "Vertices: %d, allocated: %d, H*V: %d, top: %d, bottom: %d\n", vertNum, horizontal * vertical + top + bottom,
             horizontal * vertical, top, bottom);
 
     /* Generate indices */
@@ -191,7 +192,7 @@ bool Sphere::init()
     uint32_t base = _h * (_v - 1);
     uint32_t side = 1 << level;
 
-    fprintf(stderr, "numIndices: %d, count: %d\n", numIndices, count);
+    log("numIndices: %d, count: %d\n", numIndices, count);
     uint32_t total_levels = ((1 << (level - 1)) - 1);
 
     for (k = 0; k <= total_levels; k++) {
@@ -294,7 +295,7 @@ bool Sphere::init()
         side -= 2;
     }
 
-    fprintf(stderr, "numIndices: %d, count: %d\n", numIndices, count);
+    log("numIndices: %d, count: %d\n", numIndices, count);
 
     /* Generate a vertex array to reference the attributes */
     glGenVertexArrays(1, &_gVAO);

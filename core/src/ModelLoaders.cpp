@@ -12,7 +12,9 @@
 #include <string>
 #include <vector>
 #include "ImageLoaders.h"
+#include "Logging.hpp"
 
+using namespace Logging;
 using namespace std;
 
 bool ModelLoaders::LoadOBJModel(Model3D &model, const string &name)
@@ -41,7 +43,7 @@ bool ModelLoaders::LoadOBJModel(Model3D &model, const string &name)
     /* Open the materials file */
     FILE *file = fopen(matFile.c_str(), "r");
     if (file == NULL) {
-        printf("ERROR cannot open file %s\n", matFile.c_str());
+        log("ERROR cannot open file %s\n", matFile.c_str());
         return false;
     }
 

@@ -41,21 +41,21 @@ bool Game::init()
 
     _windowManager = WindowManager::GetInstance();
     if (_windowManager == NULL) {
-        fprintf(stderr, "ERROR creating new window manager\n");
+        log("ERROR creating new window manager\n");
         return false;
     }
 
     /* Use our system renderer. This only supports OpenGL for now */
     _renderer = Renderer::GetInstance();
     if (_renderer == NULL) {
-        fprintf(stderr, "ERROR allocating renderer\n");
+        log("ERROR allocating renderer\n");
         return false;
     }
 
     /* Time manager */
     _timer = TimeManager::GetInstance();
     if (_timer == NULL) {
-        fprintf(stderr, "ERROR allocating time manager\n");
+        log("ERROR allocating time manager\n");
         return false;
     }
 
@@ -71,17 +71,17 @@ bool Game::init()
     _windowManager->setRenderer(_renderer);
 
     /* Retrieve the renderer info */
-    fprintf(stderr, "Renderer:       %s\n", _renderer->getName());
-    fprintf(stderr, "Vendor:         %s\n", _renderer->getVendor());
-    fprintf(stderr, "Version:        %s\n", _renderer->getVersion());
-    fprintf(stderr, "Shader Version: %s\n\n", _renderer->getShaderVersion());
+    log("Renderer:       %s\n", _renderer->getName());
+    log("Vendor:         %s\n", _renderer->getVendor());
+    log("Version:        %s\n", _renderer->getVersion());
+    log("Shader Version: %s\n\n", _renderer->getShaderVersion());
 
     /* Setup the text console */
     glm::vec4 color(1.0, 0.5, 0.2, 1.0);
     std::string fontPath = "data/fonts/Arial.ttf";
 
     if (_console.init(fontPath, 14, _width, _height) == false) {
-        printf("ERROR creating text console\n");
+        log("ERROR creating text console\n");
         return false;
     }
 
@@ -131,7 +131,7 @@ bool Game::loop()
         if (_unboundFPS == true || (renderElapsedMs + totalAvgTime * jitterAdj >= dueTime)) {
             _console.clear();
             if (_gameHandler->handleRender(this) != true) {
-                fprintf(stderr, "ERROR handling render callback");
+                log("ERROR handling render callback");
             }
             _console.gprintf("FPS: %d\n", (int)FPS);
             _console.gprintf("Upper FPS: %d\n", (int)(1000.0 / totalAvgTime));
@@ -164,7 +164,7 @@ bool Game::loop()
              * frames. In this case re-adjust the render adjustment and
              * the elapsed time. Have to check how costly that fmod is... */
             if (renderFrameMs > dueTime * jitterAdj) {
-                fprintf(stderr, "Droping frames...(%.2f, %.2f)\n", renderFrameMs, dueTime);
+                log("Droping frames...(%.2f, %.2f)\n", renderFrameMs, dueTime);
             }
 
             /* Calculate FPS now */
@@ -190,9 +190,9 @@ bool Game::loop()
         }
     }
 
-    fprintf(stderr, "Average FPS: %d\n", (int)(1000.0 / totalAvgTime));
-    fprintf(stderr, "Minimum FPS: %d\n", (int)(1000.0 / _maxRenderFrameMs));
-    fprintf(stderr, "Maximum FPS: %d\n", (int)(1000.0 / _minRenderFrameMs));
+    log("Average FPS: %d\n", (int)(1000.0 / totalAvgTime));
+    log("Minimum FPS: %d\n", (int)(1000.0 / _maxRenderFrameMs));
+    log("Maximum FPS: %d\n", (int)(1000.0 / _minRenderFrameMs));
 
     return true;
 }
