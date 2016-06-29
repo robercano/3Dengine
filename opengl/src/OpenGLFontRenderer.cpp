@@ -7,10 +7,13 @@
 #include "OpenGLFontRenderer.hpp"
 #include <string.h>
 #include "Logging.hpp"
-#include "MathUtils.h"
+#include "MathUtils.hpp"
 #include "OpenGL.h"
 #include "Renderer.hpp"
 #include "glm/gtx/transform.hpp"
+
+using namespace MathUtils;
+using namespace Logging;
 
 OpenGLFontRenderer::OpenGLFontRenderer() : _font(NULL), _glyphTextures() {}
 OpenGLFontRenderer::~OpenGLFontRenderer()

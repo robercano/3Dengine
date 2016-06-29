@@ -10,7 +10,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/transform.hpp>
-#include "MathUtils.h"
+#include "MathUtils.hpp"
+
+using namespace MathUtils;
 
 FlyMotion::FlyMotion()
     : _forward(0.0f, 0.0f, -1.0f, 0.0f)

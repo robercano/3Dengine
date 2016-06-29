@@ -15,7 +15,7 @@ CC=gcc
 #
 #Files to be compiled
 #
-VPATH=core/src:core/opengl/src:core/procedural/src:utils/src
+VPATH=core/src:opengl/src:procedural/src:utils/src
 
 CORE_FILES=Game.cpp InputManager.cpp WindowManager.cpp TimeManager.cpp \
 		   ModelLoaders.cpp \
@@ -72,7 +72,7 @@ endif
 #
 #Compilation flags
 #
-FLAGS+=-Werror -MMD -fPIC -Icore/inc -Icore/opengl/inc -Icore/procedural/inc -Iutils/inc -I3rdparty -g -DDEBUG_OPENGL_PIPELINE
+FLAGS+=-Werror -MMD -fPIC -Icore/inc -Iopengl/inc -Iprocedural/inc -Iutils/inc -I3rdparty -g -DDEBUG_OPENGL_PIPELINE
 CXXFLAGS=$(FLAGS) -std=c++11
 CFLAGS=$(FLAGS) -std=c11
 

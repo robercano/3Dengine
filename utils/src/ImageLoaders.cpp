@@ -1,5 +1,5 @@
 
-#include "ImageLoaders.h"
+#include "ImageLoaders.hpp"
 #include <jerror.h>
 #include <jpeglib.h>
 #include <png.h>
@@ -47,7 +47,7 @@ static void jpeg_mem_src(j_decompress_ptr cinfo, void *buffer, long nbytes)
 }
 #endif
 
-int loadJPEG(const char *filename, uint8_t **image, uint32_t *width, uint32_t *height, uint32_t *bytesPerPixel)
+int ImageLoaders::loadJPEG(const char *filename, uint8_t **image, uint32_t *width, uint32_t *height, uint32_t *bytesPerPixel)
 {
     struct jpeg_decompress_struct cinfo;
     struct jpeg_error_mgr jerr;
@@ -106,7 +106,7 @@ int loadJPEG(const char *filename, uint8_t **image, uint32_t *width, uint32_t *h
     return 0;
 }
 
-int loadPNG(const char *filename, uint8_t **image, uint32_t *width, uint32_t *height, uint32_t *bytesPerPixel)
+int ImageLoaders::loadPNG(const char *filename, uint8_t **image, uint32_t *width, uint32_t *height, uint32_t *bytesPerPixel)
 {
     uint32_t y;
     uint32_t ret = 0;
@@ -176,7 +176,7 @@ int loadPNG(const char *filename, uint8_t **image, uint32_t *width, uint32_t *he
     }
 
     row_size_bytes = png_get_rowbytes(png_ptr, info_ptr);
-    *image = malloc(row_size_bytes * (*height));
+    *image = (uint8_t*)malloc(row_size_bytes * (*height));
     if ((*image) == NULL) {
         fprintf(stderr, "ERROR allocating memory for final image for %s\n", filename);
         return -1;

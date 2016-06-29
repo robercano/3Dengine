@@ -11,10 +11,11 @@
 #include <map>
 #include <string>
 #include <vector>
-#include "ImageLoaders.h"
+#include "ImageLoaders.hpp"
 #include "Logging.hpp"
 
 using namespace Logging;
+using namespace ImageLoaders;
 using namespace std;
 
 bool ModelLoaders::LoadOBJModel(Model3D &model, const string &name)

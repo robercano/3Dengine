@@ -3,7 +3,7 @@
  *
  * @author Roberto Cano
  */
-#include "MathUtils.h"
+#include "MathUtils.hpp"
 
 uint32_t MathUtils::clp2(uint32_t x)
 {
