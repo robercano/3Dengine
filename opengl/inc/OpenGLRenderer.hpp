@@ -33,6 +33,7 @@ class OpenGLRenderer : public Renderer
     bool renderModelNormals(Model3D &model3D, Camera &camera, RenderTarget &renderTarget);
     bool resize(uint16_t width, uint16_t height);
     void flush();
+    void clear();
 
   private:
     /**

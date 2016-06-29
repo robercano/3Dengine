@@ -88,11 +88,33 @@ class Renderer
      * Adjusts the renderer's display size
      */
     virtual bool resize(uint16_t width, uint16_t height) = 0;
+
+    /**
+     * Flushes all the renderers pending commands
+     */
     virtual void flush() = 0;
+
+    /**
+     * Clears the main framebuffer
+     */
+    virtual void clear() = 0;
+
+    /**
+     * Global settings for the renderer
+     */
+    void setWireframeMode(bool flag) { _wireframe = flag; }
+    bool getWireframeMode() { return _wireframe; }
 
   private:
     /**
      * Singleton instance
      */
     static Renderer *_renderer;
+
+    /**
+     * Enable wireframe mode
+     */
+
+
+    bool _wireframe; /**< Enables/disables wireframe rendering */
 };

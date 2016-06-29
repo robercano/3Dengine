@@ -176,7 +176,7 @@ int ImageLoaders::loadPNG(const char *filename, uint8_t **image, uint32_t *width
     }
 
     row_size_bytes = png_get_rowbytes(png_ptr, info_ptr);
-    *image = (uint8_t*)malloc(row_size_bytes * (*height));
+    *image = (uint8_t *)malloc(row_size_bytes * (*height));
     if ((*image) == NULL) {
         fprintf(stderr, "ERROR allocating memory for final image for %s\n", filename);
         return -1;

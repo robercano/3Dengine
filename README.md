@@ -43,7 +43,7 @@ TODO
 * OpenGL renderer (based on GLFW and GLEW)
 * Input manager (keyboard and mouse for now)
 * Window manager (based on GLFW)
-* Shader class to compile and apply shaders
+* Shader class to compile and apply shaders: vertex/geometry/fragment supported
 * OBJ format importer supporting geometry, textures and material specification
 * Render targets support
 * Anti-aliasing render targets implemented with shaders: FXAA, FXAA2, SSAA and MSAA
@@ -55,6 +55,7 @@ TODO
 * Simple shader demo effect for render targets (waves)
 * Dynamic lights support: point light, spot light and direct light
 * Shadow map support for all dynamic lights
+* Visual debug info: lights, normals, wireframe and bounding boxes
 * Common game loop with input, time and screen management
 
 # Current set of demos
@@ -63,6 +64,7 @@ TODO
 * Point lights demo
 * Toon shader demo
 * Shadow maps demos with direct light, point light and spot light
+* Bounding box demo with OBB, AABB and Bounding Sphere
 
 ## In the pipeline
 * Scene support so user can define a scene and rendering happens automatically from the camera view

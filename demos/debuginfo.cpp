@@ -29,6 +29,10 @@ class ShadowsDemo : public GameHandler
         _prevX = 0xFFFFFF;
         _prevY = 0xFFFFFF;
         _angle = 0.0f;
+        _enableBoundingBox = true;
+        _enableNormals = true;
+        _enableLights = true;
+        _enableWireframe = true;
     }
 
     bool handleInit(Game *game)
@@ -53,6 +57,10 @@ class ShadowsDemo : public GameHandler
         keys.push_back('A');
         keys.push_back('D');
         keys.push_back('R');
+        keys.push_back('1');
+        keys.push_back('2');
+        keys.push_back('3');
+        keys.push_back('4');
         keys.push_back(GLFW_KEY_ESCAPE);
 
         game->getWindowManager()->getKeyManager()->registerListener(_inputManager, keys);
@@ -71,8 +79,8 @@ class ShadowsDemo : public GameHandler
         }
 
         /* Point light */
-        PointLight *light = new PointLight(glm::vec3(1.0f, 1.0f, 0.2f), glm::vec3(0.8f, 0.4f, 0.4f), glm::vec3(0.8f, 0.4f, 0.4f),
-                                           glm::vec3(-100.0f, 200.0f, 0.0f), 0.0000099999f, 1000.0f);
+        PointLight *light = new PointLight(glm::vec3(3.0f, 3.0f, 3.0f), glm::vec3(1.8f, 1.4f, 1.4f), glm::vec3(1.8f, 1.4f, 1.4f),
+                                           glm::vec3(100.0f, 100.0f, 0.0f), 0.0000099999f, 1000.0f);
 
         light->setProjection((float)_width / 4.0f, (float)_height / 4.0f, 0.1f, 10000.0f);
         light->getShadowMap()->init(_width, _height);
@@ -118,6 +126,25 @@ class ShadowsDemo : public GameHandler
         if (_inputManager._keys['R']) {
             game->resetStats();
         }
+        if (_inputManager._keys['1'] && _key1Pressed == false) {
+            _enableBoundingBox = !_enableBoundingBox;
+        }
+        _key1Pressed = _inputManager._keys['1'];
+
+        if (_inputManager._keys['2'] && _key2Pressed == false) {
+            _enableNormals = !_enableNormals;
+        }
+        _key2Pressed = _inputManager._keys['2'];
+
+        if (_inputManager._keys['3'] && _key3Pressed == false) {
+            _enableLights = !_enableLights;
+        }
+        _key3Pressed = _inputManager._keys['3'];
+
+        if (_inputManager._keys['4'] && _key4Pressed == false) {
+            _enableWireframe = !_enableWireframe;
+        }
+        _key4Pressed = _inputManager._keys['4'];
 
         /* Mouse */
         if (_prevX == 0xFFFFFF) {
@@ -159,18 +186,31 @@ class ShadowsDemo : public GameHandler
             (*it)->getShadowMap()->clear();
 
             game->getRenderer()->renderToShadowMap(*_model, *(*it), *_shaderShadow);
-            game->getRenderer()->renderLight(*(*it), _camera, *_renderTargetNormal);
+            if (_enableLights) {
+                game->getRenderer()->renderLight(*(*it), _camera, *_renderTargetNormal);
+            }
         }
+
+        game->getRenderer()->setWireframeMode(_enableWireframe);
 
         /* Render all objects */
         game->getRenderer()->renderModel3D(*_model, _camera, *_shaderBlinnLight, NULL, _pointLights, _emptySpotLights, 0.4f, *_renderTargetNormal);
         game->getRenderer()->renderModel3D(*_plane, _camera, *_shaderBlinnLight, NULL, _pointLights, _emptySpotLights, 0.4f, *_renderTargetNormal);
 
-        game->getRenderer()->renderModelNormals(*_model, _camera, *_renderTargetNormal);
-
-        game->getRenderer()->renderModelBoundingBoxes(*_model, _camera, *_renderTargetNormal);
+        if (_enableNormals) {
+            game->getRenderer()->renderModelNormals(*_model, _camera, *_renderTargetNormal);
+        }
+        if (_enableBoundingBox) {
+            game->getRenderer()->renderModelBoundingBoxes(*_model, _camera, *_renderTargetNormal);
+        }
 
         _renderTargetNormal->blit();
+
+        game->getTextConsole()->gprintf("1=Bounding Box%s, 2=Normals %s, 3=Lights %s, 4=Wireframe %s\n",
+                                        _enableBoundingBox ? "Off" : "On",
+                                        _enableNormals ? "Off" : "On",
+                                        _enableLights ? "Off" : "On",
+                                        _enableWireframe ? "Off" : "On");
         return true;
     }
 
@@ -195,6 +235,9 @@ class ShadowsDemo : public GameHandler
     uint32_t _width;
     uint32_t _height;
     float _angle;
+    bool _enableBoundingBox, _enableNormals;
+    bool _enableLights, _enableWireframe;
+    bool _key1Pressed, _key2Pressed, _key3Pressed, _key4Pressed;
 };
 
 int main()

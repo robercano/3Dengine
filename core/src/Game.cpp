@@ -130,6 +130,8 @@ bool Game::loop()
          * account for the jitter in the GPU/CPU when rendering the same scene */
         if (_unboundFPS == true || (renderElapsedMs + totalAvgTime * jitterAdj >= dueTime)) {
             _console.clear();
+            _renderer->clear();
+
             if (_gameHandler->handleRender(this) != true) {
                 log("ERROR handling render callback");
             }

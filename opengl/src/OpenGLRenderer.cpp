@@ -124,6 +124,16 @@ bool OpenGLRenderer::renderModel3D(Model3D &model3D, Camera &camera, LightingSha
         glEnable(GL_DEPTH_TEST);
     }
 
+    if (getWireframeMode() == true) {
+        __(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
+        __(glEnable(GL_LINE_SMOOTH));
+        __(glDisable(GL_CULL_FACE));
+    } else {
+        __(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
+        __(glDisable(GL_LINE_SMOOTH));
+        __(glEnable(GL_CULL_FACE));
+    }
+
     /* Bind the render target */
     renderTarget.bind();
     {
@@ -554,3 +564,9 @@ bool OpenGLRenderer::resize(uint16_t width, uint16_t height)
 }
 
 void OpenGLRenderer::flush() { glFinish(); }
+void OpenGLRenderer::clear()
+{
+    __(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+    __(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
+    __(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+}
