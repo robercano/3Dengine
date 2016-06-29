@@ -11,7 +11,7 @@
 #include <vector>
 #include "Model3D.hpp"
 
-namespace procedural
+namespace Procedural
 {
 /**
  * Plane class to generate axis aligned planes

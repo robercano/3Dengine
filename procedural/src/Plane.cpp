@@ -7,7 +7,7 @@
 #include "Plane.hpp"
 #include <glm/glm.hpp>
 
-using namespace procedural;
+using namespace Procedural;
 using namespace std;
 
 Plane::Plane(uint32_t horizontal, uint32_t vertical)
