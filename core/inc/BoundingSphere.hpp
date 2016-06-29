@@ -15,7 +15,7 @@ class BoundingSphere
      * Constructor
      */
     BoundingSphere(float radius = 1.0f) : _radius(radius) {}
-    float getRadius() { return _radius; }
+    float getRadius() const { return _radius; }
     void setRadius(float radius) { _radius = radius; }
   private:
     float _radius; /**< Radius of the sphere from the center of the model that

@@ -403,7 +403,6 @@ bool OpenGLRenderer::renderBoundingBox(const BoundingBox &box, const glm::mat4 &
     glm::mat4 MVP = camera.getPerspectiveMatrix() * camera.getViewMatrix() * modelMatrix;
 
     __(glEnable(GL_DEPTH_TEST));
-    //__(glEnable(GL_LINE_SMOOTH));
 
     /* Bind the render target */
     renderTarget.bind();
@@ -455,17 +454,80 @@ bool OpenGLRenderer::renderBoundingBox(const BoundingBox &box, const glm::mat4 &
     return true;
 }
 
+bool OpenGLRenderer::renderBoundingSphere(const BoundingSphere &sphere, const glm::vec3 &center, const glm::vec3 &color, Camera &camera,
+                                          RenderTarget &renderTarget)
+{
+    /* TODO: Create this in the renderer so it does not have to be created every time */
+    Shader *shader = Shader::New();
+
+    std::string error;
+    if (shader->use("utils/render_boundingsphere", error) != true) {
+        log("ERROR loading utils/render_boundingsphere shader: %s\n", error.c_str());
+        return false;
+    }
+
+    /* Calculate MVP matrix, bounding box coordinates are already in world coordinates */
+    glm::mat4 MVP = camera.getPerspectiveMatrix() * camera.getViewMatrix();
+
+    __(glEnable(GL_DEPTH_TEST));
+
+    /* Bind the render target */
+    renderTarget.bind();
+    {
+        GLuint boxPosVAO, boxPosVBO;
+
+        /* Bind program to upload the uniform */
+        shader->attach();
+
+        /* Send our transformation to the currently bound shader, in the "MVP" uniform */
+        shader->setUniformMat4("u_MVPMatrix", &MVP);
+        shader->setUniformMat4("u_projectionMatrix", &camera.getPerspectiveMatrix());
+        shader->setUniformVec3("u_boxColor", const_cast<glm::vec3 &>(color));
+        shader->setUniformFloat("u_radius", sphere.getRadius());
+
+        __(glGenVertexArrays(1, &boxPosVAO));
+        __(glBindVertexArray(boxPosVAO));
+
+        __(glGenBuffers(1, &boxPosVBO));
+
+        __(glBindBuffer(GL_ARRAY_BUFFER, boxPosVBO));
+
+        __(glBufferData(GL_ARRAY_BUFFER, sizeof center, &center[0], GL_STATIC_DRAW));
+
+        __(glEnableVertexAttribArray(0));
+        __(glVertexAttribPointer(0,         // attribute. No particular reason for 0, but must match the layout in the shader.
+                                 3,         // size
+                                 GL_FLOAT,  // type
+                                 GL_FALSE,  // normalized?
+                                 0,         // stride
+                                 (void *)0  // array buffer offset
+                                 ));
+
+        __(glDrawArrays(GL_POINTS, 0, 1));
+
+        __(glBindVertexArray(0));
+
+        __(glDeleteBuffers(1, &boxPosVBO));
+        __(glDeleteVertexArrays(1, &boxPosVAO));
+
+        /* Unbind */
+        shader->detach();
+    }
+    renderTarget.unbind();
+
+    __(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
+    __(glEnable(GL_CULL_FACE));
+
+    Shader::Delete(shader);
+
+    return true;
+}
 bool OpenGLRenderer::renderModelBoundingBoxes(Model3D &model, Camera &camera, RenderTarget &renderTarget, bool showSphere, bool showAABB,
                                               bool showOOBB)
 {
     if (showSphere) {
-        float radius = model.getBoundingSphere().getRadius();
-        glm::vec3 radiusVec(radius, radius, radius);
-        glm::vec3 position = model.getPosition();
-
-        BoundingBox sphere(position - radiusVec, position + radiusVec);
-
-        if (renderBoundingBox(sphere, glm::mat4(1.0f), glm::vec3(1.0f, 0.0f, 0.0f), camera, renderTarget) == false) {
+        if (renderBoundingSphere(model.getBoundingSphere(), model.getPosition(), glm::vec3(1.0f, 0.0f, 0.0f), camera, renderTarget) ==
+            false) {
             return false;
         }
     }

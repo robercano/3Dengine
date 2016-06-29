@@ -252,7 +252,9 @@ class Object3D
 
         _aabb.setMin(newCenter - newExtent);
         _aabb.setMax(newCenter + newExtent);
-        _boundingSphere.setRadius(glm::length(newExtent));
+
+        /* Set the radius to the length of the OOBB extent in world coordinates */
+        _boundingSphere.setRadius(glm::length(glm::vec3(model * glm::vec4(extent, 0.0f))));
     }
 
     glm::vec3 _position;    /**< Position of the object in world coordinates */
