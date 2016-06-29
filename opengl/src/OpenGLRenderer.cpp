@@ -378,56 +378,32 @@ bool OpenGLRenderer::renderBoundingBox(const BoundingBox &box, const glm::mat4 &
         return false;
     }
 
-    /* Generate the box triangles */
-    GLfloat boxFaces[] = {/* First face */
-                          box.getMin().x, box.getMin().y, box.getMin().z, box.getMin().x, box.getMin().y, box.getMax().z, box.getMin().x,
-                          box.getMax().y, box.getMax().z,
-
-                          box.getMin().x, box.getMin().y, box.getMin().z, box.getMin().x, box.getMax().y, box.getMax().z, box.getMin().x,
-                          box.getMax().y, box.getMin().z,
-
-                          /* Second face */
-                          box.getMin().x, box.getMin().y, box.getMin().z, box.getMax().x, box.getMin().y, box.getMin().z, box.getMax().x,
-                          box.getMin().y, box.getMax().z,
-
-                          box.getMin().x, box.getMin().y, box.getMin().z, box.getMax().x, box.getMin().y, box.getMax().z, box.getMin().x,
-                          box.getMin().y, box.getMax().z,
-
-                          /* Third face */
-                          box.getMin().x, box.getMin().y, box.getMin().z, box.getMin().x, box.getMax().y, box.getMin().z, box.getMax().x,
-                          box.getMax().y, box.getMin().z,
-
-                          box.getMin().x, box.getMin().y, box.getMin().z, box.getMax().x, box.getMax().y, box.getMin().z, box.getMax().x,
-                          box.getMin().y, box.getMin().z,
-
-                          /* Fourth face */
-                          box.getMax().x, box.getMax().y, box.getMax().z, box.getMax().x, box.getMin().y, box.getMax().z, box.getMax().x,
-                          box.getMin().y, box.getMin().z,
-
-                          box.getMax().x, box.getMax().y, box.getMax().z, box.getMax().x, box.getMin().y, box.getMin().z, box.getMax().x,
-                          box.getMax().y, box.getMin().z,
-
-                          /* Fifth face */
-                          box.getMax().x, box.getMax().y, box.getMax().z, box.getMax().x, box.getMax().y, box.getMin().z, box.getMin().x,
-                          box.getMax().y, box.getMin().z,
-
-                          box.getMax().x, box.getMax().y, box.getMax().z, box.getMin().x, box.getMax().y, box.getMin().z, box.getMin().x,
-                          box.getMax().y, box.getMax().z,
-
-                          /* Sixth face */
-                          box.getMax().x, box.getMax().y, box.getMax().z, box.getMin().x, box.getMax().y, box.getMax().z, box.getMin().x,
-                          box.getMin().y, box.getMax().z,
-
-                          box.getMax().x, box.getMax().y, box.getMax().z, box.getMin().x, box.getMin().y, box.getMax().z, box.getMax().x,
-                          box.getMin().y, box.getMax().z};
+    /* Generate the box lines */
+    GLfloat boxFaces[] = {
+        /* First face */
+        box.getMin().x, box.getMin().y, box.getMin().z, box.getMax().x, box.getMin().y, box.getMin().z, box.getMin().x, box.getMin().y,
+        box.getMin().z, box.getMin().x, box.getMax().y, box.getMin().z, box.getMin().x, box.getMin().y, box.getMin().z, box.getMin().x,
+        box.getMin().y, box.getMax().z,
+        /*--*/
+        box.getMax().x, box.getMax().y, box.getMax().z, box.getMin().x, box.getMax().y, box.getMax().z, box.getMax().x, box.getMax().y,
+        box.getMax().z, box.getMax().x, box.getMin().y, box.getMax().z, box.getMax().x, box.getMax().y, box.getMax().z, box.getMax().x,
+        box.getMax().y, box.getMin().z,
+        /*--*/
+        box.getMin().x, box.getMax().y, box.getMax().z, box.getMin().x, box.getMax().y, box.getMin().z, box.getMin().x, box.getMax().y,
+        box.getMax().z, box.getMin().x, box.getMin().y, box.getMax().z,
+        /*--*/
+        box.getMax().x, box.getMin().y, box.getMax().z, box.getMax().x, box.getMin().y, box.getMin().z, box.getMax().x, box.getMin().y,
+        box.getMax().z, box.getMin().x, box.getMin().y, box.getMax().z,
+        /*--*/
+        box.getMax().x, box.getMax().y, box.getMin().z, box.getMin().x, box.getMax().y, box.getMin().z, box.getMax().x, box.getMax().y,
+        box.getMin().z, box.getMax().x, box.getMin().y, box.getMin().z,
+    };
 
     /* Calculate MVP matrix, bounding box coordinates are already in world coordinates */
     glm::mat4 MVP = camera.getPerspectiveMatrix() * camera.getViewMatrix() * modelMatrix;
 
     __(glEnable(GL_DEPTH_TEST));
-    __(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
-    __(glEnable(GL_LINE_SMOOTH));
-    __(glDisable(GL_CULL_FACE));
+    //__(glEnable(GL_LINE_SMOOTH));
 
     /* Bind the render target */
     renderTarget.bind();
@@ -459,7 +435,7 @@ bool OpenGLRenderer::renderBoundingBox(const BoundingBox &box, const glm::mat4 &
                                  (void *)0  // array buffer offset
                                  ));
 
-        __(glDrawArrays(GL_TRIANGLES, 0, sizeof boxFaces / (3 * sizeof *boxFaces)));
+        __(glDrawArrays(GL_LINES, 0, sizeof boxFaces / (2 * sizeof *boxFaces)));
 
         __(glBindVertexArray(0));
 
