@@ -20,6 +20,7 @@ class OpenGLShader : public virtual Shader
     bool init() { return true; }
     bool use(const std::string &path, std::string &error);
     bool loadVertexShader(const std::string &filename, std::string &error);
+    bool loadGeometryShader(const std::string &filename, std::string &error);
     bool loadFragmentShader(const std::string &filename, std::string &error);
     bool linkProgram(std::string &error);
     bool attach(void);
@@ -39,7 +40,7 @@ class OpenGLShader : public virtual Shader
     virtual void setCustomParams(void);
 
   protected:
-    bool _loadShader(uint32_t shaderObjectID, const std::string &filename, std::string &error);
+    bool _loadShader(uint32_t shaderObjectID, const std::string &filename, std::string &error, bool optional = false);
     void _deleteShadersIDs(void);
     void _buildUniformsMap(void);
     std::vector<uint32_t> _shadersIDs;

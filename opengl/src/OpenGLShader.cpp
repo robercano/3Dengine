@@ -23,11 +23,16 @@ OpenGLShader::~OpenGLShader(void)
 bool OpenGLShader::use(const std::string &path, std::string &error)
 {
     std::string vertex = std::string("data/shaders/") + path + std::string(".vert");
+    std::string geometry = std::string("data/shaders/") + path + std::string(".geo");
     std::string fragment = std::string("data/shaders/") + path + std::string(".frag");
 
     if (loadVertexShader(vertex, error) == false) {
         return false;
     }
+    if (loadGeometryShader(geometry, error) == false) {
+        return false;
+    }
+
     if (loadFragmentShader(fragment, error) == false) {
         return false;
     }
@@ -43,6 +48,15 @@ bool OpenGLShader::loadVertexShader(const std::string &filename, std::string &er
     return _loadShader(shaderObjectID, filename, error);
 }
 
+bool OpenGLShader::loadGeometryShader(const std::string &filename, std::string &error)
+{
+    GLuint shaderObjectID;
+
+    __(shaderObjectID = glCreateShader(GL_GEOMETRY_SHADER));
+
+    return _loadShader(shaderObjectID, filename, error, true);
+}
+
 bool OpenGLShader::loadFragmentShader(const std::string &filename, std::string &error)
 {
     GLuint shaderObjectID;
@@ -52,7 +66,7 @@ bool OpenGLShader::loadFragmentShader(const std::string &filename, std::string &
     return _loadShader(shaderObjectID, filename, error);
 }
 
-bool OpenGLShader::_loadShader(uint32_t shaderObjectID, const std::string &filename, std::string &error)
+bool OpenGLShader::_loadShader(uint32_t shaderObjectID, const std::string &filename, std::string &error, bool optional)
 {
     GLint result = GL_FALSE;
 
@@ -60,6 +74,9 @@ bool OpenGLShader::_loadShader(uint32_t shaderObjectID, const std::string &filen
     FILE *shader = fopen(filename.c_str(), "rb");
 
     if (shader == NULL) {
+        if (optional) {
+            return true;
+        }
         error = std::string("File ") + filename + std::string(" couldn't be opened");
         return false;
     }

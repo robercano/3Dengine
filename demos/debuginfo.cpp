@@ -33,9 +33,6 @@ class ShadowsDemo : public GameHandler
 
     bool handleInit(Game *game)
     {
-//        _sun = new DirectLight(glm::vec3(1.4f, 1.4f, 1.4f), glm::vec3(1.4f, 1.4f, 1.4f), glm::vec3(1.4f, 1.4f, 0.f),
-//                               glm::vec3(-200.0f, 200.0f, -150.0f));
-
         game->getWindowManager()->getWindowSize(&_width, &_height);
 
         /* Setup the normal render target for the shadow mapping */
@@ -168,6 +165,8 @@ class ShadowsDemo : public GameHandler
         /* Render all objects */
         game->getRenderer()->renderModel3D(*_model, _camera, *_shaderBlinnLight, NULL, _pointLights, _emptySpotLights, 0.4f, *_renderTargetNormal);
         game->getRenderer()->renderModel3D(*_plane, _camera, *_shaderBlinnLight, NULL, _pointLights, _emptySpotLights, 0.4f, *_renderTargetNormal);
+
+        game->getRenderer()->renderModelNormals(*_model, _camera, *_renderTargetNormal);
 
         game->getRenderer()->renderModelBoundingBoxes(*_model, _camera, *_renderTargetNormal);
 

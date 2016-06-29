@@ -496,6 +496,56 @@ bool OpenGLRenderer::renderModelBoundingBoxes(Model3D &model, Camera &camera, Re
     return true;
 }
 
+bool OpenGLRenderer::renderModelNormals(Model3D &model3D, Camera &camera, RenderTarget &renderTarget)
+{
+    /* TODO: Create this in the renderer so it does not have to be created every time */
+    Shader *shader = Shader::New();
+
+    std::string error;
+    if (shader->use("utils/render_normals", error) != true) {
+        log("ERROR loading utils/render_normals shader: %s\n", error.c_str());
+        return false;
+    }
+
+    /* Calculate MVP matrix */
+    glm::mat4 MVP = camera.getPerspectiveMatrix() * camera.getViewMatrix() * model3D.getModelMatrix();
+
+    /* Calculate normal matrix */
+    glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(model3D.getModelMatrix())));
+
+    /* Cast the model into an internal type */
+    OpenGLModel3D &glObject = dynamic_cast<OpenGLModel3D &>(model3D);
+
+    /* Bind the render target */
+    renderTarget.bind();
+    {
+        /* Bind program to upload the uniform */
+        shader->attach();
+
+        shader->setUniformMat4("u_MVPMatrix", &MVP);
+
+        /* Draw the model */
+        __(glBindVertexArray(glObject.getVertexArrayID()));
+        {
+            std::vector<uint32_t> offset = glObject.getIndicesOffsets();
+            std::vector<uint32_t> count = glObject.getIndicesCount();
+
+            for (size_t i = 0; i < offset.size(); ++i) {
+                __(glDrawElements(GL_TRIANGLES, count[i], GL_UNSIGNED_INT, (void *)(offset[i] * sizeof(GLuint))));
+            }
+        }
+        __(glBindVertexArray(0));
+
+        /* Unbind */
+        shader->detach();
+    }
+    renderTarget.unbind();
+
+    Shader::Delete(shader);
+
+    return true;
+}
+
 bool OpenGLRenderer::resize(uint16_t width, uint16_t height)
 {
     _width = width;

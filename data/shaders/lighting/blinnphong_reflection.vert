@@ -53,7 +53,7 @@ void main()
 
     /* World-space coordinates */
     io_fragVertex = vec3(u_modelMatrix * vec4(in_vertex, 1.0f));
-    io_fragNormal = normalize(normalMatrix * in_normal);
+    io_fragNormal = normalize(u_normalMatrix * in_normal);
     io_fragUVCoord = in_uvcoord;
 
     /* View-space coordinates */

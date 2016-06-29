@@ -4,6 +4,7 @@ moving-lights
 toon
 shadows
 boundingbox
+debuginfo
 game-class-demo
 *.dSYM
 *.d
