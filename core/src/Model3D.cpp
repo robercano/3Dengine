@@ -19,22 +19,22 @@ void Model3D::normalize()
     cm /= _modelData.size();
 
     /* Substract the center of mass to all vertices */
-    float max_length = std::numeric_limits<float>::min();
+    float maxLength = std::numeric_limits<float>::min();
 
     for (it = _modelData.begin(); it != _modelData.end(); ++it) {
         it->vertex -= cm;
 
         /* Calculate maximum length */
         float length = glm::length(it->vertex);
-        if (length > max_length) {
-            max_length = length;
+        if (length > maxLength) {
+            maxLength = length;
         }
     }
 
-    /* Finally divide by max_length to make the model fit in a sphere
+    /* Finally divide by maxLength to make the model fit in a sphere
      * of radius 1.0 */
     for (it = _modelData.begin(); it != _modelData.end(); ++it) {
-        it->vertex /= max_length;
+        it->vertex /= maxLength;
     }
 
     setScaleFactor(glm::vec3(1.0f, 1.0f, 1.0f));
@@ -45,7 +45,7 @@ void Model3D::normalize()
 void Model3D::_calculateBoundingVolumes()
 {
     std::vector<Model3D::VertexData>::iterator it;
-    float max_length = 0.0f;
+    float maxLength = 0.0f;
     float minX = 0.0f, maxX = 0.0f;
     float minY = 0.0f, maxY = 0.0f;
     float minZ = 0.0f, maxZ = 0.0f;
@@ -62,8 +62,9 @@ void Model3D::_calculateBoundingVolumes()
     for (it = _modelData.begin(); it != _modelData.end(); ++it) {
         /* Calculate maximum length */
         float length = glm::length(it->vertex);
-        if (length > max_length) {
-            max_length = length;
+        if (length > maxLength) {
+            maxLength = length;
+            _maxLengthVertex = it->vertex;
         }
 
         /* Calculate the maximum and minimum for each axis */

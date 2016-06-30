@@ -253,8 +253,7 @@ class Object3D
         _aabb.setMin(newCenter - newExtent);
         _aabb.setMax(newCenter + newExtent);
 
-        /* Set the radius to the length of the OOBB extent in world coordinates */
-        _boundingSphere.setRadius(glm::length(glm::vec3(model * glm::vec4(extent, 0.0f))));
+        _boundingSphere.setRadius(glm::length(_maxLengthVertex * getScaleFactor()));
     }
 
     glm::vec3 _position;    /**< Position of the object in world coordinates */
@@ -265,6 +264,7 @@ class Object3D
     bool _modelValid;       /**< If true, current model matrix is cached and does not need recalculation */
     bool _viewValid;        /**< If true, current view matrix is cached and does not need recalculation */
 
+    glm::vec3 _maxLengthVertex;     /**< Maximum length among the vertices set, used to calculate _boundingSphere */
     BoundingSphere _boundingSphere; /**< Bounding sphere containing all model's vertices */
     BoundingBox _oobb;              /**< Object-oriented bounding box containing all model's vertices */
     BoundingBox _aabb;              /**< Axis-aligned bounding box containing all model's vertices */
