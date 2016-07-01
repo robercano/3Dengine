@@ -35,8 +35,10 @@ class ShadowsDemo : public GameHandler
         _key3Pressed = false;
         _key4Pressed = false;
         _key5Pressed = false;
+        _key6Pressed = false;
         _animateSun = false;
         _moonlight = true;
+        _stopMotion = false;
     }
 
     bool handleInit(Game *game)
@@ -79,6 +81,7 @@ class ShadowsDemo : public GameHandler
         keys.push_back('3');
         keys.push_back('4');
         keys.push_back('5');
+        keys.push_back('6');
         keys.push_back(GLFW_KEY_ESCAPE);
 
         game->getWindowManager()->getKeyManager()->registerListener(_inputManager, keys);
@@ -184,6 +187,11 @@ class ShadowsDemo : public GameHandler
         }
         _key5Pressed = _inputManager._keys['5'];
 
+        if (_inputManager._keys['6'] && _key6Pressed == false) {
+            _stopMotion = !_stopMotion;
+        }
+        _key6Pressed = _inputManager._keys['6'];
+
         /* Mouse */
         if (_prevX == 0xFFFFFF) {
             _prevX = _inputManager._xMouse;
@@ -205,39 +213,41 @@ class ShadowsDemo : public GameHandler
         _prevX = _inputManager._xMouse;
         _prevY = _inputManager._yMouse;
 
-        /* Move the lights */
-        _angle += (float)(2 * PI * elapsedMs / 20000.0);
-        if (_angle > 2 * PI) {
-            _angle -= (float)(2 * PI);
-        }
-
-        for (int i = 0; i < (int)_pointLights.size(); ++i) {
-            int sign = i % 2 ? -1 : 1;
-            if (i == 0) {
-                _pointLights[i]->setPosition(glm::vec3(10.0, 300.0, 300.0 * glm::cos((i + 1) * sign * _angle)));
-            } else {
-                _pointLights[i]->setPosition(
-                    glm::vec3(200.0 * glm::sin((i + 1) * sign * _angle), 200.0, 200.0 * glm::cos((i + 1) * sign * _angle)));
+        /* Move the lights  */
+        if (_stopMotion == false) {
+            _angle += (float)(2 * PI * elapsedMs / 20000.0);
+            if (_angle > 2 * PI) {
+                _angle -= (float)(2 * PI);
             }
-        }
 
-        for (int i = 0; i < (int)_spotLights.size(); ++i) {
-            int sign = i % 2 ? -1 : 1;
-            if (i == 1) {
-                _spotLights[i]->setPosition(glm::vec3(20.0, 200.0, 200.0 * glm::cos((i + 1) * sign * _angle)));
-            } else {
-                _spotLights[i]->setPosition(
-                    glm::vec3(240.0 * glm::sin((i + 1) * sign * _angle), 250.0, 260.0 * glm::cos((i + 1) * sign * _angle)));
+            for (int i = 0; i < (int)_pointLights.size(); ++i) {
+                int sign = i % 2 ? -1 : 1;
+                if (i == 0) {
+                    _pointLights[i]->setPosition(glm::vec3(10.0, 300.0, 300.0 * glm::cos((i + 1) * sign * _angle)));
+                } else {
+                    _pointLights[i]->setPosition(
+                            glm::vec3(200.0 * glm::sin((i + 1) * sign * _angle), 200.0, 200.0 * glm::cos((i + 1) * sign * _angle)));
+                }
             }
-        }
 
-        if (_animateSun) {
-            float sunDial = 0.8f;
-            float sunAngle = (float)(PI / 2.0f) + ((_angle <= PI ? _angle : (float)(2.0f * PI) - _angle) - (float)(PI / 2.0f)) * sunDial;
+            for (int i = 0; i < (int)_spotLights.size(); ++i) {
+                int sign = i % 2 ? -1 : 1;
+                if (i == 1) {
+                    _spotLights[i]->setPosition(glm::vec3(20.0, 200.0, 200.0 * glm::cos((i + 1) * sign * _angle)));
+                } else {
+                    _spotLights[i]->setPosition(
+                            glm::vec3(240.0 * glm::sin((i + 1) * sign * _angle), 250.0, 260.0 * glm::cos((i + 1) * sign * _angle)));
+                }
+            }
 
-            _sun->setPosition(glm::vec3(200.0f * glm::cos(sunAngle), 200.0f * glm::sin(sunAngle), -150.0f));
-        } else {
-            _sun->setPosition(glm::vec3(-200.0f, 200.0f, -150.0f));
+            if (_animateSun) {
+                float sunDial = 0.8f;
+                float sunAngle = (float)(PI / 2.0f) + ((_angle <= PI ? _angle : (float)(2.0f * PI) - _angle) - (float)(PI / 2.0f)) * sunDial;
+
+                _sun->setPosition(glm::vec3(200.0f * glm::cos(sunAngle), 200.0f * glm::sin(sunAngle), -150.0f));
+            } else {
+                _sun->setPosition(glm::vec3(-200.0f, 200.0f, -150.0f));
+            }
         }
 
         if (_moonlight) {
@@ -274,7 +284,6 @@ class ShadowsDemo : public GameHandler
                 (*it)->getShadowMap()->clear();
 
                 game->getRenderer()->renderToShadowMap(*_model3D, *(*it), *_shaderShadow);
-                game->getRenderer()->renderLight(*(*it), _camera, *_renderTargetNormal);
             }
         }
         if (_enableSpotLight) {
@@ -285,7 +294,6 @@ class ShadowsDemo : public GameHandler
                 (*it)->getShadowMap()->clear();
 
                 game->getRenderer()->renderToShadowMap(*_model3D, *(*it), *_shaderShadow);
-                game->getRenderer()->renderLight(*(*it), _camera, *_renderTargetNormal);
             }
         }
 
@@ -304,12 +312,25 @@ class ShadowsDemo : public GameHandler
                                            _enablePointLight ? _pointLights : _emptyPointLights,
                                            _enableSpotLight ? _spotLights : _emptySpotLights, 0.2f, *_renderTargetNormal);
 
+        /* Render the light billboards */
+        if (_enableSpotLight) {
+            for (std::vector<SpotLight *>::iterator it = _spotLights.begin(); it != _spotLights.end(); ++it) {
+                game->getRenderer()->renderLight(*(*it), _camera, *_renderTargetNormal);
+            }
+        }
+        if (_enablePointLight) {
+            for (std::vector<PointLight *>::iterator it = _pointLights.begin(); it != _pointLights.end(); ++it) {
+                game->getRenderer()->renderLight(*(*it), _camera, *_renderTargetNormal);
+            }
+        }
+
         _renderTargetNormal->blit();
         //_spotLights[0]->getShadowMap()->blit();
         //
-        game->getTextConsole()->gprintf("1=DirectLight %s, 2=SpotLight %s, 3=PointLights %s, 4=Move Sun %s, 5=Moonlight/Daylight\n",
+        game->getTextConsole()->gprintf("1=DirectLight %s, 2=SpotLight %s, 3=PointLights %s, 4=Move Sun %s, 5=Moonlight/Daylight, 6=Motion %s\n",
                                         _enableDirectLight ? "Off" : "On", _enableSpotLight ? "Off" : "On",
-                                        _enablePointLight ? "Off" : "On", _animateSun ? "Off" : "On");
+                                        _enablePointLight ? "Off" : "On", _animateSun ? "Off" : "On",
+                                        _stopMotion ? "On" : "Off");
         return true;
     }
 
@@ -336,9 +357,10 @@ class ShadowsDemo : public GameHandler
     uint32_t _height;
     float _angle;
     bool _enableDirectLight, _enableSpotLight, _enablePointLight;
-    bool _key1Pressed, _key2Pressed, _key3Pressed, _key4Pressed, _key5Pressed;
+    bool _key1Pressed, _key2Pressed, _key3Pressed, _key4Pressed, _key5Pressed, _key6Pressed;
     bool _animateSun;
     bool _moonlight;
+    bool _stopMotion;
 };
 
 int main()

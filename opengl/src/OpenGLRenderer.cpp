@@ -139,6 +139,11 @@ bool OpenGLRenderer::renderModel3D(Model3D &model3D, Camera &camera, LightingSha
     {
         __(glEnable(GL_MULTISAMPLE));
 
+        __(glEnable(GL_DEPTH_TEST));
+        __(glBlendEquation(GL_FUNC_ADD));
+        __(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+        __(glEnable(GL_BLEND));
+
         /* Bind program to upload the uniform */
         shader.attach();
 
@@ -324,11 +329,14 @@ bool OpenGLRenderer::renderLight(Light &light, Camera &camera, RenderTarget &ren
     /* Calculate MVP matrix */
     glm::mat4 MVP = camera.getPerspectiveMatrix() * camera.getViewMatrix() * light.getModelMatrix();
 
-    glEnable(GL_DEPTH_TEST);
-
     /* Bind the render target */
     renderTarget.bind();
     {
+        __(glEnable(GL_DEPTH_TEST));
+        __(glBlendEquation(GL_FUNC_ADD));
+        __(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+        __(glEnable(GL_BLEND));
+
         GLuint lightPosVAO, lightPosVBO;
 
         /* Bind program to upload the uniform */

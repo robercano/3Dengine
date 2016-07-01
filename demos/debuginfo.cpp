@@ -186,9 +186,6 @@ class ShadowsDemo : public GameHandler
             (*it)->getShadowMap()->clear();
 
             game->getRenderer()->renderToShadowMap(*_model, *(*it), *_shaderShadow);
-            if (_enableLights) {
-                game->getRenderer()->renderLight(*(*it), _camera, *_renderTargetNormal);
-            }
         }
 
         game->getRenderer()->setWireframeMode(_enableWireframe);
@@ -202,6 +199,11 @@ class ShadowsDemo : public GameHandler
         }
         if (_enableBoundingBox) {
             game->getRenderer()->renderModelBoundingBoxes(*_model, _camera, *_renderTargetNormal);
+        }
+        if (_enableLights) {
+            for (std::vector<PointLight *>::iterator it = _pointLights.begin(); it != _pointLights.end(); ++it) {
+                game->getRenderer()->renderLight(*(*it), _camera, *_renderTargetNormal);
+            }
         }
 
         _renderTargetNormal->blit();

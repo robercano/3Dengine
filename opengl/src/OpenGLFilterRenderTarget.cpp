@@ -131,16 +131,17 @@ bool OpenGLFilterRenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width
     /* Setup the viewport */
     __(glViewport(dstX, dstY, width, height));
 
+    /* Bind the target texture */
+    if (bindMainFB) {
+        __(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+    }
+
     /* Set the rendering mode */
     __(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
     __(glDisable(GL_LINE_SMOOTH));
     __(glEnable(GL_CULL_FACE));
     __(glDisable(GL_BLEND));
 
-    /* Bind the target texture */
-    if (bindMainFB) {
-        __(glBindFramebuffer(GL_FRAMEBUFFER, 0));
-    }
     __(glViewport(dstX, dstY, width, height));
     __(glActiveTexture(GL_TEXTURE0));
     __(glBindTexture(GL_TEXTURE_2D, _colorBuffer));
