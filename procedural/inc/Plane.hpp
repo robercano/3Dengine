@@ -7,8 +7,6 @@
 #pragma once
 
 #include <stdint.h>
-#include <glm/glm.hpp>
-#include <vector>
 #include "Model3D.hpp"
 
 namespace Procedural

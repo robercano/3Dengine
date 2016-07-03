@@ -8,7 +8,10 @@ using namespace glm;
 #include "Cube.hpp"
 #include "Renderer.hpp"
 
-using namespace procedural;
+using namespace Procedural;
+using namespace std;
+
+Plane::Plane(uint32_t horizontal, uint32_t vertical)
 
 Cube::Cube()
 {
@@ -32,17 +35,3 @@ Cube::Cube()
     memcpy(_indicesArray, indices, sizeof indices);
     _indicesArrayLen = sizeof indices;
 }
-
-Cube::~Cube()
-{
-    delete[] _vertsArray;
-    delete[] _colorsArray;
-    delete[] _indicesArray;
-}
-
-const GLfloat *Cube::getVerticesArray() { return _vertsArray; }
-uint32_t Cube::getVerticesArrayLen() { return _vertsArrayLen; }
-const GLfloat *Cube::getColorsArray() { return _colorsArray; }
-uint32_t Cube::getColorsArrayLen() { return _colorsArrayLen; }
-const GLuint *Cube::getIndicesArray() { return _indicesArray; }
-uint32_t Cube::getIndicesArrayLen() { return _indicesArrayLen; }

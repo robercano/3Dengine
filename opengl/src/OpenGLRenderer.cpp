@@ -394,10 +394,6 @@ bool OpenGLRenderer::renderLights(std::vector<Light*> &lights, Camera &camera, R
 
     uint32_t n = 0;
     for (std::vector<Light *>::iterator it = lights.begin(); it != lights.end(); ++it, ++n) {
-        log("Length: %f\n", glm::length(camera.getPosition() - (*it)->getPosition()));
-        glm::mat4 MVP = camera.getPerspectiveMatrix() * camera.getViewMatrix() * (*it)->getModelMatrix();
-        glm::vec3 projected = glm::vec3(MVP * glm::vec4((*it)->getPosition(), 1.0f));
-        log("Projected z: %f\n", projected.z);
         if (renderLight(*(*it), camera, renderTarget, n) == false) {
             return false;
         }

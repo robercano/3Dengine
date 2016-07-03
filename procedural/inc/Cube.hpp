@@ -1,38 +1,22 @@
 /**
- * @class	Cube
- * @brief   Procedural cube
+ * @module  Cube
+ * @brief	Cube procedural generation
  *
  * @author	Roberto Cano (http://www.robertocano.es)
  */
 #pragma once
 
-#include "Object3D.hpp"
+#include <stdint.h>
+#include "Model3D.hpp"
 
-namespace procedural
+namespace Procedural
 {
-class Cube : public Object3D
+/**
+ * Cube class to generate axis aligned planes
+ */
+class Cube : public Model3D
 {
   public:
-    Cube();
-    ~Cube();
-
-    /* Object3D methods */
-    const GLfloat *getVerticesArray();
-    uint32_t getVerticesArrayLen();
-    const GLfloat *getColorsArray();
-    uint32_t getColorsArrayLen();
-    const GLuint *getIndicesArray();
-    uint32_t getIndicesArrayLen();
-
-  private:
-    GLfloat *_vertsArray;
-    uint32_t _vertsArrayLen;
-
-    GLfloat *_colorsArray;
-    uint32_t _colorsArrayLen;
-
-    GLuint *_indicesArray;
-    uint32_t _indicesArrayLen;
+    Cube(uint32_t horizontal = 2, uint32_t vertical = 2);
 };
-
-} /* namespace procedural */
+};

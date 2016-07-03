@@ -108,9 +108,7 @@ class ShadowsDemo : public GameHandler
         _model3D->rotate(glm::toMat4(rot));
 
         /* Use a plane for the floor */
-        Procedural::Plane plane;
-
-        _plane3D = game->getRenderer()->prepareModel(plane);
+        _plane3D = game->getRenderer()->prepareModel(Procedural::Plane(8, 8));
         _plane3D->setScaleFactor(glm::vec3(500.0f, 1.0f, 500.0f));
 
         /* Create the game camera */
