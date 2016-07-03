@@ -29,10 +29,10 @@ class ShadowsDemo : public GameHandler
         _prevX = 0xFFFFFF;
         _prevY = 0xFFFFFF;
         _angle = 0.0f;
-        _enableBoundingBox = false;
-        _enableNormals = false;
+        _enableBoundingBox = true;
+        _enableNormals = true;
         _enableLights = true;
-        _enableWireframe = false;
+        _enableWireframe = true;
     }
 
     bool handleInit(Game *game)
