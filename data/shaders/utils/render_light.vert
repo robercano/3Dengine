@@ -5,11 +5,11 @@
 
 layout(location = 0) in vec3 in_vertex;
 
-uniform mat4 u_MVPMatrix;
-out vec4 io_vertex;
+uniform mat4 u_MVMatrix;
+uniform mat4 u_PMatrix;
 
 void main()
 {
-	gl_Position = u_MVPMatrix * vec4(in_vertex, 1.0f);
-	gl_PointSize = 20000.0f/gl_Position.z;
+    mat4 MVP = u_PMatrix * u_MVMatrix;
+    gl_Position = MVP * vec4(in_vertex, 1.0f);
 }

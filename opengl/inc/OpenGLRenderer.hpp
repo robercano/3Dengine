@@ -27,7 +27,8 @@ class OpenGLRenderer : public Renderer
     bool renderModel3D(Model3D &model, Camera &camera, LightingShader &shader, DirectLight *sun, std::vector<PointLight *> &pointLights,
                        std::vector<SpotLight *> &spotLights, float ambientK, RenderTarget &renderTarget, bool disableDepth = false);
     bool renderToShadowMap(Model3D &model3D, Light &light, NormalShadowMapShader &shader);
-    bool renderLight(Light &light, Camera &camera, RenderTarget &renderTarget);
+    bool renderLight(Light &light, Camera &camera, RenderTarget &renderTarget, uint32_t lightNumber);
+    bool renderLights(std::vector<Light*> &lights, Camera &camera, RenderTarget &renderTarget);
     bool renderBoundingBox(const BoundingBox &box, const glm::mat4 &modelMatrix, const glm::vec3 &color, Camera &camera, RenderTarget &renderTarget);
     bool renderBoundingSphere(const BoundingSphere &sphere, const glm::vec3 &center,
             const glm::vec3 &color, Camera &camera, RenderTarget &renderTarget);

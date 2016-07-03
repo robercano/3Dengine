@@ -130,9 +130,9 @@ class Object3D
     /**
      * Getters
      */
-    const glm::vec3 &getPosition() { return _position; }
-    const glm::mat4 &getOrientation() { return _orientation; }
-    const glm::vec3 &getScaleFactor() { return _scale; }
+    const glm::vec3 &getPosition() const { return _position; }
+    const glm::mat4 &getOrientation() const { return _orientation; }
+    const glm::vec3 &getScaleFactor() const { return _scale; }
     /**
      * Returns the current direction of the model, which is the forward vector
      *

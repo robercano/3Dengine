@@ -34,7 +34,7 @@ void OpenGLRenderer::init()
     __(glHint(GL_POLYGON_SMOOTH_HINT, GL_DONT_CARE));
 #define GL_MULTISAMPLE_ARB 0x809D
     __(glDisable(GL_MULTISAMPLE_ARB));
-    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    __(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
     __(glDepthRangef(0.1f, 1000.0f));
 
     /* Generate a fake texture to fullfill GLSL 3.3 requirement
@@ -313,7 +313,7 @@ bool OpenGLRenderer::renderToShadowMap(Model3D &model3D, Light &light, NormalSha
     return true;
 }
 
-bool OpenGLRenderer::renderLight(Light &light, Camera &camera, RenderTarget &renderTarget)
+bool OpenGLRenderer::renderLight(Light &light, Camera &camera, RenderTarget &renderTarget, uint32_t lightNumber)
 {
     glm::vec3 ambient = (light.getAmbient() + light.getDiffuse() + light.getSpecular()) / 3.0f;
 
@@ -327,7 +327,8 @@ bool OpenGLRenderer::renderLight(Light &light, Camera &camera, RenderTarget &ren
     }
 
     /* Calculate MVP matrix */
-    glm::mat4 MVP = camera.getPerspectiveMatrix() * camera.getViewMatrix() * light.getModelMatrix();
+    glm::mat4 MV = camera.getViewMatrix() * light.getModelMatrix();
+    glm::mat4 P = camera.getPerspectiveMatrix();
 
     /* Bind the render target */
     renderTarget.bind();
@@ -343,8 +344,10 @@ bool OpenGLRenderer::renderLight(Light &light, Camera &camera, RenderTarget &ren
         shader->attach();
 
         /* Send our transformation to the currently bound shader, in the "MVP" uniform */
-        shader->setUniformMat4("u_MVPMatrix", &MVP);
+        shader->setUniformMat4("u_MVMatrix", &MV);
+        shader->setUniformMat4("u_PMatrix", &P);
         shader->setUniformVec3("u_lightColor", ambient);
+        shader->setUniformUint("u_lightNumber", lightNumber);
 
         __(glGenVertexArrays(1, &lightPosVAO));
         __(glBindVertexArray(lightPosVAO));
@@ -371,6 +374,34 @@ bool OpenGLRenderer::renderLight(Light &light, Camera &camera, RenderTarget &ren
 
     Shader::Delete(shader);
 
+    return true;
+}
+
+bool OpenGLRenderer::renderLights(std::vector<Light*> &lights, Camera &camera, RenderTarget &renderTarget)
+{
+    struct light_compare
+    {
+        light_compare(Camera &c) : _camera(c) {}
+        inline bool operator() (const Light *light1, const Light *light2) {
+            return glm::length(_camera.getPosition() - light1->getPosition()) >
+                   glm::length(_camera.getPosition() - light2->getPosition());
+        }
+        Camera &_camera;
+    };
+
+    /* Sort the lights by its inverse proximity to the camera */
+    std::sort(lights.begin(), lights.end(), light_compare(camera));
+
+    uint32_t n = 0;
+    for (std::vector<Light *>::iterator it = lights.begin(); it != lights.end(); ++it, ++n) {
+        log("Length: %f\n", glm::length(camera.getPosition() - (*it)->getPosition()));
+        glm::mat4 MVP = camera.getPerspectiveMatrix() * camera.getViewMatrix() * (*it)->getModelMatrix();
+        glm::vec3 projected = glm::vec3(MVP * glm::vec4((*it)->getPosition(), 1.0f));
+        log("Projected z: %f\n", projected.z);
+        if (renderLight(*(*it), camera, renderTarget, n) == false) {
+            return false;
+        }
+    }
     return true;
 }
 

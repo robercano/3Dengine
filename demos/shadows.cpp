@@ -313,16 +313,20 @@ class ShadowsDemo : public GameHandler
                                            _enableSpotLight ? _spotLights : _emptySpotLights, 0.2f, *_renderTargetNormal);
 
         /* Render the light billboards */
+        _lightsMarkers.clear();
+
         if (_enableSpotLight) {
             for (std::vector<SpotLight *>::iterator it = _spotLights.begin(); it != _spotLights.end(); ++it) {
-                game->getRenderer()->renderLight(*(*it), _camera, *_renderTargetNormal);
+                _lightsMarkers.push_back(*it);
             }
         }
         if (_enablePointLight) {
             for (std::vector<PointLight *>::iterator it = _pointLights.begin(); it != _pointLights.end(); ++it) {
-                game->getRenderer()->renderLight(*(*it), _camera, *_renderTargetNormal);
+                _lightsMarkers.push_back(*it);
             }
         }
+
+        game->getRenderer()->renderLights(_lightsMarkers, _camera, *_renderTargetNormal);
 
         _renderTargetNormal->blit();
         //_spotLights[0]->getShadowMap()->blit();
@@ -344,6 +348,7 @@ class ShadowsDemo : public GameHandler
     NOAARenderTarget *_renderTargetNormal;
     std::vector<PointLight *> _pointLights;
     std::vector<SpotLight *> _spotLights;
+    std::vector<Light *> _lightsMarkers;
     DirectLight *_sun;
     InputManager _inputManager;
     std::string _current;

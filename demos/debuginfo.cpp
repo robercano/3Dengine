@@ -29,10 +29,10 @@ class ShadowsDemo : public GameHandler
         _prevX = 0xFFFFFF;
         _prevY = 0xFFFFFF;
         _angle = 0.0f;
-        _enableBoundingBox = true;
-        _enableNormals = true;
+        _enableBoundingBox = false;
+        _enableNormals = false;
         _enableLights = true;
-        _enableWireframe = true;
+        _enableWireframe = false;
     }
 
     bool handleInit(Game *game)
@@ -79,13 +79,23 @@ class ShadowsDemo : public GameHandler
         }
 
         /* Point light */
-        PointLight *light = new PointLight(glm::vec3(3.0f, 3.0f, 3.0f), glm::vec3(1.8f, 1.4f, 1.4f), glm::vec3(1.8f, 1.4f, 1.4f),
-                                           glm::vec3(100.0f, 100.0f, 0.0f), 0.0000099999f, 1000.0f);
+        PointLight *light1 = new PointLight(glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 1.0f),
+                                           glm::vec3(20.0f, 20.0f, 0.0f), 0.0000099999f, 1000.0f);
+        PointLight *light2 = new PointLight(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f),
+                                           glm::vec3(108.0f, 108.0f, 0.0f), 0.0000099999f, 1000.0f);
+        PointLight *light3 = new PointLight(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f),
+                                           glm::vec3(116.0f, 116.0f, 0.0f), 0.0000099999f, 1000.0f);
 
-        light->setProjection((float)_width / 4.0f, (float)_height / 4.0f, 0.1f, 10000.0f);
-        light->getShadowMap()->init(_width, _height);
+        light1->setProjection((float)_width / 4.0f, (float)_height / 4.0f, 0.1f, 10000.0f);
+        light1->getShadowMap()->init(_width, _height);
+        light2->setProjection((float)_width / 4.0f, (float)_height / 4.0f, 0.1f, 10000.0f);
+        light2->getShadowMap()->init(_width, _height);
+        light3->setProjection((float)_width / 4.0f, (float)_height / 4.0f, 0.1f, 10000.0f);
+        light3->getShadowMap()->init(_width, _height);
 
-        _pointLights.push_back(light);
+        _pointLights.push_back(light1);
+        _pointLights.push_back(light2);
+        _pointLights.push_back(light3);
 
         /* Load the geometry */
         _model = game->getRenderer()->loadModelOBJ("data/objects/daxter");
@@ -175,6 +185,8 @@ class ShadowsDemo : public GameHandler
         std::vector<PointLight *> _emptyPointLights;
         std::vector<SpotLight *> _emptySpotLights;
 
+        _lightMarkers.clear();
+
         /* Apply the motion to the camera */
         _cameraMotion.applyTo(_camera);
         _renderTargetNormal->clear();
@@ -202,9 +214,10 @@ class ShadowsDemo : public GameHandler
         }
         if (_enableLights) {
             for (std::vector<PointLight *>::iterator it = _pointLights.begin(); it != _pointLights.end(); ++it) {
-                game->getRenderer()->renderLight(*(*it), _camera, *_renderTargetNormal);
+                _lightMarkers.push_back(*it);
             }
         }
+        game->getRenderer()->renderLights(_lightMarkers, _camera, *_renderTargetNormal);
 
         _renderTargetNormal->blit();
 
@@ -228,6 +241,7 @@ class ShadowsDemo : public GameHandler
     InputManager _inputManager;
     std::string _current;
     std::vector<PointLight *> _pointLights;
+    std::vector<Light *> _lightMarkers;
 
     float _MouseSensibility;
     float _KeyboardSensibility;

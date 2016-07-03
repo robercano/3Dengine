@@ -79,7 +79,8 @@ class Renderer
                                std::vector<PointLight *> &pointLights, std::vector<SpotLight *> &spotLights, float ambientK,
                                RenderTarget &renderTarget, bool disableDepth = false) = 0;
     virtual bool renderToShadowMap(Model3D &model3D, Light &camera, NormalShadowMapShader &shader) = 0;
-    virtual bool renderLight(Light &light, Camera &camera, RenderTarget &renderTarget) = 0;
+    virtual bool renderLight(Light &light, Camera &camera, RenderTarget &renderTarget, uint32_t lightNumber) = 0;
+    virtual bool renderLights(std::vector<Light*> &lights, Camera &camera, RenderTarget &renderTarget) = 0;
     virtual bool renderBoundingBox(const BoundingBox &box, const glm::mat4 &modelMatrix, const glm::vec3 &color, Camera &camera, RenderTarget &renderTarget) = 0;
     virtual bool renderBoundingSphere(const BoundingSphere &sphere, const glm::vec3 &center,
                                       const glm::vec3 &color, Camera &camera, RenderTarget &renderTarget) = 0;
