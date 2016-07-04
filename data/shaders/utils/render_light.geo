@@ -24,11 +24,11 @@ void main()
     gl_Position = vec4(position.x - offset.x, position.y + offset.y, position.z, position.w);
     io_intensity = vec2(0.0f, 1.0f);
     EmitVertex();
-    gl_Position = vec4(position.x + offset.x, position.y + offset.y, position.z, position.w);
-    io_intensity = vec2(1.0f, 1.0f);
-    EmitVertex();
     gl_Position = vec4(position.x + offset.x, position.y - offset.y, position.z, position.w);
     io_intensity = vec2(1.0f, 0.0f);
+    EmitVertex();
+    gl_Position = vec4(position.x + offset.x, position.y + offset.y, position.z, position.w);
+    io_intensity = vec2(1.0f, 1.0f);
     EmitVertex();
 
     EndPrimitive();
@@ -36,11 +36,11 @@ void main()
     gl_Position = vec4(position.x - offset.x, position.y + offset.y, position.z, position.w);
     io_intensity = vec2(0.0f, 1.0f);
     EmitVertex();
-    gl_Position = vec4(position.x + offset.x, position.y - offset.y, position.z, position.w);
-    io_intensity = vec2(1.0f, 0.0f);
-    EmitVertex();
     gl_Position = vec4(position.x - offset.x, position.y - offset.y, position.z, position.w);
     io_intensity = vec2(0.0f, 0.0f);
+    EmitVertex();
+    gl_Position = vec4(position.x + offset.x, position.y - offset.y, position.z, position.w);
+    io_intensity = vec2(1.0f, 0.0f);
     EmitVertex();
 
     EndPrimitive();

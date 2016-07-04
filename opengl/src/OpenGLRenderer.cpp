@@ -338,6 +338,7 @@ bool OpenGLRenderer::renderLight(Light &light, Camera &camera, RenderTarget &ren
         __(glBlendEquation(GL_FUNC_ADD));
         __(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
         __(glEnable(GL_BLEND));
+        __(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
 
         GLuint lightPosVAO, lightPosVBO;
 
@@ -481,9 +482,6 @@ bool OpenGLRenderer::renderBoundingBox(const BoundingBox &box, const glm::mat4 &
     }
     renderTarget.unbind();
 
-    __(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
-    __(glEnable(GL_CULL_FACE));
-
     Shader::Delete(shader);
 
     return true;
@@ -504,12 +502,15 @@ bool OpenGLRenderer::renderBoundingSphere(const BoundingSphere &sphere, const gl
     /* Calculate MVP matrix, bounding box coordinates are already in world coordinates */
     glm::mat4 MVP = camera.getPerspectiveMatrix() * camera.getViewMatrix();
 
-    __(glEnable(GL_DEPTH_TEST));
-
     /* Bind the render target */
     renderTarget.bind();
     {
         GLuint boxPosVAO, boxPosVBO;
+
+        __(glEnable(GL_DEPTH_TEST));
+
+        //__(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
+        //__(glEnable(GL_CULL_FACE));
 
         /* Bind program to upload the uniform */
         shader->attach();
@@ -550,13 +551,11 @@ bool OpenGLRenderer::renderBoundingSphere(const BoundingSphere &sphere, const gl
     }
     renderTarget.unbind();
 
-    __(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
-    __(glEnable(GL_CULL_FACE));
-
     Shader::Delete(shader);
 
     return true;
 }
+
 bool OpenGLRenderer::renderModelBoundingBoxes(Model3D &model, Camera &camera, RenderTarget &renderTarget, bool showSphere, bool showAABB,
                                               bool showOOBB)
 {

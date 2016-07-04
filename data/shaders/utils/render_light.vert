@@ -10,6 +10,5 @@ uniform mat4 u_PMatrix;
 
 void main()
 {
-    mat4 MVP = u_PMatrix * u_MVMatrix;
-    gl_Position = MVP * vec4(in_vertex, 1.0f);
+    gl_Position = u_PMatrix * u_MVMatrix * vec4(in_vertex, 1.0f);
 }
