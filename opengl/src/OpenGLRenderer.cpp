@@ -5,6 +5,7 @@
  * @author	Roberto Cano (http://www.robertocano.es)
  */
 #include "OpenGL.h"
+#include <algorithm>
 #include "Logging.hpp"
 #include "ModelLoaders.hpp"
 #include "OpenGLLightingShader.hpp"
@@ -377,14 +378,13 @@ bool OpenGLRenderer::renderLight(Light &light, Camera &camera, RenderTarget &ren
     return true;
 }
 
-bool OpenGLRenderer::renderLights(std::vector<Light*> &lights, Camera &camera, RenderTarget &renderTarget)
+bool OpenGLRenderer::renderLights(std::vector<Light *> &lights, Camera &camera, RenderTarget &renderTarget)
 {
-    struct light_compare
-    {
+    struct light_compare {
         light_compare(Camera &c) : _camera(c) {}
-        inline bool operator() (const Light *light1, const Light *light2) {
-            return glm::length(_camera.getPosition() - light1->getPosition()) >
-                   glm::length(_camera.getPosition() - light2->getPosition());
+        inline bool operator()(const Light *light1, const Light *light2)
+        {
+            return glm::length(_camera.getPosition() - light1->getPosition()) > glm::length(_camera.getPosition() - light2->getPosition());
         }
         Camera &_camera;
     };

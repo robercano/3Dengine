@@ -38,9 +38,9 @@ Plane::Plane(uint32_t horizontal, uint32_t vertical)
     /* Generate the plane vertices */
     for (unsigned int i = 0, count = 0; i < vertical; ++i) {
         for (unsigned int j = 0; j < horizontal; ++j) {
-            data[count].vertex = glm::vec3(-0.5f + j/(float)hDiv, 0.0f, -0.5 + i/(float)vDiv);
+            data[count].vertex = glm::vec3(-0.5f + j / (float)hDiv, 0.0f, -0.5 + i / (float)vDiv);
             data[count].normal = glm::vec3(0.0f, 1.0f, 0.0f);
-            data[count].uvcoord = glm::vec2(j/(float)hDiv, 1.0f - i/(float)vDiv);
+            data[count].uvcoord = glm::vec2(j / (float)hDiv, 1.0f - i / (float)vDiv);
 
             count++;
         }
