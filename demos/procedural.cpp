@@ -10,6 +10,7 @@
 #include "NormalShadowMapShader.hpp"
 #include "OpenGL.h"
 #include "Plane.hpp"
+#include "Cylinder.hpp"
 #include "Cube.hpp"
 #include "Logging.hpp"
 
@@ -84,6 +85,11 @@ class ProceduralDemo : public GameHandler
         _cube = game->getRenderer()->prepareModel(Procedural::Cube(2, glm::vec3(0.5f, 0.3f, 1.0f)));
         _cube->setScaleFactor(glm::vec3(50.0f, 50.0f, 50.0f));
         _cube->setPosition(glm::vec3(0.0f, 60.0f, 0.0f));
+
+        /* Create a cylinder */
+        _cylinder = game->getRenderer()->prepareModel(Procedural::Cylinder(32, glm::vec3(0.2f, 1.0f, 0.4f)));
+        _cylinder->setScaleFactor(glm::vec3(20.0f, 20.0f, 20.0f));
+        _cylinder->setPosition(glm::vec3(100.0f, 80.0f, 50.0f));
 
         /* Create the game camera */
         _camera.setProjection((float)_width, (float)_height, 0.1f, 1000.0f, 45.0f);
@@ -161,12 +167,15 @@ class ProceduralDemo : public GameHandler
             /* TODO: lookAt the center of the calculated bounding box, but for
              * now this is enough */
             (*it)->getShadowMap()->clear();
-//            game->getRenderer()->renderToShadowMap(*_cube, *(*it), *_shaderShadow);
+            //(*it)->lookAt(_cylinder->getPosition());
+            //game->getRenderer()->renderToShadowMap(*_cube, *(*it), *_shaderShadow);
+            //game->getRenderer()->renderToShadowMap(*_cylinder, *(*it), *_shaderShadow);
         }
 
         /* Render all objects */
         game->getRenderer()->renderModel3D(*_plane, _camera, *_shaderBlinnLight, NULL, _pointLights, _emptySpotLights, 0.4f, *_renderTargetNormal);
         game->getRenderer()->renderModel3D(*_cube, _camera, *_shaderBlinnLight, NULL, _pointLights, _emptySpotLights, 0.4f, *_renderTargetNormal);
+        game->getRenderer()->renderModel3D(*_cylinder, _camera, *_shaderBlinnLight, NULL, _pointLights, _emptySpotLights, 0.4f, *_renderTargetNormal);
         _renderTargetNormal->blit();
 
         return true;
@@ -175,7 +184,7 @@ class ProceduralDemo : public GameHandler
   private:
     Camera _camera;
     FlyMotion _cameraMotion;
-    Model3D *_plane, *_cube;
+    Model3D *_plane, *_cube, *_cylinder;
     BlinnPhongShader *_shaderBlinnLight;
     NormalShadowMapShader *_shaderShadow;
     NOAARenderTarget *_renderTargetNormal;

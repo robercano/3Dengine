@@ -41,7 +41,7 @@ OPENGL_FILES=GLFWKeyManager.cpp GLFWMouseManager.cpp GLFWWindowManager.cpp \
 			 OpenGLShaderPointLight.cpp OpenGLShaderSpotLight.cpp OpenGLShaderDirectLight.cpp \
 			 OpenGLUniformBlock.cpp
 
-PROCEDURAL_FILES=Plane.cpp Cube.cpp
+PROCEDURAL_FILES=Plane.cpp Cube.cpp Cylinder.cpp
 
 FILES=$(CORE_FILES) $(OPENGL_FILES) $(PROCEDURAL_FILES) $(UTILS_FILES)
 
