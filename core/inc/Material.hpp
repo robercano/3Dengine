@@ -42,11 +42,11 @@ class Material
     void setSpecular(glm::vec3 &specular) { _specular = specular; }
     void setAlpha(float alpha) { _alpha = alpha; }
     void setShininess(float shininess) { _shininess = shininess; }
-    glm::vec3 getAmbient() { return _ambient; }
-    glm::vec3 getDiffuse() { return _diffuse; }
-    glm::vec3 getSpecular() { return _specular; }
-    float getAlpha() { return _alpha; }
-    float getShininess() { return _shininess; }
+    glm::vec3 getAmbient() const { return _ambient; }
+    glm::vec3 getDiffuse() const { return _diffuse; }
+    glm::vec3 getSpecular() const { return _specular; }
+    float getAlpha() const { return _alpha; }
+    float getShininess() const { return _shininess; }
   private:
     glm::vec3 _ambient;
     glm::vec3 _diffuse;

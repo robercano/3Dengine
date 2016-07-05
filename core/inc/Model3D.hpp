@@ -43,17 +43,18 @@
 #include <stdint.h>
 #include <glm/glm.hpp>
 #include <vector>
-#include "Material.hpp"
 #include "Object3D.hpp"
+#include "Material.hpp"
 #include "Texture.hpp"
 
 class Model3D : public Object3D
 {
   public:
     /**
-     * Friend ModelLoaders class to allow for internal data manipulation
+     * Friend classes
      */
     friend class ModelLoaders;
+    friend class ModelTransform;
 
     /**
      * Vertex data of the model

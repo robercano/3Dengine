@@ -7,6 +7,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <glm/glm.hpp>
 #include "Model3D.hpp"
 
 namespace Procedural
@@ -17,6 +18,6 @@ namespace Procedural
 class Plane : public Model3D
 {
   public:
-    Plane(uint32_t horizontal = 2, uint32_t vertical = 2);
+    Plane(uint32_t numVertices = 2, const glm::vec3 &color = glm::vec3(1.0f, 1.0f, 1.0f));
 };
 };

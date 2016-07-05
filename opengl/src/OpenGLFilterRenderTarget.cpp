@@ -13,6 +13,8 @@
 #include "Renderer.hpp"
 #include "WindowManager.hpp"
 
+using namespace Logging;
+
 OpenGLFilterRenderTarget::~OpenGLFilterRenderTarget()
 {
     delete _shader;

@@ -12,11 +12,19 @@
 namespace Procedural
 {
 /**
- * Cube class to generate axis aligned planes
+ * Cube class to generate a cube with axis aligned planes
  */
 class Cube : public Model3D
 {
   public:
-    Cube(uint32_t horizontal = 2, uint32_t vertical = 2);
+    /**
+     * Constructor
+     *
+     * @param numVertices  Number of vertices to use for the cube's faces
+     *                     generation. Each face will have numVertices*numVertices
+     *                     vertices
+     * @param color        Color for the default material
+     */
+    Cube(uint32_t numVertices = 2, const glm::vec3 &color = glm::vec3(1.0f, 1.0f, 1.0f));
 };
 };

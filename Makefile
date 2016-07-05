@@ -18,7 +18,7 @@ CC=gcc
 VPATH=core/src:opengl/src:procedural/src:utils/src
 
 CORE_FILES=Game.cpp InputManager.cpp WindowManager.cpp TimeManager.cpp \
-		   ModelLoaders.cpp \
+		   ModelLoaders.cpp ModelTransform.cpp \
 		   Model3D.cpp \
 		   TextConsole.cpp TrueTypeFont.cpp FreeTypeFont.cpp FontRenderer.cpp \
            Renderer.cpp NOAARenderTarget.cpp MSAARenderTarget.cpp SSAARenderTarget.cpp \
@@ -40,8 +40,8 @@ OPENGL_FILES=GLFWKeyManager.cpp GLFWMouseManager.cpp GLFWWindowManager.cpp \
              OpenGLShader.cpp OpenGLShaderMaterial.cpp \
 			 OpenGLShaderPointLight.cpp OpenGLShaderSpotLight.cpp OpenGLShaderDirectLight.cpp \
 			 OpenGLUniformBlock.cpp
-#PROCEDURAL_FILES = Cube.cpp Icosahedron.cpp Plane.cpp Sphere.cpp
-PROCEDURAL_FILES=Plane.cpp
+
+PROCEDURAL_FILES=Plane.cpp Cube.cpp
 
 FILES=$(CORE_FILES) $(OPENGL_FILES) $(PROCEDURAL_FILES) $(UTILS_FILES)
 

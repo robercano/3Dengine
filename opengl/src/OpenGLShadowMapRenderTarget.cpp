@@ -13,6 +13,8 @@
 #include "Renderer.hpp"
 #include "WindowManager.hpp"
 
+using namespace Logging;
+
 OpenGLShadowMapRenderTarget::~OpenGLShadowMapRenderTarget()
 {
     __(glDeleteRenderbuffers(1, &_depthBuffer));

@@ -6,7 +6,10 @@
  */
 
 #include "OpenGLModel3D.hpp"
+#include "Logging.hpp"
 #include "OpenGL.h"
+
+using namespace Logging;
 
 bool OpenGLModel3D::prepare()
 {

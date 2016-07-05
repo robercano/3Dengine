@@ -8,6 +8,7 @@
 
 #include <stdio.h>
 #include <glm/glm.hpp>
+#include "Model3D.hpp"
 
 namespace Logging
 {
@@ -20,6 +21,7 @@ namespace Logging
     void log(const char *msg, const glm::vec4 &matrix);
     void log(const char *msg, const glm::vec3 &matrix);
     void log(const char *msg, const glm::vec2 &matrix);
+    void log(const char *msg, const Model3D &model);
 
     /**
      * Main logging function

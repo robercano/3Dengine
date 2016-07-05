@@ -5,6 +5,7 @@ toon
 shadows
 boundingbox
 debuginfo
+procedural
 game-class-demo
 *.dSYM
 *.d

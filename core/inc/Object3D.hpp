@@ -14,9 +14,6 @@
 #include <glm/gtc/quaternion.hpp>
 #include "BoundingBox.hpp"
 #include "BoundingSphere.hpp"
-#include "Logging.hpp"
-
-using namespace Logging;
 
 class Object3D
 {

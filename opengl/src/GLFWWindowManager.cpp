@@ -9,6 +9,9 @@
 #include "GLFWWindowManager.hpp"
 #include "GLFWKeyManager.hpp"
 #include "GLFWMouseManager.hpp"
+#include "Logging.hpp"
+
+using namespace Logging;
 
 GLFWWindowManager::GLFWWindowManager() : _width(0), _height(0), _renderer(NULL) {}
 GLFWWindowManager::~GLFWWindowManager()

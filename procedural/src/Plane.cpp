@@ -6,22 +6,16 @@
  */
 #include "Plane.hpp"
 #include <glm/glm.hpp>
-#include "Logging.hpp"
 
 using namespace Procedural;
-using namespace std;
 
-Plane::Plane(uint32_t horizontal, uint32_t vertical)
+Plane::Plane(uint32_t numVertices, const glm::vec3 &color)
 {
-    if (horizontal < 2) {
-        horizontal = 2;
-    }
-    if (vertical < 2) {
-        vertical = 2;
+    if (numVertices < 2) {
+        numVertices = 2;
     }
 
-    float hDiv = (float)(horizontal - 1);
-    float vDiv = (float)(vertical - 1);
+    float numFaces = (float)(numVertices - 1);
 
     /*
      * For each row of vertices of the plane two indices are needed
@@ -30,17 +24,17 @@ Plane::Plane(uint32_t horizontal, uint32_t vertical)
      * Then multiplied by the number of rows minus one, as the last
      * row does have to generate more triangles
      */
-    _modelData.resize(horizontal * vertical);
-    _modelIndices.resize((size_t)(2 * 3 * hDiv * vDiv)); /** 2 triangles, 3 vertices each */
+    _modelData.resize(numVertices * numVertices);
+    _modelIndices.resize((size_t)(2 * 3 * numFaces * numFaces)); /** 2 triangles, 3 vertices each */
 
     Model3D::VertexData *data = &_modelData[0];
 
     /* Generate the plane vertices */
-    for (unsigned int i = 0, count = 0; i < vertical; ++i) {
-        for (unsigned int j = 0; j < horizontal; ++j) {
-            data[count].vertex = glm::vec3(-0.5f + j / (float)hDiv, 0.0f, -0.5 + i / (float)vDiv);
+    for (unsigned int i = 0, count = 0; i < numVertices; ++i) {
+        for (unsigned int j = 0; j < numVertices; ++j) {
+            data[count].vertex = glm::vec3(-0.5f + j / (float)numFaces, 0.0f, -0.5 + i / (float)numFaces);
             data[count].normal = glm::vec3(0.0f, 1.0f, 0.0f);
-            data[count].uvcoord = glm::vec2(j / (float)hDiv, 1.0f - i / (float)vDiv);
+            data[count].uvcoord = glm::vec2(j / (float)numFaces, 1.0f - i / (float)numFaces);
 
             count++;
         }
@@ -48,16 +42,16 @@ Plane::Plane(uint32_t horizontal, uint32_t vertical)
 
     /* Generate the indices */
     uint32_t *index = &_modelIndices[0];
-    for (unsigned int i = 0, count = 0; i < vertical - 1; ++i) {
-        for (unsigned int j = 0; j < horizontal - 1; ++j) {
-            uint32_t span = i * horizontal;
+    for (unsigned int i = 0, count = 0; i < numFaces; ++i) {
+        for (unsigned int j = 0; j < numFaces; ++j) {
+            uint32_t span = i * numVertices;
             index[count++] = j + span;
-            index[count++] = j + span + horizontal;
+            index[count++] = j + span + numVertices;
             index[count++] = j + span + 1;
 
             index[count++] = j + span + 1;
-            index[count++] = j + span + horizontal;
-            index[count++] = j + span + horizontal + 1;
+            index[count++] = j + span + numVertices;
+            index[count++] = j + span + numVertices + 1;
         }
     }
 
@@ -65,7 +59,7 @@ Plane::Plane(uint32_t horizontal, uint32_t vertical)
     _materials.push_back(Material());
 
     /* Add a default texture */
-    uint8_t rgb[3] = {255, 255, 255};
+    uint8_t rgb[3] = {(uint8_t)(color.r * 255), (uint8_t)(color.g * 255), (uint8_t)(color.b * 255)};
     _textures.push_back(Texture(rgb, 1, 1, 8));
 
     /* Only one set of indices */

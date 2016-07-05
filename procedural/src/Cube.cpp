@@ -1,37 +1,40 @@
-#include <GL/glew.h>
-#include <GL/glfw.h>
-#include <string.h>
-#include <glm/glm.hpp>
-using namespace glm;
-#include <string>
-
 #include "Cube.hpp"
-#include "Renderer.hpp"
+#include <glm/glm.hpp>
+#include "Logging.hpp"
+#include "ModelTransform.hpp"
+#include "Plane.hpp"
 
 using namespace Procedural;
-using namespace std;
+using namespace Logging;
 
-Plane::Plane(uint32_t horizontal, uint32_t vertical)
+#define PI 3.14159265358979323846
 
-Cube::Cube()
+Cube::Cube(uint32_t numVertices, const glm::vec3 &color)
 {
-    GLfloat verts[][3] = {{-1.0, -1.0, -1.0}, {-1.0, -1.0, 1.0}, {-1.0, 1.0, -1.0}, {-1.0, 1.0, 1.0},
-                          {1.0, -1.0, -1.0},  {1.0, -1.0, 1.0},  {1.0, 1.0, -1.0},  {1.0, 1.0, 1.0}};
+    glm::vec3 offsets[] = {
+        glm::vec3(0.0f, 0.5f, 0.0f),  /* Top */
+        glm::vec3(0.0f, -0.5f, 0.0f), /* Bottom */
+        glm::vec3(0.0f, 0.0f, 0.5f),  /* Front */
+        glm::vec3(0.0f, 0.0f, -0.5f), /* Back */
+        glm::vec3(-0.5f, 0.0f, 0.0f), /* Left */
+        glm::vec3(0.5f, 0.0f, 0.0f),  /* Right */
+    };
 
-    GLfloat colors[][3] = {{0.0, 0.0, 0.0}, {0.0, 0.0, 1.0}, {0.0, 1.0, 0.0}, {0.0, 1.0, 1.0},
-                           {1.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, {1.0, 1.0, 0.0}, {1.0, 1.0, 1.0}};
+    glm::vec3 rotations[] = {
+        glm::vec3(0.0, 0.0, 0.0),       /* Top */
+        glm::vec3(PI, 0.0, 0.0),        /* Bottom */
+        glm::vec3(PI / 2.0, 0.0, 0.0),  /* Front */
+        glm::vec3(-PI / 2.0, 0.0, 0.0), /* Back */
+        glm::vec3(0.0, 0.0, PI / 2.0),  /* Left */
+        glm::vec3(0.0, 0.0, -PI / 2.0), /* Right */
+    };
 
-    GLuint indices[] = {0, 1, 2, 2, 1, 3, 0, 2, 4, 4, 2, 6, 4, 6, 5, 5, 6, 7, 2, 3, 6, 6, 3, 7, 5, 7, 3, 5, 3, 1, 1, 4, 5, 4, 1, 0};
+    for (int i = 0; i < sizeof offsets / sizeof *offsets; ++i) {
+        Plane plane(numVertices, color);
 
-    _vertsArray = new GLfloat[sizeof verts];
-    memcpy(_vertsArray, verts, sizeof verts);
-    _vertsArrayLen = sizeof verts;
-
-    _colorsArray = new GLfloat[sizeof colors];
-    memcpy(_colorsArray, colors, sizeof colors);
-    _colorsArrayLen = sizeof colors;
-
-    _indicesArray = new GLuint[sizeof indices];
-    memcpy(_indicesArray, indices, sizeof indices);
-    _indicesArrayLen = sizeof indices;
+        /* Transform the original plane */
+        ModelTransform::Rotate(plane, rotations[i]);
+        ModelTransform::Translate(plane, offsets[i]);
+        ModelTransform::Append(*this, plane);
+    }
 }

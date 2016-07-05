@@ -5,6 +5,9 @@
  * @author	Roberto Cano (http://www.robertocano.es)
  */
 #include "Game.hpp"
+#include "Logging.hpp"
+
+using namespace Logging;
 
 Game::~Game()
 {
