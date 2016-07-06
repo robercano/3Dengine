@@ -9,13 +9,20 @@
 
 using namespace Procedural;
 
-Plane::Plane(uint32_t numVertices, const glm::vec3 &color)
+Plane::Plane(float width, float height, const glm::vec3 &color, uint32_t numVertsWidth, uint32_t numVertsHeight)
 {
-    if (numVertices < 2) {
-        numVertices = 2;
+    if (numVertsWidth < 2) {
+        numVertsWidth = 2;
+    }
+    if (numVertsHeight < 2) {
+        numVertsHeight = 2;
     }
 
-    float numFaces = (float)(numVertices - 1);
+    float numEdgesWidth = (float)(numVertsWidth - 1);
+    float numEdgesHeight = (float)(numVertsHeight - 1);
+
+    float halfWidth = width / 2.0f;
+    float halfHeight = height / 2.0f;
 
     /*
      * For each row of vertices of the plane two indices are needed
@@ -24,17 +31,18 @@ Plane::Plane(uint32_t numVertices, const glm::vec3 &color)
      * Then multiplied by the number of rows minus one, as the last
      * row does have to generate more triangles
      */
-    _modelData.resize(numVertices * numVertices);
-    _modelIndices.resize((size_t)(2 * 3 * numFaces * numFaces)); /** 2 triangles, 3 vertices each */
+    _modelData.resize(numVertsWidth * numVertsHeight);
+    _modelIndices.resize((size_t)(2 * 3 * numEdgesWidth * numEdgesHeight)); /** 2 triangles, 3 vertices each */
 
     Model3D::VertexData *data = &_modelData[0];
 
     /* Generate the plane vertices */
-    for (unsigned int i = 0, count = 0; i < numVertices; ++i) {
-        for (unsigned int j = 0; j < numVertices; ++j) {
-            data[count].vertex = glm::vec3(-0.5f + j / (float)numFaces, 0.0f, -0.5 + i / (float)numFaces);
+    for (unsigned int i = 0, count = 0; i < numVertsHeight; ++i) {
+        for (unsigned int j = 0; j < numVertsWidth; ++j) {
+            data[count].vertex =
+                glm::vec3(-halfWidth + width * j / (float)numEdgesWidth, 0.0f, -halfHeight + height * i / (float)numEdgesHeight);
             data[count].normal = glm::vec3(0.0f, 1.0f, 0.0f);
-            data[count].uvcoord = glm::vec2(j / (float)numFaces, 1.0f - i / (float)numFaces);
+            data[count].uvcoord = glm::vec2(j / (float)numEdgesWidth, 1.0f - i / (float)numEdgesHeight);
 
             count++;
         }
@@ -42,16 +50,16 @@ Plane::Plane(uint32_t numVertices, const glm::vec3 &color)
 
     /* Generate the indices */
     uint32_t *index = &_modelIndices[0];
-    for (unsigned int i = 0, count = 0; i < numFaces; ++i) {
-        for (unsigned int j = 0; j < numFaces; ++j) {
-            uint32_t span = i * numVertices;
+    for (unsigned int i = 0, count = 0; i < numEdgesHeight; ++i) {
+        for (unsigned int j = 0; j < numEdgesWidth; ++j) {
+            uint32_t span = i * numVertsWidth;
             index[count++] = j + span;
-            index[count++] = j + span + numVertices;
+            index[count++] = j + span + numVertsWidth;
             index[count++] = j + span + 1;
 
             index[count++] = j + span + 1;
-            index[count++] = j + span + numVertices;
-            index[count++] = j + span + numVertices + 1;
+            index[count++] = j + span + numVertsWidth;
+            index[count++] = j + span + numVertsWidth + 1;
         }
     }
 

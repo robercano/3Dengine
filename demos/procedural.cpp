@@ -77,18 +77,15 @@ class ProceduralDemo : public GameHandler
         }
 
         /* Use a plane for the floor */
-        _plane = game->getRenderer()->prepareModel(Procedural::Plane(6, glm::vec3(1.0, 0.3f, 0.6f)));
-        _plane->setScaleFactor(glm::vec3(500.0f, 1.0f, 500.0f));
+        _plane = game->getRenderer()->prepareModel(Procedural::Plane(500.0f, 500.0f, glm::vec3(1.0, 0.3f, 0.6f), 2, 2));
         _plane->setPosition(glm::vec3(0.0f, -70.0f, 0.0f));
 
         /* Create a cube */
-        _cube = game->getRenderer()->prepareModel(Procedural::Cube(2, glm::vec3(0.5f, 0.3f, 1.0f)));
-        _cube->setScaleFactor(glm::vec3(50.0f, 50.0f, 50.0f));
+        _cube = game->getRenderer()->prepareModel(Procedural::Cube(150.0f, 50.0f, 100.0f, glm::vec3(0.5f, 0.3f, 1.0f), 10, 8, 2));
         _cube->setPosition(glm::vec3(0.0f, 60.0f, 0.0f));
 
         /* Create a cylinder */
-        _cylinder = game->getRenderer()->prepareModel(Procedural::Cylinder(32, glm::vec3(0.2f, 1.0f, 0.4f)));
-        _cylinder->setScaleFactor(glm::vec3(20.0f, 20.0f, 20.0f));
+        _cylinder = game->getRenderer()->prepareModel(Procedural::Cylinder(5.0f, 40.0f, glm::vec3(0.2f, 1.0f, 0.4f), 40, 10));
         _cylinder->setPosition(glm::vec3(100.0f, 80.0f, 50.0f));
 
         /* Create the game camera */
@@ -162,6 +159,8 @@ class ProceduralDemo : public GameHandler
         /* Apply the motion to the camera */
         _cameraMotion.applyTo(_camera);
         _renderTargetNormal->clear();
+
+        //game->getRenderer()->setWireframeMode(true);
 
         for (std::vector<PointLight *>::iterator it = _pointLights.begin(); it != _pointLights.end(); ++it) {
             /* TODO: lookAt the center of the calculated bounding box, but for

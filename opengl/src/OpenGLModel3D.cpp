@@ -66,7 +66,6 @@ bool OpenGLModel3D::prepare()
             /* Upload the data */
             __(glBufferData(GL_ELEMENT_ARRAY_BUFFER, getIndexData().size() * sizeof(getIndexData()[0]), &(getIndexData()[0]),
                             GL_STATIC_DRAW));
-            log("Uploading %lu indices\n", getIndexData().size());
         }
     }
     __(glBindVertexArray(0));

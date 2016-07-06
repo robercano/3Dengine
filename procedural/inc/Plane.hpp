@@ -18,6 +18,8 @@ namespace Procedural
 class Plane : public Model3D
 {
   public:
-    Plane(uint32_t numVertices = 2, const glm::vec3 &color = glm::vec3(1.0f, 1.0f, 1.0f));
+    Plane(float width = 1.0f, float height = 1.0f,
+          const glm::vec3 &color = glm::vec3(1.0f, 1.0f, 1.0f),
+          uint32_t numVertsWidth = 2, uint32_t numVertsHeight = 2);
 };
 };

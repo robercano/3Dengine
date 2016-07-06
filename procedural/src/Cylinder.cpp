@@ -8,103 +8,121 @@ using namespace Logging;
 
 #define PI 3.14159265358979323846
 
-Cylinder::Cylinder(uint32_t numSides, const glm::vec3 &color)
+Cylinder::Cylinder(float radius, float height, const glm::vec3 &color, uint32_t numVertsCap, uint32_t numVertsHeight)
 {
-    glm::vec3 topCenter(0.0f, 1.0f, 0.0f);
-    glm::vec3 bottomCenter(0.0f, -1.0f, 0.0f);
+    uint32_t count = 0;
+    float halfHeight = height / 2.0f;
 
-    /* 2 center vertices, then 2 vertices at top for up and side
-     * direction, and then 2 at bottom for down and side direction */
-    _modelData.resize(2 + 4 * numSides);
+    glm::vec3 topCenter(0.0f, halfHeight, 0.0f);
+    glm::vec3 bottomCenter(0.0f, -halfHeight, 0.0f);
+    glm::vec3 topNormal = glm::normalize(topCenter);
+    glm::vec3 bottomNormal = glm::normalize(bottomCenter);
 
-    /* numSides triangles at top, numSides triangles at bottom,
-     * then 2 triangles for each side:
-     *
-     * total: numSides + numSides + 2*numSides
-     */
-    _modelIndices.resize(3 * 4 * numSides);
+    /* The cylinder will be conformed by the body and the 2 caps. Each cap will
+     * have a center vertex and 'numVertsCap' vertices. Then the body will have
+     * 'numVertsCap' * 'numVertsHeight' vertices */
+    _modelData.resize(2 * (1 + numVertsCap) + numVertsCap * numVertsHeight);
 
-    /* Generate the 2 center vertices */
-    _modelData[0].vertex = topCenter;
-    _modelData[0].normal = topCenter;
-    _modelData[1].vertex = bottomCenter;
-    _modelData[1].normal = bottomCenter;
+    /* There are 'numVertsCap' triangles per cap
+     * and 'numVertsCap' * ('numVertsHeight' - 1) * 2 triangles for the body
+     * with 3 indices per triangle */
+    _modelIndices.resize((numVertsCap +                             /* Top cap */
+                          numVertsCap +                             /* Bottom cap */
+                          numVertsCap * (numVertsHeight - 1) * 2) * /* Body */
+                         3 /* Indices per triangle */);
 
-    /* Now generate the surrounding vertices for the top and
-     * bottom lids */
-    Model3D::VertexData *data = &_modelData[2];
+    Model3D::VertexData *data = &_modelData[0];
 
-    for (unsigned int i = 0, count = 0; i < numSides; ++i) {
-        float angle = 2 * PI * i / numSides;
+    /* Upper cap */
+    uint32_t upperCapBase = count;
 
-        glm::vec3 vertex = glm::vec3(glm::cos(angle), 0.0f, glm::sin(angle));
-        glm::vec3 sideNormal = glm::normalize(vertex);
+    data[count].vertex = topCenter;
+    data[count].normal = topCenter;
+    count++;
 
-        /* Upper lid: same vertex twice with different normals to create the
-         * top and the side lighting */
-        data[count].vertex = vertex + topCenter;
-        data[count].normal = topCenter; /* Top center is also in the direction of the normal we need */
+    for (unsigned int i = 0; i < numVertsCap; ++i) {
+        float angle = 2 * PI * i / numVertsCap;
+
+        data[count].vertex = glm::vec3(radius * glm::cos(angle), 0.0f, radius * glm::sin(angle)) + topCenter;
+        data[count].normal = topNormal;
         count++;
+    }
+    /* Bottom cap */
+    uint32_t bottomCapBase = count;
 
-        data[count].vertex = vertex + topCenter;
-        data[count].normal = sideNormal;
-        count++;
+    data[count].vertex = bottomCenter;
+    data[count].normal = bottomCenter;
+    count++;
 
-        /* Bottom lid: same vertex twice with different normals to create the
-         * top and the side lighting */
-        data[count].vertex = vertex + bottomCenter;
-        data[count].normal = bottomCenter; /* Bottom center is also in the direction of the normal we need */
-        count++;
+    for (unsigned int i = 0; i < numVertsCap; ++i) {
+        float angle = 2 * PI * i / numVertsCap;
 
-        data[count].vertex = vertex + bottomCenter;
-        data[count].normal = sideNormal;
+        data[count].vertex = glm::vec3(radius * glm::cos(angle), 0.0f, radius * glm::sin(angle)) + bottomCenter;
+        data[count].normal = bottomNormal;
         count++;
+    }
+    /* Body */
+    uint32_t bodyBase = count;
+
+    float heightStep = height / (numVertsHeight - 1);
+    for (unsigned int j = 0; j < numVertsHeight; ++j) {
+        for (unsigned int i = 0; i < numVertsCap; ++i) {
+            float angle = 2 * PI * i / numVertsCap;
+            float ringHeight = halfHeight - j * heightStep;
+
+            data[count].vertex = glm::vec3(radius * glm::cos(angle), ringHeight, radius * glm::sin(angle));
+            data[count].normal = glm::normalize(data[count].vertex);
+            count++;
+        }
     }
 
     /* Generate the indices now */
     uint32_t *index = &_modelIndices[0];
-    uint32_t count = 0;
+    count = 0;
 
     /* Upper lid */
-    for (int i = 0; i < numSides - 1; ++i) {
-        index[count++] = 0;
-        index[count++] = 2 + 4 * (i + 1);
-        index[count++] = 2 + 4 * (i + 0);
+    for (int i = 0; i < numVertsCap - 1; ++i) {
+        index[count++] = upperCapBase;
+        index[count++] = upperCapBase + 2 + i;
+        index[count++] = upperCapBase + 1 + i;
     }
     /* Upper lid last triangle */
-    index[count++] = 0;
-    index[count++] = 2 + 4 * (0);
-    index[count++] = 2 + 4 * (numSides - 1);
+    index[count++] = upperCapBase;
+    index[count++] = upperCapBase + 1;
+    index[count++] = upperCapBase + numVertsCap;
 
     /* Bottom lid */
-    for (int i = 0; i < numSides - 1; ++i) {
-        index[count++] = 1;
-        index[count++] = 2 + 4 * (i + 0) + 2;
-        index[count++] = 2 + 4 * (i + 1) + 2;
+    for (int i = 0; i < numVertsCap - 1; ++i) {
+        index[count++] = bottomCapBase;
+        index[count++] = bottomCapBase + 1 + i;
+        index[count++] = bottomCapBase + 2 + i;
     }
     /* Bottom lid last triangle */
-    index[count++] = 1;
-    index[count++] = 2 + 4 * (numSides - 1) + 2;
-    index[count++] = 2 + 4 * (0) + 2;
+    index[count++] = bottomCapBase;
+    index[count++] = bottomCapBase + numVertsCap;
+    index[count++] = bottomCapBase + 1;
 
     /* Sides */
-    for (int i = 0; i < numSides - 1; ++i) {
-        index[count++] = 2 + 4 * (i + 0) + 1;
-        index[count++] = 2 + 4 * (i + 1) + 3;
-        index[count++] = 2 + 4 * (i + 0) + 3;
+    for (int j = 0; j < numVertsHeight - 1; ++j) {
+        int i = 0;
+        for (; i < numVertsCap - 1; ++i) {
+            index[count++] = j * numVertsCap + bodyBase + i;
+            index[count++] = j * numVertsCap + bodyBase + i + 1;
+            index[count++] = j * numVertsCap + bodyBase + numVertsCap + i;
 
-        index[count++] = 2 + 4 * (i + 0) + 1;
-        index[count++] = 2 + 4 * (i + 1) + 1;
-        index[count++] = 2 + 4 * (i + 1) + 3;
+            index[count++] = j * numVertsCap + bodyBase + i + 1;
+            index[count++] = j * numVertsCap + bodyBase + numVertsCap + i + 1;
+            index[count++] = j * numVertsCap + bodyBase + numVertsCap + i;
+        }
+        /* Last quad for this ring: 'i' contains the last position */
+        index[count++] = j * numVertsCap + bodyBase + i;
+        index[count++] = j * numVertsCap + bodyBase + 0;
+        index[count++] = j * numVertsCap + bodyBase + numVertsCap + i;
+
+        index[count++] = j * numVertsCap + bodyBase + 0;
+        index[count++] = j * numVertsCap + bodyBase + numVertsCap + 0;
+        index[count++] = j * numVertsCap + bodyBase + numVertsCap + i;
     }
-    /* Last side */
-    index[count++] = 2 + 4 * (numSides - 1) + 1;
-    index[count++] = 2 + 4 * (0) + 3;
-    index[count++] = 2 + 4 * (numSides - 1) + 3;
-
-    index[count++] = 2 + 4 * (numSides - 1) + 1;
-    index[count++] = 2 + 4 * (0) + 1;
-    index[count++] = 2 + 4 * (0) + 3;
 
     _materials.push_back(Material());
 

@@ -48,7 +48,6 @@ void ModelTransform::Append(Model3D &to, const Model3D &from)
     /* Copy the vertices ofssets. We need to add to the offsets the original size of the
      * _modelData array in the 'to' model */
     for (std::vector<uint32_t>::const_iterator it = from._indicesOffsets.begin(); it != from._indicesOffsets.end(); ++it) {
-        log("Pushing %d\n", *it + origDataSize);
         to._indicesOffsets.push_back(*it + origIndexSize);
     }
 }

@@ -9,15 +9,20 @@ using namespace Logging;
 
 #define PI 3.14159265358979323846
 
-Cube::Cube(uint32_t numVertices, const glm::vec3 &color)
+Cube::Cube(float width, float height, float depth, const glm::vec3 &color, uint32_t numVertsWidth, uint32_t numVertsHeight,
+           uint32_t numVertsDepth)
 {
+    float halfWidth = width / 2.0f;
+    float halfHeight = height / 2.0f;
+    float halfDepth = depth / 2.0f;
+
     glm::vec3 offsets[] = {
-        glm::vec3(0.0f, 0.5f, 0.0f),  /* Top */
-        glm::vec3(0.0f, -0.5f, 0.0f), /* Bottom */
-        glm::vec3(0.0f, 0.0f, 0.5f),  /* Front */
-        glm::vec3(0.0f, 0.0f, -0.5f), /* Back */
-        glm::vec3(-0.5f, 0.0f, 0.0f), /* Left */
-        glm::vec3(0.5f, 0.0f, 0.0f),  /* Right */
+        glm::vec3(0.0f, halfHeight, 0.0f),  /* Top */
+        glm::vec3(0.0f, -halfHeight, 0.0f), /* Bottom */
+        glm::vec3(0.0f, 0.0f, halfDepth),   /* Front */
+        glm::vec3(0.0f, 0.0f, -halfDepth),  /* Back */
+        glm::vec3(-halfWidth, 0.0f, 0.0f),  /* Left */
+        glm::vec3(halfWidth, 0.0f, 0.0f),   /* Right */
     };
 
     glm::vec3 rotations[] = {
@@ -29,8 +34,26 @@ Cube::Cube(uint32_t numVertices, const glm::vec3 &color)
         glm::vec3(0.0, 0.0, -PI / 2.0), /* Right */
     };
 
+    glm::vec2 planeSizes[] = {
+        glm::vec2(width, depth),  /* Top */
+        glm::vec2(width, depth),  /* Bottom */
+        glm::vec2(width, height), /* Front */
+        glm::vec2(width, height), /* Back */
+        glm::vec2(height, depth), /* Left */
+        glm::vec2(height, depth)  /* Right */
+    };
+
+    glm::vec2 planeVerts[] = {
+        glm::vec2(numVertsWidth, numVertsDepth),  /* Top */
+        glm::vec2(numVertsWidth, numVertsDepth),  /* Bottom */
+        glm::vec2(numVertsWidth, numVertsHeight), /* Front */
+        glm::vec2(numVertsWidth, numVertsHeight), /* Back */
+        glm::vec2(numVertsHeight, numVertsDepth), /* Left */
+        glm::vec2(numVertsHeight, numVertsDepth)  /* Right */
+    };
+
     for (int i = 0; i < sizeof offsets / sizeof *offsets; ++i) {
-        Plane plane(numVertices, color);
+        Plane plane(planeSizes[i].x, planeSizes[i].y, color, planeVerts[i].x, planeVerts[i].y);
 
         /* Transform the original plane */
         ModelTransform::Rotate(plane, rotations[i]);
