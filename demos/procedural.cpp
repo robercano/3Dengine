@@ -78,15 +78,15 @@ class ProceduralDemo : public GameHandler
 
         /* Use a plane for the floor */
         _plane = game->getRenderer()->prepareModel(Procedural::Plane(500.0f, 500.0f, glm::vec3(1.0, 0.3f, 0.6f), 2, 2));
-        _plane->setPosition(glm::vec3(0.0f, -70.0f, 0.0f));
+        _plane->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 
         /* Create a cube */
         _cube = game->getRenderer()->prepareModel(Procedural::Cube(150.0f, 50.0f, 100.0f, glm::vec3(0.5f, 0.3f, 1.0f), 10, 8, 2));
         _cube->setPosition(glm::vec3(0.0f, 60.0f, 0.0f));
 
         /* Create a cylinder */
-        _cylinder = game->getRenderer()->prepareModel(Procedural::Cylinder(5.0f, 40.0f, glm::vec3(0.2f, 1.0f, 0.4f), 40, 10));
-        _cylinder->setPosition(glm::vec3(100.0f, 80.0f, 50.0f));
+        _cylinder = game->getRenderer()->prepareModel(Procedural::Cylinder(20.0f, 40.0f, glm::vec3(0.2f, 1.0f, 0.4f), 40, 10));
+        _cylinder->setPosition(glm::vec3(0.0f, 0.0f, 150.0f));
 
         /* Create the game camera */
         _camera.setProjection((float)_width, (float)_height, 0.1f, 1000.0f, 45.0f);
@@ -172,9 +172,9 @@ class ProceduralDemo : public GameHandler
         }
 
         /* Render all objects */
-        game->getRenderer()->renderModel3D(*_plane, _camera, *_shaderBlinnLight, NULL, _pointLights, _emptySpotLights, 0.4f, *_renderTargetNormal);
-        game->getRenderer()->renderModel3D(*_cube, _camera, *_shaderBlinnLight, NULL, _pointLights, _emptySpotLights, 0.4f, *_renderTargetNormal);
-        game->getRenderer()->renderModel3D(*_cylinder, _camera, *_shaderBlinnLight, NULL, _pointLights, _emptySpotLights, 0.4f, *_renderTargetNormal);
+        game->getRenderer()->renderModel3D(*_plane, _camera, *_shaderBlinnLight, NULL, _pointLights, _emptySpotLights, 0.0f, *_renderTargetNormal);
+        game->getRenderer()->renderModel3D(*_cube, _camera, *_shaderBlinnLight, NULL, _pointLights, _emptySpotLights, 0.0f, *_renderTargetNormal);
+        game->getRenderer()->renderModel3D(*_cylinder, _camera, *_shaderBlinnLight, NULL, _pointLights, _emptySpotLights, 0.0f, *_renderTargetNormal);
         _renderTargetNormal->blit();
 
         return true;
