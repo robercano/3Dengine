@@ -41,7 +41,7 @@ OPENGL_FILES=GLFWKeyManager.cpp GLFWMouseManager.cpp GLFWWindowManager.cpp \
 			 OpenGLShaderPointLight.cpp OpenGLShaderSpotLight.cpp OpenGLShaderDirectLight.cpp \
 			 OpenGLUniformBlock.cpp
 
-PROCEDURAL_FILES=Plane.cpp Cube.cpp Cylinder.cpp
+PROCEDURAL_FILES=Plane.cpp Cube.cpp Cylinder.cpp Circle.cpp
 
 FILES=$(CORE_FILES) $(OPENGL_FILES) $(PROCEDURAL_FILES) $(UTILS_FILES)
 
@@ -72,7 +72,7 @@ endif
 #
 #Compilation flags
 #
-FLAGS+=-Werror -MMD -fPIC -Icore/inc -Iopengl/inc -Iprocedural/inc -Iutils/inc -I3rdparty -g -DDEBUG_OPENGL_PIPELINE
+FLAGS+=-Werror -MMD -fPIC -Icore/inc -Iopengl/inc -Iprocedural/inc -Iutils/inc -I3rdparty -O0 -g -DDEBUG_OPENGL_PIPELINE
 CXXFLAGS=$(FLAGS) -std=c++11
 CFLAGS=$(FLAGS) -std=c11
 

@@ -1,81 +1,26 @@
 #include "Cylinder.hpp"
 #include <glm/glm.hpp>
-#include "Logging.hpp"
+#include "Circle.hpp"
 #include "ModelTransform.hpp"
 
 using namespace Procedural;
-using namespace Logging;
 
 #define PI 3.14159265358979323846
-
-void Cylinder::_buildCap(const glm::vec3 &position)
-{
-    uint32_t count = 0;
-
-    /*
-     * Vertices
-     */
-    uint32_t capVertexBase = _modelData.size();
-
-    /* A cap has a center vertex and '_numVertsCap' border vertices */
-    _modelData.resize(capVertexBase + (1 + _numVertsCap));
-
-    Model3D::VertexData *data = &_modelData[capVertexBase];
-
-    glm::vec3 normal = glm::normalize(position);
-
-    data[count].vertex = position;
-    data[count].normal = normal;
-    count++;
-
-    for (unsigned int i = 0; i < _numVertsCap; ++i) {
-        float angle = 2 * PI * i / _numVertsCap;
-
-        data[count].vertex = glm::vec3(_radius * glm::cos(angle), 0.0f, _radius * glm::sin(angle)) + position;
-        data[count].normal = normal;
-        count++;
-    }
-
-    /*
-     * Faces
-     */
-    uint32_t capIndexBase = _modelIndices.size();
-
-    /* A cap has '_numVertsCap' faces */
-    _modelIndices.resize(capIndexBase + _numVertsCap);
-
-    uint32_t *index = &_modelIndices[capIndexBase];
-
-    count = 0;
-
-    /* Bottom lid */
-    for (int i = 0; i < _numVertsCap - 1; ++i) {
-        index[count++] = capVertexBase;
-        index[count++] = capVertexBase + 1 + i;
-        index[count++] = capVertexBase + 2 + i;
-    }
-
-    /* Bottom lid last triangle */
-    index[count++] = capVertexBase;
-    index[count++] = capVertexBase + _numVertsCap;
-    index[count++] = capVertexBase + 1;
-}
 
 Cylinder::Cylinder(float radius, float height, const glm::vec3 &color, uint32_t numVertsCap, uint32_t numVertsHeight)
     : _radius(radius), _height(_height), _color(color), _numVertsCap(numVertsCap), _numVertsHeight(numVertsHeight)
 {
+    Circle bottomCap(_radius, color, _numVertsCap);
+    Circle topCap(_radius, color, _numVertsCap);
     uint32_t count = 0;
 
-    glm::vec3 topCenter(0.0f, height, 0.0f);
-    glm::vec3 bottomCenter(0.0f, 0.0f, 0.0f);
-    glm::vec3 topNormal = glm::normalize(topCenter);
-    glm::vec3 bottomNormal = glm::normalize(bottomCenter);
-
     /* Bottom cap */
-    _buildCap(bottomCenter);
+    ModelTransform::Rotate(bottomCap, glm::vec3(PI, 0.0f, 0.0f));
+    ModelTransform::Append(*this, bottomCap);
 
     /* Upper cap */
-    _buildCap(topCenter);
+    ModelTransform::Translate(topCap, glm::vec3(0.0f, height, 0.0f));
+    ModelTransform::Append(*this, topCap);
 
     uint32_t bodyVertexBase = _modelData.size();
 

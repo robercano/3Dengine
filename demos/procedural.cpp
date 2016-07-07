@@ -11,6 +11,7 @@
 #include "OpenGL.h"
 #include "Plane.hpp"
 #include "Cylinder.hpp"
+#include "Circle.hpp"
 #include "Cube.hpp"
 #include "Logging.hpp"
 
@@ -29,6 +30,7 @@ class ProceduralDemo : public GameHandler
         _prevX = 0xFFFFFF;
         _prevY = 0xFFFFFF;
         _angle = 0.0f;
+        _sunIntensity = 0.8f;
     }
 
     bool handleInit(Game *game)
@@ -43,13 +45,15 @@ class ProceduralDemo : public GameHandler
         }
 
         PointLight *light = new PointLight(glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f),
-                                           glm::vec3(-100.0f, 100.0f, 100.0f), 0.0000099999f, 1000.0f);
+                                           glm::vec3(-100.0f, 100.0f, 100.0f), 0.00000000001f, 1000000.0f);
 
-        _sun = new DirectLight(glm::vec3(10.0f, 10.0f, 10.0f), glm::vec3(10.0f, 10.0f, 10.0f), glm::vec3(10.0f, 10.0f, 0.f),
+        _sun = new DirectLight(glm::vec3(64.0/255.0f, 156.0f/255.0f, 255.0f/255.0f) * _sunIntensity,
+                               glm::vec3(1.0f, 1.0f, 1.0f) * _sunIntensity,
+                               glm::vec3(1.0f, 1.0f, 1.0f) * _sunIntensity,
                                glm::vec3(-100.0f, -100.0f, -100.0f));
 
         _renderTargetNormal->init(_width, _height);
-        _renderTargetNormal->setClearColor(0.0, 0.0, 0.0, 1.0);
+        _renderTargetNormal->setClearColor(135.0f/255.0f, 206.0f/255.0f, 250.0f/255.0f, 1.0);
 
         /* Register the key and mouse listener */
         std::vector<uint32_t> keys;  // The keys should be read from a config file
@@ -84,9 +88,13 @@ class ProceduralDemo : public GameHandler
         _cube = game->getRenderer()->prepareModel(Procedural::Cube(150.0f, 50.0f, 100.0f, glm::vec3(0.5f, 0.3f, 1.0f), 10, 8, 2));
         _cube->setPosition(glm::vec3(0.0f, 60.0f, 0.0f));
 
+        /* Create a circle */
+        _circle = game->getRenderer()->prepareModel(Procedural::Circle(100.0f, glm::vec3(0.8f, 0.9f, 0.1f), 50));
+        _circle->setPosition(glm::vec3(-100.0f, 1.0f, 100.0f));
+
         /* Create a cylinder */
         _cylinder = game->getRenderer()->prepareModel(Procedural::Cylinder(20.0f, 40.0f, glm::vec3(0.2f, 1.0f, 0.4f), 40, 10));
-        _cylinder->setPosition(glm::vec3(0.0f, 0.0f, 150.0f));
+        _cylinder->setPosition(glm::vec3(-80.0f, 120.0f, 150.0f));
 
         /* Create the game camera */
         _camera.setProjection((float)_width, (float)_height, 0.1f, 1000.0f, 45.0f);
@@ -101,7 +109,7 @@ class ProceduralDemo : public GameHandler
         light->setProjection((float)_width / 4.0f, (float)_height / 4.0f, 0.1f, 10000.0f);
         light->getShadowMap()->init(_width, _height);
 
-        _pointLights.push_back(light);
+        //_pointLights.push_back(light);
 
         return true;
     }
@@ -171,10 +179,17 @@ class ProceduralDemo : public GameHandler
             //game->getRenderer()->renderToShadowMap(*_cylinder, *(*it), *_shaderShadow);
         }
 
+        _sun->lookAt(_plane->getPosition());
+        _sun->getShadowMap()->clear();
+        game->getRenderer()->renderToShadowMap(*_cube, *_sun, *_shaderShadow);
+        game->getRenderer()->renderToShadowMap(*_cylinder, *_sun, *_shaderShadow);
+        //game->getRenderer()->renderToShadowMap(*_circle, *_sun, *_shaderShadow);
+
         /* Render all objects */
-        game->getRenderer()->renderModel3D(*_plane, _camera, *_shaderBlinnLight, NULL, _pointLights, _emptySpotLights, 0.0f, *_renderTargetNormal);
-        game->getRenderer()->renderModel3D(*_cube, _camera, *_shaderBlinnLight, NULL, _pointLights, _emptySpotLights, 0.0f, *_renderTargetNormal);
-        game->getRenderer()->renderModel3D(*_cylinder, _camera, *_shaderBlinnLight, NULL, _pointLights, _emptySpotLights, 0.0f, *_renderTargetNormal);
+        game->getRenderer()->renderModel3D(*_plane, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
+        game->getRenderer()->renderModel3D(*_cube, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
+        game->getRenderer()->renderModel3D(*_cylinder, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
+        game->getRenderer()->renderModel3D(*_circle, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
         _renderTargetNormal->blit();
 
         return true;
@@ -183,7 +198,7 @@ class ProceduralDemo : public GameHandler
   private:
     Camera _camera;
     FlyMotion _cameraMotion;
-    Model3D *_plane, *_cube, *_cylinder;
+    Model3D *_plane, *_cube, *_cylinder, *_circle;
     BlinnPhongShader *_shaderBlinnLight;
     NormalShadowMapShader *_shaderShadow;
     NOAARenderTarget *_renderTargetNormal;
@@ -199,6 +214,7 @@ class ProceduralDemo : public GameHandler
     uint32_t _width;
     uint32_t _height;
     float _angle;
+    float _sunIntensity;
 };
 
 int main()
