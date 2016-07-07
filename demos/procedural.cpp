@@ -81,7 +81,7 @@ class ProceduralDemo : public GameHandler
         }
 
         /* Use a plane for the floor */
-        _plane = game->getRenderer()->prepareModel(Procedural::Plane(500.0f, 500.0f, glm::vec3(1.0, 0.3f, 0.6f), PI/6.0f, 20, 20));
+        _plane = game->getRenderer()->prepareModel(Procedural::Plane(500.0f, 500.0f, glm::vec3(1.0, 0.3f, 0.6f), PI/16.0f, 0.0f, 20, 20));
         _plane->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 
         /* Create a cube */
@@ -93,7 +93,7 @@ class ProceduralDemo : public GameHandler
         _circle->setPosition(glm::vec3(30.0f, 35.0f, 100.0f));
 
         /* Create a cylinder */
-        _cylinder = game->getRenderer()->prepareModel(Procedural::Cylinder(20.0f, 40.0f, glm::vec3(0.2f, 1.0f, 0.4f), 40, 10));
+        _cylinder = game->getRenderer()->prepareModel(Procedural::Cylinder(20.0f, 40.0f, glm::vec3(0.2f, 1.0f, 0.4f), 10, 10));
         _cylinder->setPosition(glm::vec3(0.0f, 120.0f, 150.0f));
 
         /* Create the game camera */
