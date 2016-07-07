@@ -1,6 +1,8 @@
 /**
  * @module  Plane
- * @brief	Plane procedural generation
+ * @brief	Plane procedural generation. This class can create normal flat planes or
+ *          bent planes around the z-axis that can be used to generate, for example,
+ *          cylinders without the caps
  *
  * @author	Roberto Cano (http://www.robertocano.es)
  */
@@ -18,8 +20,29 @@ namespace Procedural
 class Plane : public Model3D
 {
   public:
+      /**
+       * Constructor
+       *
+       * @param width  Width of the plane along the x-axis
+       * @param height Height of the plane along the z-axis
+       * @param color  Default color for the plane material
+       * @param angle  Bending angle for the plane. If 0.0f then a flat plane is generated,
+       *               otherwise the plane is bent around the z-axis preserving its width on an
+       *               arc indicated by 'angle'
+       * @param numVertsWidth  Number of vertices to generate along the x-axis
+       * @param numVertsHeight Number of vertices to generate along the y-axis
+       */
     Plane(float width = 1.0f, float height = 1.0f,
           const glm::vec3 &color = glm::vec3(1.0f, 1.0f, 1.0f),
+          float angle = 0.0f,
           uint32_t numVertsWidth = 2, uint32_t numVertsHeight = 2);
+
+  private:
+    float _width;
+    float _height;
+    glm::vec3 _color;
+    float _angle;
+    uint32_t _numVertsWidth;
+    uint32_t _numVertsHeight;
 };
 };

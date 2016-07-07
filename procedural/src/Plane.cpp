@@ -6,20 +6,25 @@
  */
 #include "Plane.hpp"
 #include <glm/glm.hpp>
+#include "Logging.hpp"
 
+using namespace Logging;
 using namespace Procedural;
 
-Plane::Plane(float width, float height, const glm::vec3 &color, uint32_t numVertsWidth, uint32_t numVertsHeight)
+#define PI 3.14159265358979323846
+
+Plane::Plane(float width, float height, const glm::vec3 &color, float angle, uint32_t numVertsWidth, uint32_t numVertsHeight)
+    : _width(width), _height(height), _color(color), _angle(angle), _numVertsWidth(numVertsWidth), _numVertsHeight(numVertsHeight)
 {
-    if (numVertsWidth < 2) {
-        numVertsWidth = 2;
+    if (_numVertsWidth < 2) {
+        _numVertsWidth = 2;
     }
-    if (numVertsHeight < 2) {
-        numVertsHeight = 2;
+    if (_numVertsHeight < 2) {
+        _numVertsHeight = 2;
     }
 
-    float numEdgesWidth = (float)(numVertsWidth - 1);
-    float numEdgesHeight = (float)(numVertsHeight - 1);
+    float numEdgesWidth = (float)(_numVertsWidth - 1);
+    float numEdgesHeight = (float)(_numVertsHeight - 1);
 
     float halfWidth = width / 2.0f;
     float halfHeight = height / 2.0f;
@@ -31,20 +36,40 @@ Plane::Plane(float width, float height, const glm::vec3 &color, uint32_t numVert
      * Then multiplied by the number of rows minus one, as the last
      * row does have to generate more triangles
      */
-    _modelData.resize(numVertsWidth * numVertsHeight);
+    _modelData.resize(_numVertsWidth * _numVertsHeight);
     _modelIndices.resize((size_t)(2 * 3 * numEdgesWidth * numEdgesHeight)); /** 2 triangles, 3 vertices each */
 
     Model3D::VertexData *data = &_modelData[0];
 
     /* Generate the plane vertices */
-    for (unsigned int i = 0, count = 0; i < numVertsHeight; ++i) {
-        for (unsigned int j = 0; j < numVertsWidth; ++j) {
-            data[count].vertex =
-                glm::vec3(-halfWidth + width * j / (float)numEdgesWidth, 0.0f, -halfHeight + height * i / (float)numEdgesHeight);
-            data[count].normal = glm::vec3(0.0f, 1.0f, 0.0f);
-            data[count].uvcoord = glm::vec2(j / (float)numEdgesWidth, 1.0f - i / (float)numEdgesHeight);
+    if (_angle != 0.0f) {
+        /* Bent plane */
+        float radius = _width / _angle;
+        float offset = radius * glm::sin((PI + _angle) / 2.0f);
+        float angleIncrement = _angle / numEdgesWidth;
 
-            count++;
+        for (unsigned int i = 0, count = 0; i < _numVertsHeight; ++i) {
+            float vertexAngle = (PI + _angle) / 2.0f;
+
+            for (unsigned int j = 0; j < _numVertsWidth; ++j, vertexAngle -= angleIncrement) {
+                data[count].vertex = glm::vec3(radius * cos(vertexAngle), radius * sin(vertexAngle) - offset,
+                                               -halfHeight + height * i / (float)numEdgesHeight);
+                data[count].normal = glm::vec3(0.0f, 1.0f, 0.0f);
+                data[count].uvcoord = glm::vec2(0.0f, 0.0f);
+                count++;
+            }
+        }
+    } else {
+        /* Straight plane */
+        for (unsigned int i = 0, count = 0; i < _numVertsHeight; ++i) {
+            for (unsigned int j = 0; j < _numVertsWidth; ++j) {
+                data[count].vertex =
+                    glm::vec3(-halfWidth + width * j / (float)numEdgesWidth, 0.0f, -halfHeight + height * i / (float)numEdgesHeight);
+                data[count].normal = glm::vec3(0.0f, 1.0f, 0.0f);
+                data[count].uvcoord = glm::vec2(0.0f, 0.0f);
+
+                count++;
+            }
         }
     }
 
@@ -52,14 +77,14 @@ Plane::Plane(float width, float height, const glm::vec3 &color, uint32_t numVert
     uint32_t *index = &_modelIndices[0];
     for (unsigned int i = 0, count = 0; i < numEdgesHeight; ++i) {
         for (unsigned int j = 0; j < numEdgesWidth; ++j) {
-            uint32_t span = i * numVertsWidth;
+            uint32_t span = i * _numVertsWidth;
             index[count++] = j + span;
-            index[count++] = j + span + numVertsWidth;
+            index[count++] = j + span + _numVertsWidth;
             index[count++] = j + span + 1;
 
             index[count++] = j + span + 1;
-            index[count++] = j + span + numVertsWidth;
-            index[count++] = j + span + numVertsWidth + 1;
+            index[count++] = j + span + _numVertsWidth;
+            index[count++] = j + span + _numVertsWidth + 1;
         }
     }
 

@@ -53,7 +53,7 @@ Cube::Cube(float width, float height, float depth, const glm::vec3 &color, uint3
     };
 
     for (int i = 0; i < sizeof offsets / sizeof *offsets; ++i) {
-        Plane plane(planeSizes[i].x, planeSizes[i].y, color, planeVerts[i].x, planeVerts[i].y);
+        Plane plane(planeSizes[i].x, planeSizes[i].y, color, 0.0f, planeVerts[i].x, planeVerts[i].y);
 
         /* Transform the original plane */
         ModelTransform::Rotate(plane, rotations[i]);
