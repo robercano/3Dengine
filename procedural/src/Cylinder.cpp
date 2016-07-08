@@ -71,7 +71,7 @@ Cylinder::Cylinder(float radius, float height, const glm::vec3 &color, uint32_t 
 {
     Circle bottomCap(_radius, _color, _numVertsCap);
     Circle topCap(_radius, _color, _numVertsCap);
-    Plane body(2.0f * PI * _radius, height, color, 2.0 * PI, 0.0f, _numVertsCap, _numVertsHeight);
+    Plane body(2.0f * PI * _radius, height, color, 2.0 * PI, 0.0f, _numVertsCap + 1, _numVertsHeight);
 
     /* Bottom cap */
     ModelTransform::Rotate(bottomCap, glm::vec3(PI, 0.0f, 0.0f));
@@ -85,6 +85,7 @@ Cylinder::Cylinder(float radius, float height, const glm::vec3 &color, uint32_t 
     ModelTransform::Translate(body, glm::vec3(0.0f, -_radius, 0.0f));
     ModelTransform::Rotate(body, glm::vec3(-PI / 2.0f, 0.0f, 0.0f));
     ModelTransform::Translate(body, glm::vec3(0.0f, _radius, 0.0f));
+    ModelTransform::Rotate(body, glm::vec3(0.0f, PI / _numVertsCap, 0.0f));
     ModelTransform::Append(*this, body);
 
     /* Only one set of indices */

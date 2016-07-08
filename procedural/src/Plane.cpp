@@ -73,10 +73,12 @@ Plane::Plane(float width, float height, const glm::vec3 &color, float angleWidth
             float vertexAngleWidth = (PI + _angleWidth) / 2.0f;
 
             for (unsigned int j = 0; j < _numVertsWidth; ++j, vertexAngleWidth -= angleIncrementWidth) {
-                data[count].vertex.x = radiusWidth * cos(vertexAngleWidth);
-                data[count].vertex.y = radiusWidth * sin(vertexAngleWidth) - offsetWidth;
-                data[count].vertex.z = -halfHeight + height * i / (float)numEdgesHeight;
+                glm::vec3 unitVertex(cos(vertexAngleWidth), sin(vertexAngleWidth), 0.0f);
+
+                data[count].vertex =
+                    unitVertex * radiusWidth + glm::vec3(0.0f, -offsetWidth, -halfHeight + height * i / (float)numEdgesHeight);
                 /* Don't touch the z coordinate here */
+                data[count].normal = unitVertex;
                 count++;
             }
         }
