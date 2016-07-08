@@ -35,7 +35,7 @@ Cylinder::Cylinder(float radius, float height, const glm::vec3 &color, uint32_t 
     float heightStep = height / (numVertsHeight - 1);
     for (unsigned int j = 0; j < numVertsHeight; ++j) {
         for (unsigned int i = 0; i < numVertsCap; ++i) {
-            float angle = 2 * PI * i / numVertsCap;
+            float angle = (float)(2.0f * PI * i / numVertsCap);
             float ringHeight = j * heightStep;
 
             data[count].vertex = glm::vec3(radius * glm::cos(angle), ringHeight, radius * glm::sin(angle));
@@ -55,8 +55,8 @@ Cylinder::Cylinder(float radius, float height, const glm::vec3 &color, uint32_t 
     count = 0;
 
     /* Body */
-    for (int j = 0; j < numVertsHeight - 1; ++j) {
-        int i = 0;
+    for (unsigned int j = 0; j < numVertsHeight - 1; ++j) {
+        unsigned int i = 0;
         for (; i < numVertsCap - 1; ++i) {
             index[count++] = j * numVertsCap + bodyVertexBase + i;
             index[count++] = j * numVertsCap + bodyVertexBase + numVertsCap + i;
