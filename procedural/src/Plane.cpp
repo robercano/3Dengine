@@ -45,11 +45,11 @@ Plane::Plane(float width, float height, const glm::vec3 &color, float angle, uin
     if (_angle != 0.0f) {
         /* Bent plane */
         float radius = _width / _angle;
-        float offset = radius * glm::sin((PI + _angle) / 2.0f);
+        float offset = (float)(radius * glm::sin((PI + _angle) / 2.0f));
         float angleIncrement = _angle / numEdgesWidth;
 
         for (unsigned int i = 0, count = 0; i < _numVertsHeight; ++i) {
-            float vertexAngle = (PI + _angle) / 2.0f;
+            float vertexAngle = (float)((PI + _angle) / 2.0f);
 
             for (unsigned int j = 0; j < _numVertsWidth; ++j, vertexAngle -= angleIncrement) {
                 data[count].vertex = glm::vec3(radius * cos(vertexAngle), radius * sin(vertexAngle) - offset,

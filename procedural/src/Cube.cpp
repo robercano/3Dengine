@@ -43,17 +43,20 @@ Cube::Cube(float width, float height, float depth, const glm::vec3 &color, uint3
         glm::vec2(height, depth)  /* Right */
     };
 
-    glm::vec2 planeVerts[] = {
-        glm::vec2(numVertsWidth, numVertsDepth),  /* Top */
-        glm::vec2(numVertsWidth, numVertsDepth),  /* Bottom */
-        glm::vec2(numVertsWidth, numVertsHeight), /* Front */
-        glm::vec2(numVertsWidth, numVertsHeight), /* Back */
-        glm::vec2(numVertsHeight, numVertsDepth), /* Left */
-        glm::vec2(numVertsHeight, numVertsDepth)  /* Right */
+	struct {
+		uint32_t width;
+		uint32_t height;
+	} planeVerts[] = {
+		{ numVertsWidth, numVertsDepth  }, /* Top */
+		{ numVertsWidth, numVertsDepth  }, /* Bottom */
+		{ numVertsWidth, numVertsHeight }, /* Front */
+		{ numVertsWidth, numVertsHeight }, /* Back */
+		{ numVertsHeight, numVertsDepth }, /* Left */
+		{ numVertsHeight, numVertsDepth }  /* Right */
     };
 
     for (int i = 0; i < sizeof offsets / sizeof *offsets; ++i) {
-        Plane plane(planeSizes[i].x, planeSizes[i].y, color, 0.0f, planeVerts[i].x, planeVerts[i].y);
+        Plane plane(planeSizes[i].x, planeSizes[i].y, color, 0.0f, planeVerts[i].width, planeVerts[i].height);
 
         /* Transform the original plane */
         ModelTransform::Rotate(plane, rotations[i]);

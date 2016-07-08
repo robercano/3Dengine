@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{383F7ABD-FBDE-4DE6-9BBF-FCFEFC298EF8}</ProjectGuid>
+    <ProjectGuid>{423003FA-6AED-44E6-BE3B-5D3AA6087259}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>AntiAliasingComparison</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
@@ -157,7 +157,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\moving-lights.cpp" />
+    <ClCompile Include="..\debuginfo.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

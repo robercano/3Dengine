@@ -19,7 +19,7 @@ Circle::Circle(float radius, const glm::vec3 &color, uint32_t numVertsSide) : _r
     count++;
 
     for (unsigned int i = 0; i < _numVertsSide; ++i) {
-        float angle = 2 * PI * i / _numVertsSide;
+        float angle = (float)(2.0f * PI * i / _numVertsSide);
 
         data[count].vertex = glm::vec3(_radius * glm::cos(angle), 0.0f, _radius * glm::sin(angle));
         data[count].normal = normal;
@@ -34,7 +34,7 @@ Circle::Circle(float radius, const glm::vec3 &color, uint32_t numVertsSide) : _r
 
     /* Bottom lid */
     count = 0;
-    for (int i = 0; i < _numVertsSide - 1; ++i) {
+    for (unsigned int i = 0; i < _numVertsSide - 1; ++i) {
         index[count++] = 0;
         index[count++] = 2 + i;
         index[count++] = 1 + i;
