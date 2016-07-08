@@ -76,14 +76,14 @@ Plane::Plane(float width, float height, const glm::vec3 &color, float angleWidth
                 glm::vec3 unitVertex(cos(vertexAngleWidth), sin(vertexAngleWidth), 0.0f);
 
                 data[count].vertex =
-                    unitVertex * radiusWidth + glm::vec3(0.0f, -offsetWidth, -halfHeight + height * i / (float)numEdgesHeight);
+                    unitVertex * radiusWidth + glm::vec3(0.0f, -offsetWidth, -halfHeight + _height * i / (float)numEdgesHeight);
                 /* Don't touch the z coordinate here */
                 data[count].normal = unitVertex;
                 count++;
             }
         }
     }
-    if (_angleHeight != 0.0f) {
+    if (_angleWidth == 0.0f && _angleHeight != 0.0f) {
         /* Bent plane only around the x-axis */
         float radiusHeight = _height / _angleHeight;
         float offsetHeight = radiusHeight * glm::sin((PI + _angleHeight) / 2.0f);
@@ -92,12 +92,18 @@ Plane::Plane(float width, float height, const glm::vec3 &color, float angleWidth
         float vertexAngleHeight = (PI + _angleHeight) / 2.0f;
         for (unsigned int i = 0, count = 0; i < _numVertsHeight; ++i, vertexAngleHeight -= angleIncrementHeight) {
             for (unsigned int j = 0; j < _numVertsWidth; ++j) {
+                glm::vec3 unitVertex(0.0f, sin(vertexAngleHeight), cos(vertexAngleHeight));
+
                 /* Don't touch the x coordinate */
-                data[count].vertex.y += radiusHeight * sin(vertexAngleHeight) - offsetHeight;
-                data[count].vertex.z = radiusHeight * cos(vertexAngleHeight);
+                data[count].vertex =
+                    unitVertex * radiusHeight + glm::vec3(-halfWidth + _width * j / (float)numEdgesWidth, -offsetHeight, 0.0f);
+                data[count].normal = unitVertex;
                 count++;
             }
         }
+    }
+    if (_angleWidth != 0.0f && _angleHeight != 0.0f) {
+        /* TODO */
     }
 
     /* Generate the indices */
