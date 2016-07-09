@@ -97,8 +97,8 @@ class ProceduralDemo : public GameHandler
         _cube->setPosition(glm::vec3(0.0f, 60.0f, 0.0f));
 
         /* Create a circle */
-        _circle = game->getRenderer()->prepareModel(Procedural::Circle(100.0f, glm::vec3(0.8f, 0.9f, 0.1f), 50));
-        _circle->setPosition(glm::vec3(30.0f, 1.0f, 100.0f));
+        _circle = game->getRenderer()->prepareModel(Procedural::Circle(10.0f, glm::vec3(0.8f, 0.9f, 0.1f), 50));
+        _circle->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 
         /* Create a cylinder */
         _cylinder = game->getRenderer()->prepareModel(Procedural::Cylinder(20.0f, 40.0f, glm::vec3(0.2f, 1.0f, 0.4f), 50, 50));
@@ -198,7 +198,7 @@ class ProceduralDemo : public GameHandler
         game->getRenderer()->renderModel3D(*_plane3, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
         game->getRenderer()->renderModel3D(*_cube, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
         game->getRenderer()->renderModel3D(*_cylinder, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
-        game->getRenderer()->renderModel3D(*_circle, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
+       game->getRenderer()->renderModel3D(*_circle, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
         _renderTargetNormal->blit();
 
         return true;
