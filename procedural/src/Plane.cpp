@@ -25,23 +25,15 @@ Plane::Plane(float width, float height, const glm::vec3 &color, float angleWidth
     , _numVertsWidth(numVertsWidth)
     , _numVertsHeight(numVertsHeight)
 {
-    bool rotatePlane = false;
+    float radiusWidth, offsetWidth, angleIncrementWidth;
+    float radiusHeight, offsetHeight, angleIncrementHeight;
+    glm::vec3 center(0.0f, 0.0f, 0.0f);
 
     if (_numVertsWidth < 2) {
         _numVertsWidth = 2;
     }
     if (_numVertsHeight < 2) {
         _numVertsHeight = 2;
-    }
-    /* Only consider 3 cases, no bending angle, two bending angles,
-     * or only one bending angle (either _angleWidth or _angleHeight. For this
-     * last case if only _angleHeight is defined we move to _angleWidth and set
-     * _angleHeight to 0.0f. After the process we rotate the plane to put the
-     * bending angle along the z-axis instead of along the x-axis */
-    if (_angleWidth == 0.0f && _angleHeight != 0.0f) {
-        _angleWidth = _angleHeight;
-        _angleHeight = 0.0f;
-        rotatePlane = true;
     }
 
     float numEdgesWidth = (float)(_numVertsWidth - 1);
@@ -62,66 +54,60 @@ Plane::Plane(float width, float height, const glm::vec3 &color, float angleWidth
 
     Model3D::VertexData *data = &_modelData[0];
 
-    /* Straight plane */
-    if (_angleWidth == 0.0f && _angleHeight == 0.0f) {
-        for (unsigned int i = 0, count = 0; i < _numVertsHeight; ++i) {
-            for (unsigned int j = 0; j < _numVertsWidth; ++j) {
-                data[count].vertex.x = -halfWidth + width * j / (float)numEdgesWidth;
-                data[count].vertex.y = 0.0f;
-                data[count].vertex.z = -halfHeight + height * i / (float)numEdgesHeight;
-
-                data[count].normal = glm::vec3(0.0f, 1.0f, 0.0f);
-                data[count].uvcoord = glm::vec2(0.0f, 0.0f);
-
-                count++;
-            }
-        }
-    }
-    /* Bent plane along the x-axis */
+    /* Set parameters for generation along the z-axis */
     if (_angleWidth != 0.0f) {
-        float radiusWidth, offsetWidth, angleIncrementWidth;
-        float radiusHeight, offsetHeight, angleIncrementHeight;
-
         radiusWidth = _width / _angleWidth;
         offsetWidth = radiusWidth * glm::sin((PI + _angleWidth) / 2.0f);
-        angleIncrementWidth = _angleWidth / numEdgesWidth;
+        center = glm::vec3(0.0f, -offsetWidth, 0.0f);
+    } else {
+        radiusWidth = halfWidth;
+    }
+    angleIncrementWidth = _angleWidth / numEdgesWidth;
+
+    /* Set parameters for generation along the x-axis */
+    if (_angleHeight != 0.0f) {
+        radiusHeight = _height / _angleHeight;
+        offsetHeight = radiusHeight * glm::sin((PI + _angleHeight) / 2.0f);
+        center += glm::vec3(0.0f, -offsetHeight, 0.0f);
+    } else {
+        radiusHeight = halfHeight;
+    }
+    angleIncrementHeight = _angleHeight / numEdgesHeight;
+
+    float vertexAngleHeight = (PI - _angleHeight) / 2.0f;
+    for (unsigned int i = 0, count = 0; i < _numVertsHeight; ++i, vertexAngleHeight += angleIncrementHeight) {
+        glm::vec3 offset;
+        glm::mat4 rotation(1.0f);
+
+        if (_angleWidth != 0.0f && _angleHeight != 0.0f) {
+            rotation = glm::toMat4(glm::quat(glm::vec3(vertexAngleHeight - PI / 2.0f, 0.0f, 0.0f)));
+        }
 
         if (_angleHeight != 0.0f) {
-            radiusHeight = _height / _angleHeight;
-            offsetHeight = radiusHeight * glm::sin((PI + _angleHeight) / 2.0f);
-            angleIncrementHeight = _angleHeight / numEdgesHeight;
+            offset = glm::vec3(0.0f, sin(vertexAngleHeight), -cos(vertexAngleHeight));
         } else {
-            radiusHeight = halfHeight;
-            angleIncrementHeight = _angleHeight / numEdgesHeight;
+            offset = glm::vec3(0.0f, 0.0f, -1.0f + 2.0f * i / (float)numEdgesHeight);
         }
 
-        float vertexAngleHeight = (PI - _angleHeight) / 2.0f;
-        for (unsigned int i = 0, count = 0; i < _numVertsHeight; ++i, vertexAngleHeight += angleIncrementHeight) {
-            float vertexAngleWidth = (PI + _angleWidth) / 2.0f;
+        float vertexAngleWidth = (PI + _angleWidth) / 2.0f;
+        for (unsigned int j = 0; j < _numVertsWidth; ++j, vertexAngleWidth -= angleIncrementWidth) {
+            glm::vec3 unitVertex, normal;
 
-            for (unsigned int j = 0; j < _numVertsWidth; ++j, vertexAngleWidth -= angleIncrementWidth) {
-                glm::vec3 unitVertex(cos(vertexAngleWidth), sin(vertexAngleWidth), 0.0f);
-                glm::vec3 offset, center;
-                glm::mat4 rotation;
-
-                if (_angleHeight != 0.0f) {
-                    offset = glm::vec3(0.0f, sin(vertexAngleHeight), -cos(vertexAngleHeight));
-                    center = glm::vec3(0.0f, -offsetWidth - offsetHeight, 0.0f);
-                    rotation = glm::toMat4(glm::quat(glm::vec3(vertexAngleHeight - PI / 2.0f, 0.0f, 0.0f)));
-                    unitVertex = glm::vec3(rotation * glm::vec4(unitVertex, 1.0f));
-                } else {
-                    offset = glm::vec3(0.0f, 0.0f, -1.0f + 2.0f * i / (float)numEdgesHeight);
-                    center = glm::vec3(0.0f, -offsetWidth, 0.0f);
-                }
-
-                data[count].vertex = unitVertex * radiusWidth + offset * radiusHeight + center;
-                data[count].normal = unitVertex;
-                count++;
+            if (_angleWidth != 0.0f) {
+                unitVertex = glm::vec3(cos(vertexAngleWidth), sin(vertexAngleWidth), 0.0f);
+                normal = unitVertex;
+            } else {
+                unitVertex = glm::vec3(-1.0 + 2 * j / (float)numEdgesWidth, 0.0f, 0.0f);
+                normal = glm::vec3(0.0f, 1.0f, 0.0f);
             }
+
+            unitVertex = glm::vec3(rotation * glm::vec4(unitVertex, 1.0f));
+            normal = glm::vec3(rotation * glm::vec4(normal, 1.0f));
+
+            data[count].vertex = unitVertex * radiusWidth + offset * radiusHeight + center;
+            data[count].normal = normal;
+            count++;
         }
-    }
-    if (rotatePlane) {
-        ModelTransform::Rotate(*this, glm::vec3(0.0f, PI / 2.0f, 0.0f));
     }
 
     /* Generate the indices */
