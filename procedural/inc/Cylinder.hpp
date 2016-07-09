@@ -29,7 +29,7 @@ class Cylinder : public Model3D
              uint32_t numVertsCap = 20, uint32_t numVertsHeight = 2);
 
   private:
-    void _buildCap(const glm::vec3 &position);
+    void _buildBody();
 
     float _radius;
     float _height;
