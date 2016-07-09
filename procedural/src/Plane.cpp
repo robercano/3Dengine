@@ -6,16 +6,29 @@
  */
 #include "Plane.hpp"
 #include <glm/glm.hpp>
+#include <glm/gtx/quaternion.hpp>
 #include "Logging.hpp"
+#include "ModelTransform.hpp"
 
 using namespace Logging;
 using namespace Procedural;
 
 #define PI 3.14159265358979323846
 
-Plane::Plane(float width, float height, const glm::vec3 &color, float angle, uint32_t numVertsWidth, uint32_t numVertsHeight)
-    : _width(width), _height(height), _color(color), _angle(angle), _numVertsWidth(numVertsWidth), _numVertsHeight(numVertsHeight)
+Plane::Plane(float width, float height, const glm::vec3 &color, float angleWidth, float angleHeight, uint32_t numVertsWidth,
+             uint32_t numVertsHeight)
+    : _width(width)
+    , _height(height)
+    , _color(color)
+    , _angleWidth(angleWidth)
+    , _angleHeight(angleHeight)
+    , _numVertsWidth(numVertsWidth)
+    , _numVertsHeight(numVertsHeight)
 {
+    float radiusWidth, offsetWidth, angleIncrementWidth;
+    float radiusHeight, offsetHeight, angleIncrementHeight;
+    glm::vec3 center(0.0f, 0.0f, 0.0f);
+
     if (_numVertsWidth < 2) {
         _numVertsWidth = 2;
     }
@@ -26,8 +39,8 @@ Plane::Plane(float width, float height, const glm::vec3 &color, float angle, uin
     float numEdgesWidth = (float)(_numVertsWidth - 1);
     float numEdgesHeight = (float)(_numVertsHeight - 1);
 
-    float halfWidth = width / 2.0f;
-    float halfHeight = height / 2.0f;
+    float halfWidth = _width / 2.0f;
+    float halfHeight = _height / 2.0f;
 
     /*
      * For each row of vertices of the plane two indices are needed
@@ -41,35 +54,59 @@ Plane::Plane(float width, float height, const glm::vec3 &color, float angle, uin
 
     Model3D::VertexData *data = &_modelData[0];
 
-    /* Generate the plane vertices */
-    if (_angle != 0.0f) {
-        /* Bent plane */
-        float radius = _width / _angle;
-        float offset = (float)(radius * glm::sin((PI + _angle) / 2.0f));
-        float angleIncrement = _angle / numEdgesWidth;
-
-        for (unsigned int i = 0, count = 0; i < _numVertsHeight; ++i) {
-            float vertexAngle = (float)((PI + _angle) / 2.0f);
-
-            for (unsigned int j = 0; j < _numVertsWidth; ++j, vertexAngle -= angleIncrement) {
-                data[count].vertex = glm::vec3(radius * cos(vertexAngle), radius * sin(vertexAngle) - offset,
-                                               -halfHeight + height * i / (float)numEdgesHeight);
-                data[count].normal = glm::vec3(0.0f, 1.0f, 0.0f);
-                data[count].uvcoord = glm::vec2(0.0f, 0.0f);
-                count++;
-            }
-        }
+    /* Set parameters for generation along the z-axis */
+    if (_angleWidth != 0.0f) {
+        radiusWidth = _width / _angleWidth;
+        offsetWidth = (float)(radiusWidth * glm::sin((PI + _angleWidth) / 2.0f));
+        center = glm::vec3(0.0f, -offsetWidth, 0.0f);
     } else {
-        /* Straight plane */
-        for (unsigned int i = 0, count = 0; i < _numVertsHeight; ++i) {
-            for (unsigned int j = 0; j < _numVertsWidth; ++j) {
-                data[count].vertex =
-                    glm::vec3(-halfWidth + width * j / (float)numEdgesWidth, 0.0f, -halfHeight + height * i / (float)numEdgesHeight);
-                data[count].normal = glm::vec3(0.0f, 1.0f, 0.0f);
-                data[count].uvcoord = glm::vec2(0.0f, 0.0f);
+        radiusWidth = halfWidth;
+    }
+    angleIncrementWidth = _angleWidth / numEdgesWidth;
 
-                count++;
+    /* Set parameters for generation along the x-axis */
+    if (_angleHeight != 0.0f) {
+        radiusHeight = _height / _angleHeight;
+        offsetHeight = radiusHeight * glm::sin((PI + _angleHeight) / 2.0f);
+        center += glm::vec3(0.0f, -offsetHeight, 0.0f);
+    } else {
+        radiusHeight = halfHeight;
+    }
+    angleIncrementHeight = _angleHeight / numEdgesHeight;
+
+    float vertexAngleHeight = (float)((PI - _angleHeight) / 2.0f);
+    for (unsigned int i = 0, count = 0; i < _numVertsHeight; ++i, vertexAngleHeight += angleIncrementHeight) {
+        glm::vec3 offset;
+        glm::mat4 rotation(1.0f);
+
+        if (_angleWidth != 0.0f && _angleHeight != 0.0f) {
+            rotation = glm::toMat4(glm::quat(glm::vec3(vertexAngleHeight - PI / 2.0f, 0.0f, 0.0f)));
+        }
+
+        if (_angleHeight != 0.0f) {
+            offset = glm::vec3(0.0f, sin(vertexAngleHeight), -cos(vertexAngleHeight));
+        } else {
+            offset = glm::vec3(0.0f, 0.0f, -1.0f + 2.0f * i / (float)numEdgesHeight);
+        }
+
+        float vertexAngleWidth = (float)((PI + _angleWidth) / 2.0f);
+        for (unsigned int j = 0; j < _numVertsWidth; ++j, vertexAngleWidth -= angleIncrementWidth) {
+            glm::vec3 unitVertex, normal;
+
+            if (_angleWidth != 0.0f) {
+                unitVertex = glm::vec3(cos(vertexAngleWidth), sin(vertexAngleWidth), 0.0f);
+                normal = unitVertex;
+            } else {
+                unitVertex = glm::vec3(-1.0 + 2 * j / (float)numEdgesWidth, 0.0f, 0.0f);
+                normal = glm::vec3(0.0f, 1.0f, 0.0f);
             }
+
+            unitVertex = glm::vec3(rotation * glm::vec4(unitVertex, 1.0f));
+            normal = glm::vec3(rotation * glm::vec4(normal, 1.0f));
+
+            data[count].vertex = unitVertex * radiusWidth + offset * radiusHeight + center;
+            data[count].normal = normal;
+            count++;
         }
     }
 
