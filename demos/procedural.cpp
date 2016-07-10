@@ -13,6 +13,7 @@
 #include "Cylinder.hpp"
 #include "Circle.hpp"
 #include "Cube.hpp"
+#include "Torus.hpp"
 #include "Logging.hpp"
 
 using namespace Logging;
@@ -92,13 +93,18 @@ class ProceduralDemo : public GameHandler
         _plane3->setOrientation(glm::toMat4(glm::quat(glm::vec3(PI/2.0, -PI/4.0f, 0.0f))));
         _plane3->setPosition(glm::vec3(300.0f, 220.0f, -300.0f));
 
+        /* Torus */
+        _torus = game->getRenderer()->prepareModel(Procedural::Torus(10.0f, 4.0f, glm::vec3(1.0f, 0.0f, 0.0f), 50, 50));
+        _torus->setOrientation(glm::toMat4(glm::quat(glm::vec3(0.0f, -PI/2.0f, 0.0f))));
+        _torus->setPosition(glm::vec3(120.0f, 100.0f, 100.0f));
+
         /* Create a cube */
         _cube = game->getRenderer()->prepareModel(Procedural::Cube(150.0f, 50.0f, 100.0f, glm::vec3(0.5f, 0.3f, 1.0f), 10, 8, 2));
         _cube->setPosition(glm::vec3(0.0f, 60.0f, 0.0f));
 
         /* Create a circle */
-        _circle = game->getRenderer()->prepareModel(Procedural::Circle(10.0f, glm::vec3(0.8f, 0.9f, 0.1f), 50));
-        _circle->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+        _circle = game->getRenderer()->prepareModel(Procedural::Circle(100.0f, glm::vec3(0.8f, 0.9f, 0.1f), 50));
+        _circle->setPosition(glm::vec3(0.0f, 1.0f, 0.0f));
 
         /* Create a cylinder */
         _cylinder = game->getRenderer()->prepareModel(Procedural::Cylinder(20.0f, 40.0f, glm::vec3(0.2f, 1.0f, 0.4f), 50, 50));
@@ -199,6 +205,7 @@ class ProceduralDemo : public GameHandler
         game->getRenderer()->renderModel3D(*_cube, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
         game->getRenderer()->renderModel3D(*_cylinder, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
        game->getRenderer()->renderModel3D(*_circle, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
+       game->getRenderer()->renderModel3D(*_torus, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
         _renderTargetNormal->blit();
 
         return true;
@@ -207,7 +214,7 @@ class ProceduralDemo : public GameHandler
   private:
     Camera _camera;
     FlyMotion _cameraMotion;
-    Model3D *_plane1, *_plane2, *_plane3, *_cube, *_cylinder, *_circle;
+    Model3D *_plane1, *_plane2, *_plane3, *_cube, *_cylinder, *_circle, *_torus;
     BlinnPhongShader *_shaderBlinnLight;
     NormalShadowMapShader *_shaderShadow;
     NOAARenderTarget *_renderTargetNormal;
