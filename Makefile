@@ -85,9 +85,13 @@ DEMO_TARGETS=$(DEMO_FILES:.cpp=)
 #
 # Main rules
 #
-.PHONY: demos
+.PHONY: demos release
 
 all: engine $(DEMO_TARGETS)
+
+release:
+	$(MAKE) clean
+	$(MAKE) all
 
 engine: dirs $(LIBDIR)/$(LIBNAME)
 
