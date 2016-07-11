@@ -1,43 +1,31 @@
 /**
- * @class	Sphere
- * @brief	Procedural sphere
+ * @module  Sphere
+ * @brief	Sphere procedural generation
  *
  * @author	Roberto Cano (http://www.robertocano.es)
  */
 #pragma once
 
-#include "Object3D.hpp"
+#include <stdint.h>
+#include "Model3D.hpp"
 
-namespace procedural
+namespace Procedural
 {
-class Sphere : public Object3D
+/**
+ * Sphere class to generate a sphere
+ */
+class Sphere : public Model3D
 {
   public:
-    /** Object3D methods */
-    bool init();
-    bool destroy();
-    uint32_t getVertexArrayIndex();
-
-  private:
     /**
-     * Vertex array object ID
+     * Constructor
+     *
+     * @param numSides  Number of sides of the cylinder. Minimum is 4 sides, which
+     *                  would yield a cube
+     * @param color     Color for the default material
      */
-    uint32_t _gVAO;
+    Sphere(float radius = 1.0f, const glm::vec3 &color = glm::vec3(1.0f, 1.0f, 1.0f),
+           uint32_t numVertsLongitude = 20, uint32_t numVertsLatitude = 20);
 
-    /**
-     * Vertex buffer object for vertices
-     */
-    uint32_t _verticesVBO;
-
-    /**
-     * Vertex buffer object for colors
-     */
-    uint32_t _colorsVBO;
-
-    /**
-     * Vertex buffer object for indices
-     */
-    uint32_t _indicesVBO;
 };
-
-} /* namespace procedural */
+};

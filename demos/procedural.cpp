@@ -14,6 +14,7 @@
 #include "Circle.hpp"
 #include "Cube.hpp"
 #include "Torus.hpp"
+#include "Sphere.hpp"
 #include "Logging.hpp"
 
 using namespace Logging;
@@ -82,20 +83,21 @@ class ProceduralDemo : public GameHandler
         }
 
         /* Use a plane for the floor */
-        _plane1 = game->getRenderer()->prepareModel(Procedural::Plane(500.0f, 500.0f, glm::vec3(1.0, 0.3f, 0.6f), 0.0f, 0.0f, 20, 20));
+        _plane1 = game->getRenderer()->prepareModel(Procedural::Plane(500.0f, 500.0f, glm::vec3(1.0, 0.3f, 0.6f), 0.0f, 0.0f, 0.0f, 20, 20));
         _plane1->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 
         /* 2 bent planes for background */
-        _plane2 = game->getRenderer()->prepareModel(Procedural::Plane(500.0f, 500.0f, glm::vec3(1.0, 0.8f, 0.1f), 0.0f, PI/2.0f, 20, 20));
+        _plane2 = game->getRenderer()->prepareModel(Procedural::Plane(500.0f, 500.0f, glm::vec3(1.0, 0.8f, 0.1f), 0.0f, PI/2.0f, 0.0f, 20, 20));
         _plane2->setOrientation(glm::toMat4(glm::quat(glm::vec3(PI/2.0, PI/4.0f, 0.0f))));
         _plane2->setPosition(glm::vec3(-300.0f, 220.0f, -300.0f));
-        _plane3 = game->getRenderer()->prepareModel(Procedural::Plane(500.0f, 500.0f, glm::vec3(0.8, 1.0f, 0.1f), PI, 0.0f, 20, 20));
+        _plane3 = game->getRenderer()->prepareModel(Procedural::Plane(500.0f, 500.0f, glm::vec3(0.8, 1.0f, 0.1f), PI, 0.0f, 0.0f, 20, 20));
         _plane3->setOrientation(glm::toMat4(glm::quat(glm::vec3(PI/2.0, -PI/4.0f, 0.0f))));
         _plane3->setPosition(glm::vec3(300.0f, 220.0f, -300.0f));
 
         /* Torus */
         _torus = game->getRenderer()->prepareModel(Procedural::Torus(10.0f, 4.0f, glm::vec3(1.0f, 0.0f, 0.0f), 50, 50));
         _torus->setOrientation(glm::toMat4(glm::quat(glm::vec3(0.0f, -PI/2.0f, 0.0f))));
+        _torus->rotate(glm::toMat4(glm::quat(glm::vec3(-PI/4.0f, 0.0f, 0.0f))));
         _torus->setPosition(glm::vec3(120.0f, 100.0f, 100.0f));
 
         /* Create a cube */
@@ -110,13 +112,17 @@ class ProceduralDemo : public GameHandler
         _cylinder = game->getRenderer()->prepareModel(Procedural::Cylinder(20.0f, 40.0f, glm::vec3(0.2f, 1.0f, 0.4f), 50, 50));
         _cylinder->setPosition(glm::vec3(0.0f, 90.0f, 150.0f));
 
+        /* Create a sphere */
+        _sphere = game->getRenderer()->prepareModel(Procedural::Sphere(30.0f, glm::vec3(0.4, 0.8f, 0.9f), 50, 50));
+        _sphere->setPosition(glm::vec3(-120.0f, 30.0f, 200.0f));
+
         /* Create the game camera */
         _camera.setProjection((float)_width, (float)_height, 0.1f, 1000.0f, 45.0f);
-        _cameraMotion.setPosition(glm::vec3(150.0f, 100.0f, 150.0f));
-        _cameraMotion.rotateYaw(-45.0f);
+        _cameraMotion.setPosition(glm::vec3(244.421936, 113.758423, 404.655487));
+        _cameraMotion.rotateYaw(-30.0f);
 
         /* Sun setting */
-        _sun->setPosition(glm::vec3(245.0f, 300.0f, 170.0f));
+        _sun->setPosition(glm::vec3(0.0f, 300.0f, 170.0f));
         _sun->setProjection((float)_width / 4.0f, (float)_height / 4.0f, 0.1f, 1000.0f);
         _sun->getShadowMap()->init(_width, _height);
 
@@ -180,6 +186,7 @@ class ProceduralDemo : public GameHandler
 
         /* Apply the motion to the camera */
         _cameraMotion.applyTo(_camera);
+
         _renderTargetNormal->clear();
 
         //game->getRenderer()->setWireframeMode(true);
@@ -196,7 +203,8 @@ class ProceduralDemo : public GameHandler
         _sun->getShadowMap()->clear();
         game->getRenderer()->renderToShadowMap(*_cube, *_sun, *_shaderShadow);
         game->getRenderer()->renderToShadowMap(*_cylinder, *_sun, *_shaderShadow);
-        //game->getRenderer()->renderToShadowMap(*_circle, *_sun, *_shaderShadow);
+        game->getRenderer()->renderToShadowMap(*_torus, *_sun, *_shaderShadow);
+        game->getRenderer()->renderToShadowMap(*_sphere, *_sun, *_shaderShadow);
 
         /* Render all objects */
         game->getRenderer()->renderModel3D(*_plane1, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
@@ -204,8 +212,9 @@ class ProceduralDemo : public GameHandler
         game->getRenderer()->renderModel3D(*_plane3, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
         game->getRenderer()->renderModel3D(*_cube, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
         game->getRenderer()->renderModel3D(*_cylinder, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
-       game->getRenderer()->renderModel3D(*_circle, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
-       game->getRenderer()->renderModel3D(*_torus, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
+        game->getRenderer()->renderModel3D(*_circle, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
+        game->getRenderer()->renderModel3D(*_torus, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
+        game->getRenderer()->renderModel3D(*_sphere, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
         _renderTargetNormal->blit();
 
         return true;
@@ -214,7 +223,7 @@ class ProceduralDemo : public GameHandler
   private:
     Camera _camera;
     FlyMotion _cameraMotion;
-    Model3D *_plane1, *_plane2, *_plane3, *_cube, *_cylinder, *_circle, *_torus;
+    Model3D *_plane1, *_plane2, *_plane3, *_cube, *_cylinder, *_circle, *_torus, *_sphere;
     BlinnPhongShader *_shaderBlinnLight;
     NormalShadowMapShader *_shaderShadow;
     NOAARenderTarget *_renderTargetNormal;

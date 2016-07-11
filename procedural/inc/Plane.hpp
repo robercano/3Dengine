@@ -34,7 +34,7 @@ class Plane : public Model3D
        */
     Plane(float width = 1.0f, float height = 1.0f,
           const glm::vec3 &color = glm::vec3(1.0f, 1.0f, 1.0f),
-          float angleWidth = 0.0f, float angleHeight = 0.0f,
+          float angleWidth = 0.0f, float angleHeight = 0.0f, float angleRadius = 0.0f,
           uint32_t numVertsWidth = 2, uint32_t numVertsHeight = 2);
 
   private:
@@ -43,6 +43,7 @@ class Plane : public Model3D
     glm::vec3 _color;
     float _angleWidth;
     float _angleHeight;
+    float _angleRadius;
     uint32_t _numVertsWidth;
     uint32_t _numVertsHeight;
 };
