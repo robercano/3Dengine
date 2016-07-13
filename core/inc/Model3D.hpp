@@ -46,6 +46,7 @@
 #include "Object3D.hpp"
 #include "Material.hpp"
 #include "Texture.hpp"
+#include "ProceduralUtils.hpp"
 
 class Model3D : public Object3D
 {
@@ -55,6 +56,10 @@ class Model3D : public Object3D
      */
     friend class ModelLoaders;
     friend class ModelTransform;
+    friend void Procedural::AppendBentPlane(Model3D &model,
+                                            float width, float height, const glm::vec3 &color,
+                                            float angleWidth, float angleHeight, float angleRadius,
+                                            uint32_t numVertsWidth, uint32_t numVertsHeight);
 
     /**
      * Vertex data of the model
@@ -64,6 +69,11 @@ class Model3D : public Object3D
         glm::vec3 normal;  /**< Normal of the vertex */
         glm::vec2 uvcoord; /**< Textures coordinates of the vertex */
     } VertexData;
+
+    /**
+     * Constructor
+     */
+    Model3D() {}
 
     /**
      * Destructor
@@ -96,10 +106,6 @@ class Model3D : public Object3D
     const std::vector<uint32_t> &getIndicesOffsets() const { return _indicesOffsets; }
     const std::vector<uint32_t> &getIndicesCount() const { return _indicesCount; }
   protected:
-    /**
-     * Constructor
-     */
-    Model3D() {}
     /**
      * Methods from Object3D class
      */

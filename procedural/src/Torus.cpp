@@ -2,7 +2,7 @@
 #include <glm/glm.hpp>
 #include "Logging.hpp"
 #include "ModelTransform.hpp"
-#include "Plane.hpp"
+#include "ProceduralUtils.hpp"
 
 using namespace Procedural;
 using namespace Logging;
@@ -18,8 +18,6 @@ Torus::Torus(float outerRadius, float innerRadius, const glm::vec3 &color, uint3
         numVertsPoloidal = 3;
     }
 
-    Plane torus((outerRadius - innerRadius) * 2.0f * PI, outerRadius * 2.0f * PI, color, 2.0 * PI, 2.0 * PI, 0.0f, numVertsToroidal + 1,
-                numVertsPoloidal + 1);
-
-    ModelTransform::Append(*this, torus);
+    AppendBentPlane(*this, (outerRadius - innerRadius) * 2.0f * PI, outerRadius * 2.0f * PI, color, 2.0 * PI, 2.0 * PI, 0.0f,
+                    numVertsToroidal + 1, numVertsPoloidal + 1);
 }

@@ -13,6 +13,7 @@
 #include "Cylinder.hpp"
 #include "Circle.hpp"
 #include "Cube.hpp"
+#include "BentPlane.hpp"
 #include "Torus.hpp"
 #include "Sphere.hpp"
 #include "Logging.hpp"
@@ -83,14 +84,16 @@ class ProceduralDemo : public GameHandler
         }
 
         /* Use a plane for the floor */
-        _plane1 = game->getRenderer()->prepareModel(Procedural::Plane(500.0f, 500.0f, glm::vec3(1.0, 0.3f, 0.6f), 0.0f, 0.0f, 0.0f, 20, 20));
+        _plane1 = game->getRenderer()->prepareModel(Procedural::Plane(500.0f, 500.0f, glm::vec3(1.0, 0.3f, 0.6f), 20, 20));
         _plane1->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 
         /* 2 bent planes for background */
-        _plane2 = game->getRenderer()->prepareModel(Procedural::Plane(500.0f, 500.0f, glm::vec3(1.0, 0.8f, 0.1f), 0.0f, PI/2.0f, 0.0f, 20, 20));
-        _plane2->setOrientation(glm::toMat4(glm::quat(glm::vec3(PI/2.0, PI/4.0f, 0.0f))));
+        _plane2 = game->getRenderer()->prepareModel(Procedural::BentPlane(500.0f, 500.0f, glm::vec3(1.0, 0.8f, 0.1f), PI/2.0f, 20, 20));
+        _plane2->setOrientation(glm::toMat4(glm::quat(glm::vec3(0.0f, PI/2.0f, 0.0f))));
+        _plane2->rotate(glm::toMat4(glm::quat(glm::vec3(PI/2.0, PI/4.0f, 0.0f))));
         _plane2->setPosition(glm::vec3(-300.0f, 220.0f, -300.0f));
-        _plane3 = game->getRenderer()->prepareModel(Procedural::Plane(500.0f, 500.0f, glm::vec3(0.8, 1.0f, 0.1f), PI, 0.0f, 0.0f, 20, 20));
+
+        _plane3 = game->getRenderer()->prepareModel(Procedural::BentPlane(500.0f, 500.0f, glm::vec3(0.8, 1.0f, 0.1f), PI, 20, 20));
         _plane3->setOrientation(glm::toMat4(glm::quat(glm::vec3(PI/2.0, -PI/4.0f, 0.0f))));
         _plane3->setPosition(glm::vec3(300.0f, 220.0f, -300.0f));
 

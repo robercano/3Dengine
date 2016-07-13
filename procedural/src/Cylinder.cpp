@@ -2,7 +2,7 @@
 #include <glm/glm.hpp>
 #include "Circle.hpp"
 #include "ModelTransform.hpp"
-#include "Plane.hpp"
+//#include "ProceduralUtils.hpp"
 
 using namespace Procedural;
 
@@ -13,7 +13,6 @@ Cylinder::Cylinder(float radius, float height, const glm::vec3 &color, uint32_t 
 {
     Circle bottomCap(_radius, _color, _numVertsCap);
     Circle topCap(_radius, _color, _numVertsCap);
-    Plane body(2.0f * PI * _radius, height, color, 2.0 * PI, 0.0f, 0.0f, _numVertsCap + 1, _numVertsHeight);
 
     /* Bottom cap */
     ModelTransform::Rotate(bottomCap, glm::vec3(PI, 0.0f, 0.0f));
@@ -24,6 +23,9 @@ Cylinder::Cylinder(float radius, float height, const glm::vec3 &color, uint32_t 
     ModelTransform::Append(*this, topCap);
 
     /* Body */
+    Model3D body;
+    AppendBentPlane(body, 2.0f * PI * _radius, _height, _color, 2.0 * PI, 0.0f, 0.0f, _numVertsCap + 1, _numVertsHeight);
+
     ModelTransform::Translate(body, glm::vec3(0.0f, -_radius, 0.0f));
     ModelTransform::Rotate(body, glm::vec3(-PI / 2.0f, 0.0f, 0.0f));
     ModelTransform::Translate(body, glm::vec3(0.0f, _radius, 0.0f));

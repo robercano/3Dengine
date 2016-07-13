@@ -31,7 +31,7 @@ void main()
         io_vertexColor = io_vertex[i].color;
         EmitVertex();
 
-        gl_Position = u_MVPMatrix * vec4(position + normal * 0.03f, 1.0f);
+        gl_Position = u_MVPMatrix * vec4(position + normal * 3.0f, 1.0f);
         io_vertexColor = io_vertex[i].color;
         EmitVertex();
 

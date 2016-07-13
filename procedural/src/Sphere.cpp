@@ -2,7 +2,7 @@
 #include <glm/glm.hpp>
 #include "Circle.hpp"
 #include "ModelTransform.hpp"
-#include "Plane.hpp"
+#include "ProceduralUtils.hpp"
 
 using namespace Procedural;
 
@@ -10,7 +10,5 @@ using namespace Procedural;
 
 Sphere::Sphere(float radius, const glm::vec3 &color, uint32_t numVertsLongitude, uint32_t numVertsLatitude)
 {
-    Plane body(2.0f * PI * radius, 2.0f * radius, color, 2.0f * PI, 0.0f, 2.0f * PI, numVertsLongitude + 1, numVertsLatitude);
-
-    ModelTransform::Append(*this, body);
+    AppendBentPlane(*this, 2.0f * PI * radius, 2.0f * radius, color, 2.0f * PI, 0.0f, 2.0f * PI, numVertsLongitude + 1, numVertsLatitude);
 }
