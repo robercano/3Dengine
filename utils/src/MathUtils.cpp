@@ -57,32 +57,52 @@ MathUtils::Perlin::Perlin()
 double MathUtils::Perlin::noise(double x, double y, double z)
 {
     int32_t xi = (int32_t)x & 255;
-    int32_t yi = (int32_t)x & 255;
-    int32_t zi = (int32_t)x & 255;
+    int32_t yi = (int32_t)y & 255;
+    int32_t zi = (int32_t)z & 255;
 
-    double xf = x - xi;
-    double yf = y - yi;
-    double zf = z - zi;
+    x -= xi;
+    y -= yi;
+    z -= zi;
 
-    uint8_t lbb = _perms[_perms[_perms[xi] + yi] + zi];
-    uint8_t lbf = _perms[_perms[_perms[xi] + yi] + zi + 1];
-    uint8_t ltb = _perms[_perms[_perms[xi] + yi + 1] + zi];
-    uint8_t ltf = _perms[_perms[_perms[xi] + yi + 1] + zi + 1];
-    uint8_t rbb = _perms[_perms[_perms[xi + 1] + yi] + zi];
-    uint8_t rbf = _perms[_perms[_perms[xi + 1] + yi] + zi + 1];
-    uint8_t rtb = _perms[_perms[_perms[xi + 1] + yi + 1] + zi];
-    uint8_t rtf = _perms[_perms[_perms[xi + 1] + yi + 1] + zi + 1];
+    double u = _fade(x);
+    double v = _fade(y);
+    double w = _fade(z);
 
-    double z1 = glm::lerp(_grad(lbb, xf, yf, zf), _grad(lbf, xf, yf, zf - 1), zf);
-    double z2 = glm::lerp(_grad(ltb, xf, yf - 1, zf), _grad(ltf, xf, yf - 1, zf - 1), zf);
-    double z3 = glm::lerp(_grad(rbb, xf - 1, yf, zf), _grad(rbf, xf - 1, yf, zf - 1), zf);
-    double z4 = glm::lerp(_grad(rtb, xf - 1, yf - 1, zf), _grad(rtf, xf - 1, yf - 1, zf - 1), zf);
-    log("Z: %f, %f, %f, %f\n", z1, z2, z3, z4);
+    uint8_t px0 = _perms[xi] + yi;
+    uint8_t px1 = _perms[xi + 1] + yi;
+    uint8_t px0y0 = _perms[px0] + zi;
+    uint8_t px0y1 = _perms[px0 + 1] + zi;
+    uint8_t px1y0 = _perms[px1] + zi;
+    uint8_t px1y1 = _perms[px1 + 1] + zi;
 
-    double y1 = glm::lerp(z1, z2, yf);
-    double y2 = glm::lerp(z3, z4, yf);
-    log("Y: %f, %f, %f\n", y1, y2, xf);
-    return glm::lerp(y1, y2, xf);
+    return (glm::lerp(
+                glm::lerp(glm::lerp(_grad(_perms[px0y0], x, y, z), _grad(_perms[px0y0 + 1], x, y, z - 1.0), w),
+                          glm::lerp(_grad(_perms[px0y1], x, y - 1.0, z), _grad(_perms[px0y1 + 1], x, y - 1.0, z - 1.0), w), v),
+                glm::lerp(glm::lerp(_grad(_perms[px1y0], x - 1.0, y, z), _grad(_perms[px1y0 + 1], x - 1.0, y, z - 1.0), w),
+                          glm::lerp(_grad(_perms[px1y1], x - 1.0, y - 1.0, z), _grad(_perms[px1y1 + 1], x - 1.0, y - 1.0, z - 1.0), w), v),
+                u) +
+            1.0) /
+           2.0;
+}
+
+double MathUtils::Perlin::octave(double x, double y, double z, uint8_t octaves, double persistence)
+{
+    double frequency = 1.0;
+    double amplitude = 1.0;
+    double maxValue = 0.0;
+
+    double v = 0.0;
+
+    for (int i = 0; i < octaves; ++i) {
+        v += amplitude * noise(x * frequency, y * frequency, z * frequency);
+
+        maxValue += amplitude;
+
+        amplitude *= persistence;
+        frequency *= 2.0;
+    }
+
+    return v / maxValue;
 }
 
 double MathUtils::Perlin::_grad(uint8_t hash, double x, double y, double z)
@@ -93,19 +113,21 @@ double MathUtils::Perlin::_grad(uint8_t hash, double x, double y, double z)
         case 0x1: return -x + y;
         case 0x2: return  x - y;
         case 0x3: return -x - y;
-        case 0x4: return  x + x;
-        case 0x5: return -x + x;
-        case 0x6: return  x - x;
-        case 0x7: return -x - x;
-        case 0x8: return  y + x;
-        case 0x9: return -y + x;
-        case 0xA: return  y - x;
-        case 0xB: return -y - x;
-        case 0xC: return  y + z;
-        case 0xD: return -y + x;
+        case 0x4: return  x + z;
+        case 0x5: return -x + z;
+        case 0x6: return  x - z;
+        case 0x7: return -x - z;
+        case 0x8: return  y + z;
+        case 0x9: return -y + z;
+        case 0xA: return  y - z;
+        case 0xB: return -y - z;
+        case 0xC: return  y + x;
+        case 0xD: return -y + z;
         case 0xE: return  y - x;
         case 0xF: return -y - z;
         default: return 0;  // never happens
     }
     // clang-format on
 }
+
+double MathUtils::Perlin::_fade(double v) { return v * v * v * (v * (v * 6 - 15) + 10); }
