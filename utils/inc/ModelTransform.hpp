@@ -36,4 +36,12 @@ class ModelTransform
        * @param from  Model where the data is taken from
        */
       static void Append(Model3D &to, const Model3D &from);
+
+      /**
+       * Recalculates all the normals in the model by using the faces
+       * and vertices information
+       *
+       * @param model  Model whose normals will be recalculated
+       */
+      static void RecalculateNormals(Model3D &model);
 };

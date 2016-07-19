@@ -51,3 +51,8 @@ void ModelTransform::Append(Model3D &to, const Model3D &from)
         to._indicesOffsets.push_back(*it + origIndexSize);
     }
 }
+
+void ModelTransform::RecalculateNormals(Model3D &model)
+{
+    /* TODO */
+}
