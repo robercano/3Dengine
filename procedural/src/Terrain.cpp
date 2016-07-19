@@ -17,11 +17,8 @@ using namespace Logging;
 using namespace Procedural;
 using namespace MathUtils;
 
-#define NUM_OCTAVES 5
-#define PERSISTENCE 0.5f
-
 Terrain::Terrain(float width, float depth, float height, uint32_t slice, const glm::vec3 &color, uint32_t numVertsWidth,
-                 uint32_t numVertsDepth)
+                 uint32_t numVertsDepth, uint32_t numOctaves, float persistence)
     : _width(width)
     , _depth(depth)
     , _height(height)
@@ -42,7 +39,7 @@ Terrain::Terrain(float width, float depth, float height, uint32_t slice, const g
         for (uint32_t j = 0; j < numVertsDepth; ++j) {
             /* Generate the vertex height */
             data[nData].vertex.y =
-                Perlin::Octave(i / (float)_numVertsWidth, (float)_slice, j / (float)_numVertsDepth, NUM_OCTAVES, PERSISTENCE) * _height;
+                Perlin::Octave(i / (float)_numVertsWidth, (float)_slice, j / (float)_numVertsDepth, numOctaves, persistence) * _height;
             if (data[nData].vertex.y < minHeight) {
                 minHeight = data[nData].vertex.y;
             }
@@ -61,5 +58,6 @@ Terrain::Terrain(float width, float depth, float height, uint32_t slice, const g
         }
     }
 
+    ModelTransform::RecalculateNormals(*this);
     ModelTransform::SetUniqueMaterialFromColor(*this, _color);
 }

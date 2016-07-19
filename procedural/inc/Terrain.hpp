@@ -34,10 +34,19 @@ class Terrain : public Model3D
        *                arc indicated by 'angle'
        * @param numVertsWidth  Number of vertices to generate along the x-axis
        * @param numVertsHeight Number of vertices to generate along the y-axis
+       * @param complexity     Number of composite frequencies that will conform the
+       *                       terrain heights. This is done by using an octaves composition
+       *                       of the perlin noise function
+       * @pararm persistence   This parameter determines how important are the lower or the
+       *                       higher frequencies for complexities highers than 1. If persistence
+       *                       is less than 1.0f then the lower frequencies will have more impact
+       *                       on the terrain heights. With a value higher than 1.0f the higher
+       *                       frequencies will have a higher impact
        */
     Terrain(float width = 1.0f, float depth = 1.0f, float height = 1.0f,
             uint32_t slice = 0, const glm::vec3 &color = glm::vec3(1.0f, 1.0f, 1.0f),
-          uint32_t numVertsWidth = 2, uint32_t numVertsDepth = 2);
+          uint32_t numVertsWidth = 2, uint32_t numVertsDepth = 2,
+          uint32_t complexity = 5, float persistence = 0.5f);
 
     /**
      * Accessors

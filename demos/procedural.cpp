@@ -85,7 +85,7 @@ class ProceduralDemo : public GameHandler
         }
 
         /* Generate a terrain for the scene */
-        _terrain = game->getRenderer()->prepareModel(Procedural::Terrain(500.0f, 500.0f, 500.0f, 0, glm::vec3(1.0, 0.3f, 0.6f), 20, 20));
+        _terrain = game->getRenderer()->prepareModel(Procedural::Terrain(500.0f, 500.0f, 500.0f, 0, glm::vec3(1.0, 0.3f, 0.6f), 200, 200, 5, 0.5));
         _terrain ->setPosition(glm::vec3(0.0f, -100.0f, 0.0f));
 
         /* Use a plane for the floor */
@@ -217,6 +217,7 @@ class ProceduralDemo : public GameHandler
         /* Render all objects */
 //        game->getRenderer()->renderModel3D(*_plane1, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
         game->getRenderer()->renderModel3D(*_terrain, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
+//        game->getRenderer()->renderModelNormals(*_terrain, _camera, *_renderTargetNormal);
         game->getRenderer()->renderModel3D(*_plane2, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
         game->getRenderer()->renderModel3D(*_plane3, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
         game->getRenderer()->renderModel3D(*_cube, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);

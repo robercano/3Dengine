@@ -6,6 +6,7 @@
  */
 #include "ModelTransform.hpp"
 #include <glm/gtx/quaternion.hpp>
+#include <map>
 #include "Logging.hpp"
 
 using namespace Logging;
@@ -84,4 +85,34 @@ void ModelTransform::SetUniqueMaterialFromColor(Model3D &model, const glm::vec3 
     SetUniqueMaterial(model, Material(), Texture(rgb, 1, 1, 8));
 }
 
-void ModelTransform::RecalculateNormals(Model3D &model) { /* TODO */}
+void ModelTransform::RecalculateNormals(Model3D &model)
+{
+    /* Loop the model indices and create a map for each vertex
+     * containing the normals of the faces it touches */
+    std::map<uint32_t, std::vector<glm::vec3> > normalsMap;
+
+    uint32_t *index = &model._modelIndices[0];
+
+    for (uint32_t i = 0; i < model._modelIndices.size(); i += 3) {
+        /* Calculate the normal for the face */
+        glm::vec3 a = model._modelData[index[i]].vertex - model._modelData[index[i + 1]].vertex;
+        glm::vec3 b = model._modelData[index[i + 2]].vertex - model._modelData[index[i + 1]].vertex;
+        glm::vec3 normal = glm::cross(b, a);
+
+        normalsMap[index[i]].push_back(normal);
+        normalsMap[index[i + 1]].push_back(normal);
+        normalsMap[index[i + 2]].push_back(normal);
+    }
+
+    /* Now loop the normals map and calculate the average */
+    for (std::map<uint32_t, std::vector<glm::vec3> >::iterator it = normalsMap.begin(); it != normalsMap.end(); ++it) {
+        glm::vec3 normal(0.0f);
+        for (std::vector<glm::vec3>::iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
+            normal += *it2;
+        }
+
+        /* Divide by the number of normals in the average and set it to
+         * the right vertex */
+        model._modelData[it->first].normal = normal / (float)it->second.size();
+    }
+}
