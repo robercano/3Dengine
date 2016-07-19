@@ -17,6 +17,7 @@
 #include "BentPlane.hpp"
 #include "Torus.hpp"
 #include "Sphere.hpp"
+#include "Triangle.hpp"
 #include "Logging.hpp"
 
 using namespace Logging;
@@ -88,20 +89,21 @@ class ProceduralDemo : public GameHandler
         _terrain = game->getRenderer()->prepareModel(Procedural::Terrain(500.0f, 500.0f, 500.0f, 0, glm::vec3(1.0, 0.3f, 0.6f), 200, 200, 5, 0.5));
         _terrain ->setPosition(glm::vec3(0.0f, -100.0f, 0.0f));
 
-        /* Use a plane for the floor */
-        _plane1 = game->getRenderer()->prepareModel(Procedural::Plane(500.0f, 500.0f, glm::vec3(1.0, 0.3f, 0.6f), 20, 20));
-        _plane1->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
-
         /* 2 bent planes for background */
-        _plane2 = game->getRenderer()->prepareModel(Procedural::BentPlane(500.0f, 500.0f, glm::vec3(1.0, 0.8f, 0.1f), PI/2.0f, 20, 20));
-        _plane2->setOrientation(glm::toMat4(glm::quat(glm::vec3(0.0f, PI/2.0f, 0.0f))));
-        _plane2->rotate(glm::toMat4(glm::quat(glm::vec3(PI/2.0, PI/4.0f, 0.0f))));
-        _plane2->setPosition(glm::vec3(-300.0f, 220.0f, -300.0f));
+        _plane1 = game->getRenderer()->prepareModel(Procedural::BentPlane(500.0f, 500.0f, glm::vec3(1.0, 0.8f, 0.1f), PI/2.0f, 20, 20));
+        _plane1->setOrientation(glm::toMat4(glm::quat(glm::vec3(0.0f, PI/2.0f, 0.0f))));
+        _plane1->rotate(glm::toMat4(glm::quat(glm::vec3(PI/2.0, PI/4.0f, 0.0f))));
+        _plane1->setPosition(glm::vec3(-300.0f, 220.0f, -300.0f));
 
-        _plane3 = game->getRenderer()->prepareModel(Procedural::BentPlane(500.0f, 500.0f, glm::vec3(0.8, 1.0f, 0.1f), PI, 20, 20));
-        _plane3->setOrientation(glm::toMat4(glm::quat(glm::vec3(PI/2.0, -PI/4.0f, 0.0f))));
-        _plane3->setPosition(glm::vec3(300.0f, 220.0f, -300.0f));
+        _plane2 = game->getRenderer()->prepareModel(Procedural::BentPlane(500.0f, 500.0f, glm::vec3(0.8, 1.0f, 0.1f), PI, 20, 20));
+        _plane2->setOrientation(glm::toMat4(glm::quat(glm::vec3(PI/2.0, -PI/4.0f, 0.0f))));
+        _plane2->setPosition(glm::vec3(300.0f, 220.0f, -300.0f));
 
+        /* A sample triangle */
+        _triangle = game->getRenderer()->prepareModel(Procedural::Triangle(glm::vec3(-100.0f, 10.0f, 130.0f),
+                                                                           glm::vec3(0.0f, 30.0f, 130.0f),
+                                                                           glm::vec3(-50.0f, 80.0f, 100.0f),
+                                                                           glm::vec3(1.0f, 1.0f, 1.0f)));
         /* Torus */
         _torus = game->getRenderer()->prepareModel(Procedural::Torus(10.0f, 4.0f, glm::vec3(1.0f, 0.0f, 0.0f), 50, 50));
         _torus->setOrientation(glm::toMat4(glm::quat(glm::vec3(0.0f, -PI/2.0f, 0.0f))));
@@ -207,7 +209,7 @@ class ProceduralDemo : public GameHandler
             game->getRenderer()->renderToShadowMap(*_cylinder, *(*it), *_shaderShadow);
         }
 
-        _sun->lookAt(_plane1->getPosition());
+        _sun->lookAt(_terrain->getPosition());
         _sun->getShadowMap()->clear();
         game->getRenderer()->renderToShadowMap(*_cube, *_sun, *_shaderShadow);
         game->getRenderer()->renderToShadowMap(*_cylinder, *_sun, *_shaderShadow);
@@ -215,11 +217,10 @@ class ProceduralDemo : public GameHandler
         game->getRenderer()->renderToShadowMap(*_sphere, *_sun, *_shaderShadow);
 
         /* Render all objects */
-//        game->getRenderer()->renderModel3D(*_plane1, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
         game->getRenderer()->renderModel3D(*_terrain, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
-//        game->getRenderer()->renderModelNormals(*_terrain, _camera, *_renderTargetNormal);
+        game->getRenderer()->renderModel3D(*_plane1, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
         game->getRenderer()->renderModel3D(*_plane2, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
-        game->getRenderer()->renderModel3D(*_plane3, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
+        game->getRenderer()->renderModel3D(*_triangle, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
         game->getRenderer()->renderModel3D(*_cube, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
         game->getRenderer()->renderModel3D(*_cylinder, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
         game->getRenderer()->renderModel3D(*_circle, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
@@ -233,7 +234,8 @@ class ProceduralDemo : public GameHandler
   private:
     Camera _camera;
     FlyMotion _cameraMotion;
-    Model3D *_terrain, *_plane1, *_plane2, *_plane3, *_cube, *_cylinder, *_circle, *_torus, *_sphere;
+    Model3D *_terrain, *_plane1, *_plane2;
+    Model3D *_triangle, *_cube, *_cylinder, *_circle, *_torus, *_sphere;
     BlinnPhongShader *_shaderBlinnLight;
     NormalShadowMapShader *_shaderShadow;
     NOAARenderTarget *_renderTargetNormal;
