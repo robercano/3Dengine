@@ -16,13 +16,14 @@ Torus::Torus(float outerRadius, float innerRadius, const glm::vec3 &color, uint3
     , _numVertsToroidal(numVertsToroidal)
     , _numVertsPoloidal(numVertsPoloidal)
 {
-    if (numVertsToroidal < 3) {
-        numVertsToroidal = 3;
+    if (_numVertsToroidal < 3) {
+        _numVertsToroidal = 3;
     }
-    if (numVertsPoloidal < 3) {
-        numVertsPoloidal = 3;
+    if (_numVertsPoloidal < 3) {
+        _numVertsPoloidal = 3;
     }
 
-    AppendBentPlane(*this, (outerRadius - innerRadius) * 2.0f * PI, outerRadius * 2.0f * PI, color, 2.0 * PI, 2.0 * PI, 0.0f,
-                    numVertsToroidal + 1, numVertsPoloidal + 1);
+    AppendBentPlane(*this, (_outerRadius - _innerRadius) * 2.0f * PI, _outerRadius * 2.0f * PI, 2.0 * PI, 2.0 * PI, 0.0f,
+                    _numVertsToroidal + 1, _numVertsPoloidal + 1);
+    ModelTransform::SetUniqueMaterialFromColor(*this, _color);
 }

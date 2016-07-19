@@ -20,7 +20,7 @@ namespace Procedural
      * around the x-axis or TODO
      */
     void AppendBentPlane(Model3D &model,
-                         float width, float height, const glm::vec3 &color,
+                         float width, float height,
                          float angleWidth, float angleHeight, float angleRadius,
                          uint32_t numVertsWidth, uint32_t numVertsHeight);
 };

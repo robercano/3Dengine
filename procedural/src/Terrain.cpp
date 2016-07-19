@@ -10,6 +10,7 @@
 #include <glm/glm.hpp>
 #include "Logging.hpp"
 #include "MathUtils.hpp"
+#include "ModelTransform.hpp"
 #include "ProceduralUtils.hpp"
 
 using namespace Logging;
@@ -32,7 +33,7 @@ Terrain::Terrain(float width, float depth, float height, uint32_t slice, const g
     float minHeight = _height;
     uint32_t nData = 0;
 
-    AppendBentPlane(*this, _width, _depth, _color, 0.0f, 0.0f, 0.0f, _numVertsWidth, _numVertsDepth);
+    AppendBentPlane(*this, _width, _depth, 0.0f, 0.0f, 0.0f, _numVertsWidth, _numVertsDepth);
 
     /* Now modify the height according to the octave perlin noise function */
     Model3D::VertexData *data = &_modelData[0];
@@ -59,4 +60,6 @@ Terrain::Terrain(float width, float depth, float height, uint32_t slice, const g
             /* TODO: Recalculate the normals */
         }
     }
+
+    ModelTransform::SetUniqueMaterialFromColor(*this, _color);
 }

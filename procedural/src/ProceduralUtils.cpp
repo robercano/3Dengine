@@ -14,8 +14,8 @@ using namespace Logging;
 
 #define PI 3.14159265358979323846
 
-void Procedural::AppendBentPlane(Model3D &model, float width, float height, const glm::vec3 &color, float angleWidth, float angleHeight,
-                                 float angleRadius, uint32_t numVertsWidth, uint32_t numVertsHeight)
+void Procedural::AppendBentPlane(Model3D &model, float width, float height, float angleWidth, float angleHeight, float angleRadius,
+                                 uint32_t numVertsWidth, uint32_t numVertsHeight)
 {
     float radiusWidth, offsetWidth, angleIncrementWidth;
     float radiusHeight, offsetHeight, angleIncrementHeight;
@@ -131,15 +131,4 @@ void Procedural::AppendBentPlane(Model3D &model, float width, float height, cons
             index[count++] = j + span + numVertsWidth + 1;
         }
     }
-
-    /* Add a default material */
-    model._materials.push_back(Material());
-
-    /* Add a default texture */
-    uint8_t rgb[3] = {(uint8_t)(color.r * 255), (uint8_t)(color.g * 255), (uint8_t)(color.b * 255)};
-    model._textures.push_back(Texture(rgb, 1, 1, 8));
-
-    /* Only one set of indices */
-    model._indicesOffsets.push_back(0);
-    model._indicesCount.push_back(model._modelIndices.size());
 }

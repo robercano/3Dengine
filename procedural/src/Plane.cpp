@@ -19,5 +19,7 @@ using namespace Procedural;
 Plane::Plane(float width, float height, const glm::vec3 &color, uint32_t numVertsWidth, uint32_t numVertsHeight)
     : _width(width), _height(height), _color(color), _numVertsWidth(numVertsWidth), _numVertsHeight(numVertsHeight)
 {
-    AppendBentPlane(*this, _width, _height, _color, 0.0f, 0.0f, 0.0f, _numVertsWidth, _numVertsHeight);
+    AppendBentPlane(*this, _width, _height, 0.0f, 0.0f, 0.0f, _numVertsWidth, _numVertsHeight);
+
+    ModelTransform::SetUniqueMaterialFromColor(*this, _color);
 }

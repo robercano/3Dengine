@@ -11,11 +11,17 @@ using namespace Logging;
 
 Cube::Cube(float width, float height, float depth, const glm::vec3 &color, uint32_t numVertsWidth, uint32_t numVertsHeight,
            uint32_t numVertsDepth)
-    : _width(width), _height(height), _color(color), _numVertsWidth(numVertsWidth), _numVertsHeight(numVertsHeight)
+    : _width(width)
+    , _height(height)
+    , _depth(depth)
+    , _color(color)
+    , _numVertsWidth(numVertsWidth)
+    , _numVertsHeight(numVertsHeight)
+    , _numVertsDepth(numVertsDepth)
 {
-    float halfWidth = width / 2.0f;
-    float halfHeight = height / 2.0f;
-    float halfDepth = depth / 2.0f;
+    float halfWidth = _width / 2.0f;
+    float halfHeight = _height / 2.0f;
+    float halfDepth = _depth / 2.0f;
 
     glm::vec3 offsets[] = {
         glm::vec3(0.0f, halfHeight, 0.0f),  /* Top */
@@ -36,32 +42,34 @@ Cube::Cube(float width, float height, float depth, const glm::vec3 &color, uint3
     };
 
     glm::vec2 planeSizes[] = {
-        glm::vec2(width, depth),  /* Top */
-        glm::vec2(width, depth),  /* Bottom */
-        glm::vec2(width, height), /* Front */
-        glm::vec2(width, height), /* Back */
-        glm::vec2(height, depth), /* Left */
-        glm::vec2(height, depth)  /* Right */
+        glm::vec2(_width, _depth),  /* Top */
+        glm::vec2(_width, _depth),  /* Bottom */
+        glm::vec2(_width, _height), /* Front */
+        glm::vec2(_width, _height), /* Back */
+        glm::vec2(_height, _depth), /* Left */
+        glm::vec2(_height, _depth)  /* Right */
     };
 
     struct {
-        uint32_t width;
-        uint32_t height;
+        uint32_t _width;
+        uint32_t _height;
     } planeVerts[] = {
-        {numVertsWidth, numVertsDepth},  /* Top */
-        {numVertsWidth, numVertsDepth},  /* Bottom */
-        {numVertsWidth, numVertsHeight}, /* Front */
-        {numVertsWidth, numVertsHeight}, /* Back */
-        {numVertsHeight, numVertsDepth}, /* Left */
-        {numVertsHeight, numVertsDepth}  /* Right */
+        {_numVertsWidth, _numVertsDepth},  /* Top */
+        {_numVertsWidth, _numVertsDepth},  /* Bottom */
+        {_numVertsWidth, _numVertsHeight}, /* Front */
+        {_numVertsWidth, _numVertsHeight}, /* Back */
+        {_numVertsHeight, _numVertsDepth}, /* Left */
+        {_numVertsHeight, _numVertsDepth}  /* Right */
     };
 
     for (int i = 0; i < sizeof offsets / sizeof *offsets; ++i) {
-        Plane plane(planeSizes[i].x, planeSizes[i].y, color, planeVerts[i].width, planeVerts[i].height);
+        Plane plane(planeSizes[i].x, planeSizes[i].y, _color, planeVerts[i]._width, planeVerts[i]._height);
 
         /* Transform the original plane */
         ModelTransform::Rotate(plane, rotations[i]);
         ModelTransform::Translate(plane, offsets[i]);
-        ModelTransform::Append(*this, plane);
+        ModelTransform::AppendGeometryOnly(*this, plane);
     }
+
+    ModelTransform::SetUniqueMaterialFromColor(*this, _color);
 }

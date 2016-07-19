@@ -16,19 +16,22 @@ Cylinder::Cylinder(float radius, float height, const glm::vec3 &color, uint32_t 
 
     /* Bottom cap */
     ModelTransform::Rotate(bottomCap, glm::vec3(PI, 0.0f, 0.0f));
-    ModelTransform::Append(*this, bottomCap);
+    ModelTransform::AppendGeometryOnly(*this, bottomCap);
 
     /* Upper cap */
     ModelTransform::Translate(topCap, glm::vec3(0.0f, height, 0.0f));
-    ModelTransform::Append(*this, topCap);
+    ModelTransform::AppendGeometryOnly(*this, topCap);
 
     /* Body */
     Model3D body;
-    AppendBentPlane(body, 2.0f * PI * _radius, _height, _color, 2.0 * PI, 0.0f, 0.0f, _numVertsCap + 1, _numVertsHeight);
+    AppendBentPlane(body, 2.0f * PI * _radius, _height, 2.0 * PI, 0.0f, 0.0f, _numVertsCap + 1, _numVertsHeight);
 
     ModelTransform::Translate(body, glm::vec3(0.0f, -_radius, 0.0f));
     ModelTransform::Rotate(body, glm::vec3(-PI / 2.0f, 0.0f, 0.0f));
     ModelTransform::Translate(body, glm::vec3(0.0f, _radius, 0.0f));
     ModelTransform::Rotate(body, glm::vec3(0.0f, PI / _numVertsCap, 0.0f));
-    ModelTransform::Append(*this, body);
+    ModelTransform::AppendGeometryOnly(*this, body);
+
+    /* Generate the material */
+    ModelTransform::SetUniqueMaterialFromColor(*this, _color);
 }

@@ -57,7 +57,7 @@ class Model3D : public Object3D
     friend class ModelLoaders;
     friend class ModelTransform;
     friend void Procedural::AppendBentPlane(Model3D &model,
-                                            float width, float height, const glm::vec3 &color,
+                                            float width, float height,
                                             float angleWidth, float angleHeight, float angleRadius,
                                             uint32_t numVertsWidth, uint32_t numVertsHeight);
 
