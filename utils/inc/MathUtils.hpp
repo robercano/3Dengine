@@ -22,11 +22,6 @@ namespace MathUtils
     class Perlin {
         public:
             /**
-             * Constructor
-             */
-            Perlin();
-
-            /**
              * Returns the perlin noise at the specified coordinate
              *
              * A 2D slice can be obtained by fixing one of the coordinates
@@ -37,7 +32,7 @@ namespace MathUtils
              *
              * @return Value between 0.0 and 1.0
              */
-            double noise(double x, double y, double z);
+            static double Noise(double x, double y, double z);
 
             /**
              * Returns the perlin noise at the specified location after sampling
@@ -57,9 +52,21 @@ namespace MathUtils
              *
              * @return Value between 0.0 and 1.0
              */
-            double octave(double x, double y, double z, uint8_t octaves, double persistence);
+            static double Octave(double x, double y, double z, uint8_t octaves, double persistence);
 
         private:
+            /**
+             * Singleton accessor
+             */
+            static Perlin *_getPerlin();
+
+            /**
+             * Constructor
+             */
+            Perlin();
+
+            double _noise(double x, double y, double z);
+            double _octave(double x, double y, double z, uint8_t octaves, double persistence);
             double _grad(uint8_t hash, double x, double y, double z);
             double _fade(double v);
             uint8_t *_perms;

@@ -9,6 +9,7 @@
 #include "NOAARenderTarget.hpp"
 #include "NormalShadowMapShader.hpp"
 #include "OpenGL.h"
+#include "Terrain.hpp"
 #include "Plane.hpp"
 #include "Cylinder.hpp"
 #include "Circle.hpp"
@@ -82,6 +83,10 @@ class ProceduralDemo : public GameHandler
             log("ERROR initializing shadow map shader\n");
             return false;
         }
+
+        /* Generate a terrain for the scene */
+        _terrain = game->getRenderer()->prepareModel(Procedural::Terrain(500.0f, 500.0f, 500.0f, 0, glm::vec3(1.0, 0.3f, 0.6f), 20, 20));
+        _terrain ->setPosition(glm::vec3(0.0f, -100.0f, 0.0f));
 
         /* Use a plane for the floor */
         _plane1 = game->getRenderer()->prepareModel(Procedural::Plane(500.0f, 500.0f, glm::vec3(1.0, 0.3f, 0.6f), 20, 20));
@@ -210,7 +215,8 @@ class ProceduralDemo : public GameHandler
         game->getRenderer()->renderToShadowMap(*_sphere, *_sun, *_shaderShadow);
 
         /* Render all objects */
-        game->getRenderer()->renderModel3D(*_plane1, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
+//        game->getRenderer()->renderModel3D(*_plane1, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
+        game->getRenderer()->renderModel3D(*_terrain, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
         game->getRenderer()->renderModel3D(*_plane2, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
         game->getRenderer()->renderModel3D(*_plane3, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
         game->getRenderer()->renderModel3D(*_cube, _camera, *_shaderBlinnLight, _sun, _pointLights, _emptySpotLights, _sunIntensity, *_renderTargetNormal);
@@ -226,7 +232,7 @@ class ProceduralDemo : public GameHandler
   private:
     Camera _camera;
     FlyMotion _cameraMotion;
-    Model3D *_plane1, *_plane2, *_plane3, *_cube, *_cylinder, *_circle, *_torus, *_sphere;
+    Model3D *_terrain, *_plane1, *_plane2, *_plane3, *_cube, *_cylinder, *_circle, *_torus, *_sphere;
     BlinnPhongShader *_shaderBlinnLight;
     NormalShadowMapShader *_shaderShadow;
     NOAARenderTarget *_renderTargetNormal;
@@ -260,7 +266,7 @@ int main()
 #if defined(_WIN32)
     game->setWindowSize(800, 600, false);
 #else
-    game->setWindowSize(2560, 1440, true);
+    game->setWindowSize(800, 600, false);
 #endif
     game->setFPS(60);
 

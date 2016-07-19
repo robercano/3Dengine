@@ -33,6 +33,22 @@ float MathUtils::restrictAngle(float angle)
 /**
  * Perlin noise implementation
  */
+double MathUtils::Perlin::Noise(double x, double y, double z) { return _getPerlin()->_noise(x, y, z); }
+double MathUtils::Perlin::Octave(double x, double y, double z, uint8_t octaves, double persistence)
+{
+    return _getPerlin()->_octave(x, y, z, octaves, persistence);
+}
+
+MathUtils::Perlin *MathUtils::Perlin::_getPerlin()
+{
+    static MathUtils::Perlin *_perlin = NULL;
+
+    if (_perlin == NULL) {
+        _perlin = new MathUtils::Perlin();
+    }
+    return _perlin;
+}
+
 MathUtils::Perlin::Perlin()
 {
     uint8_t perlinPerms[] = {
@@ -54,7 +70,7 @@ MathUtils::Perlin::Perlin()
     }
 }
 
-double MathUtils::Perlin::noise(double x, double y, double z)
+double MathUtils::Perlin::_noise(double x, double y, double z)
 {
     int32_t xi = (int32_t)x & 255;
     int32_t yi = (int32_t)y & 255;
@@ -85,7 +101,7 @@ double MathUtils::Perlin::noise(double x, double y, double z)
            2.0;
 }
 
-double MathUtils::Perlin::octave(double x, double y, double z, uint8_t octaves, double persistence)
+double MathUtils::Perlin::_octave(double x, double y, double z, uint8_t octaves, double persistence)
 {
     double frequency = 1.0;
     double amplitude = 1.0;
@@ -94,7 +110,7 @@ double MathUtils::Perlin::octave(double x, double y, double z, uint8_t octaves, 
     double v = 0.0;
 
     for (int i = 0; i < octaves; ++i) {
-        v += amplitude * noise(x * frequency, y * frequency, z * frequency);
+        v += amplitude * _noise(x * frequency, y * frequency, z * frequency);
 
         maxValue += amplitude;
 

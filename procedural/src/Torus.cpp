@@ -10,6 +10,11 @@ using namespace Logging;
 #define PI 3.14159265358979323846
 
 Torus::Torus(float outerRadius, float innerRadius, const glm::vec3 &color, uint32_t numVertsToroidal, uint32_t numVertsPoloidal)
+    : _outerRadius(outerRadius)
+    , _innerRadius(innerRadius)
+    , _color(color)
+    , _numVertsToroidal(numVertsToroidal)
+    , _numVertsPoloidal(numVertsPoloidal)
 {
     if (numVertsToroidal < 3) {
         numVertsToroidal = 3;
