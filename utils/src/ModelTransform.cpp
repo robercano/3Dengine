@@ -52,7 +52,4 @@ void ModelTransform::Append(Model3D &to, const Model3D &from)
     }
 }
 
-void ModelTransform::RecalculateNormals(Model3D &model)
-{
-    /* TODO */
-}
+void ModelTransform::RecalculateNormals(Model3D &model) { /* TODO */ }
