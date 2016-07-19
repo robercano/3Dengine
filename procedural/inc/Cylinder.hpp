@@ -27,6 +27,14 @@ class Cylinder : public Model3D
     Cylinder(float radius = 1.0f, float height = 1.0f,
              const glm::vec3 &color = glm::vec3(1.0f, 1.0f, 1.0f),
              uint32_t numVertsCap = 20, uint32_t numVertsHeight = 2);
+    /**
+     * Accessors
+     */
+    float getRadius() const { return _radius; }
+    float getHeight() const { return _height; }
+    const glm::vec3 &getColor() const { return _color; }
+    uint32_t getNumVertsCap() const { return _numVertsCap; }
+    uint32_t getNumVertsHeight() const { return _numVertsHeight; }
 
   private:
     void _buildBody();

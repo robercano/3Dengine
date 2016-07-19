@@ -11,6 +11,7 @@ using namespace Logging;
 
 Cube::Cube(float width, float height, float depth, const glm::vec3 &color, uint32_t numVertsWidth, uint32_t numVertsHeight,
            uint32_t numVertsDepth)
+    : _width(width), _height(height), _color(color), _numVertsWidth(numVertsWidth), _numVertsHeight(numVertsHeight)
 {
     float halfWidth = width / 2.0f;
     float halfHeight = height / 2.0f;

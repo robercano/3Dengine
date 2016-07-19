@@ -7,5 +7,6 @@ boundingbox
 debuginfo
 procedural
 game-class-demo
+perlin
 *.dSYM
 *.d

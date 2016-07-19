@@ -36,6 +36,15 @@ class Plane : public Model3D
           const glm::vec3 &color = glm::vec3(1.0f, 1.0f, 1.0f),
           uint32_t numVertsWidth = 2, uint32_t numVertsHeight = 2);
 
+    /**
+     * Accessors
+     */
+    float getWidth() const { return _width; }
+    float getHeight() const { return _height; }
+    const glm::vec3 &getColor() const { return _color; }
+    uint32_t getNumVertsWidth() const { return _numVertsWidth; }
+    uint32_t getNumVertsHeight() const { return _numVertsHeight; }
+
   private:
     float _width;
     float _height;

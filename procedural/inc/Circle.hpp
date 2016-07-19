@@ -24,6 +24,13 @@ class Circle : public Model3D
      */
     Circle(float radius = 1.0f, const glm::vec3 &color = glm::vec3(1.0f, 1.0f, 1.0f), uint32_t numVertesSide = 20);
 
+    /**
+     * Accessors
+     */
+    float getRadius() const { return _radius; }
+    const glm::vec3 &getColor() const { return _color; }
+    uint32_t getNumVertsSide() const { return _numVertsSide; }
+
   private:
     float _radius;
     glm::vec3 _color;

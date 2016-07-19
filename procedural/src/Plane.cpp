@@ -1,6 +1,6 @@
 /**
- * @module  Procedural
- * @brief	Procedural objects generation library
+ * @module  Plane
+ * @brief	Procedural plane generation
  *
  * @author	Roberto Cano (http://www.robertocano.es)
  */
