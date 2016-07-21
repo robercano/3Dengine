@@ -102,7 +102,7 @@ bool Renderer::renderScene(Scene &scene)
     /* Render all objects */
     for (std::vector<Model3D *>::iterator model = scene.getModels().begin(); model != scene.getModels().end(); ++model) {
         if ((*model)->getLightingShader() == NULL) {
-            log("ERROR model has no lighting shader associated to it");
+            log("ERROR model has no lighting shader associated to it\n");
             continue;
         }
 

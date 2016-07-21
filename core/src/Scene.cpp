@@ -56,6 +56,10 @@ bool Scene::add(const std::string &name, Camera *elem)
     }
     _camerasNames[name] = elem;
     _cameras.push_back(elem);
+
+    if (_activeCamera == NULL) {
+        _activeCamera = elem;
+    }
     return true;
 }
 
@@ -66,6 +70,10 @@ bool Scene::add(const std::string &name, RenderTarget *elem)
     }
     _renderTargetsNames[name] = elem;
     _renderTargets.push_back(elem);
+
+    if (_activeRenderTarget == NULL) {
+        _activeRenderTarget = elem;
+    }
     return true;
 }
 
