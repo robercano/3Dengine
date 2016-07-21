@@ -18,6 +18,7 @@
 class Light : public Projection, public Object3D
 {
   public:
+    /* TODO: add comments */
     Light(const glm::vec3 &ambient = glm::vec3(0.0f, 0.0f, 0.0f), const glm::vec3 &diffuse = glm::vec3(0.0f, 0.0f, 0.0f),
           const glm::vec3 &specular = glm::vec3(0.0f, 0.0f, 0.0f), const glm::vec3 &position = glm::vec3(0.0f, 0.0f, 0.0f))
         : _ambient(ambient), _diffuse(diffuse), _specular(specular)
@@ -35,9 +36,16 @@ class Light : public Projection, public Object3D
     RenderTarget *getShadowMap() { return _shadowMap; }
     virtual const glm::mat4 &getProjectionMatrix() = 0;
 
+    /**
+     * Debug information
+     */
+    void setRenderMarker(bool flag) { _renderMarker = flag; }
+    bool getRenderMarker(void) { return _renderMarker; }
+
   protected:
     glm::vec3 _ambient;
     glm::vec3 _diffuse;
     glm::vec3 _specular;
     ShadowMapRenderTarget *_shadowMap;
+    bool _renderMarker;
 };

@@ -9,16 +9,8 @@
 #include <glm/glm.hpp>
 #include <string>
 #include <vector>
-#include "BoundingBox.hpp"
-#include "Camera.hpp"
-#include "DirectLight.hpp"
-#include "LightingShader.hpp"
-#include "Model3D.hpp"
-#include "NormalShadowMapShader.hpp"
-#include "PointLight.hpp"
-#include "RenderTarget.hpp"
-#include "SpotLight.hpp"
 #include "Scene.hpp"
+#include "NormalShadowMapShader.hpp"
 
 class Renderer
 {
@@ -36,7 +28,7 @@ class Renderer
     /**
      * Initializes the renderer
      */
-    virtual void init(void) = 0;
+    virtual bool init(void);
 
     /**
      * Renderer introspection
@@ -230,16 +222,15 @@ class Renderer
     void setWireframeMode(bool flag) { _wireframe = flag; }
     bool getWireframeMode() { return _wireframe; }
 
+  protected:
+    /**
+     * Constructor
+     */
+    Renderer() : _shaderShadow(NULL) {}
+
   private:
-    /**
-     * Singleton instance
-     */
-    static Renderer *_renderer;
 
-    /**
-     * Enable wireframe mode
-     */
-
-
+    static Renderer *_renderer; /**< Singleton instance */
     bool _wireframe; /**< Enables/disables wireframe rendering */
+    NormalShadowMapShader *_shaderShadow; /**< Preloaded shader to render shadow maps */
 };

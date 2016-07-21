@@ -15,7 +15,7 @@
 
 using namespace Logging;
 
-void OpenGLRenderer::init()
+bool OpenGLRenderer::init()
 {
     __(glClearColor(0.0, 0.0, 0.0, 1.0));
     __(glEnable(GL_DEPTH_TEST));
@@ -53,6 +53,9 @@ void OpenGLRenderer::init()
         __(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
     }
     __(glBindTexture(GL_TEXTURE_2D, 0));
+
+    /* Call parent to initialize some members related to scene rendering */
+    return Renderer::init();
 }
 
 const char *OpenGLRenderer::getName() { return (const char *)glGetString(GL_RENDERER); }

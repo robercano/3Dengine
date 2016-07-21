@@ -16,7 +16,7 @@ class OpenGLRenderer : public Renderer
     /**
      * Renderer methods
      */
-    void init(void);
+    bool init(void);
     const char *getName();
     const char *getVersion();
     const char *getVendor();

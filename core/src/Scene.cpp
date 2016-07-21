@@ -14,7 +14,8 @@ bool Scene::add(const std::string &name, Model3D *elem)
     if (getModel(name) != NULL) {
         return false;
     }
-    _models[name] = elem;
+    _modelsNames[name] = elem;
+    _models.push_back(elem);
     return true;
 }
 
@@ -23,7 +24,8 @@ bool Scene::add(const std::string &name, PointLight *elem)
     if (getPointLight(name) != NULL) {
         return false;
     }
-    _pointLights[name] = elem;
+    _pointLightsNames[name] = elem;
+    _pointLights.push_back(elem);
     return true;
 }
 
@@ -32,7 +34,8 @@ bool Scene::add(const std::string &name, SpotLight *elem)
     if (getSpotLight(name) != NULL) {
         return false;
     }
-    _spotLights[name] = elem;
+    _spotLightsNames[name] = elem;
+    _spotLights.push_back(elem);
     return true;
 }
 
@@ -41,7 +44,8 @@ bool Scene::add(const std::string &name, DirectLight *elem)
     if (getDirectLight(name) != NULL) {
         return false;
     }
-    _directLights[name] = elem;
+    _directLightsNames[name] = elem;
+    _directLights.push_back(elem);
     return true;
 }
 
@@ -50,7 +54,8 @@ bool Scene::add(const std::string &name, Camera *elem)
     if (getCamera(name) != NULL) {
         return false;
     }
-    _cameras[name] = elem;
+    _camerasNames[name] = elem;
+    _cameras.push_back(elem);
     return true;
 }
 
@@ -59,14 +64,15 @@ bool Scene::add(const std::string &name, RenderTarget *elem)
     if (getRenderTarget(name) != NULL) {
         return false;
     }
-    _renderTargets[name] = elem;
+    _renderTargetsNames[name] = elem;
+    _renderTargets.push_back(elem);
     return true;
 }
 
 Model3D *Scene::getModel(const std::string &name)
 {
-    std::map<std::string, Model3D *>::iterator it = _models.find(name);
-    if (it == _models.end()) {
+    std::map<std::string, Model3D *>::iterator it = _modelsNames.find(name);
+    if (it == _modelsNames.end()) {
         return NULL;
     }
     return it->second;
@@ -74,8 +80,8 @@ Model3D *Scene::getModel(const std::string &name)
 
 PointLight *Scene::getPointLight(const std::string &name)
 {
-    std::map<std::string, PointLight *>::iterator it = _pointLights.find(name);
-    if (it == _pointLights.end()) {
+    std::map<std::string, PointLight *>::iterator it = _pointLightsNames.find(name);
+    if (it == _pointLightsNames.end()) {
         return NULL;
     }
     return it->second;
@@ -83,8 +89,8 @@ PointLight *Scene::getPointLight(const std::string &name)
 
 SpotLight *Scene::getSpotLight(const std::string &name)
 {
-    std::map<std::string, SpotLight *>::iterator it = _spotLights.find(name);
-    if (it == _spotLights.end()) {
+    std::map<std::string, SpotLight *>::iterator it = _spotLightsNames.find(name);
+    if (it == _spotLightsNames.end()) {
         return NULL;
     }
     return it->second;
@@ -92,8 +98,8 @@ SpotLight *Scene::getSpotLight(const std::string &name)
 
 DirectLight *Scene::getDirectLight(const std::string &name)
 {
-    std::map<std::string, DirectLight *>::iterator it = _directLights.find(name);
-    if (it == _directLights.end()) {
+    std::map<std::string, DirectLight *>::iterator it = _directLightsNames.find(name);
+    if (it == _directLightsNames.end()) {
         return NULL;
     }
     return it->second;
@@ -101,8 +107,8 @@ DirectLight *Scene::getDirectLight(const std::string &name)
 
 Camera *Scene::getCamera(const std::string &name)
 {
-    std::map<std::string, Camera *>::iterator it = _cameras.find(name);
-    if (it == _cameras.end()) {
+    std::map<std::string, Camera *>::iterator it = _camerasNames.find(name);
+    if (it == _camerasNames.end()) {
         return NULL;
     }
     return it->second;
@@ -110,8 +116,8 @@ Camera *Scene::getCamera(const std::string &name)
 
 RenderTarget *Scene::getRenderTarget(const std::string &name)
 {
-    std::map<std::string, RenderTarget *>::iterator it = _renderTargets.find(name);
-    if (it == _renderTargets.end()) {
+    std::map<std::string, RenderTarget *>::iterator it = _renderTargetsNames.find(name);
+    if (it == _renderTargetsNames.end()) {
         return NULL;
     }
     return it->second;

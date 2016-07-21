@@ -47,6 +47,7 @@
 #include "Material.hpp"
 #include "Texture.hpp"
 #include "ProceduralUtils.hpp"
+#include "LightingShader.hpp"
 
 class Model3D : public Object3D
 {
@@ -73,7 +74,7 @@ class Model3D : public Object3D
     /**
      * Constructor
      */
-    Model3D() {}
+    Model3D() : _lightingShader(NULL) {}
 
     /**
      * Destructor
@@ -105,6 +106,30 @@ class Model3D : public Object3D
     const std::vector<Texture> &getTextures() const { return _textures; }
     const std::vector<uint32_t> &getIndicesOffsets() const { return _indicesOffsets; }
     const std::vector<uint32_t> &getIndicesCount() const { return _indicesCount; }
+
+    /**
+     * Sets the lighting shader used to render this model
+     *
+     * @param shader  Lighting shader used to render this model
+     */
+    void setLightingShader(LightingShader *shader) { _lightingShader = shader; }
+
+    /**
+     * Gets the lighting shader used to render this model
+     *
+     * @return Lighting shader used to render this model
+     */
+    LightingShader *getLightingShader(void) { return _lightingShader; }
+
+    /**
+     * Debug information
+     */
+    void setRenderNormals(bool flag) { _renderNormals = flag; }
+    bool getRenderNormals(void) { return _renderNormals; }
+
+    void setRenderBoundingVolumes(bool flag) { _renderBoundingVolumes = flag; }
+    bool getRenderBoundingVolumes(void) { return _renderBoundingVolumes; }
+
   protected:
     /**
      * Methods from Object3D class
@@ -117,4 +142,9 @@ class Model3D : public Object3D
     std::vector<uint32_t> _modelIndices;         /**< List of indices containing all rendering lists together */
     std::vector<uint32_t> _indicesOffsets;       /**< Offset in _modelIndices of the beginning of the rendering list number 'n' */
     std::vector<uint32_t> _indicesCount;         /**< Number of indices belonging to the rendering list number 'n' */
+
+    bool _renderNormals;           /**< Enables normal rendering for this model */
+    bool _renderBoundingVolumes;   /**< Enables bounding volumes rendering for this model */
+
+    LightingShader *_lightingShader; /** Lighting shader used to render this model */
 };
