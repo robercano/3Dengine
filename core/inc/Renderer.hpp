@@ -18,6 +18,7 @@
 #include "PointLight.hpp"
 #include "RenderTarget.hpp"
 #include "SpotLight.hpp"
+#include "Scene.hpp"
 
 class Renderer
 {
@@ -70,22 +71,52 @@ class Renderer
     virtual Model3D *prepareModel(const Model3D &model) = 0;
 
     /**
-     * Renders the internal list of models to a render target
+     * Renders a whole scene
      *
-     * @param projection	Projection matrix
-     * @param view			View matrix
+     * This method uses the input scene to render the final frame. It performs
+     * some geometry occlusion calculations, and determines the best parameters
+     * for light rendering using the camera frustum and the models bounding boxes
+     *
+     * @see Scene
+     *
+     * @param scene  The scene to be rendered
+     *
+     * @return true or false
+     */
+    bool renderScene(Scene &scene);
+
+    /**
+     * Renders a model 3D from the given camera using the provided lighting shader and the
+     * different types of light into the given renderTarget
+     *
+     * @param model         Model to be rendered
+     * @param camera        Camera to use for the rendering
+     * @param shader        Lighting shader to apply to the model
+     * @param sun           Direct light to apply to the model
+     * @param pointLights   Vector of point lights to use for the rendering
+     * @param spotLights    Vector of spot lights to use for the rendering
+     * @param ambientK      Precalculated ambient factor to use for the rendering. This is
+     *                      typically calculated from the scene definition
+     * @param renderTarget  Render target for rendering the frame
+     * @param disableDepth  Disables the depth test
+     *
+     * @return true or false
      */
     virtual bool renderModel3D(Model3D &model, Camera &camera, LightingShader &shader, DirectLight *sun,
                                std::vector<PointLight *> &pointLights, std::vector<SpotLight *> &spotLights, float ambientK,
                                RenderTarget &renderTarget, bool disableDepth = false) = 0;
-    virtual bool renderToShadowMap(Model3D &model3D, Light &camera, NormalShadowMapShader &shader) = 0;
-    virtual bool renderLight(Light &light, Camera &camera, RenderTarget &renderTarget, uint32_t lightNumber) = 0;
-    virtual bool renderLights(std::vector<Light*> &lights, Camera &camera, RenderTarget &renderTarget) = 0;
-    virtual bool renderBoundingBox(const BoundingBox &box, const glm::mat4 &modelMatrix, const glm::vec3 &color, Camera &camera, RenderTarget &renderTarget) = 0;
-    virtual bool renderBoundingSphere(const BoundingSphere &sphere, const glm::vec3 &center,
-                                      const glm::vec3 &color, Camera &camera, RenderTarget &renderTarget) = 0;
-    virtual bool renderModelBoundingBoxes(Model3D &model, Camera &camera, RenderTarget &renderTarget, bool showSphere = true, bool showAABB = true, bool showOOBB = true) = 0;
-    virtual bool renderModelNormals(Model3D &model3D, Camera &camera, RenderTarget &renderTarget) = 0;
+
+    /**
+     * Renders the shadow map of the model using the given light and the given shader. The shadow
+     * map is stored in the 'light' parameter to be used later on for shadow rendering
+     *
+     * @param model  Model to be rendered as a shadow map
+     * @param light  Light to use for the shadow map rendering
+     * @param shader Shadow map shader to use for the rendering
+     *
+     * @return true or false
+     */
+    virtual bool renderToShadowMap(Model3D &model3D, Light &light, NormalShadowMapShader &shader) = 0;
 
     /**
      * Adjusts the renderer's display size
@@ -101,6 +132,97 @@ class Renderer
      * Clears the main framebuffer
      */
     virtual void clear() = 0;
+
+    /**---------------------------
+     * Debug rendering methods
+     *----------------------------*/
+
+    /**
+     * Renders the position of the light as a billboard with the ambient component
+     * of the light. Used for debugging purposes
+     *
+     * Mainly used from renderLights as a helper function
+     *
+     * @param light         Light to be rendered as a billboard
+     * @param camera        Camera to use for the rendering
+     * @param renderTarget  Render target for rendering the billboard
+     * @param lightNumber   Number of light to offset the billboard rendering, this helps
+     *                      that the billboards are not rendered at the same depth
+     *
+     * @return true or false
+     */
+    virtual bool renderLight(Light &light, Camera &camera, RenderTarget &renderTarget, uint32_t lightNumber) = 0;
+
+    /**
+     * Renders the position of the light in the input vector as a billboard with the ambient component
+     * of the light. Used for debugging purposes
+     *
+     * @param lights        Vector of lights to be rendered as a billboard
+     * @param camera        Camera to use for the rendering
+     * @param renderTarget  Render target for rendering the billboard
+     *
+     * @return true or false
+     */
+    virtual bool renderLights(std::vector<Light*> &lights, Camera &camera, RenderTarget &renderTarget) = 0;
+
+    /**
+     * Renders the bounding box with the given color
+     *
+     * Helper method for renderModelBoundingBoxes
+     *
+     * @param box           Bounding box to be rendered
+     * @param modelMatrix   Model matrix used to bring the bounding box to world coordinates. Typically
+     *                      the matrix comes from the same Model3D than the BoundingBox
+     * @param color         Color to use for the bounding box rendering
+     * @param camera        Camera to use for the bounding box rendering
+     * @param renderTarget  Render target for rendering the bounding box
+     *
+     * @return true or false
+     */
+    virtual bool renderBoundingBox(const BoundingBox &box, const glm::mat4 &modelMatrix, const glm::vec3 &color, Camera &camera, RenderTarget &renderTarget) = 0;
+    /**
+     *
+     * Renders the bounding sphere with the given color
+     *
+     * Helper method for renderModelBoundingBoxes
+     *
+     * @param sphere        Bounding sphere to be rendered
+     * @param center        World coordinates position for the center of the sphere. Typically the
+     *                      position of the Model3D that contained the bounding sphere
+     * @param color         Color to use for the bounding box
+     * @param camera        Camera to use for the bounding box rendering
+     * @param renderTarget  Render target for rendering the bounding box
+     *
+     * @return true or false
+     */
+    virtual bool renderBoundingSphere(const BoundingSphere &sphere, const glm::vec3 &center,
+                                      const glm::vec3 &color, Camera &camera, RenderTarget &renderTarget) = 0;
+
+    /**
+     * Renders a model 3D bounding volumes (AABB, OOBB and Bounding Sphere)
+     *
+     * @param model         Model containing the bounding boxes to be rendered
+     * @param camera        Camera to use for the rendering
+     * @param renderTarget  Render target for rendering the bounding volumes
+     * @param showSphere    Indicates whether to render the bounding sphere or not
+     * @param showAABB      Indicates whether to render the AABB or not
+     * @param showOOBB      Indicates whether to render the OOBB or not
+     *
+     * @return true or false
+     */
+    virtual bool renderModelBoundingVolumes(Model3D &model, Camera &camera, RenderTarget &renderTarget, bool showSphere = true, bool showAABB = true, bool showOOBB = true) = 0;
+
+    /**
+     * Renders a model 3D normals
+     *
+     * @param model         Model containing the normals to be rendered
+     * @param camera        Camera to use for the rendering
+     * @param renderTarget  Render target for rendering the normals
+     * @param normalSize    Length of the normal in world units
+     *
+     * @return true or false
+     */
+    virtual bool renderModelNormals(Model3D &model3D, Camera &camera, RenderTarget &renderTarget, float normalSize) = 0;
 
     /**
      * Global settings for the renderer

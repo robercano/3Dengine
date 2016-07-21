@@ -556,8 +556,8 @@ bool OpenGLRenderer::renderBoundingSphere(const BoundingSphere &sphere, const gl
     return true;
 }
 
-bool OpenGLRenderer::renderModelBoundingBoxes(Model3D &model, Camera &camera, RenderTarget &renderTarget, bool showSphere, bool showAABB,
-                                              bool showOOBB)
+bool OpenGLRenderer::renderModelBoundingVolumes(Model3D &model, Camera &camera, RenderTarget &renderTarget, bool showSphere, bool showAABB,
+                                                bool showOOBB)
 {
     if (showSphere) {
         if (renderBoundingSphere(model.getBoundingSphere(), model.getPosition(), glm::vec3(1.0f, 0.0f, 0.0f), camera, renderTarget) ==
@@ -578,7 +578,7 @@ bool OpenGLRenderer::renderModelBoundingBoxes(Model3D &model, Camera &camera, Re
     return true;
 }
 
-bool OpenGLRenderer::renderModelNormals(Model3D &model3D, Camera &camera, RenderTarget &renderTarget)
+bool OpenGLRenderer::renderModelNormals(Model3D &model3D, Camera &camera, RenderTarget &renderTarget, float normalSize)
 {
     /* TODO: Create this in the renderer so it does not have to be created every time */
     Shader *shader = Shader::New();
@@ -605,6 +605,7 @@ bool OpenGLRenderer::renderModelNormals(Model3D &model3D, Camera &camera, Render
         shader->attach();
 
         shader->setUniformMat4("u_MVPMatrix", &MVP);
+        shader->setUniformFloat("u_normalSize", normalSize);
 
         /* Draw the model */
         __(glBindVertexArray(glObject.getVertexArrayID()));

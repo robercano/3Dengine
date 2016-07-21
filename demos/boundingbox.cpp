@@ -222,9 +222,9 @@ class ShadowsDemo : public GameHandler
         game->getRenderer()->renderModel3D(*_model3, _camera, *_shaderBlinnLight, _sun, _emptyPointLights, _emptySpotLights, 0.4f, *_renderTargetNormal);
         game->getRenderer()->renderModel3D(*_plane, _camera, *_shaderBlinnLight, _sun, _emptyPointLights, _emptySpotLights, 0.4f, *_renderTargetNormal);
 
-        game->getRenderer()->renderModelBoundingBoxes(*_model1, _camera, *_renderTargetNormal, _enableSphere, _enableAABB, _enableOOBB);
-        game->getRenderer()->renderModelBoundingBoxes(*_model2, _camera, *_renderTargetNormal, _enableSphere, _enableAABB, _enableOOBB);
-        game->getRenderer()->renderModelBoundingBoxes(*_model3, _camera, *_renderTargetNormal, _enableSphere, _enableAABB, _enableOOBB);
+        game->getRenderer()->renderModelBoundingVolumes(*_model1, _camera, *_renderTargetNormal, _enableSphere, _enableAABB, _enableOOBB);
+        game->getRenderer()->renderModelBoundingVolumes(*_model2, _camera, *_renderTargetNormal, _enableSphere, _enableAABB, _enableOOBB);
+        game->getRenderer()->renderModelBoundingVolumes(*_model3, _camera, *_renderTargetNormal, _enableSphere, _enableAABB, _enableOOBB);
 
         _renderTargetNormal->blit();
 

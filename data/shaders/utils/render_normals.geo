@@ -11,6 +11,7 @@ layout(triangles) in;
 layout(line_strip, max_vertices=6) out;
 
 uniform mat4 u_MVPMatrix;
+uniform float u_normalSize;
 
 in Vertex {
     vec3 normal;
@@ -31,7 +32,7 @@ void main()
         io_vertexColor = io_vertex[i].color;
         EmitVertex();
 
-        gl_Position = u_MVPMatrix * vec4(position + normal * 0.4f, 1.0f);
+        gl_Position = u_MVPMatrix * vec4(position + normal * u_normalSize, 1.0f);
         io_vertexColor = io_vertex[i].color;
         EmitVertex();
 

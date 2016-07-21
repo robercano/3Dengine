@@ -207,10 +207,10 @@ class ShadowsDemo : public GameHandler
         game->getRenderer()->renderModel3D(*_plane, _camera, *_shaderBlinnLight, NULL, _pointLights, _emptySpotLights, 0.4f, *_renderTargetNormal);
 
         if (_enableNormals) {
-            game->getRenderer()->renderModelNormals(*_model, _camera, *_renderTargetNormal);
+            game->getRenderer()->renderModelNormals(*_model, _camera, *_renderTargetNormal, _model->getBoundingSphere().getRadius() * 0.0002);
         }
         if (_enableBoundingBox) {
-            game->getRenderer()->renderModelBoundingBoxes(*_model, _camera, *_renderTargetNormal);
+            game->getRenderer()->renderModelBoundingVolumes(*_model, _camera, *_renderTargetNormal);
         }
         if (_enableLights) {
             for (std::vector<PointLight *>::iterator it = _pointLights.begin(); it != _pointLights.end(); ++it) {
