@@ -74,7 +74,7 @@ class Model3D : public Object3D
     /**
      * Constructor
      */
-    Model3D() : _lightingShader(NULL) {}
+    Model3D() : _lightingShader(NULL), _renderNormals(false), _isShadowCaster(true) {}
 
     /**
      * Destructor
@@ -122,13 +122,29 @@ class Model3D : public Object3D
     LightingShader *getLightingShader(void) { return _lightingShader; }
 
     /**
+     * Enables/disables this model as a shadow caster
+     *
+     * If disabled the model is not taken into account when generating the
+     * shadow map for a specific light
+     *
+     * @param flag  true (casts a shadow) or false (does not cast a shadow)
+     */
+    void setShadowCaster(bool flag) { _isShadowCaster = flag; }
+
+    /**
+     * Indicates if this model casts a shadow or not
+     *
+     * @see setShadowCaster
+     *
+     * @return true (casts a shadow) or false (does not cast a shadow)
+     */
+    bool isShadowCaster(void) { return _isShadowCaster; }
+
+    /**
      * Debug information
      */
     void setRenderNormals(bool flag) { _renderNormals = flag; }
     bool getRenderNormals(void) { return _renderNormals; }
-
-    void setRenderBoundingVolumes(bool flag) { _renderBoundingVolumes = flag; }
-    bool getRenderBoundingVolumes(void) { return _renderBoundingVolumes; }
 
   protected:
     /**
@@ -143,8 +159,8 @@ class Model3D : public Object3D
     std::vector<uint32_t> _indicesOffsets;       /**< Offset in _modelIndices of the beginning of the rendering list number 'n' */
     std::vector<uint32_t> _indicesCount;         /**< Number of indices belonging to the rendering list number 'n' */
 
-    bool _renderNormals;           /**< Enables normal rendering for this model */
-    bool _renderBoundingVolumes;   /**< Enables bounding volumes rendering for this model */
+    bool _renderNormals;  /**< Enables normal rendering for this model */
+    bool _isShadowCaster; /**< Indicates if this model is a shadow caster */
 
     LightingShader *_lightingShader; /** Lighting shader used to render this model */
 };
