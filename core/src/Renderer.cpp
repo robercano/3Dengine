@@ -113,7 +113,7 @@ bool Renderer::renderScene(Scene &scene)
         }
 
         renderModel3D(**model, *scene.getActiveCamera(), *(*model)->getLightingShader(), sun, scene.getPointLights(), scene.getSpotLights(),
-                      0.5f, /* TODO: calculate the global ambient light */
+                      0.0f, /* TODO: calculate the global ambient light */
                       *scene.getActiveRenderTarget());
 
         /* Render normals information */
