@@ -64,7 +64,7 @@ bool Renderer::renderScene(Scene &scene)
         }
 
         /* Check if we need to render this light billboard */
-        if ((*pointLight)->getRenderMarker() == true) {
+        if ((*pointLight)->getRenderMarker() == true || this->getRenderLightsMarkers()) {
             lightsMarkers.push_back(*pointLight);
         }
     }
@@ -100,7 +100,7 @@ bool Renderer::renderScene(Scene &scene)
         }
 
         /* Check if we need to render this light billboard */
-        if ((*spotLight)->getRenderMarker() == true) {
+        if ((*spotLight)->getRenderMarker() == true || this->getRenderLightsMarkers()) {
             lightsMarkers.push_back(*spotLight);
         }
     }
@@ -117,14 +117,14 @@ bool Renderer::renderScene(Scene &scene)
                       *scene.getActiveRenderTarget());
 
         /* Render normals information */
-        if ((*model)->getRenderNormals() == true) {
+        if ((*model)->getRenderNormals() == true || this->getRenderNormals()) {
             /* TODO: Calculate proper normal size by analyzing all objects in the scene and taking
              * a proper average */
             renderModelNormals(**model, *scene.getActiveCamera(), *scene.getActiveRenderTarget(),
                                (*model)->getBoundingSphere().getRadius() * 0.0002);
         }
         /* Render bounding volumes information */
-        if ((*model)->getRenderNormals() == true) {
+        if ((*model)->getRenderBoundingVolumes() == true || this->getRenderBoundingVolumes()) {
             /* TODO: Calculate proper normal size by analyzing all objects in the scene and taking
              * a proper average */
             renderModelBoundingVolumes(**model, *scene.getActiveCamera(), *scene.getActiveRenderTarget());
