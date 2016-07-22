@@ -8,6 +8,7 @@
 #include "PointLight.hpp"
 #include "ToonLightingShader.hpp"
 #include "ToonRenderTarget.hpp"
+#include "Scene.hpp"
 
 #define PI 3.14159265358979323846
 
@@ -26,36 +27,6 @@ class Demo : public GameHandler
 
     bool handleInit(Game *game)
     {
-        PointLight *light1 = new PointLight(glm::vec3(3.5, 3.5, 4.5), glm::vec3(3.5, 3.5, 4.5), glm::vec3(3.5, 3.5, 4.5),
-                                            glm::vec3(75.0, 300.0, 150.0), 0.0000099999f, 1000.0f);
-
-        light1->getShadowMap()->init(1, 1);
-
-        _lights.push_back(light1);
-
-        game->getWindowManager()->getWindowSize(&_width, &_height);
-
-        /* Create a render target to allow post-processing */
-        _renderTargetFXAA2 = FXAA2RenderTarget::New();
-        if (_renderTargetFXAA2 == NULL) {
-            fprintf(stderr, "ERROR allocating fxaa2 render target\n");
-            return false;
-        }
-
-        _renderTargetFXAA2->init(_width, _height);
-        _renderTargetFXAA2->setClearColor(1.0, 1.0, 1.0, 0.0);
-
-        /* Create the toon target to add a border */
-        _renderTargetToon = ToonRenderTarget::New();
-        if (_renderTargetToon == NULL) {
-            fprintf(stderr, "ERROR allocating toon render target\n");
-            return false;
-        }
-
-        _renderTargetToon->init(_width, _height);
-        _renderTargetToon->setClearColor(1.0, 1.0, 1.0, 1.0);
-        _renderTargetToon->setBorderColor(glm::vec4(0.0, 0.0, 0.0, 1.0));
-
         /* Register the key and mouse listener */
         std::vector<uint32_t> keys;  // The keys should be read from a config file
 
@@ -74,6 +45,27 @@ class Demo : public GameHandler
         game->getWindowManager()->getKeyManager()->registerListener(_inputManager, keys);
         game->getWindowManager()->getMouseManager()->registerListener(_inputManager);
 
+        /* Get the window size */
+        game->getWindowManager()->getWindowSize(&_width, &_height);
+
+        _scene.add("PL_light1", new PointLight(glm::vec3(3.5, 3.5, 4.5), glm::vec3(3.5, 3.5, 4.5), glm::vec3(3.5, 3.5, 4.5),
+                                            glm::vec3(75.0, 300.0, 150.0), 0.0000099999f, 1000.0f));
+
+        _scene.getPointLight("PL_light1")->getShadowMap()->init(1, 1);
+
+        /* Create a render target to allow post-processing */
+        _scene.add("RT_fxaa2", FXAA2RenderTarget::New());
+        _scene.getRenderTarget("RT_fxaa2")->init(_width, _height);
+        _scene.getRenderTarget("RT_fxaa2")->setClearColor(1.0, 1.0, 1.0, 0.0);
+
+        /* Create the toon target to add a border */
+        _scene.add("RT_toon", ToonRenderTarget::New());
+        _scene.getRenderTarget("RT_toon")->init(_width, _height);
+        _scene.getRenderTarget("RT_toon")->setClearColor(1.0, 1.0, 1.0, 1.0);
+        dynamic_cast<ToonRenderTarget*>(_scene.getRenderTarget("RT_toon"))->setBorderColor(glm::vec4(0.0, 0.0, 0.0, 1.0));
+
+        _scene.setActiveRenderTarget("RT_fxaa2");
+
         /* Create a Blinn-phong shader for the geometry */
         _shaderToonLight = ToonLightingShader::New();
         if (_shaderToonLight->init() == false) {
@@ -86,16 +78,28 @@ class Demo : public GameHandler
             return false;
         }
 
-        _shaderLight = _shaderBlinnLight;
-        _renderTarget = _renderTargetFXAA2;
         _current = "Normal";
 
         /* Load the geometry */
-        _model3D = game->getRenderer()->loadModelOBJ("data/objects/daxter");
-        _model3D->setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
+        _scene.add("M3D_daxter1", game->getRenderer()->loadModelOBJ("data/objects/daxter"));
+        _scene.getModel("M3D_daxter1")->setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
+        _scene.getModel("M3D_daxter1")->setLightingShader(_shaderBlinnLight);
+        _scene.getModel("M3D_daxter1")->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+
+        _scene.add("M3D_daxter2", game->getRenderer()->loadModelOBJ("data/objects/daxter"));
+        _scene.getModel("M3D_daxter2")->setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
+        _scene.getModel("M3D_daxter2")->setLightingShader(_shaderBlinnLight);
+        _scene.getModel("M3D_daxter2")->setPosition(glm::vec3(0.0f, 0.0f, -50.0f));
+
+        _scene.add("M3D_daxter3", game->getRenderer()->loadModelOBJ("data/objects/daxter"));
+        _scene.getModel("M3D_daxter3")->setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
+        _scene.getModel("M3D_daxter3")->setLightingShader(_shaderBlinnLight);
+        _scene.getModel("M3D_daxter3")->setPosition(glm::vec3(0.0f, 0.0f, -100.0f));
 
         /* Create the game camera */
-        _camera.setProjection((float)_width, (float)_height, 0.1f, 1000.0f, 45.0f);
+        _scene.add("C_camera1", new Camera());
+        _scene.getCamera("C_camera1")->setProjection((float)_width, (float)_height, 0.1f, 1000.0f, 45.0f);
+
         _cameraMotion.setPosition(glm::vec3(150.0f, 100.0f, 150.0f));
         _cameraMotion.rotateYaw(-45.0f);
 
@@ -124,18 +128,30 @@ class Demo : public GameHandler
             game->resetStats();
         }
         if (_inputManager._keys['1']) {
-            _shaderLight = _shaderBlinnLight;
-            _renderTarget = _renderTargetFXAA2;
+            _scene.setActiveRenderTarget("RT_fxaa2");
+
+            for (std::vector<Model3D*>::iterator it = _scene.getModels().begin();
+                 it != _scene.getModels().end(); ++it) {
+                (*it)->setLightingShader(_shaderBlinnLight);
+            }
             _current = "Normal";
         }
         if (_inputManager._keys['2']) {
-            _shaderLight = _shaderToonLight;
-            _renderTarget = _renderTargetFXAA2;
+            _scene.setActiveRenderTarget("RT_fxaa2");
+
+            for (std::vector<Model3D*>::iterator it = _scene.getModels().begin();
+                 it != _scene.getModels().end(); ++it) {
+                (*it)->setLightingShader(_shaderToonLight);
+            }
             _current = "ToonLight";
         }
         if (_inputManager._keys['3']) {
-            _shaderLight = _shaderToonLight;
-            _renderTarget = _renderTargetToon;
+            _scene.setActiveRenderTarget("RT_toon");
+
+            for (std::vector<Model3D*>::iterator it = _scene.getModels().begin();
+                 it != _scene.getModels().end(); ++it) {
+                (*it)->setLightingShader(_shaderToonLight);
+            }
             _current = "ToonLight+Filter";
         }
 
@@ -165,41 +181,26 @@ class Demo : public GameHandler
 
     bool handleRender(Game *game)
     {
-        std::vector<SpotLight *> empty;
-
         /* Apply the motion to the camera */
-        _cameraMotion.applyTo(_camera);
+        _cameraMotion.applyTo(*_scene.getCamera("C_camera1"));
 
-        _renderTarget->clear();
+        game->getRenderer()->renderScene(_scene);
 
-        /* Render all objects */
-        _model3D->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
-        game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderLight, NULL, _lights, empty, 0.2f, *_renderTarget);
-        _model3D->setPosition(glm::vec3(0.0f, 0.0f, -50.0f));
-        game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderLight, NULL, _lights, empty, 0.2f, *_renderTarget);
-        _model3D->setPosition(glm::vec3(0.0f, 0.0f, -100.0f));
-        game->getRenderer()->renderModel3D(*_model3D, _camera, *_shaderLight, NULL, _lights, empty, 0.2f, *_renderTarget);
         game->getTextConsole()->gprintf("Current = %s\n", _current.c_str());
         game->getTextConsole()->gprintf("1=Normal, 2=ToonLight, 3=ToonLight+Filter\n");
 
-        _renderTarget->blit();
         return true;
     }
 
   private:
     Camera _camera;
     FlyMotion _cameraMotion;
-    Model3D *_model3D;
-    LightingShader *_shaderLight;
     BlinnPhongShader *_shaderBlinnLight;
     ToonLightingShader *_shaderToonLight;
-    RenderTarget *_renderTarget;
-    FXAA2RenderTarget *_renderTargetFXAA2;
-    ToonRenderTarget *_renderTargetToon;
     std::string _renderTargetName;
-    std::vector<PointLight *> _lights;
     InputManager _inputManager;
     std::string _current;
+    Scene _scene;
 
     float _MouseSensibility;
     float _KeyboardSensibility;
