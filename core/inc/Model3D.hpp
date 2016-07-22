@@ -74,7 +74,8 @@ class Model3D : public Object3D
     /**
      * Constructor
      */
-    Model3D() : _lightingShader(NULL), _renderNormals(false), _isShadowCaster(true) {}
+    Model3D() : _lightingShader(NULL), _renderNormals(false), _isShadowCaster(true),
+                _renderBoundingSphere(false), _renderAABB(false), _renderOOBB(false) {}
 
     /**
      * Destructor
@@ -145,6 +146,19 @@ class Model3D : public Object3D
      */
     void setRenderNormals(bool flag) { _renderNormals = flag; }
     bool getRenderNormals(void) { return _renderNormals; }
+    void setRenderBoundingVolumes(bool flag)
+    {
+        _renderBoundingSphere = flag;
+        _renderAABB = flag;
+        _renderOOBB = flag;
+    }
+    void setRenderBoundingSphere(bool flag) { _renderBoundingSphere = flag; }
+    void setRenderAABB(bool flag) { _renderAABB = flag; }
+    void setRenderOOBB(bool flag) { _renderOOBB = flag; }
+
+    bool getRenderBoundingSphere() { return _renderBoundingSphere; }
+    bool getRenderAABB() { return _renderAABB; }
+    bool getRenderOOBB() { return _renderOOBB; }
 
   protected:
     /**
@@ -159,8 +173,11 @@ class Model3D : public Object3D
     std::vector<uint32_t> _indicesOffsets;       /**< Offset in _modelIndices of the beginning of the rendering list number 'n' */
     std::vector<uint32_t> _indicesCount;         /**< Number of indices belonging to the rendering list number 'n' */
 
-    bool _renderNormals;  /**< Enables normal rendering for this model */
-    bool _isShadowCaster; /**< Indicates if this model is a shadow caster */
+    bool _renderNormals;        /**< Enables normal rendering for this model */
+    bool _isShadowCaster;       /**< Indicates if this model is a shadow caster */
+    bool _renderBoundingSphere; /**< Flag to enable model bounding sphere rendering */
+    bool _renderAABB;           /**< Flag to enable model AABB rendering */
+    bool _renderOOBB;           /**< Flag to enable model OOBB rendering */
 
     LightingShader *_lightingShader; /** Lighting shader used to render this model */
 };

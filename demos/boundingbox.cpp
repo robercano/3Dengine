@@ -16,6 +16,7 @@
 #include "ToonLightingShader.hpp"
 #include "ToonRenderTarget.hpp"
 #include "Logging.hpp"
+#include "Scene.hpp"
 
 using namespace Logging;
 
@@ -34,28 +35,10 @@ class ShadowsDemo : public GameHandler
         _angle = 0.0f;
         _key1Pressed = false;
         _enableMovement = true;
-        _enableSphere = true;
-        _enableAABB = true;
-        _enableOOBB = true;
     }
 
     bool handleInit(Game *game)
     {
-        _sun = new DirectLight(glm::vec3(1.4f, 1.4f, 1.4f), glm::vec3(1.4f, 1.4f, 1.4f), glm::vec3(1.4f, 1.4f, 0.f),
-                               glm::vec3(-200.0f, 200.0f, -150.0f));
-
-        game->getWindowManager()->getWindowSize(&_width, &_height);
-
-        /* Setup the normal render target for the shadow mapping */
-        _renderTargetNormal = NOAARenderTarget::New();
-        if (_renderTargetNormal == NULL) {
-            log("ERROR allocating normal render target\n");
-            return false;
-        }
-
-        _renderTargetNormal->init(_width, _height);
-        _renderTargetNormal->setClearColor(0.0, 0.0, 0.0, 1.0);
-
         /* Register the key and mouse listener */
         std::vector<uint32_t> keys;  // The keys should be read from a config file
 
@@ -74,47 +57,62 @@ class ShadowsDemo : public GameHandler
         game->getWindowManager()->getKeyManager()->registerListener(_inputManager, keys);
         game->getWindowManager()->getMouseManager()->registerListener(_inputManager);
 
+        /* Get the window size */
+        game->getWindowManager()->getWindowSize(&_width, &_height);
+
+        _scene.add("DL_light1", new DirectLight(glm::vec3(1.4f, 1.4f, 1.4f), glm::vec3(1.4f, 1.4f, 1.4f), glm::vec3(1.4f, 1.4f, 0.f),
+                               glm::vec3(-200.0f, 200.0f, -150.0f)));
+        /* TODO: Hack to properly calculate direct light frustum */
+        _scene.getDirectLight("DL_light1")->setPosition(glm::vec3(245.0f, 300.0f, 170.0f));
+        _scene.getDirectLight("DL_light1")->setProjection((float)_width / 4.0f, (float)_height / 4.0f, 0.1f, 1000.0f);
+        _scene.getDirectLight("DL_light1")->getShadowMap()->init(_width, _height);
+
+        /* Setup the normal render target for the shadow mapping */
+        _scene.add("RT_noaa", NOAARenderTarget::New());
+        _scene.getRenderTarget("RT_noaa")->init(_width, _height);
+        _scene.getRenderTarget("RT_noaa")->setClearColor(0.0, 0.0, 0.0, 1.0);
+
         /* Create a Blinn-phong shader for the geometry */
-        _shaderBlinnLight = BlinnPhongShader::New();
-        if (_shaderBlinnLight->init() == false) {
+        BlinnPhongShader *shaderBlinnLight = BlinnPhongShader::New();
+        if (shaderBlinnLight->init() == false) {
             log("ERROR initializing toon lighting shader\n");
-            return false;
-        }
-        _shaderShadow = NormalShadowMapShader::New();
-        if (_shaderShadow->init() == false) {
-            log("ERROR initializing shadow map shader\n");
             return false;
         }
 
         /* Load the geometry */
-        _model1 = game->getRenderer()->loadModelOBJ("data/objects/daxter");
-        _model1->setScaleFactor(glm::vec3(50.0f, 50.0f, 50.0f));
-        _model1->setPosition(glm::vec3(100.0f, 0.0f, 0.0f));
+        _scene.add("M3D_daxter", game->getRenderer()->loadModelOBJ("data/objects/daxter"));
+        _scene.getModel("M3D_daxter")->setScaleFactor(glm::vec3(50.0f, 50.0f, 50.0f));
+        _scene.getModel("M3D_daxter")->setPosition(glm::vec3(100.0f, 0.0f, 0.0f));
+        _scene.getModel("M3D_daxter")->setLightingShader(shaderBlinnLight);
 
-        _model2 = game->getRenderer()->loadModelOBJ("data/objects/deadpool");
-        _model2->setScaleFactor(glm::vec3(50.0f, 50.0f, 50.0f));
-        _model2->setPosition(glm::vec3(100.0f, 0.0f, 0.0f));
+        _scene.add("M3D_deadpool1", game->getRenderer()->loadModelOBJ("data/objects/deadpool"));
+        _scene.getModel("M3D_deadpool1")->setScaleFactor(glm::vec3(50.0f, 50.0f, 50.0f));
+        _scene.getModel("M3D_deadpool1")->setPosition(glm::vec3(100.0f, 0.0f, 0.0f));
+        _scene.getModel("M3D_deadpool1")->setLightingShader(shaderBlinnLight);
 
-        _model3 = game->getRenderer()->loadModelOBJ("data/objects/deadpool");
-        _model3->setScaleFactor(glm::vec3(50.0f, 50.0f, 50.0f));
-        _model3->setPosition(glm::vec3(100.0f, 0.0f, 0.0f));
+        _scene.add("M3D_deadpool2", game->getRenderer()->loadModelOBJ("data/objects/deadpool"));
+        _scene.getModel("M3D_deadpool2")->setScaleFactor(glm::vec3(50.0f, 50.0f, 50.0f));
+        _scene.getModel("M3D_deadpool2")->setPosition(glm::vec3(100.0f, 0.0f, 0.0f));
+        _scene.getModel("M3D_deadpool2")->setLightingShader(shaderBlinnLight);
 
         /* Use a plane for the floor */
         Procedural::Plane plane;
 
-        _plane = game->getRenderer()->prepareModel(plane);
-        _plane->setScaleFactor(glm::vec3(500.0f, 1.0f, 500.0f));
-        _plane->setPosition(glm::vec3(0.0f, -70.0f, 0.0f));
+        _scene.add("M3D_plane", game->getRenderer()->prepareModel(plane));
+        _scene.getModel("M3D_plane")->setScaleFactor(glm::vec3(500.0f, 1.0f, 500.0f));
+        _scene.getModel("M3D_plane")->setPosition(glm::vec3(0.0f, -70.0f, 0.0f));
+        _scene.getModel("M3D_plane")->setLightingShader(shaderBlinnLight);
+        _scene.getModel("M3D_plane")->setShadowCaster(false);
 
         /* Create the game camera */
-        _camera.setProjection((float)_width, (float)_height, 0.1f, 1000.0f, 45.0f);
+        _scene.add("C_camera", new Camera());
+        _scene.getCamera("C_camera")->setProjection((float)_width, (float)_height, 0.1f, 1000.0f, 45.0f);
+
         _cameraMotion.setPosition(glm::vec3(150.0f, 100.0f, 150.0f));
         _cameraMotion.rotateYaw(-45.0f);
 
-        /* TODO: Hack to properly calculate direct light frustum */
-        _sun->setPosition(glm::vec3(245.0f, 300.0f, 170.0f));
-        _sun->setProjection((float)_width / 4.0f, (float)_height / 4.0f, 0.1f, 1000.0f);
-        _sun->getShadowMap()->init(_width, _height);
+        game->getRenderer()->setRenderBoundingVolumes(true);
+
         return true;
     }
 
@@ -144,15 +142,15 @@ class ShadowsDemo : public GameHandler
         }
         _key1Pressed = _inputManager._keys['1'];
         if (_inputManager._keys['2'] && _key2Pressed == false) {
-            _enableSphere = !_enableSphere;
+            game->getRenderer()->setRenderBoundingSphere(!game->getRenderer()->getRenderBoundingSphere());
         }
         _key2Pressed = _inputManager._keys['2'];
         if (_inputManager._keys['3'] && _key3Pressed == false) {
-            _enableAABB = !_enableAABB;
+            game->getRenderer()->setRenderAABB(!game->getRenderer()->getRenderAABB());
         }
         _key3Pressed = _inputManager._keys['3'];
         if (_inputManager._keys['4'] && _key4Pressed == false) {
-            _enableOOBB = !_enableOOBB;
+            game->getRenderer()->setRenderOOBB(!game->getRenderer()->getRenderOOBB());
         }
         _key4Pressed = _inputManager._keys['4'];
 
@@ -185,16 +183,16 @@ class ShadowsDemo : public GameHandler
             }
 
             glm::quat orientation = glm::quat(glm::vec3(0.0f, _angle, 0.0f));
-            _model1->setOrientation(glm::toMat4(orientation));
-            _model1->setPosition(glm::vec3(150.0f + 50.0f*glm::cos(_angle), 0.0, 50.0f*glm::sin(_angle)));
+            _scene.getModel("M3D_daxter")->setOrientation(glm::toMat4(orientation));
+            _scene.getModel("M3D_daxter")->setPosition(glm::vec3(150.0f + 50.0f*glm::cos(_angle), 0.0, 50.0f*glm::sin(_angle)));
 
             orientation = glm::quat(glm::vec3(0.0f, -_angle, 0.0f));
-            _model2->setOrientation(glm::toMat4(orientation));
-            _model2->setPosition(glm::vec3(-50.0f + 50.0f*glm::cos(-_angle), 0.0, 50.0f*glm::sin(-_angle)));
+            _scene.getModel("M3D_deadpool1")->setOrientation(glm::toMat4(orientation));
+            _scene.getModel("M3D_deadpool1")->setPosition(glm::vec3(-50.0f + 50.0f*glm::cos(-_angle), 0.0, 50.0f*glm::sin(-_angle)));
 
             orientation = glm::quat(glm::vec3(0.0f, _angle, 0.0f));
-            _model3->setOrientation(glm::toMat4(orientation));
-            _model3->setPosition(glm::vec3(50.0f*glm::cos(_angle), 0.0, 160.0f + 50.0f*glm::sin(_angle)));
+            _scene.getModel("M3D_deadpool2")->setOrientation(glm::toMat4(orientation));
+            _scene.getModel("M3D_deadpool2")->setPosition(glm::vec3(50.0f*glm::cos(_angle), 0.0, 160.0f + 50.0f*glm::sin(_angle)));
         }
 
         return true;
@@ -202,52 +200,25 @@ class ShadowsDemo : public GameHandler
 
     bool handleRender(Game *game)
     {
-        std::vector<PointLight *> _emptyPointLights;
-        std::vector<SpotLight *> _emptySpotLights;
-
         /* Apply the motion to the camera */
-        _cameraMotion.applyTo(_camera);
-        _renderTargetNormal->clear();
+        _cameraMotion.applyTo(*_scene.getCamera("C_camera"));
 
-        /* Render the shadow map for the sun */
-        _sun->lookAt(glm::vec3(0.0f, 0.0f, 0.0f));
-        _sun->getShadowMap()->clear();
-        game->getRenderer()->renderToShadowMap(*_model1, *_sun, *_shaderShadow);
-        game->getRenderer()->renderToShadowMap(*_model2, *_sun, *_shaderShadow);
-        game->getRenderer()->renderToShadowMap(*_model3, *_sun, *_shaderShadow);
-
-        /* Render all objects */
-        game->getRenderer()->renderModel3D(*_model1, _camera, *_shaderBlinnLight, _sun, _emptyPointLights, _emptySpotLights, 0.4f, *_renderTargetNormal);
-        game->getRenderer()->renderModel3D(*_model2, _camera, *_shaderBlinnLight, _sun, _emptyPointLights, _emptySpotLights, 0.4f, *_renderTargetNormal);
-        game->getRenderer()->renderModel3D(*_model3, _camera, *_shaderBlinnLight, _sun, _emptyPointLights, _emptySpotLights, 0.4f, *_renderTargetNormal);
-        game->getRenderer()->renderModel3D(*_plane, _camera, *_shaderBlinnLight, _sun, _emptyPointLights, _emptySpotLights, 0.4f, *_renderTargetNormal);
-
-        game->getRenderer()->renderModelBoundingVolumes(*_model1, _camera, *_renderTargetNormal, _enableSphere, _enableAABB, _enableOOBB);
-        game->getRenderer()->renderModelBoundingVolumes(*_model2, _camera, *_renderTargetNormal, _enableSphere, _enableAABB, _enableOOBB);
-        game->getRenderer()->renderModelBoundingVolumes(*_model3, _camera, *_renderTargetNormal, _enableSphere, _enableAABB, _enableOOBB);
-
-        _renderTargetNormal->blit();
+        game->getRenderer()->renderScene(_scene);
 
         game->getTextConsole()->gprintf("1=Movement %s, 2=Sphere %s, 3=AABB %s, 4=OOBB %s\n",
                 _enableMovement ? "Off" : "On",
-                _enableSphere ? "Off" : "On",
-                _enableAABB ? "Off" : "On",
-                _enableOOBB ? "Off" : "On");
+                game->getRenderer()->getRenderBoundingSphere() ? "Off" : "On",
+                game->getRenderer()->getRenderAABB() ? "Off" : "On",
+                game->getRenderer()->getRenderOOBB() ? "Off" : "On");
         game->getTextConsole()->gprintf("Red=Sphere, Green=AABB, Blue=OOBB\n");
         return true;
     }
 
   private:
-    Camera _camera;
     FlyMotion _cameraMotion;
-    Model3D *_model1, *_model2, *_model3;
-    Model3D *_plane;
-    BlinnPhongShader *_shaderBlinnLight;
-    NormalShadowMapShader *_shaderShadow;
-    NOAARenderTarget *_renderTargetNormal;
-    DirectLight *_sun;
     InputManager _inputManager;
     std::string _current;
+    Scene _scene;
 
     float _MouseSensibility;
     float _KeyboardSensibility;
@@ -259,7 +230,6 @@ class ShadowsDemo : public GameHandler
     float _angle;
     bool _key1Pressed, _key2Pressed, _key3Pressed, _key4Pressed;
     bool _enableMovement;
-    bool _enableSphere, _enableAABB, _enableOOBB;
 };
 
 int main()

@@ -132,11 +132,9 @@ bool Renderer::renderScene(Scene &scene)
                                (*model)->getBoundingSphere().getRadius() * 0.0002);
         }
         /* Render bounding volumes information */
-        if ((*model)->getRenderBoundingVolumes() == true || this->getRenderBoundingVolumes()) {
-            /* TODO: Calculate proper normal size by analyzing all objects in the scene and taking
-             * a proper average */
-            renderModelBoundingVolumes(**model, *scene.getActiveCamera(), *scene.getActiveRenderTarget());
-        }
+        renderModelBoundingVolumes(**model, *scene.getActiveCamera(), *scene.getActiveRenderTarget(),
+                                   (*model)->getRenderBoundingSphere() || this->getRenderBoundingSphere(),
+                                   (*model)->getRenderAABB() || this->getRenderAABB(), (*model)->getRenderOOBB() || this->getRenderOOBB());
     }
 
     /* Render the required light markers */
