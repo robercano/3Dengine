@@ -6,6 +6,7 @@
 #include "Game.hpp"
 #include "OpenGL.h"
 #include "PointLight.hpp"
+#include "Scene.hpp"
 
 #define PI 3.14159265358979323846
 
@@ -23,32 +24,6 @@ class AntiaAliasingDemo : public GameHandler
 
     bool handleInit(Game *game)
     {
-        PointLight *light1 = new PointLight(glm::vec3(5.0, 5.0, 5.0), glm::vec3(5.0, 5.0, 5.0), glm::vec3(5.0, 5.0, 5.0),
-                                            glm::vec3(50.0, 100.0, 50.0), 0.0000099999f, 1000.0f);
-        PointLight *light2 = new PointLight(glm::vec3(5.0, 3.0, 3.0), glm::vec3(5.0, 3.0, 3.0), glm::vec3(5.0, 3.0, 3.0),
-                                            glm::vec3(-50.0, 100.0, 50.0), 0.0000099999f, 1000.0f);
-        PointLight *light3 = new PointLight(glm::vec3(1.0, 1.0, 3.0), glm::vec3(1.0, 1.0, 3.0), glm::vec3(1.0, 1.0, 3.0),
-                                            glm::vec3(50.0, 200.0, 100.0), 0.0000099999f, 1000.0f);
-
-        light1->getShadowMap()->init(1, 1);
-        light2->getShadowMap()->init(1, 1);
-        light3->getShadowMap()->init(1, 1);
-
-        _lights.push_back(light1);
-        _lights.push_back(light2);
-        _lights.push_back(light3);
-
-        game->getWindowManager()->getWindowSize(&_width, &_height);
-
-        /* Create a render target to allow post-processing */
-        _renderTargetFXAA2 = FXAA2RenderTarget::New();
-        if (_renderTargetFXAA2 == NULL) {
-            fprintf(stderr, "ERROR allocating render target\n");
-            return false;
-        }
-
-        _renderTargetFXAA2->init(_width, _height);
-
         /* Register the key and mouse listener */
         std::vector<uint32_t> keys;  // The keys should be read from a config file
 
@@ -64,22 +39,44 @@ class AntiaAliasingDemo : public GameHandler
         keys.push_back('5');
         keys.push_back(GLFW_KEY_ESCAPE);
 
+        /* Get the window size */
+        game->getWindowManager()->getWindowSize(&_width, &_height);
+
         game->getWindowManager()->getKeyManager()->registerListener(_inputManager, keys);
         game->getWindowManager()->getMouseManager()->registerListener(_inputManager);
 
+        /* Add some lights */
+        _scene.add("PL_light1", new PointLight(glm::vec3(5.0, 5.0, 5.0), glm::vec3(5.0, 5.0, 5.0), glm::vec3(5.0, 5.0, 5.0),
+                                            glm::vec3(50.0, 100.0, 50.0), 0.0000099999f, 1000.0f));
+        _scene.add("PL_light2", new PointLight(glm::vec3(5.0, 3.0, 3.0), glm::vec3(5.0, 3.0, 3.0), glm::vec3(5.0, 3.0, 3.0),
+                                            glm::vec3(-50.0, 100.0, 50.0), 0.0000099999f, 1000.0f));
+        _scene.add("PL_light3", new PointLight(glm::vec3(1.0, 1.0, 3.0), glm::vec3(1.0, 1.0, 3.0), glm::vec3(1.0, 1.0, 3.0),
+                                            glm::vec3(50.0, 200.0, 100.0), 0.0000099999f, 1000.0f));
+
+        _scene.getPointLight("PL_light1")->getShadowMap()->init(1, 1);
+        _scene.getPointLight("PL_light2")->getShadowMap()->init(1, 1);
+        _scene.getPointLight("PL_light3")->getShadowMap()->init(1, 1);
+
+        /* Create a render target to allow post-processing */
+        _scene.add("RT_fxaa2", FXAA2RenderTarget::New());
+        _scene.getRenderTarget("RT_fxaa2")->init(_width, _height);
+
         /* Create a Blinn-phong shader for the geometry */
-        _blinnPhongShader = BlinnPhongShader::New();
-        if (_blinnPhongShader->init() == false) {
+        BlinnPhongShader *blinnPhongShader = BlinnPhongShader::New();
+        if (blinnPhongShader->init() == false) {
             printf("ERROR initializing blinn-phong shader\n");
             return false;
         }
 
         /* Load the geometry */
-        _model3D = game->getRenderer()->loadModelOBJ("data/objects/deadpool");
-        _model3D->setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
+        _scene.add("M3D_deadpool", game->getRenderer()->loadModelOBJ("data/objects/deadpool"));
+        _scene.getModel("M3D_deadpool")->setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
+        _scene.getModel("M3D_deadpool")->setLightingShader(blinnPhongShader);
 
         /* Create the game camera */
-        _camera.setProjection((float)_width, (float)_height, 0.1f, 1000.0f, 45.0f);
+        _scene.add("C_camera1", new Camera());
+        _scene.getCamera("C_camera1")->setProjection((float)_width, (float)_height, 0.1f, 1000.0f, 45.0f);
+
         _cameraMotion.setPosition(glm::vec3(150.0f, 100.0f, 150.0f));
         _cameraMotion.rotateYaw(-45.0f);
 
@@ -135,9 +132,9 @@ class AntiaAliasingDemo : public GameHandler
             _angle -= (float)(2 * PI);
         }
 
-        _lights[0]->setPosition(glm::vec3(50.0 * glm::sin(-_angle), 100.0, 50.0 * glm::cos(-_angle)));
-        _lights[1]->setPosition(glm::vec3(-50.0 * glm::sin(_angle), 100.0, 500.0 * glm::cos(_angle)));
-        _lights[2]->setPosition(glm::vec3(100.0 * glm::sin(_angle), 150.0, 100.0 * glm::cos(_angle)));
+        _scene.getPointLight("PL_light1")->setPosition(glm::vec3(50.0 * glm::sin(-_angle), 100.0, 50.0 * glm::cos(-_angle)));
+        _scene.getPointLight("PL_light2")->setPosition(glm::vec3(-50.0 * glm::sin(_angle), 100.0, 500.0 * glm::cos(_angle)));
+        _scene.getPointLight("PL_light3")->setPosition(glm::vec3(100.0 * glm::sin(_angle), 150.0, 100.0 * glm::cos(_angle)));
 
         return true;
     }
@@ -147,25 +144,18 @@ class AntiaAliasingDemo : public GameHandler
         std::vector<SpotLight *> empty;
 
         /* Apply the motion to the camera */
-        _cameraMotion.applyTo(_camera);
+        _cameraMotion.applyTo(*_scene.getCamera("C_camera1"));
 
-        /* Render all objects */
-        _renderTargetFXAA2->clear();
-        game->getRenderer()->renderModel3D(*_model3D, _camera, *_blinnPhongShader, NULL, _lights, empty, 0.0, *_renderTargetFXAA2);
+        /* Render the scene */
+        game->getRenderer()->renderScene(_scene);
 
-        _renderTargetFXAA2->blit(0, 0, _width, _height);
         return true;
     }
 
   private:
-    Camera _camera;
     FlyMotion _cameraMotion;
-    Model3D *_model3D;
-    BlinnPhongShader *_blinnPhongShader;
-    FXAA2RenderTarget *_renderTargetFXAA2;
-    std::string _renderTargetName;
-    std::vector<PointLight *> _lights;
     InputManager _inputManager;
+    Scene _scene;
 
     float _MouseSensibility;
     float _InvertMouse;
