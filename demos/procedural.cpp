@@ -62,12 +62,6 @@ class ProceduralDemo : public GameHandler
         _scene.getRenderTarget("RT_noaa")->init(_width, _height);
         _scene.getRenderTarget("RT_noaa")->setClearColor(135.0f/255.0f, 206.0f/255.0f, 250.0f/255.0f, 1.0);
 
-        /* Setup a point light */
-        //_scene.add("PL_1", new PointLight(glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f),
-        //                                 glm::vec3(-100.0f, 100.0f, 100.0f), 0.00000000001f, 1000000.0f));
-        //_scene.getPointLight("PL_1")->setProjection((float)_width / 4.0f, (float)_height / 4.0f, 0.1f, 10000.0f);
-        //_scene.getPointLight("PL_1")->getShadowMap()->init(_width, _height);
-
         /* Setup the sun */
         _scene.add("Sun", new DirectLight(glm::vec3(64.0/255.0f, 156.0f/255.0f, 255.0f/255.0f) * _sunIntensity,
                                          glm::vec3(1.0f, 1.0f, 1.0f) * _sunIntensity,
@@ -79,11 +73,16 @@ class ProceduralDemo : public GameHandler
 
         /* Create a Blinn-phong shader for the geometry */
         BlinnPhongShader *lightShader = BlinnPhongShader::New();
+        if (lightShader->init() == false) {
+            log("ERROR initializing toon lighting shader\n");
+            return false;
+        }
 
         /* Generate a terrain for the _scene */
         _scene.add("M3D_terrain", game->getRenderer()->prepareModel(Procedural::Terrain(500.0f, 500.0f, 500.0f, 0, glm::vec3(1.0, 0.3f, 0.6f), 200, 200, 5, 0.5)));
         _scene.getModel("M3D_terrain")->setPosition(glm::vec3(0.0f, -100.0f, 0.0f));
         _scene.getModel("M3D_terrain")->setLightingShader(lightShader);
+        _scene.getModel("M3D_terrain")->setShadowCaster(false);
 
         /* 2 bent planes for background */
         _scene.add("M3D_plane1", game->getRenderer()->prepareModel(Procedural::BentPlane(500.0f, 500.0f, glm::vec3(1.0, 0.8f, 0.1f), PI/2.0f, 20, 20)));
@@ -91,11 +90,13 @@ class ProceduralDemo : public GameHandler
         _scene.getModel("M3D_plane1")->rotate(glm::toMat4(glm::quat(glm::vec3(PI/2.0, PI/4.0f, 0.0f))));
         _scene.getModel("M3D_plane1")->setPosition(glm::vec3(-300.0f, 220.0f, -300.0f));
         _scene.getModel("M3D_plane1")->setLightingShader(lightShader);
+        _scene.getModel("M3D_plane1")->setShadowCaster(false);
 
         _scene.add("M3D_plane2", game->getRenderer()->prepareModel(Procedural::BentPlane(500.0f, 500.0f, glm::vec3(0.8, 1.0f, 0.1f), PI, 20, 20)));
         _scene.getModel("M3D_plane2")->setOrientation(glm::toMat4(glm::quat(glm::vec3(PI/2.0, -PI/4.0f, 0.0f))));
         _scene.getModel("M3D_plane2")->setPosition(glm::vec3(300.0f, 220.0f, -300.0f));
         _scene.getModel("M3D_plane2")->setLightingShader(lightShader);
+        _scene.getModel("M3D_plane2")->setShadowCaster(false);
 
         /* A sample triangle */
         _scene.add("M3D_triangle", game->getRenderer()->prepareModel(Procedural::Triangle(glm::vec3(-100.0f, 10.0f, 130.0f),

@@ -58,7 +58,9 @@ bool Renderer::renderScene(Scene &scene)
 
         /* Render the shadow maps for all models */
         for (std::vector<Model3D *>::iterator model = scene.getModels().begin(); model != scene.getModels().end(); ++model) {
-            renderToShadowMap(**model, **pointLight, *_shaderShadow);
+            if ((*model)->isShadowCaster()) {
+                renderToShadowMap(**model, **pointLight, *_shaderShadow);
+            }
         }
 
         /* Check if we need to render this light billboard */
@@ -77,7 +79,9 @@ bool Renderer::renderScene(Scene &scene)
 
         /* Render the shadow maps for all models */
         for (std::vector<Model3D *>::iterator model = scene.getModels().begin(); model != scene.getModels().end(); ++model) {
-            renderToShadowMap(**model, *sun, *_shaderShadow);
+            if ((*model)->isShadowCaster()) {
+                renderToShadowMap(**model, *sun, *_shaderShadow);
+            }
         }
     }
 
@@ -90,7 +94,9 @@ bool Renderer::renderScene(Scene &scene)
 
         /* Render the shadow maps for all models */
         for (std::vector<Model3D *>::iterator model = scene.getModels().begin(); model != scene.getModels().end(); ++model) {
-            renderToShadowMap(**model, **spotLight, *_shaderShadow);
+            if ((*model)->isShadowCaster()) {
+                renderToShadowMap(**model, **spotLight, *_shaderShadow);
+            }
         }
 
         /* Check if we need to render this light billboard */

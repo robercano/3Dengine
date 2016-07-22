@@ -21,7 +21,7 @@ class Light : public Projection, public Object3D
     /* TODO: add comments */
     Light(const glm::vec3 &ambient = glm::vec3(0.0f, 0.0f, 0.0f), const glm::vec3 &diffuse = glm::vec3(0.0f, 0.0f, 0.0f),
           const glm::vec3 &specular = glm::vec3(0.0f, 0.0f, 0.0f), const glm::vec3 &position = glm::vec3(0.0f, 0.0f, 0.0f))
-        : _ambient(ambient), _diffuse(diffuse), _specular(specular)
+        : _ambient(ambient), _diffuse(diffuse), _specular(specular), _shadowMap(NULL), _renderMarker(false)
     {
         _shadowMap = ShadowMapRenderTarget::New();
         setPosition(position);

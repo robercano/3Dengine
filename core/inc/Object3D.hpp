@@ -30,6 +30,7 @@ class Object3D
         , _viewValid(true)
         , _oobbValid(false)
         , _boundingVolumesValid(false)
+        , _renderBoundingVolumes(false)
     {
     }
 
@@ -209,6 +210,12 @@ class Object3D
         return _oobb;
     }
 
+    /**
+     * Debug information
+     */
+    void setRenderBoundingVolumes(bool flag) { _renderBoundingVolumes = flag; }
+    bool getRenderBoundingVolumes(void) { return _renderBoundingVolumes; }
+
   protected:
     /**
      * Calculates the bounding volumes for a Model3D
@@ -267,4 +274,5 @@ class Object3D
     BoundingBox _aabb;              /**< Axis-aligned bounding box containing all model's vertices */
     bool _oobbValid;                /**< Indicates if the cached information for the base OOBB is still valid */
     bool _boundingVolumesValid;     /**< Indicates if the cached information for the OOBB and AABB is still valid */
+    bool _renderBoundingVolumes;    /**< Enables bounding volumes rendering for this model */
 };
