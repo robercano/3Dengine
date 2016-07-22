@@ -228,7 +228,7 @@ int main()
 #if defined(_WIN32)
     game->setWindowSize(800, 600, false);
 #else
-    game->setWindowSize(800, 600, false);
+    game->setWindowSize(2560, 1440, false);
 #endif
     game->setFPS(60);
 
