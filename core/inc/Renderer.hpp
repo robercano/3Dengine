@@ -223,8 +223,19 @@ class Renderer
     bool getWireframeMode() { return _wireframe; }
     void setRenderNormals(bool flag) { _renderNormals = flag; }
     bool getRenderNormals() { return _renderNormals; }
-    void setRenderBoundingVolumes(bool flag) { _renderBoundingVolumes = flag; }
-    bool getRenderBoundingVolumes() { return _renderBoundingVolumes; }
+    void setRenderBoundingVolumes(bool flag)
+    {
+        _renderBoundingSphere = flag;
+        _renderAABB = flag;
+        _renderOOBB = flag;
+    }
+    void setRenderBoundingSphere(bool flag) { _renderBoundingSphere = flag; }
+    void setRenderAABB(bool flag) { _renderAABB = flag; }
+    void setRenderOOBB(bool flag) { _renderOOBB = flag; }
+
+    bool getRenderBoundingSphere() { return _renderBoundingSphere; }
+    bool getRenderAABB() { return _renderAABB; }
+    bool getRenderOOBB() { return _renderOOBB; }
     void setRenderLightsMarkers(bool flag) { _renderLightsMarkers = flag; }
     bool getRenderLightsMarkers() { return _renderLightsMarkers; }
 
@@ -232,14 +243,18 @@ class Renderer
     /**
      * Constructor
      */
-    Renderer() : _shaderShadow(NULL) {}
+    Renderer() : _wireframe(false),_renderNormals(false),
+                 _renderBoundingSphere(false),_renderAABB(false),_renderOOBB(false),
+                 _renderLightsMarkers(false), _shaderShadow(NULL) {}
 
   private:
 
     static Renderer *_renderer;   /**< Singleton instance */
     bool _wireframe;              /**< Enables/disables wireframe rendering */
     bool _renderNormals;          /**< Global flag to enable model normals rendering */
-    bool _renderBoundingVolumes;  /**< Global flag to enable model bounding volumes rendering */
+    bool _renderBoundingSphere;   /**< Global flag to enable model bounding sphere rendering */
+    bool _renderAABB;             /**< Global flag to enable model AABB rendering */
+    bool _renderOOBB;             /**< Global flag to enable model OOBB rendering */
     bool _renderLightsMarkers;    /**< Global flag to enable lights markers rendering */
     NormalShadowMapShader *_shaderShadow; /**< Preloaded shader to render shadow maps */
 };
