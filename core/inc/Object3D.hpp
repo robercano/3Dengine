@@ -31,6 +31,7 @@ class Object3D
         , _oobbValid(false)
         , _boundingVolumesValid(false)
         , _renderBoundingVolumes(false)
+        , _enabled(true)
     {
     }
 
@@ -211,6 +212,16 @@ class Object3D
     }
 
     /**
+     * Enables/disables this object in the pipeline
+     *
+     * When disabled the object is not taken into account during the rendering
+     * process
+     */
+    void enable() { _enabled = true; }
+    void disable() { _enabled = false; }
+    bool isEnabled() { return _enabled; }
+
+    /**
      * Debug information
      */
     void setRenderBoundingVolumes(bool flag) { _renderBoundingVolumes = flag; }
@@ -275,4 +286,5 @@ class Object3D
     bool _oobbValid;                /**< Indicates if the cached information for the base OOBB is still valid */
     bool _boundingVolumesValid;     /**< Indicates if the cached information for the OOBB and AABB is still valid */
     bool _renderBoundingVolumes;    /**< Enables bounding volumes rendering for this model */
+    bool _enabled;                  /**< Indicates if this object is taken into account in the pipeline */
 };

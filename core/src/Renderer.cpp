@@ -52,6 +52,10 @@ bool Renderer::renderScene(Scene &scene)
     /* Render the point lights shadows */
     for (std::vector<PointLight *>::iterator pointLight = scene.getPointLights().begin(); pointLight != scene.getPointLights().end();
          ++pointLight) {
+        if ((*pointLight)->isEnabled() == false) {
+            continue;
+        }
+
         /* TODO: lookAt the center of the calculated bounding box, but for now this is enough */
         (*pointLight)->getShadowMap()->clear();
         (*pointLight)->lookAt(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -70,7 +74,7 @@ bool Renderer::renderScene(Scene &scene)
     }
 
     /* TODO: We only support one direct light for now */
-    if (scene.getDirectLights().size() > 0) {
+    if (scene.getDirectLights().size() > 0 && scene.getDirectLights()[0]->isEnabled()) {
         sun = scene.getDirectLights()[0];
 
         /* TODO: lookAt in this case must be fixed to go along the direct light direction */
@@ -88,6 +92,10 @@ bool Renderer::renderScene(Scene &scene)
     /* Render the spot lights shadows */
     for (std::vector<SpotLight *>::iterator spotLight = scene.getSpotLights().begin(); spotLight != scene.getSpotLights().end();
          ++spotLight) {
+        if ((*spotLight)->isEnabled() == false) {
+            continue;
+        }
+
         /* TODO: lookAt the center of the calculated bounding box, but for * now this is enough */
         (*spotLight)->lookAt(glm::vec3(0.0f, 0.0f, 0.0f));
         (*spotLight)->getShadowMap()->clear();
@@ -113,7 +121,7 @@ bool Renderer::renderScene(Scene &scene)
         }
 
         renderModel3D(**model, *scene.getActiveCamera(), *(*model)->getLightingShader(), sun, scene.getPointLights(), scene.getSpotLights(),
-                      0.0f, /* TODO: calculate the global ambient light */
+                      0.1f, /* TODO: calculate the global ambient light */
                       *scene.getActiveRenderTarget());
 
         /* Render normals information */
