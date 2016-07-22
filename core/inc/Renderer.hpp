@@ -221,6 +221,12 @@ class Renderer
      */
     void setWireframeMode(bool flag) { _wireframe = flag; }
     bool getWireframeMode() { return _wireframe; }
+    void setRenderNormals(bool flag) { _renderNormals = flag; }
+    bool getRenderNormals() { return _renderNormals; }
+    void setRenderBoundingVolumes(bool flag) { _renderBoundingVolumes = flag; }
+    bool getRenderBoundingVolumes() { return _renderBoundingVolumes; }
+    void setRenderLightsMarkers(bool flag) { _renderLightsMarkers = flag; }
+    bool getRenderLightsMarkers() { return _renderLightsMarkers; }
 
   protected:
     /**
@@ -230,7 +236,10 @@ class Renderer
 
   private:
 
-    static Renderer *_renderer; /**< Singleton instance */
-    bool _wireframe; /**< Enables/disables wireframe rendering */
+    static Renderer *_renderer;   /**< Singleton instance */
+    bool _wireframe;              /**< Enables/disables wireframe rendering */
+    bool _renderNormals;          /**< Global flag to enable model normals rendering */
+    bool _renderBoundingVolumes;  /**< Global flag to enable model bounding volumes rendering */
+    bool _renderLightsMarkers;    /**< Global flag to enable lights markers rendering */
     NormalShadowMapShader *_shaderShadow; /**< Preloaded shader to render shadow maps */
 };
