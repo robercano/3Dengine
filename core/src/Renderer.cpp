@@ -40,6 +40,7 @@ bool Renderer::init()
 
 bool Renderer::renderScene(Scene &scene)
 {
+    float avgRadius = 0.0f;
     std::vector<Light *> lightsMarkers;
     DirectLight *sun = NULL;
 
@@ -114,6 +115,7 @@ bool Renderer::renderScene(Scene &scene)
     }
 
     /* Render all objects */
+    avgRadius = 0.0f;
     for (std::vector<Model3D *>::iterator model = scene.getModels().begin(); model != scene.getModels().end(); ++model) {
         if ((*model)->getLightingShader() == NULL) {
             log("ERROR model has no lighting shader associated to it\n");
@@ -124,12 +126,17 @@ bool Renderer::renderScene(Scene &scene)
                       0.1f, /* TODO: calculate the global ambient light */
                       *scene.getActiveRenderTarget());
 
+        avgRadius += (*model)->getBoundingSphere().getRadius() / glm::length((*model)->getScaleFactor());
+    }
+
+    /* Calculate the average radius */
+    avgRadius /= scene.getModels().size();
+
+    /* Render the required debug info */
+    for (std::vector<Model3D *>::iterator model = scene.getModels().begin(); model != scene.getModels().end(); ++model) {
         /* Render normals information */
         if ((*model)->getRenderNormals() == true || this->getRenderNormals()) {
-            /* TODO: Calculate proper normal size by analyzing all objects in the scene and taking
-             * a proper average */
-            renderModelNormals(**model, *scene.getActiveCamera(), *scene.getActiveRenderTarget(),
-                               (*model)->getBoundingSphere().getRadius() * 0.0002);
+            renderModelNormals(**model, *scene.getActiveCamera(), *scene.getActiveRenderTarget(), avgRadius * 0.02);
         }
         /* Render bounding volumes information */
         renderModelBoundingVolumes(**model, *scene.getActiveCamera(), *scene.getActiveRenderTarget(),

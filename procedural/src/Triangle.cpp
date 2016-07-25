@@ -11,7 +11,7 @@ using namespace Procedural;
 
 Triangle::Triangle(const glm::vec3 &vertex0, const glm::vec3 &vertex1, const glm::vec3 &vertex2, const glm::vec3 &color) : _color(color)
 {
-    glm::vec3 normal = glm::cross(vertex2 - vertex1, vertex0 - vertex1);
+    glm::vec3 normal = glm::normalize(glm::cross(vertex2 - vertex1, vertex0 - vertex1));
 
     _modelData.resize(3);
     _modelData[0].vertex = vertex0;

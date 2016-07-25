@@ -53,8 +53,6 @@ Terrain::Terrain(float width, float depth, float height, uint32_t slice, const g
     for (uint32_t i = 0; i < numVertsWidth; ++i) {
         for (uint32_t j = 0; j < numVertsDepth; ++j) {
             data[nData++].vertex.y -= minHeight;
-
-            /* TODO: Recalculate the normals */
         }
     }
 

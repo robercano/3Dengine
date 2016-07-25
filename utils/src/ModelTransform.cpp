@@ -113,6 +113,6 @@ void ModelTransform::RecalculateNormals(Model3D &model)
 
         /* Divide by the number of normals in the average and set it to
          * the right vertex */
-        model._modelData[it->first].normal = normal / (float)it->second.size();
+        model._modelData[it->first].normal = glm::normalize(normal);
     }
 }
