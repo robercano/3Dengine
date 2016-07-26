@@ -9,6 +9,7 @@
 
 #include <vector>
 #include "Renderer.hpp"
+#include "OpenGLShader.hpp"
 
 class OpenGLRenderer : public Renderer
 {
@@ -53,4 +54,24 @@ class OpenGLRenderer : public Renderer
      * Dummy texture for some GLSL 3.30 workaround
      */
     unsigned int _dummyTexture;
+
+    /**
+     * Shader to render light billboards
+     */
+    OpenGLShader _renderLightShader;
+
+    /**
+     * Shader to render bounding volumes
+     */
+    OpenGLShader _renderBoundingBox;
+
+    /**
+     * Shader to render bounding spheres
+     */
+    OpenGLShader _renderBoundingSphere;
+
+    /**
+     * Shader to render model normals
+     */
+    OpenGLShader _renderNormals;
 };

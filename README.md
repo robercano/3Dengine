@@ -55,8 +55,10 @@ TODO
 * Simple shader demo effect for render targets (waves)
 * Dynamic lights support: point light, spot light and direct light
 * Shadow map support for all dynamic lights
-* Visual debug info: lights, normals, wireframe and bounding boxes
+* Visual debug info: lights, normals, wireframe and bounding volumes
 * Common game loop with input, time and screen management
+* Scene management, now all elements are added to scene class and passed to renderer
+* Procedural generation: Plane, bent plane, cylinder, torus, sphere, triangle and terrain (using Perlin noise)
 
 # Current set of demos
 * Anti-aliasing methods showcase demo (FXAA, FXAA2, MSAA and SSAA)
@@ -65,14 +67,17 @@ TODO
 * Toon shader demo
 * Shadow maps demos with direct light, point light and spot light
 * Bounding box demo with OBB, AABB and Bounding Sphere
+* Debug info demo showing wireframe, normals, bounding volumes and lights billboards
+* Procedural generation demo using all supported models
 
 ## In the pipeline
-* Scene support so user can define a scene and rendering happens automatically from the camera view
+* Support for vieports when rendering a scene
+* Geometry culling using bounding volumes
 * Automatic shadow map frustum calculation for shadow map rendering
 * Cascade shadow maps
 * Ambient occlusion
 * Mipmaps support
-* OBJ object importer tool: it converts from OBJ to custom binary format for the engine
+* Facility to save in-memory models to disk and load them back
 * Bump-mapping
 * Portals implementation
 * More shaders effects like bloom effect

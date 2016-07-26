@@ -11,12 +11,13 @@
 #include "OpenGLLightingShader.hpp"
 #include "OpenGLModel3D.hpp"
 #include "OpenGLRenderer.hpp"
-#include "OpenGLShader.hpp"
 
 using namespace Logging;
 
 bool OpenGLRenderer::init()
 {
+    std::string error;
+
     __(glClearColor(0.0, 0.0, 0.0, 1.0));
     __(glEnable(GL_DEPTH_TEST));
     __(glEnable(GL_CULL_FACE));
@@ -53,6 +54,29 @@ bool OpenGLRenderer::init()
         __(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
     }
     __(glBindTexture(GL_TEXTURE_2D, 0));
+
+    /* Create the shader to render light debug billboard */
+    if (_renderLightShader.use("utils/render_light", error) != true) {
+        log("ERROR loading utils/render_light shader: %s\n", error.c_str());
+        return false;
+    }
+
+    /* Create the shader to render bounding boxes information */
+    if (_renderBoundingBox.use("utils/render_boundingbox", error) != true) {
+        log("ERROR loading utils/render_boundingbox shader: %s\n", error.c_str());
+        return false;
+    }
+
+    /* Create the shader to render bounding spheres information */
+    if (_renderBoundingSphere.use("utils/render_boundingsphere", error) != true) {
+        log("ERROR loading utils/render_boundingsphere shader: %s\n", error.c_str());
+        return false;
+    }
+
+    if (_renderNormals.use("utils/render_normals", error) != true) {
+        log("ERROR loading utils/render_normals shader: %s\n", error.c_str());
+        return false;
+    }
 
     /* Call parent to initialize some members related to scene rendering */
     return Renderer::init();
@@ -321,15 +345,6 @@ bool OpenGLRenderer::renderLight(Light &light, Camera &camera, RenderTarget &ren
 {
     glm::vec3 ambient = (light.getAmbient() + light.getDiffuse() + light.getSpecular()) / 3.0f;
 
-    /* TODO: Create this in the renderer so it does not have to be created every time */
-    Shader *shader = Shader::New();
-
-    std::string error;
-    if (shader->use("utils/render_light", error) != true) {
-        log("ERROR loading utils/render_light shader: %s\n", error.c_str());
-        return false;
-    }
-
     /* Calculate MVP matrix */
     glm::mat4 MV = camera.getViewMatrix() * light.getModelMatrix();
     glm::mat4 P = camera.getPerspectiveMatrix();
@@ -346,13 +361,13 @@ bool OpenGLRenderer::renderLight(Light &light, Camera &camera, RenderTarget &ren
         GLuint lightPosVAO, lightPosVBO;
 
         /* Bind program to upload the uniform */
-        shader->attach();
+        _renderLightShader.attach();
 
         /* Send our transformation to the currently bound shader, in the "MVP" uniform */
-        shader->setUniformMat4("u_MVMatrix", &MV);
-        shader->setUniformMat4("u_PMatrix", &P);
-        shader->setUniformVec3("u_lightColor", ambient);
-        shader->setUniformUint("u_lightNumber", lightNumber);
+        _renderLightShader.setUniformMat4("u_MVMatrix", &MV);
+        _renderLightShader.setUniformMat4("u_PMatrix", &P);
+        _renderLightShader.setUniformVec3("u_lightColor", ambient);
+        _renderLightShader.setUniformUint("u_lightNumber", lightNumber);
 
         __(glGenVertexArrays(1, &lightPosVAO));
         __(glBindVertexArray(lightPosVAO));
@@ -373,11 +388,9 @@ bool OpenGLRenderer::renderLight(Light &light, Camera &camera, RenderTarget &ren
         __(glDeleteVertexArrays(1, &lightPosVAO));
 
         /* Unbind */
-        shader->detach();
+        _renderLightShader.detach();
     }
     renderTarget.unbind();
-
-    Shader::Delete(shader);
 
     return true;
 }
@@ -408,15 +421,6 @@ bool OpenGLRenderer::renderLights(std::vector<Light *> &lights, Camera &camera, 
 bool OpenGLRenderer::renderBoundingBox(const BoundingBox &box, const glm::mat4 &modelMatrix, const glm::vec3 &color, Camera &camera,
                                        RenderTarget &renderTarget)
 {
-    /* TODO: Create this in the renderer so it does not have to be created every time */
-    Shader *shader = Shader::New();
-
-    std::string error;
-    if (shader->use("utils/render_boundingbox", error) != true) {
-        log("ERROR loading utils/render_boundingbox shader: %s\n", error.c_str());
-        return false;
-    }
-
     /* Generate the box lines */
     GLfloat boxFaces[] = {
         /* First face */
@@ -449,11 +453,11 @@ bool OpenGLRenderer::renderBoundingBox(const BoundingBox &box, const glm::mat4 &
         GLuint boxPosVAO, boxPosVBO;
 
         /* Bind program to upload the uniform */
-        shader->attach();
+        _renderBoundingBox.attach();
 
-        /* Send our transformation to the currently bound shader, in the "MVP" uniform */
-        shader->setUniformMat4("u_MVPMatrix", &MVP);
-        shader->setUniformVec3("u_boxColor", const_cast<glm::vec3 &>(color));
+        /* Send our transformation to the currently bound _renderBoundingBox, in the "MVP" uniform */
+        _renderBoundingBox.setUniformMat4("u_MVPMatrix", &MVP);
+        _renderBoundingBox.setUniformVec3("u_boxColor", const_cast<glm::vec3 &>(color));
 
         __(glGenVertexArrays(1, &boxPosVAO));
         __(glBindVertexArray(boxPosVAO));
@@ -481,11 +485,9 @@ bool OpenGLRenderer::renderBoundingBox(const BoundingBox &box, const glm::mat4 &
         __(glDeleteVertexArrays(1, &boxPosVAO));
 
         /* Unbind */
-        shader->detach();
+        _renderBoundingBox.detach();
     }
     renderTarget.unbind();
-
-    Shader::Delete(shader);
 
     return true;
 }
@@ -493,15 +495,6 @@ bool OpenGLRenderer::renderBoundingBox(const BoundingBox &box, const glm::mat4 &
 bool OpenGLRenderer::renderBoundingSphere(const BoundingSphere &sphere, const glm::vec3 &center, const glm::vec3 &color, Camera &camera,
                                           RenderTarget &renderTarget)
 {
-    /* TODO: Create this in the renderer so it does not have to be created every time */
-    Shader *shader = Shader::New();
-
-    std::string error;
-    if (shader->use("utils/render_boundingsphere", error) != true) {
-        log("ERROR loading utils/render_boundingsphere shader: %s\n", error.c_str());
-        return false;
-    }
-
     /* Calculate MVP matrix, bounding box coordinates are already in world coordinates */
     glm::mat4 MVP = camera.getPerspectiveMatrix() * camera.getViewMatrix();
 
@@ -516,13 +509,13 @@ bool OpenGLRenderer::renderBoundingSphere(const BoundingSphere &sphere, const gl
         //__(glEnable(GL_CULL_FACE));
 
         /* Bind program to upload the uniform */
-        shader->attach();
+        _renderBoundingSphere.attach();
 
-        /* Send our transformation to the currently bound shader, in the "MVP" uniform */
-        shader->setUniformMat4("u_MVPMatrix", &MVP);
-        shader->setUniformMat4("u_projectionMatrix", &camera.getPerspectiveMatrix());
-        shader->setUniformVec3("u_boxColor", const_cast<glm::vec3 &>(color));
-        shader->setUniformFloat("u_radius", sphere.getRadius());
+        /* Send our transformation to the currently bound _renderBoundingSpheres, in the "MVP" uniform */
+        _renderBoundingSphere.setUniformMat4("u_MVPMatrix", &MVP);
+        _renderBoundingSphere.setUniformMat4("u_projectionMatrix", &camera.getPerspectiveMatrix());
+        _renderBoundingSphere.setUniformVec3("u_boxColor", const_cast<glm::vec3 &>(color));
+        _renderBoundingSphere.setUniformFloat("u_radius", sphere.getRadius());
 
         __(glGenVertexArrays(1, &boxPosVAO));
         __(glBindVertexArray(boxPosVAO));
@@ -534,8 +527,8 @@ bool OpenGLRenderer::renderBoundingSphere(const BoundingSphere &sphere, const gl
         __(glBufferData(GL_ARRAY_BUFFER, sizeof center, &center[0], GL_STATIC_DRAW));
 
         __(glEnableVertexAttribArray(0));
-        __(glVertexAttribPointer(0,         // attribute. No particular reason for 0, but must match the layout in the shader.
-                                 3,         // size
+        __(glVertexAttribPointer(0,  // attribute. No particular reason for 0, but must match the layout in the _renderBoundingSpheres.
+                                 3,  // size
                                  GL_FLOAT,  // type
                                  GL_FALSE,  // normalized?
                                  0,         // stride
@@ -550,11 +543,9 @@ bool OpenGLRenderer::renderBoundingSphere(const BoundingSphere &sphere, const gl
         __(glDeleteVertexArrays(1, &boxPosVAO));
 
         /* Unbind */
-        shader->detach();
+        _renderBoundingSphere.detach();
     }
     renderTarget.unbind();
-
-    Shader::Delete(shader);
 
     return true;
 }
@@ -583,15 +574,6 @@ bool OpenGLRenderer::renderModelBoundingVolumes(Model3D &model, Camera &camera, 
 
 bool OpenGLRenderer::renderModelNormals(Model3D &model3D, Camera &camera, RenderTarget &renderTarget, float normalSize)
 {
-    /* TODO: Create this in the renderer so it does not have to be created every time */
-    Shader *shader = Shader::New();
-
-    std::string error;
-    if (shader->use("utils/render_normals", error) != true) {
-        log("ERROR loading utils/render_normals shader: %s\n", error.c_str());
-        return false;
-    }
-
     /* Calculate MVP matrix */
     glm::mat4 MVP = camera.getPerspectiveMatrix() * camera.getViewMatrix() * model3D.getModelMatrix();
 
@@ -605,10 +587,10 @@ bool OpenGLRenderer::renderModelNormals(Model3D &model3D, Camera &camera, Render
     renderTarget.bind();
     {
         /* Bind program to upload the uniform */
-        shader->attach();
+        _renderNormals.attach();
 
-        shader->setUniformMat4("u_MVPMatrix", &MVP);
-        shader->setUniformFloat("u_normalSize", normalSize);
+        _renderNormals.setUniformMat4("u_MVPMatrix", &MVP);
+        _renderNormals.setUniformFloat("u_normalSize", normalSize);
 
         /* Draw the model */
         __(glBindVertexArray(glObject.getVertexArrayID()));
@@ -623,11 +605,9 @@ bool OpenGLRenderer::renderModelNormals(Model3D &model3D, Camera &camera, Render
         __(glBindVertexArray(0));
 
         /* Unbind */
-        shader->detach();
+        _renderNormals.detach();
     }
     renderTarget.unbind();
-
-    Shader::Delete(shader);
 
     return true;
 }

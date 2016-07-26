@@ -83,7 +83,7 @@ void Procedural::AppendBentPlane(Model3D &model, float width, float height, floa
         }
 
         if (angleHeight != 0.0f) {
-            offset = glm::vec3(0.0f, sin(vertexAngleHeight), -cos(vertexAngleHeight));
+            offset = glm::vec3(0.0f, glm::sin(vertexAngleHeight), -glm::cos(vertexAngleHeight));
         } else if (angleRadius != 0.0f) {
             offset = glm::vec3(0.0f, 0.0f, -glm::cos(vertexAngleRadius));
         } else {
