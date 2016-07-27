@@ -60,6 +60,9 @@ class ShadowsDemo : public GameHandler
         /* Get the window size */
         game->getWindowManager()->getWindowSize(&_width, &_height);
 
+        /* Create the viewport */
+        _viewport = new Viewport(0, 0, _width, _height);
+
         _scene.add("DL_light1", new DirectLight(glm::vec3(1.4f, 1.4f, 1.4f), glm::vec3(1.4f, 1.4f, 1.4f), glm::vec3(1.4f, 1.4f, 0.f),
                                glm::vec3(-200.0f, 200.0f, -150.0f)));
         /* TODO: Hack to properly calculate direct light frustum */
@@ -203,7 +206,7 @@ class ShadowsDemo : public GameHandler
         /* Apply the motion to the camera */
         _cameraMotion.applyTo(*_scene.getCamera("C_camera"));
 
-        game->getRenderer()->renderScene(_scene);
+        game->getRenderer()->renderScene(_scene, *_viewport);
 
         game->getTextConsole()->gprintf("1=Movement %s, 2=Sphere %s, 3=AABB %s, 4=OOBB %s\n",
                 _enableMovement ? "Off" : "On",
@@ -230,6 +233,7 @@ class ShadowsDemo : public GameHandler
     float _angle;
     bool _key1Pressed, _key2Pressed, _key3Pressed, _key4Pressed;
     bool _enableMovement;
+    Viewport *_viewport;
 };
 
 int main()
