@@ -24,7 +24,7 @@ Cylinder::Cylinder(float radius, float height, const glm::vec3 &color, uint32_t 
 
     /* Body */
     Model3D body;
-    AppendBentPlane(body, 2.0f * PI * _radius, _height, 2.0 * PI, 0.0f, 0.0f, _numVertsCap + 1, _numVertsHeight);
+    AppendBentPlane(body, (float)(2.0f * PI * _radius), _height, (float)(2.0 * PI), 0.0f, 0.0f, _numVertsCap + 1, _numVertsHeight);
 
     ModelTransform::Translate(body, glm::vec3(0.0f, -_radius, 0.0f));
     ModelTransform::Rotate(body, glm::vec3(-PI / 2.0f, 0.0f, 0.0f));

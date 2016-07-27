@@ -88,14 +88,14 @@ class ProceduralDemo : public GameHandler
         _scene.getModel("M3D_terrain")->setShadowCaster(false);
 
         /* 2 bent planes for background */
-        _scene.add("M3D_plane1", game->getRenderer()->prepareModel(Procedural::BentPlane(500.0f, 500.0f, glm::vec3(1.0, 0.8f, 0.1f), PI/2.0f, 20, 20)));
+        _scene.add("M3D_plane1", game->getRenderer()->prepareModel(Procedural::BentPlane(500.0f, 500.0f, glm::vec3(1.0, 0.8f, 0.1f), (float)(PI/2.0f), 20, 20)));
         _scene.getModel("M3D_plane1")->setOrientation(glm::toMat4(glm::quat(glm::vec3(0.0f, PI/2.0f, 0.0f))));
         _scene.getModel("M3D_plane1")->rotate(glm::toMat4(glm::quat(glm::vec3(PI/2.0, PI/4.0f, 0.0f))));
         _scene.getModel("M3D_plane1")->setPosition(glm::vec3(-300.0f, 220.0f, -300.0f));
         _scene.getModel("M3D_plane1")->setLightingShader(lightShader);
         _scene.getModel("M3D_plane1")->setShadowCaster(false);
 
-        _scene.add("M3D_plane2", game->getRenderer()->prepareModel(Procedural::BentPlane(500.0f, 500.0f, glm::vec3(0.8, 1.0f, 0.1f), PI, 20, 20)));
+        _scene.add("M3D_plane2", game->getRenderer()->prepareModel(Procedural::BentPlane(500.0f, 500.0f, glm::vec3(0.8, 1.0f, 0.1f), (float)PI, 20, 20)));
         _scene.getModel("M3D_plane2")->setOrientation(glm::toMat4(glm::quat(glm::vec3(PI/2.0, -PI/4.0f, 0.0f))));
         _scene.getModel("M3D_plane2")->setPosition(glm::vec3(300.0f, 220.0f, -300.0f));
         _scene.getModel("M3D_plane2")->setLightingShader(lightShader);
