@@ -57,6 +57,9 @@ class ProceduralDemo : public GameHandler
         /* Get the window size */
         game->getWindowManager()->getWindowSize(&_width, &_height);
 
+        /* Create the viewport */
+        _viewport = new Viewport(0, 0, _width, _height);
+
         /* Setup the normal render target for the shadow mapping */
         _scene.add("RT_noaa", NOAARenderTarget::New());
         _scene.getRenderTarget("RT_noaa")->init(_width, _height);
@@ -194,7 +197,7 @@ class ProceduralDemo : public GameHandler
         /* Apply the motion to the camera */
         _cameraMotion.applyTo(*_scene.getCamera("Camera1"));
 
-        if (game->getRenderer()->renderScene(_scene) != true) {
+        if (game->getRenderer()->renderScene(_scene, *_viewport) != true) {
             log("ERROR rendering scene\n");
             return false;
         }
@@ -214,6 +217,7 @@ class ProceduralDemo : public GameHandler
     float _angle;
     float _sunIntensity;
     uint32_t _width, _height;
+    Viewport *_viewport;
 };
 
 int main()

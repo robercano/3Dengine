@@ -14,10 +14,10 @@
 
 #define PI 3.14159265358979323846
 
-class AntiaAliasingDemo : public GameHandler
+class FxaaComparisonDemo : public GameHandler
 {
   public:
-    AntiaAliasingDemo()
+    FxaaComparisonDemo()
     {
         _MouseSensibility = 10.0;
         _InvertMouse = 1.0;
@@ -27,39 +27,6 @@ class AntiaAliasingDemo : public GameHandler
 
     bool handleInit(Game *game)
     {
-        PointLight *light = new PointLight(glm::vec3(5.0, 5.0, 5.0), glm::vec3(5.0, 5.0, 5.0), glm::vec3(5.0, 5.0, 5.0),
-                                           glm::vec3(50.0, 100.0, 50.0), 0.0000099999f, 1000.0f);
-        light->getShadowMap()->init(1, 1);
-        _lights.push_back(light);
-
-        game->getWindowManager()->getWindowSize(&_width, &_height);
-
-        /* Create a render target to allow post-processing */
-        _renderTargetNOAA = NOAARenderTarget::New();
-        if (_renderTargetNOAA == NULL) {
-            fprintf(stderr, "ERROR allocating render target\n");
-            return false;
-        }
-        _renderTargetFXAA = FXAARenderTarget::New();
-        if (_renderTargetFXAA == NULL) {
-            fprintf(stderr, "ERROR allocating render target\n");
-            return false;
-        }
-        _renderTargetFXAA2 = FXAA2RenderTarget::New();
-        if (_renderTargetFXAA2 == NULL) {
-            fprintf(stderr, "ERROR allocating render target\n");
-            return false;
-        }
-
-        _renderTargetNOAA->init(_width / 2, _height);
-        _renderTargetFXAA->init(_width / 2, _height);
-        _renderTargetFXAA2->init(_width / 2, _height);
-
-        /* Choose the render target here */
-        _selectedTargetLeft = _renderTargetNOAA;
-        _selectedTargetRight = _renderTargetNOAA;
-        _renderTargetName = "NOAA Left / NOAA Right";
-
         /* Register the key and mouse listener */
         std::vector<uint32_t> keys;  // The keys should be read from a config file
 
@@ -75,19 +42,55 @@ class AntiaAliasingDemo : public GameHandler
         game->getWindowManager()->getKeyManager()->registerListener(_inputManager, keys);
         game->getWindowManager()->getMouseManager()->registerListener(_inputManager);
 
+        /* Get the window size */
+        game->getWindowManager()->getWindowSize(&_width, &_height);
+
+        /* Create the viewport */
+        _viewportLeft = new Viewport(0, 0, _width / 2, _height);
+        _viewportRight = new Viewport(_width / 2, 0, _width / 2, _height);
+
+        _scene1.add("RT_noaa", NOAARenderTarget::New());
+        _scene1.add("RT_fxaa", FXAARenderTarget::New());
+
+        _scene2.add("RT_noaa", _scene1.getRenderTarget("RT_noaa"));
+        _scene2.add("RT_fxaa2", FXAA2RenderTarget::New());
+
+        _scene1.getRenderTarget("RT_noaa")->init(_width / 2, _height);
+        _scene1.getRenderTarget("RT_fxaa")->init(_width / 2, _height);
+        _scene2.getRenderTarget("RT_fxaa2")->init(_width / 2, _height);
+
+        /* Add light */
+        _scene1.add("PL_light1", new PointLight(glm::vec3(5.0, 5.0, 5.0), glm::vec3(5.0, 5.0, 5.0), glm::vec3(5.0, 5.0, 5.0),
+                                           glm::vec3(50.0, 100.0, 50.0), 0.0000099999f, 1000.0f));
+        _scene1.getPointLight("PL_light1")->getShadowMap()->init(1, 1);
+
+        _scene2.add("PL_light1", _scene1.getPointLight("PL_light1"));
+
+        /* Choose the render target here */
+        _scene1.setActiveRenderTarget("RT_noaa");
+        _scene2.setActiveRenderTarget("RT_noaa");
+        _renderTargetName = "NOAA Left / NOAA Right";
+
         /* Create a Blinn-phong shader for the geometry */
-        _blinnPhongShader = BlinnPhongShader::New();
-        if (_blinnPhongShader->init() != true) {
+        BlinnPhongShader *blinnPhongShader = BlinnPhongShader::New();
+        if (blinnPhongShader->init() != true) {
             printf("ERROR initializing blinn-phong shader\n");
             return false;
         }
 
         /* Load the geometry */
-        _model3D = game->getRenderer()->loadModelOBJ("data/objects/deadpool");
-        _model3D->setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
+        _scene1.add("M3D_deadpool", game->getRenderer()->loadModelOBJ("data/objects/deadpool"));
+        _scene1.getModel("M3D_deadpool")->setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
+        _scene1.getModel("M3D_deadpool")->setLightingShader(blinnPhongShader);
+
+        _scene2.add("M3D_deadpool", _scene1.getModel("M3D_deadpool"));
 
         /* Create the game camera */
-        _camera.setProjection((float)_width / 2.0f, (float)_height, 0.1f, 1000.0f, 45.0f);
+        _scene1.add("C_camera1", new Camera());
+        _scene1.getCamera("C_camera1")->setProjection((float)_width / 2.0f, (float)_height, 0.1f, 1000.0f, 45.0f);
+
+        _scene2.add("C_camera1", _scene1.getCamera("C_camera1"));
+
         _cameraMotion.setPosition(glm::vec3(150.0f, 100.0f, 150.0f));
         _cameraMotion.rotateYaw(-45.0f);
 
@@ -116,13 +119,13 @@ class AntiaAliasingDemo : public GameHandler
             game->resetStats();
         }
         if (_inputManager._keys['F']) {
-            _selectedTargetLeft = _renderTargetFXAA;
-            _selectedTargetRight = _renderTargetFXAA2;
+            _scene1.setActiveRenderTarget("RT_fxaa");
+            _scene2.setActiveRenderTarget("RT_fxaa2");
             _renderTargetName = "FXAA Left / FXAA2 Right";
         }
         if (_inputManager._keys['N']) {
-            _selectedTargetLeft = _renderTargetNOAA;
-            _selectedTargetRight = _renderTargetNOAA;
+            _scene1.setActiveRenderTarget("RT_noaa");
+            _scene2.setActiveRenderTarget("RT_noaa");
             _renderTargetName = "NOAA Left / NOAA Right";
         }
 
@@ -152,19 +155,11 @@ class AntiaAliasingDemo : public GameHandler
 
     bool handleRender(Game *game)
     {
-        std::vector<SpotLight *> empty;
-
         /* Apply the motion to the camera */
-        _cameraMotion.applyTo(_camera);
+        _cameraMotion.applyTo(*_scene1.getCamera("C_camera1"));
 
-        /* Render all objects */
-        _selectedTargetLeft->clear();
-        _selectedTargetRight->clear();
-        game->getRenderer()->renderModel3D(*_model3D, _camera, *_blinnPhongShader, NULL, _lights, empty, 0.0, *_selectedTargetLeft);
-        game->getRenderer()->renderModel3D(*_model3D, _camera, *_blinnPhongShader, NULL, _lights, empty, 0.0, *_selectedTargetRight);
-
-        _selectedTargetLeft->blit(0, 0, _width / 2, _height);
-        _selectedTargetRight->blit(_width / 2, 0, _width / 2, _height);
+        game->getRenderer()->renderScene(_scene1, *_viewportLeft);
+        game->getRenderer()->renderScene(_scene2, *_viewportRight);
 
         game->getTextConsole()->gprintf("N=NOAA, F=FXAA\n");
         game->getTextConsole()->gprintf("%s\n", _renderTargetName.c_str());
@@ -172,18 +167,11 @@ class AntiaAliasingDemo : public GameHandler
     }
 
   private:
-    Camera _camera;
     FlyMotion _cameraMotion;
-    Model3D *_model3D;
-    BlinnPhongShader *_blinnPhongShader;
-    NOAARenderTarget *_renderTargetNOAA;
-    FXAARenderTarget *_renderTargetFXAA;
-    FXAA2RenderTarget *_renderTargetFXAA2;
-    RenderTarget *_selectedTargetLeft;
-    RenderTarget *_selectedTargetRight;
     std::string _renderTargetName;
-    std::vector<PointLight *> _lights;
     InputManager _inputManager;
+    Scene _scene1, _scene2;
+    Viewport *_viewportLeft, *_viewportRight;
 
     float _MouseSensibility;
     float _InvertMouse;
@@ -196,7 +184,7 @@ class AntiaAliasingDemo : public GameHandler
 int main()
 {
     Game *game;
-    AntiaAliasingDemo antiAliasingDemo;
+    FxaaComparisonDemo demo;
 
     game = new Game("Anti Aliasing Comparison demo");
     if (game == NULL) {
@@ -204,7 +192,7 @@ int main()
         return 1;
     }
 
-    game->setHandler(&antiAliasingDemo);
+    game->setHandler(&demo);
 #if defined(_WIN32)
     game->setWindowSize(800, 600, false);
 #else

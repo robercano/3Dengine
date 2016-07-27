@@ -39,11 +39,14 @@ class AntiaAliasingDemo : public GameHandler
         keys.push_back('5');
         keys.push_back(GLFW_KEY_ESCAPE);
 
+        game->getWindowManager()->getKeyManager()->registerListener(_inputManager, keys);
+        game->getWindowManager()->getMouseManager()->registerListener(_inputManager);
+
         /* Get the window size */
         game->getWindowManager()->getWindowSize(&_width, &_height);
 
-        game->getWindowManager()->getKeyManager()->registerListener(_inputManager, keys);
-        game->getWindowManager()->getMouseManager()->registerListener(_inputManager);
+        /* Create the viewport */
+        _viewport = new Viewport(0, 0, _width, _height);
 
         /* Add some lights */
         _scene.add("PL_light1", new PointLight(glm::vec3(5.0, 5.0, 5.0), glm::vec3(5.0, 5.0, 5.0), glm::vec3(5.0, 5.0, 5.0),
@@ -147,7 +150,7 @@ class AntiaAliasingDemo : public GameHandler
         _cameraMotion.applyTo(*_scene.getCamera("C_camera1"));
 
         /* Render the scene */
-        game->getRenderer()->renderScene(_scene);
+        game->getRenderer()->renderScene(_scene, *_viewport);
 
         return true;
     }
@@ -164,6 +167,7 @@ class AntiaAliasingDemo : public GameHandler
     uint32_t _width;
     uint32_t _height;
     float _angle;
+    Viewport *_viewport;
 };
 
 int main()

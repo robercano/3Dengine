@@ -48,6 +48,9 @@ class Demo : public GameHandler
         /* Get the window size */
         game->getWindowManager()->getWindowSize(&_width, &_height);
 
+        /* Create the viewport */
+        _viewport = new Viewport(0, 0, _width, _height);
+
         _scene.add("PL_light1", new PointLight(glm::vec3(3.5, 3.5, 4.5), glm::vec3(3.5, 3.5, 4.5), glm::vec3(3.5, 3.5, 4.5),
                                             glm::vec3(75.0, 300.0, 150.0), 0.0000099999f, 1000.0f));
 
@@ -184,7 +187,7 @@ class Demo : public GameHandler
         /* Apply the motion to the camera */
         _cameraMotion.applyTo(*_scene.getCamera("C_camera1"));
 
-        game->getRenderer()->renderScene(_scene);
+        game->getRenderer()->renderScene(_scene, *_viewport);
 
         game->getTextConsole()->gprintf("Current = %s\n", _current.c_str());
         game->getTextConsole()->gprintf("1=Normal, 2=ToonLight, 3=ToonLight+Filter\n");
@@ -210,6 +213,7 @@ class Demo : public GameHandler
     uint32_t _width;
     uint32_t _height;
     float _angle;
+    Viewport *_viewport;
 };
 
 int main()

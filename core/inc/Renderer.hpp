@@ -11,6 +11,7 @@
 #include <vector>
 #include "Scene.hpp"
 #include "NormalShadowMapShader.hpp"
+#include "Viewport.hpp"
 
 class Renderer
 {
@@ -71,11 +72,13 @@ class Renderer
      *
      * @see Scene
      *
-     * @param scene  The scene to be rendered
+     * @param scene     The scene to be rendered
+     * @param viewport  Viewport for the current window. If not passed the whole window
+     *                  is used
      *
      * @return true or false
      */
-    bool renderScene(Scene &scene);
+    bool renderScene(Scene &scene, const Viewport &viewport);
 
     /**
      * Renders a model 3D from the given camera using the provided lighting shader and the

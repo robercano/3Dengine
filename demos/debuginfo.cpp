@@ -58,6 +58,9 @@ class ShadowsDemo : public GameHandler
         /* Get window size */
         game->getWindowManager()->getWindowSize(&_width, &_height);
 
+        /* Create the viewport */
+        _viewport = new Viewport(0, 0, _width, _height);
+
         /* Setup the normal render target for the shadow mapping */
         _scene.add("RT_noaa", NOAARenderTarget::New());
         _scene.getRenderTarget("RT_noaa")->init(_width, _height);
@@ -184,7 +187,7 @@ class ShadowsDemo : public GameHandler
 
         _scene.getModel("M3D_daxter")->setRenderBoundingVolumes(_enableBoundingBox);
 
-        game->getRenderer()->renderScene(_scene);
+        game->getRenderer()->renderScene(_scene, *_viewport);
 
         game->getTextConsole()->gprintf("1=Bounding Box%s, 2=Normals %s, 3=Lights %s, 4=Wireframe %s\n",
                                         _enableBoundingBox ? "Off" : "On",
@@ -211,6 +214,7 @@ class ShadowsDemo : public GameHandler
     bool _enableBoundingBox, _enableNormals;
     bool _enableLights, _enableWireframe;
     bool _key1Pressed, _key2Pressed, _key3Pressed, _key4Pressed;
+    Viewport *_viewport;
 };
 
 int main()

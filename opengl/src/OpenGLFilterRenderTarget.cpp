@@ -130,9 +130,6 @@ void OpenGLFilterRenderTarget::bindDepth() { __(glBindTexture(GL_TEXTURE_2D, _de
 void OpenGLFilterRenderTarget::unbind() { __(glBindFramebuffer(GL_FRAMEBUFFER, 0)); }
 bool OpenGLFilterRenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height, bool bindMainFB)
 {
-    /* Setup the viewport */
-    __(glViewport(dstX, dstY, width, height));
-
     /* Bind the target texture */
     if (bindMainFB) {
         __(glBindFramebuffer(GL_FRAMEBUFFER, 0));
