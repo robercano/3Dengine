@@ -161,7 +161,7 @@ class ShadowsDemo : public GameHandler
             } else {
                 _scene.getDirectLight("DL_light1")->enable();
             }
-            _enableDirectLight != _enableDirectLight;
+            _enableDirectLight = !_enableDirectLight;
         }
         _key1Pressed = _inputManager._keys['1'];
 
@@ -174,7 +174,7 @@ class ShadowsDemo : public GameHandler
                     (*it)->enable();
                 }
             }
-            _enableSpotLight != _enableSpotLight;
+            _enableSpotLight = !_enableSpotLight;
         }
         _key2Pressed = _inputManager._keys['2'];
 
@@ -187,7 +187,7 @@ class ShadowsDemo : public GameHandler
                     (*it)->enable();
                 }
             }
-            _enablePointLight != _enablePointLight;
+            _enablePointLight = !_enablePointLight;
         }
         _key3Pressed = _inputManager._keys['3'];
 

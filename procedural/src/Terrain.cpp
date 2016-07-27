@@ -38,8 +38,8 @@ Terrain::Terrain(float width, float depth, float height, uint32_t slice, const g
     for (uint32_t i = 0; i < numVertsWidth; ++i) {
         for (uint32_t j = 0; j < numVertsDepth; ++j) {
             /* Generate the vertex height */
-            data[nData].vertex.y =
-                Perlin::Octave(i / (float)_numVertsWidth, (float)_slice, j / (float)_numVertsDepth, numOctaves, persistence) * _height;
+            data[nData].vertex.y = (float)
+                (Perlin::Octave(i / (float)_numVertsWidth, (float)_slice, j / (float)_numVertsDepth, numOctaves, persistence) * _height);
             if (data[nData].vertex.y < minHeight) {
                 minHeight = data[nData].vertex.y;
             }

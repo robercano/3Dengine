@@ -61,7 +61,7 @@ void Procedural::AppendBentPlane(Model3D &model, float width, float height, floa
     /* Set parameters for generation along the x-axis */
     if (angleHeight != 0.0f) {
         radiusHeight = height / angleHeight;
-        offsetHeight = radiusHeight * glm::sin((PI + angleHeight) / 2.0f);
+        offsetHeight = (float)(radiusHeight * glm::sin((PI + angleHeight) / 2.0f));
         center += glm::vec3(0.0f, -offsetHeight, 0.0f);
     } else {
         radiusHeight = halfHeight;
@@ -71,7 +71,7 @@ void Procedural::AppendBentPlane(Model3D &model, float width, float height, floa
     angleIncrementRadius = angleRadius / 2.0f / numEdgesHeight;
 
     float vertexAngleHeight = (float)((PI - angleHeight) / 2.0f);
-    float vertexAngleRadius = (2.0f * PI - angleRadius) / 4.0f;
+    float vertexAngleRadius = (float)((2.0f * PI - angleRadius) / 4.0f);
 
     for (unsigned int i = 0, count = 0; i < numVertsHeight;
          ++i, vertexAngleHeight += angleIncrementHeight, vertexAngleRadius += angleIncrementRadius) {

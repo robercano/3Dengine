@@ -136,7 +136,7 @@ bool Renderer::renderScene(Scene &scene, const Viewport &viewport)
     for (std::vector<Model3D *>::iterator model = scene.getModels().begin(); model != scene.getModels().end(); ++model) {
         /* Render normals information */
         if ((*model)->getRenderNormals() == true || this->getRenderNormals()) {
-            renderModelNormals(**model, *scene.getActiveCamera(), *scene.getActiveRenderTarget(), avgRadius * 0.02);
+            renderModelNormals(**model, *scene.getActiveCamera(), *scene.getActiveRenderTarget(), avgRadius * 0.02f);
         }
         /* Render bounding volumes information */
         renderModelBoundingVolumes(**model, *scene.getActiveCamera(), *scene.getActiveRenderTarget(),
