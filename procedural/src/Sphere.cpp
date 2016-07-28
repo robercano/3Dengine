@@ -11,6 +11,7 @@ using namespace Procedural;
 Sphere::Sphere(float radius, const glm::vec3 &color, uint32_t numVertsLongitude, uint32_t numVertsLatitude)
     : _radius(radius), _color(color), _numVertsLongitude(numVertsLongitude), _numVertsLatitude(numVertsLatitude)
 {
-    AppendBentPlane(*this, (float)(2.0f * PI * _radius), (float)(2.0f * _radius), (float)(2.0f * PI), 0.0f, (float)(2.0f * PI), _numVertsLongitude + 1, _numVertsLatitude);
+    AppendBentPlane(*this, (float)(2.0f * PI * _radius), (float)(2.0f * _radius), (float)(2.0f * PI), 0.0f, (float)(2.0f * PI),
+                    _numVertsLongitude + 1, _numVertsLatitude);
     ModelTransform::SetUniqueMaterialFromColor(*this, _color);
 }

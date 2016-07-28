@@ -23,7 +23,7 @@ Torus::Torus(float outerRadius, float innerRadius, const glm::vec3 &color, uint3
         _numVertsPoloidal = 3;
     }
 
-    AppendBentPlane(*this, (float)((_outerRadius - _innerRadius) * 2.0f * PI), (float)(_outerRadius * 2.0f * PI), (float)(2.0f * PI), (float)(2.0f * PI), 0.0f,
-                    _numVertsToroidal + 1, _numVertsPoloidal + 1);
+    AppendBentPlane(*this, (float)((_outerRadius - _innerRadius) * 2.0f * PI), (float)(_outerRadius * 2.0f * PI), (float)(2.0f * PI),
+                    (float)(2.0f * PI), 0.0f, _numVertsToroidal + 1, _numVertsPoloidal + 1);
     ModelTransform::SetUniqueMaterialFromColor(*this, _color);
 }

@@ -9,10 +9,20 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include <stdint.h>
 
 class Material
 {
   public:
+    friend class ModelStorage;
+
+    /**
+     * This constant defines the expected size of the Material structure
+     * if it is correctly packed. It is used to optimize the serialization
+     * process of the model's material data
+     */
+    static const uint32_t PackedSize = 44;
+
     /* The default constructor sets some wierd material
      * to identify it visually if some materials are not
      * set properly */

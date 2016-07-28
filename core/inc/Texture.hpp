@@ -12,6 +12,7 @@
 class Texture
 {
   public:
+    /* TODO: comment this class */
     Texture() : _texture(NULL), _width(0), _height(0), _Bpp(0) {}
     Texture(uint8_t *texture, uint32_t width, uint32_t height, uint32_t Bpp) : _width(width), _height(height), _Bpp(Bpp)
     {

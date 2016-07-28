@@ -57,6 +57,7 @@ class Model3D : public Object3D
      */
     friend class ModelLoaders;
     friend class ModelTransform;
+    friend class ModelStorage;
     friend void Procedural::AppendBentPlane(Model3D &model,
                                             float width, float height,
                                             float angleWidth, float angleHeight, float angleRadius,
@@ -65,11 +66,18 @@ class Model3D : public Object3D
     /**
      * Vertex data of the model
      */
-    typedef struct {
+    struct VertexData {
         glm::vec3 vertex;  /**< Vertex in model coordinates */
         glm::vec3 normal;  /**< Normal of the vertex */
         glm::vec2 uvcoord; /**< Textures coordinates of the vertex */
-    } VertexData;
+    };
+
+    /**
+     * This constant defines the expected size of the VertexData structure
+     * if it is correctly packed. It is used to optimize the serialization
+     * process of the model's vertex data
+     */
+    static const uint32_t VertexDataPackedSize = 32;
 
     /**
      * Constructor
