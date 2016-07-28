@@ -16,8 +16,10 @@ void ModelTransform::Rotate(Model3D &model, const glm::vec3 eulerAngles)
     glm::mat4 rotation = glm::toMat4(glm::quat(eulerAngles));
 
     for (std::vector<Model3D::VertexData>::iterator it = model._modelData.begin(); it != model._modelData.end(); ++it) {
-        it->vertex = glm::vec3(rotation * glm::vec4(it->vertex, 1.0f));
-        it->normal = glm::mat3(rotation) * it->normal;
+        glm::vec3 v = it->vertex;
+        glm::vec3 n = it->normal;
+        it->vertex = glm::vec3(rotation * glm::vec4(v, 1.0f));
+        it->normal = glm::mat3(rotation) * n;
     }
 }
 

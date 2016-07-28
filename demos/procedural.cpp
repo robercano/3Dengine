@@ -101,6 +101,8 @@ class ProceduralDemo : public GameHandler
         _scene.getModel("M3D_plane2")->setLightingShader(lightShader);
         _scene.getModel("M3D_plane2")->setShadowCaster(false);
 
+        log("sizeof vertex data %lu\n", sizeof(_scene.getModel("M3D_plane2")->getVertexData()));
+
         /* A sample triangle */
         _scene.add("M3D_triangle", game->getRenderer()->prepareModel(Procedural::Triangle(glm::vec3(-100.0f, 10.0f, 130.0f),
                                                                            glm::vec3(0.0f, 30.0f, 130.0f),
@@ -225,6 +227,7 @@ int main()
     Game *game;
     ProceduralDemo proceduralDemo;
 
+    log("Size!! %lu\n", sizeof(Model3D::VertexData));
     game = new Game("Anti Aliasing Comparison demo");
     if (game == NULL) {
         log("ERROR creating new game\n");
@@ -235,7 +238,8 @@ int main()
 #if defined(_WIN32)
     game->setWindowSize(800, 600, false);
 #else
-    game->setWindowSize(2560, 1440, true);
+    game->setWindowSize(800, 600, false);
+    //game->setWindowSize(2560, 1440, true);
 #endif
     game->setFPS(60);
 

@@ -14,7 +14,8 @@ void Model3D::normalize()
     glm::vec3 cm = glm::vec3(0.0f, 0.0f, 0.0f);
 
     for (it = _modelData.begin(); it != _modelData.end(); ++it) {
-        cm += it->vertex;
+        glm::vec3 v = it->vertex;
+        cm += v;
     }
     cm /= _modelData.size();
 
@@ -22,10 +23,11 @@ void Model3D::normalize()
     float maxLength = std::numeric_limits<float>::min();
 
     for (it = _modelData.begin(); it != _modelData.end(); ++it) {
-        it->vertex -= cm;
+        it->vertex -= Vec3(cm);
 
         /* Calculate maximum length */
-        float length = glm::length(it->vertex);
+        glm::vec3 v = it->vertex;
+        float length = glm::length(v);
         if (length > maxLength) {
             maxLength = length;
         }
@@ -61,10 +63,11 @@ void Model3D::_calculateBoundingVolumes()
      */
     for (it = _modelData.begin(); it != _modelData.end(); ++it) {
         /* Calculate maximum length */
-        float length = glm::length(it->vertex);
+        glm::vec3 v = it->vertex;
+        float length = glm::length(v);
         if (length > maxLength) {
             maxLength = length;
-            _maxLengthVertex = it->vertex;
+            _maxLengthVertex = v;
         }
 
         /* Calculate the maximum and minimum for each axis */

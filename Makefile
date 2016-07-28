@@ -30,7 +30,7 @@ CORE_FILES=Game.cpp InputManager.cpp WindowManager.cpp TimeManager.cpp \
 		   FlyMotion.cpp FreeFlyMotion.cpp WalkingMotion.cpp \
 		   Logging.cpp
 
-UTILS_FILES=MathUtils.cpp ImageLoaders.c
+UTILS_FILES=MathUtils.cpp ImageLoaders.c Vector.cpp
 
 OPENGL_FILES=GLFWKeyManager.cpp GLFWMouseManager.cpp GLFWWindowManager.cpp \
 			 OpenGLModel3D.cpp \

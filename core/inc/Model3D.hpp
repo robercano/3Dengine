@@ -48,6 +48,7 @@
 #include "Texture.hpp"
 #include "ProceduralUtils.hpp"
 #include "LightingShader.hpp"
+#include "Vector.hpp"
 
 class Model3D : public Object3D
 {
@@ -65,11 +66,11 @@ class Model3D : public Object3D
     /**
      * Vertex data of the model
      */
-    typedef struct {
-        glm::vec3 vertex;  /**< Vertex in model coordinates */
-        glm::vec3 normal;  /**< Normal of the vertex */
-        glm::vec2 uvcoord; /**< Textures coordinates of the vertex */
-    } VertexData;
+    struct VertexData {
+        Vec3 vertex;  /**< Vertex in model coordinates */
+        Vec3 normal;  /**< Normal of the vertex */
+        Vec2 uvcoord; /**< Textures coordinates of the vertex */
+    };
 
     /**
      * Constructor
