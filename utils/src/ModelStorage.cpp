@@ -9,6 +9,7 @@
 #include <iostream>
 #include <string>
 #include "Logging.hpp"
+#include "ZCompression.hpp"
 
 using namespace std;
 using namespace Logging;
@@ -16,110 +17,119 @@ using namespace Logging;
 bool ModelStorage::Save(const std::string &name, const Model3D &model)
 {
     ofstream file(name, ios::binary | ios::out | ios::trunc);
+    ZCompression comp;
 
     if (file.is_open() == false) {
         log("ERROR opening file %s\n", name.c_str());
         return false;
     }
 
+    if (comp.init() == false) {
+        log("ERROR initializing compression in ModelStorage::Save\n");
+        file.close();
+        return false;
+    }
+
     /* Write the vertex data size */
     uint32_t dataSize = (uint32_t)model._modelData.size();
-    file.write((const char *)&dataSize, sizeof dataSize);
+    comp.write(file, (const char *)&dataSize, sizeof dataSize);
 
     /* Now write the vertex data */
     if (sizeof(Model3D::VertexData) == Model3D::VertexDataPackedSize) {
         /* Everything is packed, we can write a single blob */
-        file.write((const char *)&model._modelData[0], dataSize * sizeof model._modelData[0]);
+        comp.write(file, (const char *)&model._modelData[0], dataSize * sizeof model._modelData[0]);
     } else if (sizeof(Model3D::VertexData::vertex) + sizeof(Model3D::VertexData::normal) + sizeof(Model3D::VertexData::uvcoord) ==
                Model3D::VertexDataPackedSize) {
         /* vertex, normal and uvcoord are correctly packed internally */
         for (std::vector<Model3D::VertexData>::const_iterator it = model._modelData.begin(); it != model._modelData.end(); ++it) {
-            file.write((const char *)&it->vertex, sizeof it->vertex);
-            file.write((const char *)&it->normal, sizeof it->normal);
-            file.write((const char *)&it->uvcoord, sizeof it->uvcoord);
+            comp.write(file, (const char *)&it->vertex, sizeof it->vertex);
+            comp.write(file, (const char *)&it->normal, sizeof it->normal);
+            comp.write(file, (const char *)&it->uvcoord, sizeof it->uvcoord);
         }
     } else {
         /* Nothing is correctly packed, need to write each coordinate individually */
         for (std::vector<Model3D::VertexData>::const_iterator it = model._modelData.begin(); it != model._modelData.end(); ++it) {
-            file.write((const char *)&it->vertex.x, sizeof it->vertex.x);
-            file.write((const char *)&it->vertex.y, sizeof it->vertex.y);
-            file.write((const char *)&it->vertex.z, sizeof it->vertex.z);
-            file.write((const char *)&it->normal.x, sizeof it->normal.x);
-            file.write((const char *)&it->normal.y, sizeof it->normal.y);
-            file.write((const char *)&it->normal.z, sizeof it->normal.z);
-            file.write((const char *)&it->uvcoord.x, sizeof it->uvcoord.x);
-            file.write((const char *)&it->uvcoord.y, sizeof it->uvcoord.y);
+            comp.write(file, (const char *)&it->vertex.x, sizeof it->vertex.x);
+            comp.write(file, (const char *)&it->vertex.y, sizeof it->vertex.y);
+            comp.write(file, (const char *)&it->vertex.z, sizeof it->vertex.z);
+            comp.write(file, (const char *)&it->normal.x, sizeof it->normal.x);
+            comp.write(file, (const char *)&it->normal.y, sizeof it->normal.y);
+            comp.write(file, (const char *)&it->normal.z, sizeof it->normal.z);
+            comp.write(file, (const char *)&it->uvcoord.x, sizeof it->uvcoord.x);
+            comp.write(file, (const char *)&it->uvcoord.y, sizeof it->uvcoord.y);
         }
     }
 
     /* Write the materials data size */
     dataSize = (uint32_t)model._materials.size();
-    file.write((const char *)&dataSize, sizeof dataSize);
+    comp.write(file, (const char *)&dataSize, sizeof dataSize);
 
     /* Now write the materials data */
     if (sizeof(Material) == Material::PackedSize) {
         /* Everything is packed, we can write a single blob */
-        file.write((const char *)&model._materials[0], dataSize * sizeof model._materials[0]);
+        comp.write(file, (const char *)&model._materials[0], dataSize * sizeof model._materials[0]);
     } else if (sizeof(Material::_ambient) + sizeof(Material::_diffuse) + sizeof(Material::_specular) + sizeof(Material::_alpha) +
                    sizeof(Material::_shininess) ==
                Material::PackedSize) {
         /* The individual fields are correctly packed internally */
         for (std::vector<Material>::const_iterator it = model._materials.begin(); it != model._materials.end(); ++it) {
-            file.write((const char *)&it->_ambient, sizeof it->_ambient);
-            file.write((const char *)&it->_diffuse, sizeof it->_diffuse);
-            file.write((const char *)&it->_specular, sizeof it->_specular);
-            file.write((const char *)&it->_alpha, sizeof it->_alpha);
-            file.write((const char *)&it->_shininess, sizeof it->_shininess);
+            comp.write(file, (const char *)&it->_ambient, sizeof it->_ambient);
+            comp.write(file, (const char *)&it->_diffuse, sizeof it->_diffuse);
+            comp.write(file, (const char *)&it->_specular, sizeof it->_specular);
+            comp.write(file, (const char *)&it->_alpha, sizeof it->_alpha);
+            comp.write(file, (const char *)&it->_shininess, sizeof it->_shininess);
         }
     } else {
         /* Nothing is correctly packed, need to write each coordinate individually */
         for (std::vector<Material>::const_iterator it = model._materials.begin(); it != model._materials.end(); ++it) {
-            file.write((const char *)&it->_ambient.x, sizeof it->_ambient.x);
-            file.write((const char *)&it->_ambient.y, sizeof it->_ambient.y);
-            file.write((const char *)&it->_ambient.z, sizeof it->_ambient.z);
-            file.write((const char *)&it->_diffuse.x, sizeof it->_diffuse.x);
-            file.write((const char *)&it->_diffuse.y, sizeof it->_diffuse.y);
-            file.write((const char *)&it->_diffuse.z, sizeof it->_diffuse.z);
-            file.write((const char *)&it->_specular.x, sizeof it->_specular.x);
-            file.write((const char *)&it->_specular.y, sizeof it->_specular.y);
-            file.write((const char *)&it->_specular.z, sizeof it->_specular.z);
-            file.write((const char *)&it->_alpha, sizeof it->_alpha);
-            file.write((const char *)&it->_shininess, sizeof it->_shininess);
+            comp.write(file, (const char *)&it->_ambient.x, sizeof it->_ambient.x);
+            comp.write(file, (const char *)&it->_ambient.y, sizeof it->_ambient.y);
+            comp.write(file, (const char *)&it->_ambient.z, sizeof it->_ambient.z);
+            comp.write(file, (const char *)&it->_diffuse.x, sizeof it->_diffuse.x);
+            comp.write(file, (const char *)&it->_diffuse.y, sizeof it->_diffuse.y);
+            comp.write(file, (const char *)&it->_diffuse.z, sizeof it->_diffuse.z);
+            comp.write(file, (const char *)&it->_specular.x, sizeof it->_specular.x);
+            comp.write(file, (const char *)&it->_specular.y, sizeof it->_specular.y);
+            comp.write(file, (const char *)&it->_specular.z, sizeof it->_specular.z);
+            comp.write(file, (const char *)&it->_alpha, sizeof it->_alpha);
+            comp.write(file, (const char *)&it->_shininess, sizeof it->_shininess);
         }
     }
 
     /* Write the textures data size */
     dataSize = (uint32_t)model._textures.size();
-    file.write((const char *)&dataSize, sizeof dataSize);
+    comp.write(file, (const char *)&dataSize, sizeof dataSize);
 
     /* Now write the texture data */
     for (std::vector<Texture>::const_iterator it = model._textures.begin(); it != model._textures.end(); ++it) {
-        file.write((const char *)&it->_width, sizeof it->_width);
-        file.write((const char *)&it->_height, sizeof it->_height);
-        file.write((const char *)&it->_Bpp, sizeof it->_Bpp);
-        file.write((const char *)it->_texture, it->_width * it->_height * it->_Bpp);
+        comp.write(file, (const char *)&it->_width, sizeof it->_width);
+        comp.write(file, (const char *)&it->_height, sizeof it->_height);
+        comp.write(file, (const char *)&it->_Bpp, sizeof it->_Bpp);
+        comp.write(file, (const char *)it->_texture, it->_width * it->_height * it->_Bpp);
     }
 
     /* Write the indices data size */
     dataSize = (uint32_t)model._modelIndices.size();
-    file.write((const char *)&dataSize, sizeof dataSize);
+    comp.write(file, (const char *)&dataSize, sizeof dataSize);
 
     /* Now write the indices data */
-    file.write((const char *)&model._modelIndices[0], dataSize * sizeof model._modelIndices[0]);
+    comp.write(file, (const char *)&model._modelIndices[0], dataSize * sizeof model._modelIndices[0]);
 
     /* Write the indices offsets data size */
     dataSize = (uint32_t)model._indicesOffsets.size();
-    file.write((const char *)&dataSize, sizeof dataSize);
+    comp.write(file, (const char *)&dataSize, sizeof dataSize);
 
     /* Now write the indices offsets data */
-    file.write((const char *)&model._indicesOffsets[0], dataSize * sizeof model._indicesOffsets[0]);
+    comp.write(file, (const char *)&model._indicesOffsets[0], dataSize * sizeof model._indicesOffsets[0]);
 
     /* Write the indices count data size */
     dataSize = (uint32_t)model._indicesCount.size();
-    file.write((const char *)&dataSize, sizeof dataSize);
+    comp.write(file, (const char *)&dataSize, sizeof dataSize);
 
     /* Now write the indices count data */
-    file.write((const char *)&model._indicesCount[0], dataSize * sizeof model._indicesCount[0]);
+    comp.write(file, (const char *)&model._indicesCount[0], dataSize * sizeof model._indicesCount[0], true);
+
+    comp.finish();
 
     if (file.bad() == true) {
         log("ERROR writing data to file %s\n", name.c_str());
