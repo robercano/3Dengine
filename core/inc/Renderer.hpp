@@ -48,7 +48,7 @@ class Renderer
      *
      * @return The prepared Model3D pointer or NULL if an error happened
      */
-    virtual Model3D *loadModelOBJ(const std::string &modelName) = 0;
+    virtual Model3D *loadModel(const std::string &modelName) = 0;
 
     /**
      * Loads a model3D resource prepared for the specific renderer API from

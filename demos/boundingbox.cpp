@@ -83,17 +83,17 @@ class ShadowsDemo : public GameHandler
         }
 
         /* Load the geometry */
-        _scene.add("M3D_daxter", game->getRenderer()->loadModelOBJ("data/objects/daxter"));
+        _scene.add("M3D_daxter", game->getRenderer()->loadModel("data/models/internal/daxter.model"));
         _scene.getModel("M3D_daxter")->setScaleFactor(glm::vec3(50.0f, 50.0f, 50.0f));
         _scene.getModel("M3D_daxter")->setPosition(glm::vec3(100.0f, 0.0f, 0.0f));
         _scene.getModel("M3D_daxter")->setLightingShader(shaderBlinnLight);
 
-        _scene.add("M3D_deadpool1", game->getRenderer()->loadModelOBJ("data/objects/deadpool"));
+        _scene.add("M3D_deadpool1", game->getRenderer()->loadModel("data/models/internal/deadpool.model"));
         _scene.getModel("M3D_deadpool1")->setScaleFactor(glm::vec3(50.0f, 50.0f, 50.0f));
         _scene.getModel("M3D_deadpool1")->setPosition(glm::vec3(100.0f, 0.0f, 0.0f));
         _scene.getModel("M3D_deadpool1")->setLightingShader(shaderBlinnLight);
 
-        _scene.add("M3D_deadpool2", game->getRenderer()->loadModelOBJ("data/objects/deadpool"));
+        _scene.add("M3D_deadpool2", game->getRenderer()->loadModel("data/models/internal/deadpool.model"));
         _scene.getModel("M3D_deadpool2")->setScaleFactor(glm::vec3(50.0f, 50.0f, 50.0f));
         _scene.getModel("M3D_deadpool2")->setPosition(glm::vec3(100.0f, 0.0f, 0.0f));
         _scene.getModel("M3D_deadpool2")->setLightingShader(shaderBlinnLight);

@@ -23,7 +23,7 @@ class OpenGLRenderer : public Renderer
     const char *getVendor();
     const char *getShaderVersion();
     Shader *newShader(void);
-    Model3D *loadModelOBJ(const std::string &modelName);
+    Model3D *loadModel(const std::string &modelName);
     Model3D *prepareModel(const Model3D &model);
     bool renderModel3D(Model3D &model, Camera &camera, LightingShader &shader, DirectLight *sun, std::vector<PointLight *> &pointLights,
                        std::vector<SpotLight *> &spotLights, float ambientK, RenderTarget &renderTarget, bool disableDepth = false);

@@ -15,7 +15,7 @@ CC=gcc
 #
 #Files to be compiled
 #
-VPATH=core/src:opengl/src:procedural/src:utils/src
+VPATH=core/src:opengl/src:procedural/src:utils/src:tools/
 
 CORE_FILES=Game.cpp InputManager.cpp WindowManager.cpp TimeManager.cpp \
 		   ModelLoaders.cpp ModelTransform.cpp \
@@ -30,7 +30,7 @@ CORE_FILES=Game.cpp InputManager.cpp WindowManager.cpp TimeManager.cpp \
 		   FlyMotion.cpp FreeFlyMotion.cpp WalkingMotion.cpp \
 		   Logging.cpp
 
-UTILS_FILES=MathUtils.cpp ImageLoaders.c ModelStorage.cpp
+UTILS_FILES=MathUtils.cpp ImageLoaders.c ModelStorage.cpp ModelInfo.cpp
 
 OPENGL_FILES=GLFWKeyManager.cpp GLFWMouseManager.cpp GLFWWindowManager.cpp \
 			 OpenGLModel3D.cpp \
@@ -84,11 +84,17 @@ DEMO_FILES=$(shell \ls demos/*.cpp)
 DEMO_TARGETS=$(DEMO_FILES:.cpp=)
 
 #
+#Tools
+#
+TOOLS_FILES=$(shell \ls tools/*.cpp)
+TOOLS_TARGETS=$(TOOLS_FILES:.cpp=)
+
+#
 # Main rules
 #
 .PHONY: release
 
-all: engine $(DEMO_TARGETS)
+all: engine $(DEMO_TARGETS) $(TOOLS_TARGETS)
 
 release:
 	$(MAKE) clean
@@ -98,6 +104,10 @@ engine: dirs $(LIBDIR)/$(LIBNAME)
 
 demos/%: demos/%.cpp $(LIBDIR)/$(LIBNAME)
 	@echo "- Compiling demo $@"
+	@g++ $(CXXFLAGS) -o $@ $< $(LDFLAGS) 
+
+tools/%: tools/%.cpp $(LIBDIR)/$(LIBNAME)
+	@echo "- Compiling tool $@"
 	@g++ $(CXXFLAGS) -o $@ $< $(LDFLAGS) 
 
 dirs:

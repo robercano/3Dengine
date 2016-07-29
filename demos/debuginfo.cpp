@@ -89,7 +89,7 @@ class ShadowsDemo : public GameHandler
         _scene.getPointLight("PL_light3")->getShadowMap()->init(_width, _height);
 
         /* Load the geometry */
-        _scene.add("M3D_daxter", game->getRenderer()->loadModelOBJ("data/objects/daxter"));
+        _scene.add("M3D_daxter", game->getRenderer()->loadModel("data/models/internal/daxter.model"));
         _scene.getModel("M3D_daxter")->setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
         _scene.getModel("M3D_daxter")->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
         _scene.getModel("M3D_daxter")->rotate(glm::toMat4(glm::quat(glm::vec3(0.0f, 45.0f, 0.0f))));

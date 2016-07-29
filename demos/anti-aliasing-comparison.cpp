@@ -88,7 +88,7 @@ class AntiaAliasingDemo : public GameHandler
         }
 
         /* Load the geometry */
-        _scene.add("M3D_deadpool", game->getRenderer()->loadModelOBJ("data/objects/deadpool"));
+        _scene.add("M3D_deadpool", game->getRenderer()->loadModel("data/models/internal/deadpool.model"));
         _scene.getModel("M3D_deadpool")->setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
         _scene.getModel("M3D_deadpool")->setLightingShader(blinnPhongShader);
         _scene.getModel("M3D_deadpool")->setShadowCaster(false);
@@ -216,7 +216,8 @@ int main()
 #if defined(_WIN32)
     game->setWindowSize(800, 600, false);
 #else
-    game->setWindowSize(2560, 1440, true);
+    //game->setWindowSize(2560, 1440, true);
+    game->setWindowSize(800, 600, false);
 #endif
     game->setFPS(60);
 

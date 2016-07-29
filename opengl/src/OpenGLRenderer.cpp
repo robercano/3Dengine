@@ -7,7 +7,7 @@
 #include "OpenGL.h"
 #include <algorithm>
 #include "Logging.hpp"
-#include "ModelLoaders.hpp"
+#include "ModelStorage.hpp"
 #include "OpenGLLightingShader.hpp"
 #include "OpenGLModel3D.hpp"
 #include "OpenGLRenderer.hpp"
@@ -87,7 +87,7 @@ const char *OpenGLRenderer::getVersion() { return (const char *)glGetString(GL_V
 const char *OpenGLRenderer::getVendor() { return (const char *)glGetString(GL_VENDOR); }
 const char *OpenGLRenderer::getShaderVersion() { return (const char *)glGetString(GL_SHADING_LANGUAGE_VERSION); }
 Shader *OpenGLRenderer::newShader(void) { return new OpenGLShader(); }
-Model3D *OpenGLRenderer::loadModelOBJ(const std::string &modelName)
+Model3D *OpenGLRenderer::loadModel(const std::string &modelName)
 {
     OpenGLModel3D *model = new OpenGLModel3D();
     if (model == NULL) {
@@ -95,7 +95,7 @@ Model3D *OpenGLRenderer::loadModelOBJ(const std::string &modelName)
         return NULL;
     }
 
-    if (ModelLoaders::LoadOBJModel(*model, modelName) == false) {
+    if (ModelStorage::Load(modelName, *model) == false) {
         log("ERROR loading model %s into an OpenGLModel3D\n", modelName.c_str());
         delete model;
         return NULL;

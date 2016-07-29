@@ -59,7 +59,7 @@ bool ModelStorage::Save(const std::string &name, const Model3D &model)
     /* Now write the materials data */
     if (sizeof(Material) == Material::PackedSize) {
         /* Everything is packed, we can write a single blob */
-        file.write((const char *)&model._materials[0], dataSize * sizeof model._modelData[0]);
+        file.write((const char *)&model._materials[0], dataSize * sizeof model._materials[0]);
     } else if (sizeof(Material::_ambient) + sizeof(Material::_diffuse) + sizeof(Material::_specular) + sizeof(Material::_alpha) +
                    sizeof(Material::_shininess) ==
                Material::PackedSize) {
@@ -94,10 +94,10 @@ bool ModelStorage::Save(const std::string &name, const Model3D &model)
 
     /* Now write the texture data */
     for (std::vector<Texture>::const_iterator it = model._textures.begin(); it != model._textures.end(); ++it) {
-        file.write((const char *)it->_texture, it->_width * it->_height * it->_Bpp);
         file.write((const char *)&it->_width, sizeof it->_width);
         file.write((const char *)&it->_height, sizeof it->_height);
         file.write((const char *)&it->_Bpp, sizeof it->_Bpp);
+        file.write((const char *)it->_texture, it->_width * it->_height * it->_Bpp);
     }
 
     /* Write the indices data size */
@@ -154,14 +154,14 @@ bool ModelStorage::Load(const std::string &name, Model3D &model)
     } else if (sizeof(Model3D::VertexData::vertex) + sizeof(Model3D::VertexData::normal) + sizeof(Model3D::VertexData::uvcoord) ==
                Model3D::VertexDataPackedSize) {
         /* vertex, normal and uvcoord are correctly packed internally */
-        for (std::vector<Model3D::VertexData>::const_iterator it = model._modelData.begin(); it != model._modelData.end(); ++it) {
+        for (std::vector<Model3D::VertexData>::iterator it = model._modelData.begin(); it != model._modelData.end(); ++it) {
             file.read((char *)&it->vertex, sizeof it->vertex);
             file.read((char *)&it->normal, sizeof it->normal);
             file.read((char *)&it->uvcoord, sizeof it->uvcoord);
         }
     } else {
         /* Nothing is correctly packed, need to read each coordinate individually */
-        for (std::vector<Model3D::VertexData>::const_iterator it = model._modelData.begin(); it != model._modelData.end(); ++it) {
+        for (std::vector<Model3D::VertexData>::iterator it = model._modelData.begin(); it != model._modelData.end(); ++it) {
             file.read((char *)&it->vertex.x, sizeof it->vertex.x);
             file.read((char *)&it->vertex.y, sizeof it->vertex.y);
             file.read((char *)&it->vertex.z, sizeof it->vertex.z);
@@ -180,12 +180,12 @@ bool ModelStorage::Load(const std::string &name, Model3D &model)
     /* Now read the materials data */
     if (sizeof(Material) == Material::PackedSize) {
         /* Everything is packed, we can read a single blob */
-        file.read((char *)&model._materials[0], dataSize * sizeof model._modelData[0]);
+        file.read((char *)&model._materials[0], dataSize * sizeof model._materials[0]);
     } else if (sizeof(Material::_ambient) + sizeof(Material::_diffuse) + sizeof(Material::_specular) + sizeof(Material::_alpha) +
                    sizeof(Material::_shininess) ==
                Material::PackedSize) {
         /* The individual fields are correctly packed internally */
-        for (std::vector<Material>::const_iterator it = model._materials.begin(); it != model._materials.end(); ++it) {
+        for (std::vector<Material>::iterator it = model._materials.begin(); it != model._materials.end(); ++it) {
             file.read((char *)&it->_ambient, sizeof it->_ambient);
             file.read((char *)&it->_diffuse, sizeof it->_diffuse);
             file.read((char *)&it->_specular, sizeof it->_specular);
@@ -194,7 +194,7 @@ bool ModelStorage::Load(const std::string &name, Model3D &model)
         }
     } else {
         /* Nothing is correctly packed, need to read each coordinate individually */
-        for (std::vector<Material>::const_iterator it = model._materials.begin(); it != model._materials.end(); ++it) {
+        for (std::vector<Material>::iterator it = model._materials.begin(); it != model._materials.end(); ++it) {
             file.read((char *)&it->_ambient.x, sizeof it->_ambient.x);
             file.read((char *)&it->_ambient.y, sizeof it->_ambient.y);
             file.read((char *)&it->_ambient.z, sizeof it->_ambient.z);
@@ -211,15 +211,15 @@ bool ModelStorage::Load(const std::string &name, Model3D &model)
 
     /* Read the textures data size */
     file.read((char *)&dataSize, sizeof dataSize);
-
     model._textures.resize(dataSize);
 
     /* Now read the texture data */
-    for (std::vector<Texture>::const_iterator it = model._textures.begin(); it != model._textures.end(); ++it) {
-        file.read((char *)it->_texture, it->_width * it->_height * it->_Bpp);
+    for (std::vector<Texture>::iterator it = model._textures.begin(); it != model._textures.end(); ++it) {
         file.read((char *)&it->_width, sizeof it->_width);
         file.read((char *)&it->_height, sizeof it->_height);
         file.read((char *)&it->_Bpp, sizeof it->_Bpp);
+        it->_texture = new uint8_t[it->_width * it->_height * it->_Bpp];
+        file.read((char *)it->_texture, it->_width * it->_height * it->_Bpp);
     }
 
     /* Read the indices data size */
