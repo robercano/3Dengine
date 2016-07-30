@@ -4,7 +4,7 @@
  */
 #pragma once
 
-#include <iostream>
+#include <fstream>
 #include "zlib.h"
 
 /**
@@ -41,7 +41,7 @@ class ZCompression
          * @param file  Output file to write data to
          * @param data  Data to compress and write to 'file'
          * @param size  Number of bytes in 'data' to compress and write to 'file'
-         * @param flush True if this is the last chunk of data to be compressed
+         * @param end   True if this is the last chunk of data to be compressed
          *
          * @return true if the data was compressed and written correctly, false
          *         otherwise
@@ -75,12 +75,12 @@ class ZDecompression
         /**
          * Constructor
          */
-        ZCompression();
+        ZDecompression();
 
         /**
          * Destructor
          */
-        ~ZCompression();
+        ~ZDecompression();
 
         /**
          * Initializes the decompression
@@ -93,13 +93,13 @@ class ZDecompression
          *
          * @param file  Input file to read data from
          * @param data  Buffer where the decompressed data will be written to
-         * @param size  Number of decompressed bytes of data to obtain from 'file'
-         * @param flush True if this is the last chunk of data to be decompressed
+         * @param size  Maximum number of decompressed bytes of data to obtain from 'file'
          *
          * @return true if the data was read and decompressed correctly, false
          *         otherwise
          */
-        bool read(std::ifstream &file, const void *data, uint32_t size, bool end = false);
+        bool read(std::ifstream &file, void *data, const uint32_t &size);
+        bool read(std::ifstream &file, void *data, uint32_t &size);
 
         /**
          * Finishes the decompression. To use the decompression
@@ -108,8 +108,6 @@ class ZDecompression
         void finish();
 
     private:
-        z_stream _strm;      /**< ZLib compression state */
+        z_stream _strm;       /**< ZLib compression state */
         uint8_t  *_inBuffer;  /**< Input buffer provided to ZLib */
-        uint32_t _inBufferBytes;
-        uint8_t *_outBuffer; /**< Output buffer provided to ZLib */
 };

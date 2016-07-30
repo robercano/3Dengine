@@ -9,11 +9,7 @@ ZCompression::ZCompression()
     }
 }
 
-ZCompression::~ZCompression()
-{
-    delete[] _outBuffer;
-}
-
+ZCompression::~ZCompression() { delete[] _outBuffer; }
 bool ZCompression::init()
 {
     /* allocate deflate state */
@@ -28,10 +24,10 @@ bool ZCompression::init()
     return true;
 }
 
-bool ZCompression::write(std::ofstream &file, const void *data, uint32_t size, bool end = false)
+bool ZCompression::write(std::ofstream &file, const void *data, uint32_t size, bool end)
 {
     _strm.avail_in = size;
-    _strm.next_in = (unsigned char*)data;
+    _strm.next_in = (unsigned char *)data;
 
     do {
         _strm.avail_out = ChunkSize;
@@ -43,7 +39,7 @@ bool ZCompression::write(std::ofstream &file, const void *data, uint32_t size, b
             return false;
         }
 
-        file.write((char*)_outBuffer, ChunkSize - _strm.avail_out);
+        file.write((char *)_outBuffer, ChunkSize - _strm.avail_out);
     } while (_strm.avail_out == 0);
 
     if (_strm.avail_in != 0) {
@@ -55,29 +51,16 @@ bool ZCompression::write(std::ofstream &file, const void *data, uint32_t size, b
     return true;
 }
 
-void ZCompression::finish()
-{
-    (void)deflateEnd(&_strm);
-}
-
+void ZCompression::finish() { (void)deflateEnd(&_strm); }
 ZDecompression::ZDecompression()
 {
     _inBuffer = new uint8_t[ChunkSize];
     if (_inBuffer == NULL) {
         Logging::log("ERROR allocating input buffer in ZDecompression constructor\n");
     }
-    _outBuffer = new uint8_t[ChunkSize];
-    if (_outBuffer == NULL) {
-        Logging::log("ERROR allocating output buffer in ZDecompression constructor\n");
-    }
-    _inBufferBytes = 0;
 }
 
-ZDecompression::~ZDecompression()
-{
-    delete[] _inBuffer;
-}
-
+ZDecompression::~ZDecompression() { delete[] _inBuffer; }
 bool ZDecompression::init()
 {
     /* allocate deflate state */
@@ -94,27 +77,37 @@ bool ZDecompression::init()
     return true;
 }
 
-bool ZDecompression::read(std::ofstream &file, const void *data, uint32_t size, bool end = false)
+bool ZDecompression::read(std::ifstream &file, void *data, const uint32_t &size)
 {
-    uint32_t dataPos = 0;
+    /* 'size' will be updated but change is lost as size is passed by value */
+    uint32_t tmpSize = size;
+    return read(file, data, tmpSize);
+}
 
-    do {
-        uint32_t start = file.tellg();
+bool ZDecompression::read(std::ifstream &file, void *data, uint32_t &size)
+{
+    uint32_t initSize = size;
 
-        file.read(_inBuffer+_inBufferBytes, ChunkSize - _inBufferBytes);
+    _strm.avail_out = size;
+    _strm.next_out = (unsigned char *)data;
 
-        _inBufferBytes += file.tellg() - start;
-        if (_inBufferBytes == 0) {
-            return true;
+    while (_strm.avail_out != 0) {
+        /* Check if we need to read more inptu data */
+        if (_strm.avail_in == 0) {
+            file.read((char *)_inBuffer, ChunkSize);
+
+            _strm.next_in = _inBuffer;
+            _strm.avail_in = (int)file.gcount();
+
+            if (_strm.avail_in == 0) {
+                size = initSize - _strm.avail_out;
+                return true;
+            }
         }
 
-        _strm.next_in = _inBuffer;
-        _strm.avail_in = _inBufferBytes;
-
+        /* Inflate until we ran out of input data or
+         * output data is completed */
         do {
-            _strm.avail_out = ChunkSize;
-            _strm.next_out = _outBuffer;
-
             int ret = inflate(&_strm, Z_NO_FLUSH);
 
             if (ret == Z_STREAM_ERROR) {
@@ -124,30 +117,16 @@ bool ZDecompression::read(std::ofstream &file, const void *data, uint32_t size, 
             }
             switch (ret) {
                 case Z_NEED_DICT:
-                    ret = Z_DATA_ERROR;     /* and fall through */
+                    ret = Z_DATA_ERROR; /* and fall through */
                 case Z_DATA_ERROR:
                 case Z_MEM_ERROR:
-                    (void)inflateEnd(&strm);
+                    (void)inflateEnd(&_strm);
                     return ret;
             }
-
-            uint32_t writeBytes = ChunkSize - strm.avail_out;
-
-            if (size < writeBytes) {
-                memcpy(data, _outBuffer, size);
-                dataPos += size;
-            } else {
-                memcpy(data, _outBuffer, writeBytes);
-                dataPos += writeBytes;
-            }
-        } while (_strm.avail_out == 0);
-    } while (dataPos < size);
+        } while (_strm.avail_out != 0 && _strm.avail_in != 0);
+    }
 
     return true;
 }
 
-void ZDecompression::finish()
-{
-    (void)inflateEnd(&_strm);
-}
-
+void ZDecompression::finish() { (void)inflateEnd(&_strm); }
