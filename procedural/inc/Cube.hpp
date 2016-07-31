@@ -7,14 +7,14 @@
 #pragma once
 
 #include <stdint.h>
-#include "Model3D.hpp"
+#include "Asset3D.hpp"
 
 namespace Procedural
 {
 /**
  * Cube class to generate a cube with axis aligned planes
  */
-class Cube : public Model3D
+class Cube : public Asset3D
 {
   public:
     /**

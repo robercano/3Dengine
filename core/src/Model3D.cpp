@@ -8,43 +8,9 @@
 #include <glm/glm.hpp>
 #include <limits>
 
-void Model3D::normalize()
-{
-    std::vector<Model3D::VertexData>::iterator it;
-    glm::vec3 cm = glm::vec3(0.0f, 0.0f, 0.0f);
-
-    for (it = _modelData.begin(); it != _modelData.end(); ++it) {
-        cm += it->vertex;
-    }
-    cm /= _modelData.size();
-
-    /* Substract the center of mass to all vertices */
-    float maxLength = std::numeric_limits<float>::min();
-
-    for (it = _modelData.begin(); it != _modelData.end(); ++it) {
-        it->vertex -= cm;
-
-        /* Calculate maximum length */
-        float length = glm::length(it->vertex);
-        if (length > maxLength) {
-            maxLength = length;
-        }
-    }
-
-    /* Finally divide by maxLength to make the model fit in a sphere
-     * of radius 1.0 */
-    for (it = _modelData.begin(); it != _modelData.end(); ++it) {
-        it->vertex /= maxLength;
-    }
-
-    setScaleFactor(glm::vec3(1.0f, 1.0f, 1.0f));
-
-    _calculateBoundingVolumes();
-}
-
 void Model3D::_calculateBoundingVolumes()
 {
-    std::vector<Model3D::VertexData>::iterator it;
+    std::vector<Asset3D::VertexData>::const_iterator it;
     float maxLength = 0.0f;
     float minX = 0.0f, maxX = 0.0f;
     float minY = 0.0f, maxY = 0.0f;
@@ -59,7 +25,7 @@ void Model3D::_calculateBoundingVolumes()
      * The loop assumes the center of mass of the object is (0.0f, 0.0f, 0.0f) in local
      * coordinates. If it is not the user must call normalize() prior to this function
      */
-    for (it = _modelData.begin(); it != _modelData.end(); ++it) {
+    for (it = _asset.getVertexData().begin(); it != _asset.getVertexData().end(); ++it) {
         /* Calculate maximum length */
         float length = glm::length(it->vertex);
         if (length > maxLength) {

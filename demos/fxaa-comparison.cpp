@@ -79,7 +79,9 @@ class FxaaComparisonDemo : public GameHandler
         }
 
         /* Load the geometry */
-        _scene1.add("M3D_deadpool", game->getRenderer()->loadModel("data/models/internal/deadpool.model"));
+        Asset3D *deadpool = game->getRenderer()->loadAsset3D("data/models/internal/deadpool.model");
+
+        _scene1.add("M3D_deadpool", new Model3D(*deadpool));
         _scene1.getModel("M3D_deadpool")->setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
         _scene1.getModel("M3D_deadpool")->setLightingShader(blinnPhongShader);
 

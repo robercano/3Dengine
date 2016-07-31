@@ -10,8 +10,8 @@ Circle::Circle(float radius, const glm::vec3 &color, uint32_t numVertsSide) : _r
     uint32_t count = 0;
 
     /* A circle has a center vertex and '_numVertsSide' border vertices */
-    _modelData.resize(1 + _numVertsSide);
-    Model3D::VertexData *data = &_modelData[0];
+    _vertexData.resize(1 + _numVertsSide);
+    Asset3D::VertexData *data = &_vertexData[0];
 
     /* Vertices */
     data[count].vertex = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -29,8 +29,8 @@ Circle::Circle(float radius, const glm::vec3 &color, uint32_t numVertsSide) : _r
     /* Faces */
 
     /* A cap has '_numVertsSide' triangles */
-    _modelIndices.resize(_numVertsSide * 3);
-    uint32_t *index = &_modelIndices[0];
+    _vertexIndices.resize(_numVertsSide * 3);
+    uint32_t *index = &_vertexIndices[0];
 
     /* Bottom lid */
     count = 0;
@@ -54,5 +54,5 @@ Circle::Circle(float radius, const glm::vec3 &color, uint32_t numVertsSide) : _r
 
     /* Only one set of indices */
     _indicesOffsets.push_back(0);
-    _indicesCount.push_back(_modelIndices.size());
+    _indicesCount.push_back(_vertexIndices.size());
 }

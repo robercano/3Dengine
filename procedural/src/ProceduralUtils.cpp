@@ -14,7 +14,7 @@ using namespace Logging;
 
 #define PI 3.14159265358979323846
 
-void Procedural::AppendBentPlane(Model3D &model, float width, float height, float angleWidth, float angleHeight, float angleRadius,
+void Procedural::AppendBentPlane(Asset3D &asset, float width, float height, float angleWidth, float angleHeight, float angleRadius,
                                  uint32_t numVertsWidth, uint32_t numVertsHeight)
 {
     float radiusWidth, offsetWidth, angleIncrementWidth;
@@ -43,10 +43,10 @@ void Procedural::AppendBentPlane(Model3D &model, float width, float height, floa
      * Then multiplied by the number of rows minus one, as the last
      * row does have to generate more triangles
      */
-    model._modelData.resize(numVertsWidth * numVertsHeight);
-    model._modelIndices.resize((size_t)(2 * 3 * numEdgesWidth * numEdgesHeight)); /** 2 triangles, 3 vertices each */
+    asset._vertexData.resize(numVertsWidth * numVertsHeight);
+    asset._vertexIndices.resize((size_t)(2 * 3 * numEdgesWidth * numEdgesHeight)); /** 2 triangles, 3 vertices each */
 
-    Model3D::VertexData *data = &model._modelData[0];
+    Asset3D::VertexData *data = &asset._vertexData[0];
 
     /* Set parameters for generation along the z-axis */
     if (angleWidth != 0.0f) {
@@ -118,7 +118,7 @@ void Procedural::AppendBentPlane(Model3D &model, float width, float height, floa
     }
 
     /* Generate the indices */
-    uint32_t *index = &model._modelIndices[0];
+    uint32_t *index = &asset._vertexIndices[0];
     for (unsigned int i = 0, count = 0; i < numEdgesHeight; ++i) {
         for (unsigned int j = 0; j < numEdgesWidth; ++j) {
             uint32_t span = i * numVertsWidth;

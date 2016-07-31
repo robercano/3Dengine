@@ -84,17 +84,19 @@ class Demo : public GameHandler
         _current = "Normal";
 
         /* Load the geometry */
-        _scene.add("M3D_daxter1", game->getRenderer()->loadModel("data/models/internal/daxter.model"));
+        Asset3D *daxter = game->getRenderer()->loadAsset3D("data/models/internal/daxter.model");
+
+        _scene.add("M3D_daxter1", new Model3D(*daxter));
         _scene.getModel("M3D_daxter1")->setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
         _scene.getModel("M3D_daxter1")->setLightingShader(_shaderBlinnLight);
         _scene.getModel("M3D_daxter1")->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 
-        _scene.add("M3D_daxter2", game->getRenderer()->loadModel("data/models/internal/daxter.model"));
+        _scene.add("M3D_daxter2", new Model3D(*daxter));
         _scene.getModel("M3D_daxter2")->setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
         _scene.getModel("M3D_daxter2")->setLightingShader(_shaderBlinnLight);
         _scene.getModel("M3D_daxter2")->setPosition(glm::vec3(0.0f, 0.0f, -50.0f));
 
-        _scene.add("M3D_daxter3", game->getRenderer()->loadModel("data/models/internal/daxter.model"));
+        _scene.add("M3D_daxter3", new Model3D(*daxter));
         _scene.getModel("M3D_daxter3")->setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
         _scene.getModel("M3D_daxter3")->setLightingShader(_shaderBlinnLight);
         _scene.getModel("M3D_daxter3")->setPosition(glm::vec3(0.0f, 0.0f, -100.0f));

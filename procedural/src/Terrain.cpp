@@ -8,9 +8,9 @@
  */
 #include "Terrain.hpp"
 #include <glm/glm.hpp>
+#include "Asset3DTransform.hpp"
 #include "Logging.hpp"
 #include "MathUtils.hpp"
-#include "ModelTransform.hpp"
 #include "ProceduralUtils.hpp"
 
 using namespace Logging;
@@ -33,7 +33,7 @@ Terrain::Terrain(float width, float depth, float height, uint32_t slice, const g
     AppendBentPlane(*this, _width, _depth, 0.0f, 0.0f, 0.0f, _numVertsWidth, _numVertsDepth);
 
     /* Now modify the height according to the octave perlin noise function */
-    Model3D::VertexData *data = &_modelData[0];
+    Asset3D::VertexData *data = &_vertexData[0];
 
     for (uint32_t i = 0; i < numVertsWidth; ++i) {
         for (uint32_t j = 0; j < numVertsDepth; ++j) {
@@ -57,6 +57,6 @@ Terrain::Terrain(float width, float depth, float height, uint32_t slice, const g
         }
     }
 
-    ModelTransform::RecalculateNormals(*this);
-    ModelTransform::SetUniqueMaterialFromColor(*this, _color);
+    Asset3DTransform::RecalculateNormals(*this);
+    Asset3DTransform::SetUniqueMaterialFromColor(*this, _color);
 }

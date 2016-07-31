@@ -1,10 +1,10 @@
 /**
- * @class ModelLoaders
+ * @class Asset3DLoaders
  * @brief Various format loaders
  *
  * @author	Roberto Cano (http://www.robertocano.es)
  */
-#include "ModelLoaders.hpp"
+#include "Asset3DLoaders.hpp"
 #include <stdio.h>
 #include <string.h>
 #include <glm/glm.hpp>
@@ -18,7 +18,7 @@ using namespace Logging;
 using namespace ImageLoaders;
 using namespace std;
 
-bool ModelLoaders::LoadOBJModel(Model3D &model, const string &name)
+bool Asset3DLoaders::LoadOBJ(Asset3D &asset, const string &name)
 {
     std::vector<glm::vec3> vertices;
     std::vector<glm::vec3> normals;
@@ -199,7 +199,7 @@ bool ModelLoaders::LoadOBJModel(Model3D &model, const string &name)
     fseek(file, SEEK_SET, 0);
 
     /* Allocate size for the final data */
-    model._modelData.resize(vertices.size());
+    asset._vertexData.resize(vertices.size());
     positionSet.resize(vertices.size(), false);
 
     /* Now parse the groups and the faces */
@@ -240,17 +240,17 @@ bool ModelLoaders::LoadOBJModel(Model3D &model, const string &name)
                 uint32_t dataIdx = vertexIdx;
 
                 if (positionSet[dataIdx] == true) {
-                    if (model._modelData[dataIdx].normal != normals[normalIdx] || model._modelData[dataIdx].uvcoord != uvcoords[uvIdx]) {
-                        dataIdx = model._modelData.size();
-                        model._modelData.resize(model._modelData.size() + 1);
+                    if (asset._vertexData[dataIdx].normal != normals[normalIdx] || asset._vertexData[dataIdx].uvcoord != uvcoords[uvIdx]) {
+                        dataIdx = asset._vertexData.size();
+                        asset._vertexData.resize(asset._vertexData.size() + 1);
                         positionSet.resize(positionSet.size() + 1, false);
                     }
                 }
 
                 if (positionSet[dataIdx] == false) {
-                    model._modelData[dataIdx].vertex = vertices[vertexIdx];
-                    model._modelData[dataIdx].normal = normals[normalIdx];
-                    model._modelData[dataIdx].uvcoord = uvcoords[uvIdx];
+                    asset._vertexData[dataIdx].vertex = vertices[vertexIdx];
+                    asset._vertexData[dataIdx].normal = normals[normalIdx];
+                    asset._vertexData[dataIdx].uvcoord = uvcoords[uvIdx];
 
                     positionSet[vertexIdx] = true;
                 }
@@ -266,24 +266,24 @@ bool ModelLoaders::LoadOBJModel(Model3D &model, const string &name)
 
     /* Now consolidate the data */
     for (it = materials.begin(); it != materials.end(); ++it) {
-        model._materials.push_back(it->second);
-        model._textures.push_back(textures[it->first]);
+        asset._materials.push_back(it->second);
+        asset._textures.push_back(textures[it->first]);
 
         std::vector<uint32_t> *idx = &indices[it->first];
 
-        model._indicesOffsets.push_back(model._modelIndices.size());
+        asset._indicesOffsets.push_back(asset._vertexIndices.size());
 
         /* Append to the final indices vector */
-        model._modelIndices.reserve(model._modelIndices.size() + idx->size());
-        model._modelIndices.insert(model._modelIndices.end(), idx->begin(), idx->end());
+        asset._vertexIndices.reserve(asset._vertexIndices.size() + idx->size());
+        asset._vertexIndices.insert(asset._vertexIndices.end(), idx->begin(), idx->end());
 
-        model._indicesCount.push_back(idx->size());
+        asset._indicesCount.push_back(idx->size());
     }
 
     /* And finally normalize the vertices */
-    model.normalize();
+    asset.normalize();
 
-    printf("Loaded %s with %zu vertices and %zu faces\n", name.c_str(), model._modelData.size(), model._modelIndices.size() / 3);
+    printf("Loaded %s with %zu vertices and %zu faces\n", name.c_str(), asset._vertexData.size(), asset._vertexIndices.size() / 3);
 
 error_exit:
     fclose(file);

@@ -9,7 +9,7 @@
 #include <stdint.h>
 #include <glm/glm.hpp>
 
-class Model3D;
+class Asset3D;
 
 namespace Procedural
 {
@@ -51,7 +51,7 @@ namespace Procedural
      *                    the closer it will be to the xz-plane. With a value of 2*PI along
      *                    a value of 2*PI for 'angleWidth' a sphere will be generated
      */
-    void AppendBentPlane(Model3D &model,
+    void AppendBentPlane(Asset3D &asset,
                          float width, float height,
                          float angleWidth, float angleHeight, float angleRadius,
                          uint32_t numVertsWidth, uint32_t numVertsHeight);

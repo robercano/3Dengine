@@ -1,5 +1,5 @@
 /**
- * @class ModelLoaders
+ * @class Asset3DLoaders
  * @brief Various model loaders
  *
  * @author	Roberto Cano (http://www.robertocano.es)
@@ -7,9 +7,9 @@
 #pragma once
 
 #include <string>
-#include "Model3D.hpp"
+#include "Asset3D.hpp"
 
-class ModelLoaders
+class Asset3DLoaders
 {
   public:
       /**
@@ -55,10 +55,10 @@ class ModelLoaders
        * renderer can loop per material, and then for each material a list of indexed display
        * lists are provided.
        *
-       * @param model  The Model3D where the data will be loaded into
+       * @param model  The Asset3D where the data will be loaded into
        * @param name   Path and name of the model in disk
        *
        * @return true of the model was loaded and false if it wasn't
        */
-      static bool LoadOBJModel(Model3D &model, const std::string &name);
+      static bool LoadOBJ(Asset3D &asset, const std::string &name);
 };

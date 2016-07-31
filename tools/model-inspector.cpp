@@ -1,28 +1,30 @@
-#include "ModelInfo.hpp"
-#include "ModelLoaders.hpp"
-#include "ModelStorage.hpp"
+#include "Logging.hpp"
+#include "Asset3DLoaders.hpp"
+#include "Asset3DStorage.hpp"
+
+using namespace Logging;
 
 int main(int argc, char **argv)
 {
     if (argc < 2) {
-        fprintf(stderr, "Shows statistics about an internal model\n\n");
-        fprintf(stderr, "Usage:\n");
-        fprintf(stderr, "    inspect-model <input_model>\n");
-        fprintf(stderr, "\n");
-        fprintf(stderr, "input_model: internal model path and name\n");
-        fprintf(stderr, "\n");
+        log("Shows statistics about an internal asset\n\n");
+        log("Usage:\n");
+        log("    inspect-asset <input_asset>\n");
+        log("\n");
+        log("input_asset: internal asset path and name\n");
+        log("\n");
         exit(1);
     }
 
-    Model3D model;
+    Asset3D asset;
 
-    if (ModelStorage::Load(argv[1], model) == false) {
-        fprintf(stderr, "ERROR loading model from file %s\n", argv[1]);
+    if (Asset3DStorage::Load(argv[1], asset) == false) {
+        log("ERROR loading asset from file %s\n", argv[1]);
         exit(3);
     }
 
-    fprintf(stderr, "\nModel:     %s\n", argv[1]);
-    ModelInfo::ShowModelInfo(model);
+    log("\nAsset3D:     %s\n", argv[1]);
+    log("", asset);
 
     return 0;
 }

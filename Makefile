@@ -18,7 +18,6 @@ CC=gcc
 VPATH=core/src:opengl/src:procedural/src:utils/src:tools/
 
 CORE_FILES=Game.cpp InputManager.cpp WindowManager.cpp TimeManager.cpp \
-		   ModelLoaders.cpp ModelTransform.cpp \
 		   Model3D.cpp \
 		   TextConsole.cpp TrueTypeFont.cpp FreeTypeFont.cpp FontRenderer.cpp \
 		   Scene.cpp \
@@ -30,10 +29,11 @@ CORE_FILES=Game.cpp InputManager.cpp WindowManager.cpp TimeManager.cpp \
 		   FlyMotion.cpp FreeFlyMotion.cpp WalkingMotion.cpp \
 		   Logging.cpp
 
-UTILS_FILES=MathUtils.cpp ImageLoaders.c ModelStorage.cpp ModelInfo.cpp ZCompression.cpp
+UTILS_FILES=MathUtils.cpp ImageLoaders.c Asset3DLoaders.cpp Asset3DStorage.cpp Asset3DTransform.cpp \
+			ZCompression.cpp
 
 OPENGL_FILES=GLFWKeyManager.cpp GLFWMouseManager.cpp GLFWWindowManager.cpp \
-			 OpenGLModel3D.cpp \
+			 OpenGLAsset3D.cpp \
 			 OpenGLFontRenderer.cpp \
 			 OpenGLRenderer.cpp OpenGLFilterRenderTarget.cpp \
              OpenGLMSAARenderTarget.cpp OpenGLSSAARenderTarget.cpp OpenGLFBRenderTarget.cpp \

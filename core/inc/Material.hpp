@@ -14,7 +14,7 @@
 class Material
 {
   public:
-    friend class ModelStorage;
+    friend class Asset3DStorage;
 
     /**
      * This constant defines the expected size of the Material structure

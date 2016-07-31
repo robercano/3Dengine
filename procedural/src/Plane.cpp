@@ -7,8 +7,8 @@
 #include "Plane.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
+#include "Asset3DTransform.hpp"
 #include "Logging.hpp"
-#include "ModelTransform.hpp"
 #include "ProceduralUtils.hpp"
 
 using namespace Logging;
@@ -21,5 +21,5 @@ Plane::Plane(float width, float height, const glm::vec3 &color, uint32_t numVert
 {
     AppendBentPlane(*this, _width, _height, 0.0f, 0.0f, 0.0f, _numVertsWidth, _numVertsHeight);
 
-    ModelTransform::SetUniqueMaterialFromColor(*this, _color);
+    Asset3DTransform::SetUniqueMaterialFromColor(*this, _color);
 }

@@ -12,6 +12,7 @@
 #include "Scene.hpp"
 #include "NormalShadowMapShader.hpp"
 #include "Viewport.hpp"
+#include "Asset3D.hpp"
 
 class Renderer
 {
@@ -40,28 +41,28 @@ class Renderer
     virtual const char *getShaderVersion() = 0;
 
     /**
-     * Loads a model3D resource prepared for the specific renderer API
+     * Loads an asset3D resource prepared for the specific renderer API
      *
-     * The returned model can be deleted with a delete statement.
+     * The returned asset can be deleted with a delete statement.
      *
-     * @param modelName  Model name to be loaded from the assets directory
+     * @param assetName  Asset name to be loaded from the assets directory
      *
-     * @return The prepared Model3D pointer or NULL if an error happened
+     * @return The prepared Asset3D pointer or NULL if an error happened
      */
-    virtual Model3D *loadModel(const std::string &modelName) = 0;
+    virtual Asset3D *loadAsset3D(const std::string &assetName) = 0;
 
     /**
-     * Loads a model3D resource prepared for the specific renderer API from
-     * a simple Model3D set of data. The data is copied and then the specific
+     * Loads an Asset3D resource prepared for the specific renderer API from
+     * a simple Asset3D set of data. The data is copied and then the specific
      * rendering API structures prepared
      *
-     * The returned model can be deleted with a delete statement.
+     * The returned asset can be deleted with a delete statement.
      *
-     * @param model  Model already containing the data
+     * @param asset Asset already containing the data
      *
-     * @return The prepared Model3D pointer or NULL if an error happened
+     * @return The prepared Asset3D pointer or NULL if an error happened
      */
-    virtual Model3D *prepareModel(const Model3D &model) = 0;
+    virtual Asset3D *prepareAsset3D(const Asset3D &model) = 0;
 
     /**
      * Renders a whole scene

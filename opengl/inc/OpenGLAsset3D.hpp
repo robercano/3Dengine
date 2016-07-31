@@ -1,8 +1,8 @@
 /**
- * @class	OpenGLModel3D
- * @brief	Model 3D representation prepared for the specific renderer
- *          This is a composite model generated through Renderer::prepareModel3D()
- *          that prepares the model for the specific renderer. For example in
+ * @class	OpenGLAsset3D
+ * @brief	Asset3D representation prepared for the specific renderer
+ *          This is a composite model generated through Renderer::prepareAsset3D()
+ *          that prepares the asset for the specific renderer. For example in
  *          OpenGL it would generate the VBO specific to the model 3D and cache
  *          that value so it can be used later on
  *
@@ -11,15 +11,15 @@
 #pragma once
 
 #include <stdint.h>
-#include "Model3D.hpp"
+#include "Asset3D.hpp"
 #include "OpenGL.h"
 
-class OpenGLModel3D : public Model3D
+class OpenGLAsset3D : public Asset3D
 {
   public:
     /**
-     * Prepares the model for use with OpenGL drawing calls. It makes
-     * use of the inherited model 3D data to upload it to the GPU. Only
+     * Prepares the asset for use with OpenGL drawing calls. It makes
+     * use of the inherited asset 3D data to upload it to the GPU. Only
      * after calling prepare the rest of the methods can be used to render
      * this model
      *

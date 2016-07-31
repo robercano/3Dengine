@@ -38,33 +38,34 @@ void Logging::log(const char *msg, const Model3D &model)
 
     printf("[Model3D] %s\n", msg);
 
-    printf("  [Vertices] %lu\n", model.getVertexData().size());
+    printf("  [Vertices] %lu\n", model.getAsset3D().getVertexData().size());
     i = 0;
-    for (std::vector<Model3D::VertexData>::const_iterator it = model.getVertexData().begin(); it != model.getVertexData().end();
-         ++it, ++i) {
+    for (std::vector<Asset3D::VertexData>::const_iterator it = model.getAsset3D().getVertexData().begin();
+         it != model.getAsset3D().getVertexData().end(); ++it, ++i) {
         printf("    [%05d] vertex: [%f, %f, %f]\n", i, it->vertex.x, it->vertex.y, it->vertex.z);
         printf("            normal: [%f, %f, %f]\n", it->normal.x, it->normal.y, it->normal.z);
         printf("            uvcoord:[%f, %f]\n", it->uvcoord.x, it->uvcoord.y);
     }
 
-    printf("  [Indices] %lu\n", model.getIndexData().size());
+    printf("  [Indices] %lu\n", model.getAsset3D().getIndexData().size());
     i = 0;
-    for (std::vector<uint32_t>::const_iterator it = model.getIndexData().begin(); it != model.getIndexData().end(); ++it, ++i) {
+    for (std::vector<uint32_t>::const_iterator it = model.getAsset3D().getIndexData().begin();
+         it != model.getAsset3D().getIndexData().end(); ++it, ++i) {
         printf("    [%05d] index: %d\n", i, *it);
     }
 
-    printf("  [Materials] %lu\n", model.getMaterials().size());
-    for (i = 0; i < model.getMaterials().size(); ++i) {
-        printf("    [%05d]\t material:  Ka [%f, %f, %f]\n", i, model.getMaterials()[i].getAmbient().r,
-               model.getMaterials()[i].getAmbient().g, model.getMaterials()[i].getAmbient().b);
-        printf("           \t            Kd [%f, %f, %f]\n", model.getMaterials()[i].getDiffuse().r, model.getMaterials()[i].getDiffuse().g,
-               model.getMaterials()[i].getDiffuse().b);
-        printf("           \t            Ks [%f, %f, %f]\n", model.getMaterials()[i].getSpecular().r,
-               model.getMaterials()[i].getSpecular().g, model.getMaterials()[i].getSpecular().b);
-        printf("           \t            alpha [%f]\n", model.getMaterials()[i].getAlpha());
-        printf("           \t            shine [%f]\n", model.getMaterials()[i].getShininess());
-        printf("           \t offset: %d\n", model.getIndicesOffsets()[i]);
-        printf("           \t count:  %d\n", model.getIndicesCount()[i]);
+    printf("  [Materials] %lu\n", model.getAsset3D().getMaterials().size());
+    for (i = 0; i < model.getAsset3D().getMaterials().size(); ++i) {
+        printf("    [%05d]\t material:  Ka [%f, %f, %f]\n", i, model.getAsset3D().getMaterials()[i].getAmbient().r,
+               model.getAsset3D().getMaterials()[i].getAmbient().g, model.getAsset3D().getMaterials()[i].getAmbient().b);
+        printf("           \t            Kd [%f, %f, %f]\n", model.getAsset3D().getMaterials()[i].getDiffuse().r,
+               model.getAsset3D().getMaterials()[i].getDiffuse().g, model.getAsset3D().getMaterials()[i].getDiffuse().b);
+        printf("           \t            Ks [%f, %f, %f]\n", model.getAsset3D().getMaterials()[i].getSpecular().r,
+               model.getAsset3D().getMaterials()[i].getSpecular().g, model.getAsset3D().getMaterials()[i].getSpecular().b);
+        printf("           \t            alpha [%f]\n", model.getAsset3D().getMaterials()[i].getAlpha());
+        printf("           \t            shine [%f]\n", model.getAsset3D().getMaterials()[i].getShininess());
+        printf("           \t offset: %d\n", model.getAsset3D().getIndicesOffsets()[i]);
+        printf("           \t count:  %d\n", model.getAsset3D().getIndicesCount()[i]);
     }
 }
 

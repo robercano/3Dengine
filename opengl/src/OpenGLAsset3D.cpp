@@ -1,17 +1,17 @@
 /**
- * @class	OpenGLModel3D
- * @brief	OpengGL model 3D representation
+ * @class	OpenGLAsset3D
+ * @brief	OpengGL asset 3D representation
  *
  * @author	Roberto Cano (http://www.robertocano.es)
  */
 
-#include "OpenGLModel3D.hpp"
+#include "OpenGLAsset3D.hpp"
 #include "Logging.hpp"
 #include "OpenGL.h"
 
 using namespace Logging;
 
-bool OpenGLModel3D::prepare()
+bool OpenGLAsset3D::prepare()
 {
     uint32_t offset;
 
@@ -32,7 +32,7 @@ bool OpenGLModel3D::prepare()
                                      3,         // size
                                      GL_FLOAT,  // type
                                      GL_FALSE,  // normalized?
-                                     sizeof(Model3D::VertexData),  // stride
+                                     sizeof(Asset3D::VertexData),  // stride
                                      (void *)0                     // array buffer offset
                                      ));
 
@@ -43,7 +43,7 @@ bool OpenGLModel3D::prepare()
                                      3,                                // size
                                      GL_FLOAT,                         // type
                                      GL_FALSE,                         // normalized?
-                                     sizeof(Model3D::VertexData),      // stride
+                                     sizeof(Asset3D::VertexData),      // stride
                                      reinterpret_cast<void *>(offset)  // array buffer offset
                                      ));
 
@@ -54,7 +54,7 @@ bool OpenGLModel3D::prepare()
                                      2,                                // size
                                      GL_FLOAT,                         // type
                                      GL_FALSE,                         // normalized?
-                                     sizeof(Model3D::VertexData),      // stride
+                                     sizeof(Asset3D::VertexData),      // stride
                                      reinterpret_cast<void *>(offset)  // array buffer offset
                                      ));
         }
@@ -95,7 +95,7 @@ bool OpenGLModel3D::prepare()
     return true;
 }
 
-bool OpenGLModel3D::destroy()
+bool OpenGLAsset3D::destroy()
 {
     __(glDeleteBuffers(1, &_vertexDataVBO));
     __(glDeleteVertexArrays(1, &_gVAO));

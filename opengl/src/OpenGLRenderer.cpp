@@ -6,10 +6,11 @@
  */
 #include "OpenGL.h"
 #include <algorithm>
+#include "Asset3DStorage.hpp"
 #include "Logging.hpp"
-#include "ModelStorage.hpp"
+#include "OpenGLAsset3D.hpp"
+#include "OpenGLAsset3D.hpp"
 #include "OpenGLLightingShader.hpp"
-#include "OpenGLModel3D.hpp"
 #include "OpenGLRenderer.hpp"
 
 using namespace Logging;
@@ -87,46 +88,47 @@ const char *OpenGLRenderer::getVersion() { return (const char *)glGetString(GL_V
 const char *OpenGLRenderer::getVendor() { return (const char *)glGetString(GL_VENDOR); }
 const char *OpenGLRenderer::getShaderVersion() { return (const char *)glGetString(GL_SHADING_LANGUAGE_VERSION); }
 Shader *OpenGLRenderer::newShader(void) { return new OpenGLShader(); }
-Model3D *OpenGLRenderer::loadModel(const std::string &modelName)
+Asset3D *OpenGLRenderer::loadAsset3D(const std::string &assetName)
 {
-    OpenGLModel3D *model = new OpenGLModel3D();
-    if (model == NULL) {
-        log("ERROR allocating memory for OpenGLModel3D\n");
+    OpenGLAsset3D *asset = new OpenGLAsset3D();
+    if (asset == NULL) {
+        log("ERROR allocating memory for OpenGLAsset3D\n");
         return NULL;
     }
 
-    if (ModelStorage::Load(modelName, *model) == false) {
-        log("ERROR loading model %s into an OpenGLModel3D\n", modelName.c_str());
-        delete model;
+    if (Asset3DStorage::Load(assetName, *asset) == false) {
+        log("ERROR loading asset %s into an OpenGLAsset3D\n", assetName.c_str());
+        delete asset;
         return NULL;
     }
 
-    if (model->prepare() == false) {
-        log("ERROR preparing OpenGL arrays for model %s\n", modelName.c_str());
-        delete model;
+    if (asset->prepare() == false) {
+        log("ERROR preparing OpenGL arrays for asset %s\n", assetName.c_str());
+        delete asset;
         return NULL;
     }
 
-    return model;
+    return asset;
 }
 
-Model3D *OpenGLRenderer::prepareModel(const Model3D &source)
+Asset3D *OpenGLRenderer::prepareAsset3D(const Asset3D &source)
 {
-    OpenGLModel3D *model = new OpenGLModel3D();
-    if (model == NULL) {
-        log("ERROR allocating memory for OpenGLModel3D\n");
+    OpenGLAsset3D *asset = new OpenGLAsset3D();
+    if (asset == NULL) {
+        log("ERROR allocating memory for OpenGLAsset3D\n");
         return NULL;
     }
 
-    *((Model3D *)model) = source;
+    /* TODO: optimize this so we don't need to copy the asset */
+    *((Asset3D *)asset) = source;
 
-    if (model->prepare() == false) {
+    if (asset->prepare() == false) {
         log("ERROR preparing OpenGL arrays for model copied from other model\n");
-        delete model;
+        delete asset;
         return NULL;
     }
 
-    return model;
+    return asset;
 }
 
 bool OpenGLRenderer::renderModel3D(Model3D &model3D, Camera &camera, LightingShader &shader, DirectLight *sun,
@@ -144,7 +146,7 @@ bool OpenGLRenderer::renderModel3D(Model3D &model3D, Camera &camera, LightingSha
     glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(model3D.getModelMatrix())));
 
     /* Cast the model into an internal type */
-    OpenGLModel3D &glObject = dynamic_cast<OpenGLModel3D &>(model3D);
+    OpenGLAsset3D &glObject = dynamic_cast<OpenGLAsset3D &>(model3D.getAsset3D());
 
     if (disableDepth) {
         glDisable(GL_DEPTH_TEST);
@@ -307,7 +309,7 @@ bool OpenGLRenderer::renderToShadowMap(Model3D &model3D, Light &light, NormalSha
     glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(model3D.getModelMatrix())));
 
     /* Cast the model into an internal type */
-    OpenGLModel3D &glObject = dynamic_cast<OpenGLModel3D &>(model3D);
+    OpenGLAsset3D &glObject = dynamic_cast<OpenGLAsset3D &>(model3D.getAsset3D());
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
@@ -581,7 +583,7 @@ bool OpenGLRenderer::renderModelNormals(Model3D &model3D, Camera &camera, Render
     glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(model3D.getModelMatrix())));
 
     /* Cast the model into an internal type */
-    OpenGLModel3D &glObject = dynamic_cast<OpenGLModel3D &>(model3D);
+    OpenGLAsset3D &glObject = dynamic_cast<OpenGLAsset3D &>(model3D.getAsset3D());
 
     /* Bind the render target */
     renderTarget.bind();

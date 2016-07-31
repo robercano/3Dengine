@@ -1,35 +1,37 @@
-#include "ModelInfo.hpp"
-#include "ModelLoaders.hpp"
-#include "ModelStorage.hpp"
+#include "Asset3DLoaders.hpp"
+#include "Asset3DStorage.hpp"
+#include "Logging.hpp"
+
+using namespace Logging;
 
 int main(int argc, char **argv)
 {
     if (argc < 3) {
-        fprintf(stderr, "OBJ model files to engine internal model file converter\n\n");
-        fprintf(stderr, "Usage:\n");
-        fprintf(stderr, "    OBJ2Engine <input_obj> <output_engine>\n");
-        fprintf(stderr, "\n");
-        fprintf(stderr, "input_obj: directory containing the geometry.obj, material.mtl and all textures files\n");
-        fprintf(stderr, "output_engine: filename for the engine binary representation file\n");
-        fprintf(stderr, "\n");
+        log("OBJ asset files to engine internal asset file converter\n\n");
+        log("Usage:\n");
+        log("    OBJ2Engine <input_obj> <output_engine>\n");
+        log("\n");
+        log("input_obj: directory containing the geometry.obj, material.mtl and all textures files\n");
+        log("output_engine: filename for the engine binary representation file\n");
+        log("\n");
         exit(1);
     }
 
-    Model3D model;
+    Asset3D asset;
 
-    if (ModelLoaders::LoadOBJModel(model, argv[1]) == false) {
-        fprintf(stderr, "ERROR opening input OBJ model %s\n", argv[1]);
+    if (Asset3DLoaders::LoadOBJ(asset, argv[1]) == false) {
+        log("ERROR opening input OBJ asset %s\n", argv[1]);
         exit(2);
     }
 
-    ModelInfo::ShowModelInfo(model);
+    log("Asset info", asset);
 
-    if (ModelStorage::Save(argv[2], model) == false) {
-        fprintf(stderr, "ERROR storing model to output file %s\n", argv[2]);
+    if (Asset3DStorage::Save(argv[2], asset) == false) {
+        log("ERROR storing asset to output file %s\n", argv[2]);
         exit(3);
     }
 
-    fprintf(stderr, "\nCreated %s succesfully\n\n", argv[2]);
+    log("\nCreated %s succesfully\n\n", argv[2]);
 
     return 0;
 }

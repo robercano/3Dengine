@@ -1,7 +1,7 @@
 #include "Cube.hpp"
 #include <glm/glm.hpp>
+#include "Asset3DTransform.hpp"
 #include "Logging.hpp"
-#include "ModelTransform.hpp"
 #include "Plane.hpp"
 
 using namespace Procedural;
@@ -66,10 +66,10 @@ Cube::Cube(float width, float height, float depth, const glm::vec3 &color, uint3
         Plane plane(planeSizes[i].x, planeSizes[i].y, _color, planeVerts[i]._width, planeVerts[i]._height);
 
         /* Transform the original plane */
-        ModelTransform::Rotate(plane, rotations[i]);
-        ModelTransform::Translate(plane, offsets[i]);
-        ModelTransform::AppendGeometryOnly(*this, plane);
+        Asset3DTransform::Rotate(plane, rotations[i]);
+        Asset3DTransform::Translate(plane, offsets[i]);
+        Asset3DTransform::AppendGeometryOnly(*this, plane);
     }
 
-    ModelTransform::SetUniqueMaterialFromColor(*this, _color);
+    Asset3DTransform::SetUniqueMaterialFromColor(*this, _color);
 }

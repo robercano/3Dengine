@@ -1,7 +1,7 @@
 #include "Cylinder.hpp"
 #include <glm/glm.hpp>
+#include "Asset3DTransform.hpp"
 #include "Circle.hpp"
-#include "ModelTransform.hpp"
 //#include "ProceduralUtils.hpp"
 
 using namespace Procedural;
@@ -15,23 +15,23 @@ Cylinder::Cylinder(float radius, float height, const glm::vec3 &color, uint32_t 
     Circle topCap(_radius, _color, _numVertsCap);
 
     /* Bottom cap */
-    ModelTransform::Rotate(bottomCap, glm::vec3(PI, 0.0f, 0.0f));
-    ModelTransform::AppendGeometryOnly(*this, bottomCap);
+    Asset3DTransform::Rotate(bottomCap, glm::vec3(PI, 0.0f, 0.0f));
+    Asset3DTransform::AppendGeometryOnly(*this, bottomCap);
 
     /* Upper cap */
-    ModelTransform::Translate(topCap, glm::vec3(0.0f, height, 0.0f));
-    ModelTransform::AppendGeometryOnly(*this, topCap);
+    Asset3DTransform::Translate(topCap, glm::vec3(0.0f, height, 0.0f));
+    Asset3DTransform::AppendGeometryOnly(*this, topCap);
 
     /* Body */
-    Model3D body;
+    Asset3D body;
     AppendBentPlane(body, (float)(2.0f * PI * _radius), _height, (float)(2.0 * PI), 0.0f, 0.0f, _numVertsCap + 1, _numVertsHeight);
 
-    ModelTransform::Translate(body, glm::vec3(0.0f, -_radius, 0.0f));
-    ModelTransform::Rotate(body, glm::vec3(-PI / 2.0f, 0.0f, 0.0f));
-    ModelTransform::Translate(body, glm::vec3(0.0f, _radius, 0.0f));
-    ModelTransform::Rotate(body, glm::vec3(0.0f, PI / _numVertsCap, 0.0f));
-    ModelTransform::AppendGeometryOnly(*this, body);
+    Asset3DTransform::Translate(body, glm::vec3(0.0f, -_radius, 0.0f));
+    Asset3DTransform::Rotate(body, glm::vec3(-PI / 2.0f, 0.0f, 0.0f));
+    Asset3DTransform::Translate(body, glm::vec3(0.0f, _radius, 0.0f));
+    Asset3DTransform::Rotate(body, glm::vec3(0.0f, PI / _numVertsCap, 0.0f));
+    Asset3DTransform::AppendGeometryOnly(*this, body);
 
     /* Generate the material */
-    ModelTransform::SetUniqueMaterialFromColor(*this, _color);
+    Asset3DTransform::SetUniqueMaterialFromColor(*this, _color);
 }

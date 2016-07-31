@@ -82,56 +82,71 @@ class ProceduralDemo : public GameHandler
         }
 
         /* Generate a terrain for the _scene */
-        _scene.add("M3D_terrain", game->getRenderer()->prepareModel(Procedural::Terrain(500.0f, 500.0f, 500.0f, 0, glm::vec3(1.0, 0.3f, 0.6f), 200, 200, 5, 0.5)));
+        Asset3D *terrain = game->getRenderer()->prepareAsset3D(Procedural::Terrain(500.0f, 500.0f, 500.0f, 0, glm::vec3(1.0, 0.3f, 0.6f), 200, 200, 5, 0.5));
+
+        _scene.add("M3D_terrain", new Model3D(*terrain));
         _scene.getModel("M3D_terrain")->setPosition(glm::vec3(0.0f, -100.0f, 0.0f));
         _scene.getModel("M3D_terrain")->setLightingShader(lightShader);
         _scene.getModel("M3D_terrain")->setShadowCaster(false);
 
         /* 2 bent planes for background */
-        _scene.add("M3D_plane1", game->getRenderer()->prepareModel(Procedural::BentPlane(500.0f, 500.0f, glm::vec3(1.0, 0.8f, 0.1f), (float)(PI/2.0f), 20, 20)));
+        Asset3D *plane1 = game->getRenderer()->prepareAsset3D(Procedural::BentPlane(500.0f, 500.0f, glm::vec3(1.0, 0.8f, 0.1f), (float)(PI/2.0f), 20, 20));
+        Asset3D *plane2 = game->getRenderer()->prepareAsset3D(Procedural::BentPlane(500.0f, 500.0f, glm::vec3(0.8, 1.0f, 0.1f), (float)PI, 20, 20));
+
+        _scene.add("M3D_plane1", new Model3D(*plane1));
         _scene.getModel("M3D_plane1")->setOrientation(glm::toMat4(glm::quat(glm::vec3(0.0f, PI/2.0f, 0.0f))));
         _scene.getModel("M3D_plane1")->rotate(glm::toMat4(glm::quat(glm::vec3(PI/2.0, PI/4.0f, 0.0f))));
         _scene.getModel("M3D_plane1")->setPosition(glm::vec3(-300.0f, 220.0f, -300.0f));
         _scene.getModel("M3D_plane1")->setLightingShader(lightShader);
         _scene.getModel("M3D_plane1")->setShadowCaster(false);
 
-        _scene.add("M3D_plane2", game->getRenderer()->prepareModel(Procedural::BentPlane(500.0f, 500.0f, glm::vec3(0.8, 1.0f, 0.1f), (float)PI, 20, 20)));
+        _scene.add("M3D_plane2", new Model3D(*plane2));
         _scene.getModel("M3D_plane2")->setOrientation(glm::toMat4(glm::quat(glm::vec3(PI/2.0, -PI/4.0f, 0.0f))));
         _scene.getModel("M3D_plane2")->setPosition(glm::vec3(300.0f, 220.0f, -300.0f));
         _scene.getModel("M3D_plane2")->setLightingShader(lightShader);
         _scene.getModel("M3D_plane2")->setShadowCaster(false);
 
         /* A sample triangle */
-        _scene.add("M3D_triangle", game->getRenderer()->prepareModel(Procedural::Triangle(glm::vec3(-100.0f, 10.0f, 130.0f),
+        Asset3D *triangle = game->getRenderer()->prepareAsset3D(Procedural::Triangle(glm::vec3(-100.0f, 10.0f, 130.0f),
                                                                            glm::vec3(0.0f, 30.0f, 130.0f),
                                                                            glm::vec3(-50.0f, 80.0f, 100.0f),
-                                                                           glm::vec3(1.0f, 1.0f, 1.0f))));
+                                                                           glm::vec3(1.0f, 1.0f, 1.0f)));
+
+        _scene.add("M3D_triangle", new Model3D(*triangle));
         _scene.getModel("M3D_triangle")->setLightingShader(lightShader);
 
         /* Torus */
-        _scene.add("M3D_torus", game->getRenderer()->prepareModel(Procedural::Torus(10.0f, 4.0f, glm::vec3(1.0f, 0.0f, 0.0f), 50, 50)));
+        Asset3D *torus = game->getRenderer()->prepareAsset3D(Procedural::Torus(10.0f, 4.0f, glm::vec3(1.0f, 0.0f, 0.0f), 50, 50));
+
+        _scene.add("M3D_torus", new Model3D(*torus));
         _scene.getModel("M3D_torus")->setOrientation(glm::toMat4(glm::quat(glm::vec3(0.0f, -PI/2.0f, 0.0f))));
         _scene.getModel("M3D_torus")->rotate(glm::toMat4(glm::quat(glm::vec3(-PI/4.0f, 0.0f, 0.0f))));
         _scene.getModel("M3D_torus")->setPosition(glm::vec3(120.0f, 100.0f, 100.0f));
         _scene.getModel("M3D_torus")->setLightingShader(lightShader);
 
         /* Create a cube */
-        _scene.add("M3D_cube", game->getRenderer()->prepareModel(Procedural::Cube(150.0f, 50.0f, 100.0f, glm::vec3(0.5f, 0.3f, 1.0f), 10, 8, 2)));
+        Asset3D *cube = game->getRenderer()->prepareAsset3D(Procedural::Cube(150.0f, 50.0f, 100.0f, glm::vec3(0.5f, 0.3f, 1.0f), 10, 8, 2));
+        _scene.add("M3D_cube", new Model3D(*cube));
         _scene.getModel("M3D_cube")->setPosition(glm::vec3(0.0f, 60.0f, 0.0f));
         _scene.getModel("M3D_cube")->setLightingShader(lightShader);
 
         /* Create a circle */
-        _scene.add("M3D_circle", game->getRenderer()->prepareModel(Procedural::Circle(100.0f, glm::vec3(0.8f, 0.9f, 0.1f), 50)));
+        Asset3D *circle = game->getRenderer()->prepareAsset3D(Procedural::Circle(100.0f, glm::vec3(0.8f, 0.9f, 0.1f), 50));
+
+        _scene.add("M3D_circle", new Model3D(*circle));
         _scene.getModel("M3D_circle")->setPosition(glm::vec3(0.0f, 1.0f, 0.0f));
         _scene.getModel("M3D_circle")->setLightingShader(lightShader);
 
         /* Create a cylinder */
-        _scene.add("M3D_cylinder", game->getRenderer()->prepareModel(Procedural::Cylinder(20.0f, 40.0f, glm::vec3(0.2f, 1.0f, 0.4f), 50, 50)));
+        Asset3D *cylinder = game->getRenderer()->prepareAsset3D(Procedural::Cylinder(20.0f, 40.0f, glm::vec3(0.2f, 1.0f, 0.4f), 50, 50));
+
+        _scene.add("M3D_cylinder", new Model3D(*cylinder));
         _scene.getModel("M3D_cylinder")->setPosition(glm::vec3(0.0f, 90.0f, 150.0f));
         _scene.getModel("M3D_cylinder")->setLightingShader(lightShader);
 
         /* Create a sphere */
-        _scene.add("M3D_sphere", game->getRenderer()->prepareModel(Procedural::Sphere(30.0f, glm::vec3(0.4, 0.8f, 0.9f), 50, 50)));
+        Asset3D *sphere = game->getRenderer()->prepareAsset3D(Procedural::Sphere(30.0f, glm::vec3(0.4, 0.8f, 0.9f), 50, 50));
+        _scene.add("M3D_sphere", new Model3D(*sphere));
         _scene.getModel("M3D_sphere")->setPosition(glm::vec3(-120.0f, 30.0f, 200.0f));
         _scene.getModel("M3D_sphere")->setLightingShader(lightShader);
 
