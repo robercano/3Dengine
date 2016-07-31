@@ -18,7 +18,7 @@ CC=gcc
 VPATH=core/src:opengl/src:procedural/src:utils/src:tools/
 
 CORE_FILES=Game.cpp InputManager.cpp WindowManager.cpp TimeManager.cpp \
-		   Model3D.cpp \
+		   Model3D.cpp Asset3D.cpp \
 		   TextConsole.cpp TrueTypeFont.cpp FreeTypeFont.cpp FontRenderer.cpp \
 		   Scene.cpp \
            Renderer.cpp NOAARenderTarget.cpp MSAARenderTarget.cpp SSAARenderTarget.cpp \
@@ -73,7 +73,7 @@ endif
 #
 #Compilation flags
 #
-FLAGS+=-Werror -MMD -fPIC -Icore/inc -Iopengl/inc -Iprocedural/inc -Iutils/inc -I3rdparty -O0 -g -DDEBUG_OPENGL_PIPELINE
+FLAGS+=-Werror -MMD -fPIC -Icore/inc -Iopengl/inc -Iprocedural/inc -Iutils/inc -I3rdparty -O0 -g -DDEBUG_OPENGL_PIPELINE -fno-rtti
 CXXFLAGS=$(FLAGS) -std=c++11
 CFLAGS=$(FLAGS) -std=c11
 

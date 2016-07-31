@@ -25,7 +25,7 @@ void Model3D::_calculateBoundingVolumes()
      * The loop assumes the center of mass of the object is (0.0f, 0.0f, 0.0f) in local
      * coordinates. If it is not the user must call normalize() prior to this function
      */
-    for (it = _asset.getVertexData().begin(); it != _asset.getVertexData().end(); ++it) {
+    for (it = _asset->getVertexData().begin(); it != _asset->getVertexData().end(); ++it) {
         /* Calculate maximum length */
         float length = glm::length(it->vertex);
         if (length > maxLength) {

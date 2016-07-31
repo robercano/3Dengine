@@ -22,6 +22,7 @@ namespace Logging
     void log(const char *msg, const glm::vec3 &matrix);
     void log(const char *msg, const glm::vec2 &matrix);
     void log(const char *msg, const Model3D &model);
+    void log(const char *msg, const Asset3D &asset);
 
     /**
      * Main logging function

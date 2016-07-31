@@ -10,14 +10,14 @@
 
 #include <stdint.h>
 #include <glm/glm.hpp>
-#include "Asset3D.hpp"
+#include "Model3D.hpp"
 
 namespace Procedural
 {
 /**
  * Plane class to generate axis aligned planes
  */
-class Plane : public Asset3D
+class Plane : public Model3D
 {
   public:
       /**

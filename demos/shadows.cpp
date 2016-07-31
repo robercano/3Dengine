@@ -14,8 +14,11 @@
 #include "ToonLightingShader.hpp"
 #include "ToonRenderTarget.hpp"
 #include "Scene.hpp"
+#include "Logging.hpp"
 
 #define PI 3.14159265358979323846
+
+using namespace Logging;
 
 class ShadowsDemo : public GameHandler
 {
@@ -108,10 +111,15 @@ class ShadowsDemo : public GameHandler
         }
 
         /* Load the geometry */
-        Asset3D *daxter = game->getRenderer()->loadAsset3D("data/models/internal/daxter.model");
-        Asset3D *plane = game->getRenderer()->prepareAsset3D(Procedural::Plane());
+        Procedural::Plane *plane = new Procedural::Plane();
 
-        _scene.add("M3D_daxter", new Model3D(*daxter));
+        Asset3D *daxter = game->getRenderer()->loadAsset3D("data/models/internal/daxter.model");
+        if (game->getRenderer()->prepareAsset3D(*plane) == false) {
+            log("ERROR preparing plane asset\n");
+            return false;
+        }
+
+        _scene.add("M3D_daxter", new Model3D(daxter));
         _scene.getModel("M3D_daxter")->setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
         _scene.getModel("M3D_daxter")->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
         _scene.getModel("M3D_daxter")->setLightingShader(shaderBlinnLight);
@@ -121,7 +129,7 @@ class ShadowsDemo : public GameHandler
         _scene.getModel("M3D_daxter")->rotate(glm::toMat4(rot));
 
         /* Use a plane for the floor */
-        _scene.add("M3D_plane", new Model3D(*plane));
+        _scene.add("M3D_plane", plane);
         _scene.getModel("M3D_plane")->setScaleFactor(glm::vec3(500.0f, 1.0f, 500.0f));
         _scene.getModel("M3D_plane")->setPosition(glm::vec3(0.0f, -70.0f, 0.0f));
         _scene.getModel("M3D_plane")->setLightingShader(shaderBlinnLight);

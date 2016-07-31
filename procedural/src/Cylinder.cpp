@@ -23,14 +23,14 @@ Cylinder::Cylinder(float radius, float height, const glm::vec3 &color, uint32_t 
     Asset3DTransform::AppendGeometryOnly(*this, topCap);
 
     /* Body */
-    Asset3D body;
-    AppendBentPlane(body, (float)(2.0f * PI * _radius), _height, (float)(2.0 * PI), 0.0f, 0.0f, _numVertsCap + 1, _numVertsHeight);
+    Asset3D *body = Asset3D::New();
+    AppendBentPlane(*body, (float)(2.0f * PI * _radius), _height, (float)(2.0 * PI), 0.0f, 0.0f, _numVertsCap + 1, _numVertsHeight);
 
-    Asset3DTransform::Translate(body, glm::vec3(0.0f, -_radius, 0.0f));
-    Asset3DTransform::Rotate(body, glm::vec3(-PI / 2.0f, 0.0f, 0.0f));
-    Asset3DTransform::Translate(body, glm::vec3(0.0f, _radius, 0.0f));
-    Asset3DTransform::Rotate(body, glm::vec3(0.0f, PI / _numVertsCap, 0.0f));
-    Asset3DTransform::AppendGeometryOnly(*this, body);
+    Asset3DTransform::Translate(*body, glm::vec3(0.0f, -_radius, 0.0f));
+    Asset3DTransform::Rotate(*body, glm::vec3(-PI / 2.0f, 0.0f, 0.0f));
+    Asset3DTransform::Translate(*body, glm::vec3(0.0f, _radius, 0.0f));
+    Asset3DTransform::Rotate(*body, glm::vec3(0.0f, PI / _numVertsCap, 0.0f));
+    Asset3DTransform::AppendGeometryOnly(*this, *body);
 
     /* Generate the material */
     Asset3DTransform::SetUniqueMaterialFromColor(*this, _color);

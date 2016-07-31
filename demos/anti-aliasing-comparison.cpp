@@ -71,8 +71,8 @@ class AntiaAliasingDemo : public GameHandler
         _scene.add("RT_fxaa2", FXAA2RenderTarget::New());
 
         _scene.getRenderTarget("RT_noaa")->init(_width, _height);
-        dynamic_cast<MSAARenderTarget*>(_scene.getRenderTarget("RT_msaa"))->init(_width, _height, MSAARenderTarget::getMaxSamples() < 4 ? MSAARenderTarget::getMaxSamples() : 4);
-        dynamic_cast<SSAARenderTarget*>(_scene.getRenderTarget("RT_ssaa"))->init(_width, _height, 4);
+        static_cast<MSAARenderTarget*>(_scene.getRenderTarget("RT_msaa"))->init(_width, _height, MSAARenderTarget::getMaxSamples() < 4 ? MSAARenderTarget::getMaxSamples() : 4);
+        static_cast<SSAARenderTarget*>(_scene.getRenderTarget("RT_ssaa"))->init(_width, _height, 4);
         _scene.getRenderTarget("RT_fxaa")->init(_width, _height);
         _scene.getRenderTarget("RT_fxaa2")->init(_width, _height);
 
@@ -90,7 +90,7 @@ class AntiaAliasingDemo : public GameHandler
         /* Load the geometry */
         Asset3D *deadpool = game->getRenderer()->loadAsset3D("data/models/internal/deadpool.model");
 
-        _scene.add("M3D_deadpool", new Model3D(*deadpool));
+        _scene.add("M3D_deadpool", new Model3D(deadpool));
         _scene.getModel("M3D_deadpool")->setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
         _scene.getModel("M3D_deadpool")->setLightingShader(blinnPhongShader);
         _scene.getModel("M3D_deadpool")->setShadowCaster(false);

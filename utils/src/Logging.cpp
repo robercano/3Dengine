@@ -34,38 +34,43 @@ void Logging::log(const char *msg, const glm::vec3 &vect) { printf("[vec3] %s\n 
 void Logging::log(const char *msg, const glm::vec2 &vect) { printf("[vec2] %s\n    [%f, %f]\n", msg, vect[0], vect[1]); }
 void Logging::log(const char *msg, const Model3D &model)
 {
+    printf("[Model3D] %s\n", msg);
+    log(" ", *model.getAsset3D());
+}
+
+void Logging::log(const char *msg, const Asset3D &asset)
+{
     uint32_t i;
 
-    printf("[Model3D] %s\n", msg);
+    printf("[Asset3D] %s\n", msg);
 
-    printf("  [Vertices] %lu\n", model.getAsset3D().getVertexData().size());
+    printf("  [Vertices] %lu\n", asset.getVertexData().size());
     i = 0;
-    for (std::vector<Asset3D::VertexData>::const_iterator it = model.getAsset3D().getVertexData().begin();
-         it != model.getAsset3D().getVertexData().end(); ++it, ++i) {
+    for (std::vector<Asset3D::VertexData>::const_iterator it = asset.getVertexData().begin(); it != asset.getVertexData().end();
+         ++it, ++i) {
         printf("    [%05d] vertex: [%f, %f, %f]\n", i, it->vertex.x, it->vertex.y, it->vertex.z);
         printf("            normal: [%f, %f, %f]\n", it->normal.x, it->normal.y, it->normal.z);
         printf("            uvcoord:[%f, %f]\n", it->uvcoord.x, it->uvcoord.y);
     }
 
-    printf("  [Indices] %lu\n", model.getAsset3D().getIndexData().size());
+    printf("  [Indices] %lu\n", asset.getIndexData().size());
     i = 0;
-    for (std::vector<uint32_t>::const_iterator it = model.getAsset3D().getIndexData().begin();
-         it != model.getAsset3D().getIndexData().end(); ++it, ++i) {
+    for (std::vector<uint32_t>::const_iterator it = asset.getIndexData().begin(); it != asset.getIndexData().end(); ++it, ++i) {
         printf("    [%05d] index: %d\n", i, *it);
     }
 
-    printf("  [Materials] %lu\n", model.getAsset3D().getMaterials().size());
-    for (i = 0; i < model.getAsset3D().getMaterials().size(); ++i) {
-        printf("    [%05d]\t material:  Ka [%f, %f, %f]\n", i, model.getAsset3D().getMaterials()[i].getAmbient().r,
-               model.getAsset3D().getMaterials()[i].getAmbient().g, model.getAsset3D().getMaterials()[i].getAmbient().b);
-        printf("           \t            Kd [%f, %f, %f]\n", model.getAsset3D().getMaterials()[i].getDiffuse().r,
-               model.getAsset3D().getMaterials()[i].getDiffuse().g, model.getAsset3D().getMaterials()[i].getDiffuse().b);
-        printf("           \t            Ks [%f, %f, %f]\n", model.getAsset3D().getMaterials()[i].getSpecular().r,
-               model.getAsset3D().getMaterials()[i].getSpecular().g, model.getAsset3D().getMaterials()[i].getSpecular().b);
-        printf("           \t            alpha [%f]\n", model.getAsset3D().getMaterials()[i].getAlpha());
-        printf("           \t            shine [%f]\n", model.getAsset3D().getMaterials()[i].getShininess());
-        printf("           \t offset: %d\n", model.getAsset3D().getIndicesOffsets()[i]);
-        printf("           \t count:  %d\n", model.getAsset3D().getIndicesCount()[i]);
+    printf("  [Materials] %lu\n", asset.getMaterials().size());
+    for (i = 0; i < asset.getMaterials().size(); ++i) {
+        printf("    [%05d]\t material:  Ka [%f, %f, %f]\n", i, asset.getMaterials()[i].getAmbient().r,
+               asset.getMaterials()[i].getAmbient().g, asset.getMaterials()[i].getAmbient().b);
+        printf("           \t            Kd [%f, %f, %f]\n", asset.getMaterials()[i].getDiffuse().r, asset.getMaterials()[i].getDiffuse().g,
+               asset.getMaterials()[i].getDiffuse().b);
+        printf("           \t            Ks [%f, %f, %f]\n", asset.getMaterials()[i].getSpecular().r,
+               asset.getMaterials()[i].getSpecular().g, asset.getMaterials()[i].getSpecular().b);
+        printf("           \t            alpha [%f]\n", asset.getMaterials()[i].getAlpha());
+        printf("           \t            shine [%f]\n", asset.getMaterials()[i].getShininess());
+        printf("           \t offset: %d\n", asset.getIndicesOffsets()[i]);
+        printf("           \t count:  %d\n", asset.getIndicesCount()[i]);
     }
 }
 

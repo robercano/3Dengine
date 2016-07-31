@@ -7,14 +7,14 @@
 #pragma once
 
 #include <stdint.h>
-#include "Asset3D.hpp"
+#include "Model3D.hpp"
 
 namespace Procedural
 {
 /**
  * Torus class to generate a procedural Torus
  */
-class Torus : public Asset3D
+class Torus : public Model3D
 {
   public:
     /**

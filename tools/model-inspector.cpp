@@ -16,15 +16,17 @@ int main(int argc, char **argv)
         exit(1);
     }
 
-    Asset3D asset;
+    Asset3D *asset = Asset3D::New();
 
-    if (Asset3DStorage::Load(argv[1], asset) == false) {
+    if (Asset3DStorage::Load(argv[1], *asset) == false) {
         log("ERROR loading asset from file %s\n", argv[1]);
         exit(3);
     }
 
     log("\nAsset3D:     %s\n", argv[1]);
-    log("", asset);
+    log("Asset data", *asset);
+
+    Asset3D::Delete(asset);
 
     return 0;
 }

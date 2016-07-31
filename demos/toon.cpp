@@ -62,10 +62,12 @@ class Demo : public GameHandler
         _scene.getRenderTarget("RT_fxaa2")->setClearColor(1.0, 1.0, 1.0, 0.0);
 
         /* Create the toon target to add a border */
-        _scene.add("RT_toon", ToonRenderTarget::New());
+        ToonRenderTarget *toonRT = ToonRenderTarget::New();
+        toonRT->setBorderColor(glm::vec4(0.0, 0.0, 0.0, 1.0));
+
+        _scene.add("RT_toon", toonRT);
         _scene.getRenderTarget("RT_toon")->init(_width, _height);
         _scene.getRenderTarget("RT_toon")->setClearColor(1.0, 1.0, 1.0, 1.0);
-        dynamic_cast<ToonRenderTarget*>(_scene.getRenderTarget("RT_toon"))->setBorderColor(glm::vec4(0.0, 0.0, 0.0, 1.0));
 
         _scene.setActiveRenderTarget("RT_fxaa2");
 
@@ -86,17 +88,17 @@ class Demo : public GameHandler
         /* Load the geometry */
         Asset3D *daxter = game->getRenderer()->loadAsset3D("data/models/internal/daxter.model");
 
-        _scene.add("M3D_daxter1", new Model3D(*daxter));
+        _scene.add("M3D_daxter1", new Model3D(daxter));
         _scene.getModel("M3D_daxter1")->setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
         _scene.getModel("M3D_daxter1")->setLightingShader(_shaderBlinnLight);
         _scene.getModel("M3D_daxter1")->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 
-        _scene.add("M3D_daxter2", new Model3D(*daxter));
+        _scene.add("M3D_daxter2", new Model3D(daxter));
         _scene.getModel("M3D_daxter2")->setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
         _scene.getModel("M3D_daxter2")->setLightingShader(_shaderBlinnLight);
         _scene.getModel("M3D_daxter2")->setPosition(glm::vec3(0.0f, 0.0f, -50.0f));
 
-        _scene.add("M3D_daxter3", new Model3D(*daxter));
+        _scene.add("M3D_daxter3", new Model3D(daxter));
         _scene.getModel("M3D_daxter3")->setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
         _scene.getModel("M3D_daxter3")->setLightingShader(_shaderBlinnLight);
         _scene.getModel("M3D_daxter3")->setPosition(glm::vec3(0.0f, 0.0f, -100.0f));

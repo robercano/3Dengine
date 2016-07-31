@@ -8,14 +8,14 @@
 
 #include <stdint.h>
 #include <glm/glm.hpp>
-#include "Asset3D.hpp"
+#include "Model3D.hpp"
 
 namespace Procedural
 {
 /**
  * Circle class to generate a flat circle
  */
-class Circle : public Asset3D
+class Circle : public Model3D
 {
   public:
     /**

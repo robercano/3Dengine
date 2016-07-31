@@ -111,24 +111,15 @@ Asset3D *OpenGLRenderer::loadAsset3D(const std::string &assetName)
     return asset;
 }
 
-Asset3D *OpenGLRenderer::prepareAsset3D(const Asset3D &source)
+bool OpenGLRenderer::prepareAsset3D(Asset3D &source)
 {
-    OpenGLAsset3D *asset = new OpenGLAsset3D();
-    if (asset == NULL) {
-        log("ERROR allocating memory for OpenGLAsset3D\n");
-        return NULL;
+    OpenGLAsset3D &glAsset3D = static_cast<OpenGLAsset3D &>(source);
+    if (glAsset3D.prepare() == false) {
+        log("ERROR preparing OpenGL Asset3D\n");
+        return false;
     }
 
-    /* TODO: optimize this so we don't need to copy the asset */
-    *((Asset3D *)asset) = source;
-
-    if (asset->prepare() == false) {
-        log("ERROR preparing OpenGL arrays for model copied from other model\n");
-        delete asset;
-        return NULL;
-    }
-
-    return asset;
+    return true;
 }
 
 bool OpenGLRenderer::renderModel3D(Model3D &model3D, Camera &camera, LightingShader &shader, DirectLight *sun,
@@ -146,7 +137,7 @@ bool OpenGLRenderer::renderModel3D(Model3D &model3D, Camera &camera, LightingSha
     glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(model3D.getModelMatrix())));
 
     /* Cast the model into an internal type */
-    OpenGLAsset3D &glObject = dynamic_cast<OpenGLAsset3D &>(model3D.getAsset3D());
+    OpenGLAsset3D *glObject = static_cast<OpenGLAsset3D *>(model3D.getAsset3D());
 
     if (disableDepth) {
         glDisable(GL_DEPTH_TEST);
@@ -271,14 +262,14 @@ bool OpenGLRenderer::renderModel3D(Model3D &model3D, Camera &camera, LightingSha
         delete[] shadowMVPArray;
 
         /* Draw the model */
-        __(glBindVertexArray(glObject.getVertexArrayID()));
+        __(glBindVertexArray(glObject->getVertexArrayID()));
         {
             __(glActiveTexture(GL_TEXTURE0));
 
-            std::vector<Material> materials = glObject.getMaterials();
-            std::vector<uint32_t> texturesIDs = glObject.getTexturesIDs();
-            std::vector<uint32_t> offset = glObject.getIndicesOffsets();
-            std::vector<uint32_t> count = glObject.getIndicesCount();
+            std::vector<Material> materials = glObject->getMaterials();
+            std::vector<uint32_t> texturesIDs = glObject->getTexturesIDs();
+            std::vector<uint32_t> offset = glObject->getIndicesOffsets();
+            std::vector<uint32_t> count = glObject->getIndicesCount();
 
             for (size_t i = 0; i < materials.size(); ++i) {
                 __(glBindTexture(GL_TEXTURE_2D, texturesIDs[i]));
@@ -309,7 +300,7 @@ bool OpenGLRenderer::renderToShadowMap(Model3D &model3D, Light &light, NormalSha
     glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(model3D.getModelMatrix())));
 
     /* Cast the model into an internal type */
-    OpenGLAsset3D &glObject = dynamic_cast<OpenGLAsset3D &>(model3D.getAsset3D());
+    OpenGLAsset3D *glObject = static_cast<OpenGLAsset3D *>(model3D.getAsset3D());
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
@@ -324,10 +315,10 @@ bool OpenGLRenderer::renderToShadowMap(Model3D &model3D, Light &light, NormalSha
         shader.setUniformMat4("u_MVPMatrix", &MVP);
 
         /* Draw the model */
-        __(glBindVertexArray(glObject.getVertexArrayID()));
+        __(glBindVertexArray(glObject->getVertexArrayID()));
         {
-            std::vector<uint32_t> offset = glObject.getIndicesOffsets();
-            std::vector<uint32_t> count = glObject.getIndicesCount();
+            std::vector<uint32_t> offset = glObject->getIndicesOffsets();
+            std::vector<uint32_t> count = glObject->getIndicesCount();
 
             for (size_t i = 0; i < count.size(); ++i) {
                 __(glDrawElements(GL_TRIANGLES, count[i], GL_UNSIGNED_INT, (void *)(offset[i] * sizeof(GLuint))));
@@ -583,7 +574,7 @@ bool OpenGLRenderer::renderModelNormals(Model3D &model3D, Camera &camera, Render
     glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(model3D.getModelMatrix())));
 
     /* Cast the model into an internal type */
-    OpenGLAsset3D &glObject = dynamic_cast<OpenGLAsset3D &>(model3D.getAsset3D());
+    OpenGLAsset3D *glObject = static_cast<OpenGLAsset3D *>(model3D.getAsset3D());
 
     /* Bind the render target */
     renderTarget.bind();
@@ -595,10 +586,10 @@ bool OpenGLRenderer::renderModelNormals(Model3D &model3D, Camera &camera, Render
         _renderNormals.setUniformFloat("u_normalSize", normalSize);
 
         /* Draw the model */
-        __(glBindVertexArray(glObject.getVertexArrayID()));
+        __(glBindVertexArray(glObject->getVertexArrayID()));
         {
-            std::vector<uint32_t> offset = glObject.getIndicesOffsets();
-            std::vector<uint32_t> count = glObject.getIndicesCount();
+            std::vector<uint32_t> offset = glObject->getIndicesOffsets();
+            std::vector<uint32_t> count = glObject->getIndicesCount();
 
             for (size_t i = 0; i < offset.size(); ++i) {
                 __(glDrawElements(GL_TRIANGLES, count[i], GL_UNSIGNED_INT, (void *)(offset[i] * sizeof(GLuint))));

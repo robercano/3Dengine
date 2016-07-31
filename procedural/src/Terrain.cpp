@@ -33,7 +33,7 @@ Terrain::Terrain(float width, float depth, float height, uint32_t slice, const g
     AppendBentPlane(*this, _width, _depth, 0.0f, 0.0f, 0.0f, _numVertsWidth, _numVertsDepth);
 
     /* Now modify the height according to the octave perlin noise function */
-    Asset3D::VertexData *data = &_vertexData[0];
+    Asset3D::VertexData *data = &_asset->_vertexData[0];
 
     for (uint32_t i = 0; i < numVertsWidth; ++i) {
         for (uint32_t j = 0; j < numVertsDepth; ++j) {

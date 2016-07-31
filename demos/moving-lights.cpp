@@ -74,7 +74,7 @@ class AntiaAliasingDemo : public GameHandler
         /* Load the geometry */
         Asset3D *deadpool = game->getRenderer()->loadAsset3D("data/models/internal/deadpool.model");
 
-        _scene.add("M3D_deadpool", new Model3D(*deadpool));
+        _scene.add("M3D_deadpool", new Model3D(deadpool));
         _scene.getModel("M3D_deadpool")->setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
         _scene.getModel("M3D_deadpool")->setLightingShader(blinnPhongShader);
 

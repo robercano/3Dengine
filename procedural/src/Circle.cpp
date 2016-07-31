@@ -10,8 +10,8 @@ Circle::Circle(float radius, const glm::vec3 &color, uint32_t numVertsSide) : _r
     uint32_t count = 0;
 
     /* A circle has a center vertex and '_numVertsSide' border vertices */
-    _vertexData.resize(1 + _numVertsSide);
-    Asset3D::VertexData *data = &_vertexData[0];
+    _asset->_vertexData.resize(1 + _numVertsSide);
+    Asset3D::VertexData *data = &_asset->_vertexData[0];
 
     /* Vertices */
     data[count].vertex = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -29,8 +29,8 @@ Circle::Circle(float radius, const glm::vec3 &color, uint32_t numVertsSide) : _r
     /* Faces */
 
     /* A cap has '_numVertsSide' triangles */
-    _vertexIndices.resize(_numVertsSide * 3);
-    uint32_t *index = &_vertexIndices[0];
+    _asset->_vertexIndices.resize(_numVertsSide * 3);
+    uint32_t *index = &_asset->_vertexIndices[0];
 
     /* Bottom lid */
     count = 0;
@@ -46,13 +46,13 @@ Circle::Circle(float radius, const glm::vec3 &color, uint32_t numVertsSide) : _r
     index[count++] = _numVertsSide;
 
     /* Add a default material */
-    _materials.push_back(Material());
+    _asset->_materials.push_back(Material());
 
     /* Add a default texture */
     uint8_t rgb[3] = {(uint8_t)(color.r * 255), (uint8_t)(color.g * 255), (uint8_t)(color.b * 255)};
-    _textures.push_back(Texture(rgb, 1, 1, 8));
+    _asset->_textures.push_back(Texture(rgb, 1, 1, 8));
 
     /* Only one set of indices */
-    _indicesOffsets.push_back(0);
-    _indicesCount.push_back(_vertexIndices.size());
+    _asset->_indicesOffsets.push_back(0);
+    _asset->_indicesCount.push_back(_asset->_vertexIndices.size());
 }

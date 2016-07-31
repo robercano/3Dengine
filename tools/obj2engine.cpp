@@ -17,21 +17,23 @@ int main(int argc, char **argv)
         exit(1);
     }
 
-    Asset3D asset;
+    Asset3D *asset = Asset3D::New();
 
-    if (Asset3DLoaders::LoadOBJ(asset, argv[1]) == false) {
+    if (Asset3DLoaders::LoadOBJ(*asset, argv[1]) == false) {
         log("ERROR opening input OBJ asset %s\n", argv[1]);
         exit(2);
     }
 
-    log("Asset info", asset);
+    log("Asset info", *asset);
 
-    if (Asset3DStorage::Save(argv[2], asset) == false) {
+    if (Asset3DStorage::Save(argv[2], *asset) == false) {
         log("ERROR storing asset to output file %s\n", argv[2]);
         exit(3);
     }
 
     log("\nCreated %s succesfully\n\n", argv[2]);
+
+    Asset3D::Delete(asset);
 
     return 0;
 }

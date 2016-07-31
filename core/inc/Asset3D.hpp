@@ -29,7 +29,7 @@
  *                  * List with the number of indices that belong to the rendering list starting
  *                    at the indicated offset
  *
- *          The former data allows to render a model3D as a group of rendering lists, with each list
+ *          The former data allows to render a model2D as a group of rendering lists, with each list
  *          defining a material and a texture, and a list of indices into the raw vertex data. This
  *          minimizes the bandwidth required from the GPU to render the model.
  *
@@ -47,6 +47,12 @@
 #include "Texture.hpp"
 #include "ProceduralUtils.hpp"
 
+namespace Procedural {
+    class Circle;
+    class Terrain;
+    class Triangle;
+};
+
 class Asset3D
 {
   public:
@@ -56,6 +62,9 @@ class Asset3D
     friend class Asset3DStorage;
     friend class Asset3DLoaders;
     friend class Asset3DTransform;
+    friend class Procedural::Circle;
+    friend class Procedural::Terrain;
+    friend class Procedural::Triangle;
     friend void Procedural::AppendBentPlane(Asset3D &asset,
                                             float width, float height,
                                             float angleWidth, float angleHeight, float angleRadius,
@@ -78,9 +87,20 @@ class Asset3D
     static const uint32_t VertexDataPackedSize = 32;
 
     /**
-     * Constructor
+     * Allocates a new Asset3D of the specific underlaying API
+     *
+     * To free the returned memory Asset3D::Delete() must be used
+     *
+     * @return A pointer to the newly allocated BlinnPhongShader
      */
-    Asset3D() {}
+    static Asset3D *New();
+
+    /**
+     * Frees the asset previously allocated by Asset3D::New()
+     *
+     * @param target  Pointer to the allocated Asset3D
+     */
+    static void Delete(Asset3D *target);
 
     /**
      * Destructor
@@ -96,35 +116,7 @@ class Asset3D
      * a model from disk which hasn't been imported before in the engine so the user can
      * make sure the model will be visible on screen
      */
-    void normalize()
-    {
-        std::vector<VertexData>::iterator it;
-        glm::vec3 cm = glm::vec3(0.0f, 0.0f, 0.0f);
-
-        for (it = _vertexData.begin(); it != _vertexData.end(); ++it) {
-            cm += it->vertex;
-        }
-        cm /= _vertexData.size();
-
-        /* Substract the center of mass to all vertices */
-        float maxLength = std::numeric_limits<float>::min();
-
-        for (it = _vertexData.begin(); it != _vertexData.end(); ++it) {
-            it->vertex -= cm;
-
-            /* Calculate maximum length */
-            float length = glm::length(it->vertex);
-            if (length > maxLength) {
-                maxLength = length;
-            }
-        }
-
-        /* Finally divide by maxLength to make the model fit in a sphere
-         * of radius 1.0 */
-        for (it = _vertexData.begin(); it != _vertexData.end(); ++it) {
-            it->vertex /= maxLength;
-        }
-    }
+    void normalize();
 
     /**
      * Getter
@@ -142,6 +134,11 @@ class Asset3D
     const std::vector<uint32_t> &getIndicesCount() const { return _indicesCount; }
 
   protected:
+    /**
+     * Constructor
+     */
+    Asset3D() {}
+
     std::vector<Asset3D::VertexData> _vertexData; /**< Data containing the vertex position, normal and UV coordinates */
     std::vector<Material> _materials;            /**< List of materials used in the model */
     std::vector<Texture> _textures;              /**< List of textures used in the model */

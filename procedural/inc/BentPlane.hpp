@@ -8,14 +8,14 @@
 
 #include <stdint.h>
 #include <glm/glm.hpp>
-#include "Asset3D.hpp"
+#include "Model3D.hpp"
 
 namespace Procedural
 {
 /**
  * BentPlane class to generate axis aligned planes
  */
-class BentPlane : public Asset3D
+class BentPlane : public Model3D
 {
   public:
       /**

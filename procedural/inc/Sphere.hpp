@@ -7,14 +7,14 @@
 #pragma once
 
 #include <stdint.h>
-#include "Asset3D.hpp"
+#include "Model3D.hpp"
 
 namespace Procedural
 {
 /**
  * Sphere class to generate a sphere
  */
-class Sphere : public Asset3D
+class Sphere : public Model3D
 {
   public:
     /**

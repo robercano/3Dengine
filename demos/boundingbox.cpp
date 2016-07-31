@@ -83,29 +83,32 @@ class ShadowsDemo : public GameHandler
         }
 
         /* Load the geometry */
-        Procedural::Plane procPlane;
-
-        Asset3D *plane = game->getRenderer()->prepareAsset3D(procPlane);
         Asset3D *deadpool = game->getRenderer()->loadAsset3D("data/models/internal/deadpool.model");
         Asset3D *daxter = game->getRenderer()->loadAsset3D("data/models/internal/daxter.model");
+        Procedural::Plane *plane= new Procedural::Plane();
 
-        _scene.add("M3D_daxter", new Model3D(*daxter));
+        if (game->getRenderer()->prepareAsset3D(*plane) == false) {
+            log("ERROR preparing plane asset\n");
+            return false;
+        }
+
+        _scene.add("M3D_daxter", new Model3D(daxter));
         _scene.getModel("M3D_daxter")->setScaleFactor(glm::vec3(50.0f, 50.0f, 50.0f));
         _scene.getModel("M3D_daxter")->setPosition(glm::vec3(100.0f, 0.0f, 0.0f));
         _scene.getModel("M3D_daxter")->setLightingShader(shaderBlinnLight);
 
-        _scene.add("M3D_deadpool1", new Model3D(*deadpool));
+        _scene.add("M3D_deadpool1", new Model3D(deadpool));
         _scene.getModel("M3D_deadpool1")->setScaleFactor(glm::vec3(50.0f, 50.0f, 50.0f));
         _scene.getModel("M3D_deadpool1")->setPosition(glm::vec3(100.0f, 0.0f, 0.0f));
         _scene.getModel("M3D_deadpool1")->setLightingShader(shaderBlinnLight);
 
-        _scene.add("M3D_deadpool2", new Model3D(*deadpool));
+        _scene.add("M3D_deadpool2", new Model3D(deadpool));
         _scene.getModel("M3D_deadpool2")->setScaleFactor(glm::vec3(50.0f, 50.0f, 50.0f));
         _scene.getModel("M3D_deadpool2")->setPosition(glm::vec3(100.0f, 0.0f, 0.0f));
         _scene.getModel("M3D_deadpool2")->setLightingShader(shaderBlinnLight);
 
         /* Use a plane for the floor */
-        _scene.add("M3D_plane", new Model3D(*plane));
+        _scene.add("M3D_plane", plane);
         _scene.getModel("M3D_plane")->setScaleFactor(glm::vec3(500.0f, 1.0f, 500.0f));
         _scene.getModel("M3D_plane")->setPosition(glm::vec3(0.0f, -70.0f, 0.0f));
         _scene.getModel("M3D_plane")->setLightingShader(shaderBlinnLight);

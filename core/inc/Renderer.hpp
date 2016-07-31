@@ -52,17 +52,15 @@ class Renderer
     virtual Asset3D *loadAsset3D(const std::string &assetName) = 0;
 
     /**
-     * Loads an Asset3D resource prepared for the specific renderer API from
-     * a simple Asset3D set of data. The data is copied and then the specific
-     * rendering API structures prepared
+     * Prepares the given Asset3D to be rendered by the underlaying
+     * rendering API
      *
-     * The returned asset can be deleted with a delete statement.
+     * @param asset Asset already containing the data. It will be modified to
+     *              containg the required data for the rendering API
      *
-     * @param asset Asset already containing the data
-     *
-     * @return The prepared Asset3D pointer or NULL if an error happened
+     * @return True if the preparation was succesful, false otherwise
      */
-    virtual Asset3D *prepareAsset3D(const Asset3D &model) = 0;
+    virtual bool prepareAsset3D(Asset3D &model) = 0;
 
     /**
      * Renders a whole scene

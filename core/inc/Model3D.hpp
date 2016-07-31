@@ -62,7 +62,12 @@ class Model3D : public Object3D
     /**
      * Constructor
      */
-    Model3D(Asset3D &asset) : _asset(asset), _lightingShader(NULL), _renderNormals(false), _isShadowCaster(true),
+    Model3D() : _lightingShader(NULL), _renderNormals(false), _isShadowCaster(true),
+                _renderBoundingSphere(false), _renderAABB(false), _renderOOBB(false)
+    {
+        _asset = Asset3D::New();
+    }
+    Model3D(Asset3D *asset) : _asset(asset), _lightingShader(NULL), _renderNormals(false), _isShadowCaster(true),
                 _renderBoundingSphere(false), _renderAABB(false), _renderOOBB(false) {}
 
     /**
@@ -75,8 +80,12 @@ class Model3D : public Object3D
      *
      * @return The associated Asset3D
      */
-    Asset3D &getAsset3D() { return _asset; }
-    const Asset3D &getAsset3D() const { return _asset; }
+    Asset3D *getAsset3D() { return _asset; }
+    const Asset3D *getAsset3D() const { return _asset; }
+    operator Asset3D *() { return _asset; }
+    operator Asset3D &() { return *_asset; }
+//    operator const Asset3D *() { return _asset; }
+//    operator const Asset3D &() { return *_asset; }
 
     /**
      * Sets the lighting shader used to render this model
@@ -136,7 +145,7 @@ class Model3D : public Object3D
      */
     void _calculateBoundingVolumes();
 
-    Asset3D &_asset;            /**< Asset containing the geometry and textures */
+    Asset3D *_asset;            /**< Asset containing the geometry and textures */
     bool _renderNormals;        /**< Enables normal rendering for this model */
     bool _isShadowCaster;       /**< Indicates if this model is a shadow caster */
     bool _renderBoundingSphere; /**< Flag to enable model bounding sphere rendering */

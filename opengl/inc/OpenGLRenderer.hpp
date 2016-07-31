@@ -24,7 +24,7 @@ class OpenGLRenderer : public Renderer
     const char *getShaderVersion();
     Shader *newShader(void);
     Asset3D *loadAsset3D(const std::string &assetName);
-    Asset3D *prepareAsset3D(const Asset3D &model);
+    bool prepareAsset3D(Asset3D &model);
     bool renderModel3D(Model3D &model, Camera &camera, LightingShader &shader, DirectLight *sun, std::vector<PointLight *> &pointLights,
                        std::vector<SpotLight *> &spotLights, float ambientK, RenderTarget &renderTarget, bool disableDepth = false);
     bool renderToShadowMap(Model3D &model3D, Light &light, NormalShadowMapShader &shader);
