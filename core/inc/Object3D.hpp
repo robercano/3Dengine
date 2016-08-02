@@ -173,7 +173,7 @@ class Object3D
         return _view;
     }
 
-    BoundingSphere &getBoundingSphere()
+    const BoundingSphere &getBoundingSphere()
     {
         if (_oobbValid == false) {
             _calculateBoundingVolumes();
