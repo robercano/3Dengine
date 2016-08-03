@@ -8,7 +8,9 @@
 
 #include <stdio.h>
 #include <glm/glm.hpp>
-#include "Model3D.hpp"
+
+class Model3D;
+class Asset3D;
 
 namespace Logging
 {

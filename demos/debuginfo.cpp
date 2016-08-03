@@ -75,11 +75,11 @@ class ShadowsDemo : public GameHandler
 
         /* Point light */
         _scene.add("PL_light1", new PointLight(glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 1.0f),
-                                           glm::vec3(90.0f, 90.0f, -10.0f), 0.0000099999f, 1000.0f));
+                                           glm::vec3(90.0f, 90.0f, -10.0f), 0.0000099999f, 500.0f));
         _scene.add("PL_light2", new PointLight(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f),
-                                           glm::vec3(110.0f, 110.0f, 20.0f), 0.0000099999f, 1000.0f));
+                                           glm::vec3(110.0f, 110.0f, 20.0f), 0.0000099999f, 500.0f));
         _scene.add("PL_light3", new PointLight(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f),
-                                           glm::vec3(140.0f, 140.0f, 30.0f), 0.0000099999f, 1000.0f));
+                                           glm::vec3(140.0f, 140.0f, 30.0f), 0.0000099999f, 500.0f));
 
         _scene.getPointLight("PL_light1")->setProjection((float)_width / 4.0f, (float)_height / 4.0f, 0.1f, 10000.0f);
         _scene.getPointLight("PL_light1")->getShadowMap()->init(_width, _height);
@@ -112,7 +112,7 @@ class ShadowsDemo : public GameHandler
 
         /* Create the game camera */
         _scene.add("C_camera1", new Camera());
-        _scene.getCamera("C_camera1")->setProjection((float)_width, (float)_height, 0.1f, 1000.0f, 45.0f);
+        _scene.getCamera("C_camera1")->setProjection((float)_width, (float)_height, 0.1f, 10000.0f, 45.0f);
 
         _cameraMotion.setPosition(glm::vec3(150.0f, 100.0f, 150.0f));
         _cameraMotion.rotateYaw(-45.0f);

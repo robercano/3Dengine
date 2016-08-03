@@ -6,6 +6,8 @@
  */
 #include "Logging.hpp"
 #include <stdarg.h>
+#include "Asset3D.hpp"
+#include "Model3D.hpp"
 
 void Logging::log(const char *msg, const glm::mat4 &matrix)
 {

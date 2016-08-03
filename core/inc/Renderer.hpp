@@ -193,9 +193,9 @@ class Renderer
                                       const glm::vec3 &color, Camera &camera, RenderTarget &renderTarget) = 0;
 
     /**
-     * Renders a model 3D bounding volumes (AABB, OOBB and Bounding Sphere)
+     * Renders an object 3D bounding volumes (AABB, OOBB and Bounding Sphere)
      *
-     * @param model         Model containing the bounding boxes to be rendered
+     * @param object        Object containing the bounding boxes to be rendered
      * @param camera        Camera to use for the rendering
      * @param renderTarget  Render target for rendering the bounding volumes
      * @param showSphere    Indicates whether to render the bounding sphere or not
@@ -204,7 +204,7 @@ class Renderer
      *
      * @return true or false
      */
-    virtual bool renderModelBoundingVolumes(Model3D &model, Camera &camera, RenderTarget &renderTarget, bool showSphere = true, bool showAABB = true, bool showOOBB = true) = 0;
+    virtual bool renderBoundingVolumes(Object3D &object, Camera &camera, RenderTarget &renderTarget, bool showSphere = true, bool showAABB = true, bool showOOBB = true) = 0;
 
     /**
      * Renders a model 3D normals

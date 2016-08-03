@@ -44,6 +44,8 @@ bool Renderer::renderScene(Scene &scene, const Viewport &viewport)
     std::vector<Light *> lightsMarkers;
     DirectLight *sun = NULL;
     std::vector<Model3D *> visibleModels;
+    std::vector<PointLight *> visiblePointLights;
+    std::vector<SpotLight *> visibleSpotLights;
 
     if (scene.getActiveCamera() == NULL || scene.getActiveRenderTarget() == NULL) {
         return false;
@@ -59,32 +61,22 @@ bool Renderer::renderScene(Scene &scene, const Viewport &viewport)
 
     /* Determine the models visibility */
     for (std::vector<Model3D *>::iterator model = scene.getModels().begin(); model != scene.getModels().end(); ++model) {
-        if ((*model)->isEnabled() && scene.getActiveCamera()->isObjectVisible(*(*model))) {
+        if ((*model)->isEnabled() && scene.getActiveCamera()->isObjectVisible(**model)) {
             visibleModels.push_back(*model);
         }
     }
 
-    /* Render the point lights shadows */
+    /* Determine the lights visibility */
     for (std::vector<PointLight *>::iterator pointLight = scene.getPointLights().begin(); pointLight != scene.getPointLights().end();
          ++pointLight) {
-        if ((*pointLight)->isEnabled() == false) {
-            continue;
+        if ((*pointLight)->isEnabled() && scene.getActiveCamera()->isObjectVisible(**pointLight)) {
+            visiblePointLights.push_back(*pointLight);
         }
-
-        /* TODO: lookAt the center of the calculated bounding box, but for now this is enough */
-        (*pointLight)->getShadowMap()->clear();
-        (*pointLight)->lookAt(glm::vec3(0.0f, 0.0f, 0.0f));
-
-        /* Render the shadow maps for all models */
-        for (std::vector<Model3D *>::iterator model = visibleModels.begin(); model != visibleModels.end(); ++model) {
-            if ((*model)->isShadowCaster()) {
-                renderToShadowMap(**model, **pointLight, *_shaderShadow);
-            }
-        }
-
-        /* Check if we need to render this light billboard */
-        if ((*pointLight)->getRenderMarker() == true || this->getRenderLightsMarkers()) {
-            lightsMarkers.push_back(*pointLight);
+    }
+    for (std::vector<SpotLight *>::iterator spotLight = scene.getSpotLights().begin(); spotLight != scene.getSpotLights().end();
+         ++spotLight) {
+        if ((*spotLight)->isEnabled() && scene.getActiveCamera()->isObjectVisible(**spotLight)) {
+            visibleSpotLights.push_back(*spotLight);
         }
     }
 
@@ -104,14 +96,35 @@ bool Renderer::renderScene(Scene &scene, const Viewport &viewport)
         }
     }
 
-    /* Render the spot lights shadows */
-    for (std::vector<SpotLight *>::iterator spotLight = scene.getSpotLights().begin(); spotLight != scene.getSpotLights().end();
-         ++spotLight) {
-        if ((*spotLight)->isEnabled() == false) {
-            continue;
+    /* Render the point lights shadows */
+    for (std::vector<PointLight *>::iterator pointLight = visiblePointLights.begin(); pointLight != visiblePointLights.end();
+         ++pointLight) {
+        /* TODO: lookAt the center of the calculated bounding box, but for now this is enough */
+        (*pointLight)->getShadowMap()->clear();
+        (*pointLight)->lookAt(glm::vec3(0.0f, 0.0f, 0.0f));
+
+        /* Render the shadow maps for all models */
+        for (std::vector<Model3D *>::iterator model = visibleModels.begin(); model != visibleModels.end(); ++model) {
+            if ((*model)->isShadowCaster()) {
+                renderToShadowMap(**model, **pointLight, *_shaderShadow);
+            }
         }
 
-        /* TODO: lookAt the center of the calculated bounding box, but for * now this is enough */
+        /* Check if we need to render this light billboard */
+        if ((*pointLight)->getRenderMarker() == true || this->getRenderLightsMarkers()) {
+            lightsMarkers.push_back(*pointLight);
+        }
+
+        /* Check if we want to render the bounding volumes */
+        renderBoundingVolumes(**pointLight, *scene.getActiveCamera(), *scene.getActiveRenderTarget(),
+                              (*pointLight)->getRenderBoundingSphere() || this->getRenderBoundingSphere(),
+                              (*pointLight)->getRenderAABB() || this->getRenderAABB(),
+                              (*pointLight)->getRenderOOBB() || this->getRenderOOBB());
+    }
+
+    /* Render the spot lights shadows */
+    for (std::vector<SpotLight *>::iterator spotLight = visibleSpotLights.begin(); spotLight != visibleSpotLights.end(); ++spotLight) {
+        /* TODO: lookAt the center of the calculated bounding box, but for now this is enough */
         (*spotLight)->lookAt(glm::vec3(0.0f, 0.0f, 0.0f));
         (*spotLight)->getShadowMap()->clear();
 
@@ -136,7 +149,7 @@ bool Renderer::renderScene(Scene &scene, const Viewport &viewport)
             continue;
         }
 
-        renderModel3D(**model, *scene.getActiveCamera(), *(*model)->getLightingShader(), sun, scene.getPointLights(), scene.getSpotLights(),
+        renderModel3D(**model, *scene.getActiveCamera(), *(*model)->getLightingShader(), sun, visiblePointLights, visibleSpotLights,
                       0.4f, /* TODO: calculate the global ambient light */
                       *scene.getActiveRenderTarget());
 
@@ -146,16 +159,16 @@ bool Renderer::renderScene(Scene &scene, const Viewport &viewport)
     /* Calculate the average radius */
     avgRadius /= scene.getModels().size();
 
-    /* Render the required debug info */
+    /* Render the required debug info for the models */
     for (std::vector<Model3D *>::iterator model = visibleModels.begin(); model != visibleModels.end(); ++model) {
         /* Render normals information */
         if ((*model)->getRenderNormals() == true || this->getRenderNormals()) {
             renderModelNormals(**model, *scene.getActiveCamera(), *scene.getActiveRenderTarget(), avgRadius * 0.02f);
         }
         /* Render bounding volumes information */
-        renderModelBoundingVolumes(**model, *scene.getActiveCamera(), *scene.getActiveRenderTarget(),
-                                   (*model)->getRenderBoundingSphere() || this->getRenderBoundingSphere(),
-                                   (*model)->getRenderAABB() || this->getRenderAABB(), (*model)->getRenderOOBB() || this->getRenderOOBB());
+        renderBoundingVolumes(**model, *scene.getActiveCamera(), *scene.getActiveRenderTarget(),
+                              (*model)->getRenderBoundingSphere() || this->getRenderBoundingSphere(),
+                              (*model)->getRenderAABB() || this->getRenderAABB(), (*model)->getRenderOOBB() || this->getRenderOOBB());
     }
 
     /* Render the required light markers */

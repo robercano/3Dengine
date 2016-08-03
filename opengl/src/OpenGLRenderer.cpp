@@ -545,22 +545,22 @@ bool OpenGLRenderer::renderBoundingSphere(const BoundingSphere &sphere, const gl
     return true;
 }
 
-bool OpenGLRenderer::renderModelBoundingVolumes(Model3D &model, Camera &camera, RenderTarget &renderTarget, bool showSphere, bool showAABB,
-                                                bool showOOBB)
+bool OpenGLRenderer::renderBoundingVolumes(Object3D &object, Camera &camera, RenderTarget &renderTarget, bool showSphere, bool showAABB,
+                                           bool showOOBB)
 {
     if (showSphere) {
-        if (renderBoundingSphere(model.getBoundingSphere(), model.getPosition(), glm::vec3(1.0f, 0.0f, 0.0f), camera, renderTarget) ==
+        if (renderBoundingSphere(object.getBoundingSphere(), object.getPosition(), glm::vec3(1.0f, 0.0f, 0.0f), camera, renderTarget) ==
             false) {
             return false;
         }
     }
     if (showAABB) {
-        if (renderBoundingBox(model.getAABB(), glm::mat4(1.0f), glm::vec3(0.0f, 1.0f, 0.0f), camera, renderTarget) == false) {
+        if (renderBoundingBox(object.getAABB(), glm::mat4(1.0f), glm::vec3(0.0f, 1.0f, 0.0f), camera, renderTarget) == false) {
             return false;
         }
     }
     if (showOOBB) {
-        if (renderBoundingBox(model.getOOBB(), model.getModelMatrix(), glm::vec3(0.0f, 0.0f, 1.0f), camera, renderTarget) == false) {
+        if (renderBoundingBox(object.getOOBB(), object.getModelMatrix(), glm::vec3(0.0f, 0.0f, 1.0f), camera, renderTarget) == false) {
             return false;
         }
     }

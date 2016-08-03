@@ -30,7 +30,9 @@ class Object3D
         , _viewValid(true)
         , _oobbValid(false)
         , _boundingVolumesValid(false)
-        , _renderBoundingVolumes(false)
+        , _renderBoundingSphere(false)
+        , _renderAABB(false)
+        , _renderOOBB(false)
         , _enabled(true)
     {
     }
@@ -224,8 +226,19 @@ class Object3D
     /**
      * Debug information
      */
-    void setRenderBoundingVolumes(bool flag) { _renderBoundingVolumes = flag; }
-    bool getRenderBoundingVolumes(void) { return _renderBoundingVolumes; }
+    void setRenderBoundingVolumes(bool flag)
+    {
+        _renderBoundingSphere = flag;
+        _renderAABB = flag;
+        _renderOOBB = flag;
+    }
+    void setRenderBoundingSphere(bool flag) { _renderBoundingSphere = flag; }
+    void setRenderAABB(bool flag) { _renderAABB = flag; }
+    void setRenderOOBB(bool flag) { _renderOOBB = flag; }
+
+    bool getRenderBoundingSphere() { return _renderBoundingSphere; }
+    bool getRenderAABB() { return _renderAABB; }
+    bool getRenderOOBB() { return _renderOOBB; }
 
   protected:
     /**
@@ -241,9 +254,9 @@ class Object3D
     virtual void _calculateBoundingVolumes() { /* empty */}
 
     /**
-     * Updates the bounding volumes of a model. In this case the AABB
+     * Updates the bounding volumes of a model. In this case the OOBB
      * is used to speed up the calculation of the bounding sphere and the
-     * OOBB
+     * AABB
      *
      * Fast calculation idea copied from
      *    http://zeuxcg.org/2010/10/17/aabb-from-obb-with-component-wise-abs/
@@ -285,6 +298,10 @@ class Object3D
     BoundingBox _aabb;              /**< Axis-aligned bounding box containing all model's vertices */
     bool _oobbValid;                /**< Indicates if the cached information for the base OOBB is still valid */
     bool _boundingVolumesValid;     /**< Indicates if the cached information for the OOBB and AABB is still valid */
-    bool _renderBoundingVolumes;    /**< Enables bounding volumes rendering for this model */
+
+    bool _renderBoundingSphere;     /**< Flag to enable model bounding sphere rendering */
+    bool _renderAABB;               /**< Flag to enable model AABB rendering */
+    bool _renderOOBB;               /**< Flag to enable model OOBB rendering */
+
     bool _enabled;                  /**< Indicates if this object is taken into account in the pipeline */
 };

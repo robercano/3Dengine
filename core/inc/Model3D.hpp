@@ -62,13 +62,11 @@ class Model3D : public Object3D
     /**
      * Constructor
      */
-    Model3D() : _lightingShader(NULL), _renderNormals(false), _isShadowCaster(true),
-                _renderBoundingSphere(false), _renderAABB(false), _renderOOBB(false)
+    Model3D() : _lightingShader(NULL), _renderNormals(false), _isShadowCaster(true)
     {
         _asset = Asset3D::New();
     }
-    Model3D(Asset3D *asset) : _asset(asset), _lightingShader(NULL), _renderNormals(false), _isShadowCaster(true),
-                _renderBoundingSphere(false), _renderAABB(false), _renderOOBB(false) {}
+    Model3D(Asset3D *asset) : _asset(asset), _lightingShader(NULL), _renderNormals(false), _isShadowCaster(true) {}
 
     /**
      * Destructor
@@ -84,8 +82,6 @@ class Model3D : public Object3D
     const Asset3D *getAsset3D() const { return _asset; }
     operator Asset3D *() { return _asset; }
     operator Asset3D &() { return *_asset; }
-//    operator const Asset3D *() { return _asset; }
-//    operator const Asset3D &() { return *_asset; }
 
     /**
      * Sets the lighting shader used to render this model
@@ -125,19 +121,6 @@ class Model3D : public Object3D
      */
     void setRenderNormals(bool flag) { _renderNormals = flag; }
     bool getRenderNormals(void) { return _renderNormals; }
-    void setRenderBoundingVolumes(bool flag)
-    {
-        _renderBoundingSphere = flag;
-        _renderAABB = flag;
-        _renderOOBB = flag;
-    }
-    void setRenderBoundingSphere(bool flag) { _renderBoundingSphere = flag; }
-    void setRenderAABB(bool flag) { _renderAABB = flag; }
-    void setRenderOOBB(bool flag) { _renderOOBB = flag; }
-
-    bool getRenderBoundingSphere() { return _renderBoundingSphere; }
-    bool getRenderAABB() { return _renderAABB; }
-    bool getRenderOOBB() { return _renderOOBB; }
 
   protected:
     /**
@@ -148,9 +131,6 @@ class Model3D : public Object3D
     Asset3D *_asset;            /**< Asset containing the geometry and textures */
     bool _renderNormals;        /**< Enables normal rendering for this model */
     bool _isShadowCaster;       /**< Indicates if this model is a shadow caster */
-    bool _renderBoundingSphere; /**< Flag to enable model bounding sphere rendering */
-    bool _renderAABB;           /**< Flag to enable model AABB rendering */
-    bool _renderOOBB;           /**< Flag to enable model OOBB rendering */
 
     LightingShader *_lightingShader; /** Lighting shader used to render this model */
 };

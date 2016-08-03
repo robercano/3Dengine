@@ -33,7 +33,7 @@ class OpenGLRenderer : public Renderer
     bool renderBoundingBox(const BoundingBox &box, const glm::mat4 &modelMatrix, const glm::vec3 &color, Camera &camera, RenderTarget &renderTarget);
     bool renderBoundingSphere(const BoundingSphere &sphere, const glm::vec3 &center,
             const glm::vec3 &color, Camera &camera, RenderTarget &renderTarget);
-    bool renderModelBoundingVolumes(Model3D &model, Camera &camera, RenderTarget &renderTarget, bool showSphere = true, bool showAABB = true, bool showOOBB = true);
+    bool renderBoundingVolumes(Object3D &object, Camera &camera, RenderTarget &renderTarget, bool showSphere = true, bool showAABB = true, bool showOOBB = true);
     bool renderModelNormals(Model3D &model3D, Camera &camera, RenderTarget &renderTarget, float normalSize);
     bool resize(uint16_t width, uint16_t height);
     void flush();
