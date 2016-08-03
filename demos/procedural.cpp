@@ -82,7 +82,7 @@ class ProceduralDemo : public GameHandler
         }
 
         /* Generate a terrain for the _scene */
-        Procedural::Terrain *terrain = new Procedural::Terrain(500.0f, 500.0f, 500.0f, 0, glm::vec3(1.0, 0.3f, 0.6f), 200, 200, 5, 0.5);
+        Procedural::Terrain *terrain = new Procedural::Terrain(500.0f, 500.0f, 700.0f, 0, glm::vec3(1.0, 0.3f, 0.6f), 100, 100, 5, 0.5);
         if (game->getRenderer()->prepareAsset3D(*terrain) == false) {
             log("ERROR preparing the terrain asset\n");
             return false;
@@ -196,7 +196,7 @@ class ProceduralDemo : public GameHandler
 
         /* Create the game camera */
         _scene.add("Camera1", new Camera());
-        _scene.getCamera("Camera1")->setProjection((float)_width, (float)_height, 0.1f, 1000.0f, 45.0f);
+        _scene.getCamera("Camera1")->setProjection((float)_width, (float)_height, 0.1f, 10000.0f, 45.0f);
 
         /* And the camera motion */
         _cameraMotion.setPosition(glm::vec3(244.421936, 113.758423, 404.655487));

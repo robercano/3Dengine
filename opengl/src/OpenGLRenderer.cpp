@@ -130,6 +130,8 @@ bool OpenGLRenderer::renderModel3D(Model3D &model3D, Camera &camera, LightingSha
     GLuint textureUnit = 0;
     GLuint dummyTextureUnit = 0;
 
+    __(glDepthRangef(camera.getNear(), camera.getFar()));
+
     /* Calculate MVP matrix */
     glm::mat4 MVP = camera.getPerspectiveMatrix() * camera.getViewMatrix() * model3D.getModelMatrix();
 

@@ -123,7 +123,7 @@ bool Renderer::renderScene(Scene &scene, const Viewport &viewport)
         }
 
         renderModel3D(**model, *scene.getActiveCamera(), *(*model)->getLightingShader(), sun, scene.getPointLights(), scene.getSpotLights(),
-                      0.1f, /* TODO: calculate the global ambient light */
+                      0.4f, /* TODO: calculate the global ambient light */
                       *scene.getActiveRenderTarget());
 
         avgRadius += (*model)->getBoundingSphere().getRadius() / glm::length((*model)->getScaleFactor());

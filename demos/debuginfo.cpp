@@ -89,7 +89,7 @@ class ShadowsDemo : public GameHandler
         _scene.getPointLight("PL_light3")->getShadowMap()->init(_width, _height);
 
         /* Load the geometry */
-        Asset3D *daxter = game->getRenderer()->loadAsset3D("data/models/internal/deadpool.model");
+        Asset3D *daxter = game->getRenderer()->loadAsset3D("data/models/internal/daxter.model");
         Procedural::Plane *plane = new Procedural::Plane();
 
         if (game->getRenderer()->prepareAsset3D(*plane) == false) {
@@ -240,7 +240,7 @@ int main()
 #if defined(_WIN32)
     game->setWindowSize(800, 600, false);
 #else
-    game->setWindowSize(2560, 1440, false);
+    game->setWindowSize(2560, 1440, true);
 #endif
     game->setFPS(60);
 
