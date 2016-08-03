@@ -54,13 +54,13 @@ bool Renderer::renderScene(Scene &scene, const Viewport &viewport)
     /* Reserve enough space for the list of visible models */
     visibleModels.reserve(scene.getModels().size());
 
+    /* Force frustum planes calculation */
+    scene.getActiveCamera()->recalculateFrustum();
+
     /* Determine the models visibility */
     for (std::vector<Model3D *>::iterator model = scene.getModels().begin(); model != scene.getModels().end(); ++model) {
         if ((*model)->isEnabled() && scene.getActiveCamera()->isObjectVisible(*(*model))) {
-            log("Model is included in scene\n");
             visibleModels.push_back(*model);
-        } else {
-            log("Model not included in scene\n");
         }
     }
 
@@ -129,7 +129,6 @@ bool Renderer::renderScene(Scene &scene, const Viewport &viewport)
     }
 
     /* Render all objects */
-    fprintf(stderr, "RENDER OBJECTS\n");
     avgRadius = 0.0f;
     for (std::vector<Model3D *>::iterator model = visibleModels.begin(); model != visibleModels.end(); ++model) {
         if ((*model)->getLightingShader() == NULL) {

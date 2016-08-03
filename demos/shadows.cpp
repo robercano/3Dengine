@@ -134,7 +134,6 @@ class ShadowsDemo : public GameHandler
         _scene.getModel("M3D_plane")->setPosition(glm::vec3(0.0f, -70.0f, 0.0f));
         _scene.getModel("M3D_plane")->setLightingShader(shaderBlinnLight);
         _scene.getModel("M3D_plane")->setShadowCaster(false);
-        _scene.getModel("M3D_plane")->disable();
 
         /* Create the game camera */
         _scene.add("C_camera1", new Camera());
@@ -340,8 +339,7 @@ int main()
 #if defined(_WIN32)
     game->setWindowSize(800, 600, false);
 #else
-    //game->setWindowSize(2560, 1440, true);
-    game->setWindowSize(800, 600, false);
+    game->setWindowSize(2560, 1440, true);
 #endif
     game->setFPS(60);
 
