@@ -20,7 +20,7 @@ VPATH=core/src:opengl/src:procedural/src:utils/src:tools/
 CORE_FILES=Game.cpp InputManager.cpp WindowManager.cpp TimeManager.cpp \
 		   Model3D.cpp Asset3D.cpp \
 		   TextConsole.cpp TrueTypeFont.cpp FreeTypeFont.cpp FontRenderer.cpp \
-		   Scene.cpp \
+		   Scene.cpp Camera.cpp \
            Renderer.cpp NOAARenderTarget.cpp MSAARenderTarget.cpp SSAARenderTarget.cpp \
 		   FXAARenderTarget.cpp FXAA2RenderTarget.cpp FBRenderTarget.cpp ToonRenderTarget.cpp \
 		   ShadowMapRenderTarget.cpp \

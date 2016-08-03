@@ -74,7 +74,7 @@ class ShadowsDemo : public GameHandler
 
         _scene.add("PL_light1", new PointLight(glm::vec3(1.0f, 1.0f, 0.2f), glm::vec3(0.4f, 0.2f, 0.2f), glm::vec3(0.4f, 0.2f, 0.2f),
                                             glm::vec3(-100.0f, 100.0f, 100.0f), 0.0000099999f, 1000.0f));
-        _scene.getPointLight("PL_light1")->setProjection((float)_width / 4.0f, (float)_height / 4.0f, 0.1f, 10000.0f);
+        _scene.getPointLight("PL_light1")->setProjection((float)_width / 4.0f, (float)_height / 4.0f, 0.1f, 10.0f);
         _scene.getPointLight("PL_light1")->getShadowMap()->init(_width, _height);
 
         _scene.add("PL_light2", new PointLight(glm::vec3(0.5f, 1.0f, 0.5f), glm::vec3(0.5f, 1.0f, 0.5f), glm::vec3(0.5f, 1.0f, 0.5f),

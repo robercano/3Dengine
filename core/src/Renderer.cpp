@@ -43,12 +43,26 @@ bool Renderer::renderScene(Scene &scene, const Viewport &viewport)
     float avgRadius = 0.0f;
     std::vector<Light *> lightsMarkers;
     DirectLight *sun = NULL;
+    std::vector<Model3D *> visibleModels;
 
     if (scene.getActiveCamera() == NULL || scene.getActiveRenderTarget() == NULL) {
         return false;
     }
 
     scene.getActiveRenderTarget()->clear();
+
+    /* Reserve enough space for the list of visible models */
+    visibleModels.reserve(scene.getModels().size());
+
+    /* Force frustum planes calculation */
+    scene.getActiveCamera()->recalculateFrustum();
+
+    /* Determine the models visibility */
+    for (std::vector<Model3D *>::iterator model = scene.getModels().begin(); model != scene.getModels().end(); ++model) {
+        if ((*model)->isEnabled() && scene.getActiveCamera()->isObjectVisible(*(*model))) {
+            visibleModels.push_back(*model);
+        }
+    }
 
     /* Render the point lights shadows */
     for (std::vector<PointLight *>::iterator pointLight = scene.getPointLights().begin(); pointLight != scene.getPointLights().end();
@@ -62,7 +76,7 @@ bool Renderer::renderScene(Scene &scene, const Viewport &viewport)
         (*pointLight)->lookAt(glm::vec3(0.0f, 0.0f, 0.0f));
 
         /* Render the shadow maps for all models */
-        for (std::vector<Model3D *>::iterator model = scene.getModels().begin(); model != scene.getModels().end(); ++model) {
+        for (std::vector<Model3D *>::iterator model = visibleModels.begin(); model != visibleModels.end(); ++model) {
             if ((*model)->isShadowCaster()) {
                 renderToShadowMap(**model, **pointLight, *_shaderShadow);
             }
@@ -83,7 +97,7 @@ bool Renderer::renderScene(Scene &scene, const Viewport &viewport)
         sun->getShadowMap()->clear();
 
         /* Render the shadow maps for all models */
-        for (std::vector<Model3D *>::iterator model = scene.getModels().begin(); model != scene.getModels().end(); ++model) {
+        for (std::vector<Model3D *>::iterator model = visibleModels.begin(); model != visibleModels.end(); ++model) {
             if ((*model)->isShadowCaster()) {
                 renderToShadowMap(**model, *sun, *_shaderShadow);
             }
@@ -102,7 +116,7 @@ bool Renderer::renderScene(Scene &scene, const Viewport &viewport)
         (*spotLight)->getShadowMap()->clear();
 
         /* Render the shadow maps for all models */
-        for (std::vector<Model3D *>::iterator model = scene.getModels().begin(); model != scene.getModels().end(); ++model) {
+        for (std::vector<Model3D *>::iterator model = visibleModels.begin(); model != visibleModels.end(); ++model) {
             if ((*model)->isShadowCaster()) {
                 renderToShadowMap(**model, **spotLight, *_shaderShadow);
             }
@@ -116,7 +130,7 @@ bool Renderer::renderScene(Scene &scene, const Viewport &viewport)
 
     /* Render all objects */
     avgRadius = 0.0f;
-    for (std::vector<Model3D *>::iterator model = scene.getModels().begin(); model != scene.getModels().end(); ++model) {
+    for (std::vector<Model3D *>::iterator model = visibleModels.begin(); model != visibleModels.end(); ++model) {
         if ((*model)->getLightingShader() == NULL) {
             log("ERROR model has no lighting shader associated to it\n");
             continue;
@@ -133,7 +147,7 @@ bool Renderer::renderScene(Scene &scene, const Viewport &viewport)
     avgRadius /= scene.getModels().size();
 
     /* Render the required debug info */
-    for (std::vector<Model3D *>::iterator model = scene.getModels().begin(); model != scene.getModels().end(); ++model) {
+    for (std::vector<Model3D *>::iterator model = visibleModels.begin(); model != visibleModels.end(); ++model) {
         /* Render normals information */
         if ((*model)->getRenderNormals() == true || this->getRenderNormals()) {
             renderModelNormals(**model, *scene.getActiveCamera(), *scene.getActiveRenderTarget(), avgRadius * 0.02f);
