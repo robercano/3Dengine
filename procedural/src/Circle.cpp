@@ -1,4 +1,5 @@
 #include "Circle.hpp"
+#include "Asset3DTransform.hpp"
 
 using namespace Procedural;
 
@@ -45,14 +46,5 @@ Circle::Circle(float radius, const glm::vec3 &color, uint32_t numVertsSide) : _r
     index[count++] = 1;
     index[count++] = _numVertsSide;
 
-    /* Add a default material */
-    _asset->_materials.push_back(Material());
-
-    /* Add a default texture */
-    uint8_t rgb[3] = {(uint8_t)(color.r * 255), (uint8_t)(color.g * 255), (uint8_t)(color.b * 255)};
-    _asset->_textures.push_back(Texture(rgb, 1, 1, 8));
-
-    /* Only one set of indices */
-    _asset->_indicesOffsets.push_back(0);
-    _asset->_indicesCount.push_back(_asset->_vertexIndices.size());
+    Asset3DTransform::SetUniqueMaterialFromColor(*this, _color);
 }

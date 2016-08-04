@@ -33,13 +33,26 @@
  * problems in OpenGL pipeline
  */
 #ifdef DEBUG_OPENGL_PIPELINE
+
+#define GL_ERROR_TO_STR(error) \
+		(error == 0x500)  ? "GL_INVALID_ENUM" :      \
+        (error == 0x501)  ? "GL_INVALID_VALUE" :     \
+		(error == 0x502)  ? "GL_INVALID_OPERATION" : \
+		(error == 0x503)  ? "GL_STACK_OVERFLOW" :    \
+		(error == 0x504)  ? "GL_STACK_UNDERFLOW" :   \
+		(error == 0x505)  ? "GL_OUT_OF_MEMORY" :     \
+		(error == 0x506)  ? "GL_INVALID_FRAMEBUFFER_OPERATION" : \
+		(error == 0x507)  ? "GL_CONTEXT_LOST" :      \
+		(error == 0x8031) ? "GL_TABLE_TOO_LARGE1" :  \
+        "Unknown"
+
 #define __(call)                                                                                                                         \
     {                                                                                                                                    \
         glGetError();                                                                                                                    \
         call;                                                                                                                            \
         GLuint error = glGetError();                                                                                                     \
         if (error != GL_NO_ERROR) {                                                                                                      \
-            fprintf(stderr, "ERROR 0x%x calling %s in context:\n\t%s (%s:%d)\n", error, #call, __PRETTY_FUNCTION__, __FILE__, __LINE__); \
+            fprintf(stderr, "ERROR 0x%x (%s) calling:\n\t%s\nin context:\n\t%s (%s:%d)\n\n", error, GL_ERROR_TO_STR(error), #call, __PRETTY_FUNCTION__, __FILE__, __LINE__); \
         }                                                                                                                                \
     }
 #else
@@ -50,6 +63,6 @@
     {                                                                                                                                 \
         GLuint error = glGetError();                                                                                                  \
         if (error != GL_NO_ERROR) {                                                                                                   \
-            fprintf(stderr, "ERROR 0x%x in checkpoint for context:\n\t%s (%s:%d)\n", error, __PRETTY_FUNCTION__, __FILE__, __LINE__); \
+            fprintf(stderr, "ERROR 0x%x (%s) in checkpoint for context:\n\t%s (%s:%d)\n\n", error, GL_ERROR_TO_STR(error), __PRETTY_FUNCTION__, __FILE__, __LINE__); \
         }                                                                                                                             \
     }

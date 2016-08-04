@@ -6,6 +6,7 @@
  */
 
 #include "OpenGLAsset3D.hpp"
+#include <glm/gtx/integer.hpp>
 #include "Logging.hpp"
 #include "OpenGL.h"
 
@@ -70,24 +71,37 @@ bool OpenGLAsset3D::prepare()
     }
     __(glBindVertexArray(0));
 
-    /* TODO: Upload the textures */
+    /* Upload the textures */
     const std::vector<Texture> &textures = getTextures();
 
     _texturesIDs.resize(textures.size());
     __(glGenTextures(textures.size(), &_texturesIDs[0]));
 
     for (size_t i = 0; i < textures.size(); ++i) {
-        /* TODO: Once we use our own format, this should not
-         * be needed */
+        /* Prepare the mipmap generation */
+        if (textures[i]._width == 0 || textures[i]._height == 0) {
+            continue;
+        }
+
+        /* TODO: Once we use our own format, this should not be needed */
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         __(glBindTexture(GL_TEXTURE_2D, _texturesIDs[i]));
         {
+            /* Adjust the maximum number of mipmap levels for small texture. According to OpenGL docs the maximum mipmap level
+             * is defined by:
+             *
+             *    log2( max(width, height) ) + 1
+             */
+            uint32_t mipMapLevels = glm::min(NumTexturesMipmaps, glm::log2(glm::max(textures[i]._width, textures[i]._height)) + 1);
+
+            __(glTexStorage2D(GL_TEXTURE_2D, mipMapLevels, GL_RGBA8, textures[i]._width, textures[i]._height));
+            __(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, textures[i]._width, textures[i]._height, GL_RGB, GL_UNSIGNED_BYTE,
+                               textures[i]._texture));
+            __(glGenerateMipmap(GL_TEXTURE_2D));
             __(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-            __(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+            __(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
             __(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
             __(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
-            __(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textures[i]._width, textures[i]._height, 0, GL_RGB, GL_UNSIGNED_BYTE,
-                            textures[i]._texture));
         }
     }
     __(glBindTexture(GL_TEXTURE_2D, 0));

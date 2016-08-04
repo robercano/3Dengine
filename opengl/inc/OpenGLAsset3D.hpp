@@ -18,6 +18,14 @@ class OpenGLAsset3D : public Asset3D
 {
   public:
     /**
+     * Number of texture mipmaps that will be generated for each
+     * texture
+     *
+     * TODO: Add this value to the global configuration of the engine
+     */
+    const uint32_t NumTexturesMipmaps = 4;
+
+    /**
      * Prepares the asset for use with OpenGL drawing calls. It makes
      * use of the inherited asset 3D data to upload it to the GPU. Only
      * after calling prepare the rest of the methods can be used to render
@@ -33,12 +41,33 @@ class OpenGLAsset3D : public Asset3D
      */
     bool destroy();
 
+    /**
+     * Retrieves the ID for the vertex array
+     *
+     * @return ID for the vertex array object
+     */
     uint32_t getVertexArrayID() { return _gVAO; }
+
+    /**
+     * Returns the ID for the indices buffer object
+     *
+     * @return ID for the indices buffer object
+     */
     uint32_t getIndicesArrayID() { return _indicesBO; }
+
+    /**
+     * Returns the vector of textures IDs associated with this
+     * asset3D. The order must be the same as the order of the
+     * textures vector in the base class
+     *
+     * @return vector of textures IDs
+     */
     const std::vector<uint32_t> &getTexturesIDs() { return _texturesIDs; }
+
   private:
-    GLuint _gVAO;
-    GLuint _vertexDataVBO;
-    GLuint _indicesBO;
-    std::vector<uint32_t> _texturesIDs;
+
+    GLuint _gVAO;                       /**< Vertex array object ID */
+    GLuint _vertexDataVBO;              /**< Vertex buffer object ID */
+    GLuint _indicesBO;                  /**< Indices buffer object ID */
+    std::vector<uint32_t> _texturesIDs; /**< Textures ID vector */
 };
