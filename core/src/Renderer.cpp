@@ -125,7 +125,6 @@ bool Renderer::renderScene(Scene &scene, const Viewport &viewport)
     /* Render the spot lights shadows */
     for (std::vector<SpotLight *>::iterator spotLight = visibleSpotLights.begin(); spotLight != visibleSpotLights.end(); ++spotLight) {
         /* TODO: lookAt the center of the calculated bounding box, but for now this is enough */
-        (*spotLight)->lookAt(glm::vec3(0.0f, 0.0f, 0.0f));
         (*spotLight)->getShadowMap()->clear();
 
         /* Render the shadow maps for all models */

@@ -6,7 +6,6 @@ shadows
 boundingbox
 debuginfo
 procedural
-game-class-demo
-perlin
+hdr
 *.dSYM
 *.d

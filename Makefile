@@ -23,6 +23,7 @@ CORE_FILES=Game.cpp InputManager.cpp WindowManager.cpp TimeManager.cpp \
 		   Scene.cpp Camera.cpp \
            Renderer.cpp NOAARenderTarget.cpp MSAARenderTarget.cpp SSAARenderTarget.cpp \
 		   FXAARenderTarget.cpp FXAA2RenderTarget.cpp FBRenderTarget.cpp ToonRenderTarget.cpp \
+		   HDRRenderTarget.cpp \
 		   ShadowMapRenderTarget.cpp \
 		   Shader.cpp \
 		   BlinnPhongShader.cpp ToonLightingShader.cpp NormalShadowMapShader.cpp \
@@ -36,6 +37,7 @@ OPENGL_FILES=GLFWKeyManager.cpp GLFWMouseManager.cpp GLFWWindowManager.cpp \
 			 OpenGLAsset3D.cpp \
 			 OpenGLFontRenderer.cpp \
 			 OpenGLRenderer.cpp OpenGLFilterRenderTarget.cpp \
+			 OpenGLHDRRenderTarget.cpp \
              OpenGLMSAARenderTarget.cpp OpenGLSSAARenderTarget.cpp OpenGLFBRenderTarget.cpp \
 			 OpenGLShadowMapRenderTarget.cpp \
              OpenGLShader.cpp OpenGLShaderMaterial.cpp \
@@ -73,7 +75,7 @@ endif
 #
 #Compilation flags
 #
-FLAGS+=-Werror -MMD -fPIC -Icore/inc -Iopengl/inc -Iprocedural/inc -Iutils/inc -I3rdparty -O0 -g -DDEBUG_OPENGL_PIPELINE -fno-rtti
+FLAGS+=-Werror -MMD -fPIC -Icore/inc -Iopengl/inc -Iprocedural/inc -Iutils/inc -I3rdparty -O0 -g -DDEBUG_OPENGL_PIPELINE
 CXXFLAGS=$(FLAGS) -std=c++11
 CFLAGS=$(FLAGS) -std=c11
 

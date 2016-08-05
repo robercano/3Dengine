@@ -90,6 +90,7 @@ class ShadowsDemo : public GameHandler
                                           glm::vec3(160.0f, 170.0f, 0.0f), 15.0f, 3.0f, 0.0000099999f, 1000.0f));
         _scene.getSpotLight("SL_light1")->setProjection((float)_width / 4.0f, (float)_height / 4.0f, 0.1f, 10000.0f);
         _scene.getSpotLight("SL_light1")->getShadowMap()->init(_width, _height);
+        _scene.getSpotLight("SL_light1")->lookAt(glm::vec3(0.0f, 0.0f, 0.0f));
 
         _scene.add("DL_light1", new DirectLight(glm::vec3(0.4f, 0.4f, 0.4f), glm::vec3(0.4f, 0.4f, 0.4f), glm::vec3(0.4f, 0.4f, 0.f),
                                glm::vec3(-100.0f, -100.0f, -100.0f)));
@@ -263,6 +264,7 @@ class ShadowsDemo : public GameHandler
                     _scene.getSpotLights()[i]->setPosition(
                             glm::vec3(240.0 * glm::sin((i + 1) * sign * _angle), 250.0, 260.0 * glm::cos((i + 1) * sign * _angle)));
                 }
+                _scene.getSpotLights()[i]->lookAt(glm::vec3(0.0f, 0.0f, 0.0f));
             }
 
             if (_animateSun) {
