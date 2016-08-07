@@ -9,6 +9,7 @@
 #include "HDRRenderTarget.hpp"
 #include "NOAARenderTarget.hpp"
 #include "BlinnPhongShader.hpp"
+#include "FlatShader.hpp"
 #include "Plane.hpp"
 #include "Cube.hpp"
 #include "PointLight.hpp"
@@ -73,7 +74,14 @@ class Demo : public GameHandler
         /* Create a Blinn-phong shader for the geometry */
         BlinnPhongShader *shaderBlinnLight = BlinnPhongShader::New();
         if (shaderBlinnLight->init() == false) {
-            log("ERROR initializing toon lighting shader\n");
+            log("ERROR initializing blinn-phong lighting shader\n");
+            return false;
+        }
+
+        /* Create a Flat shader for the geometry */
+        FlatShader *shaderBlinnLight = FlatShader::New();
+        if (shaderBlinnLight->init() == false) {
+            log("ERROR initializing flat lighting shader\n");
             return false;
         }
 
@@ -97,6 +105,7 @@ class Demo : public GameHandler
 
         /* Load the geometry */
         Asset3D *daxter = game->getRenderer()->loadAsset3D("data/models/internal/daxter.model");
+        Procedural::Plane *plane = new Procedural::Plane();
         Procedural::Plane *plane = new Procedural::Plane();
 
         if (game->getRenderer()->prepareAsset3D(*plane) == false) {
