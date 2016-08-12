@@ -21,9 +21,10 @@ OpenGLShadowMapRenderTarget::~OpenGLShadowMapRenderTarget()
     __(glDeleteFramebuffers(1, &_frameBuffer));
 }
 
-bool OpenGLShadowMapRenderTarget::init(uint32_t width, uint32_t height, uint32_t maxSamples)
+bool OpenGLShadowMapRenderTarget::init(uint32_t width, uint32_t height, uint32_t maxSamples, uint32_t numTargets)
 {
     (void)maxSamples;
+    (void)numTargets;
 
     /* Depth buffer */
     __(glGenTextures(1, &_depthBuffer));
@@ -104,8 +105,10 @@ void OpenGLShadowMapRenderTarget::bind()
 
 void OpenGLShadowMapRenderTarget::bindDepth() { __(glBindTexture(GL_TEXTURE_2D, _depthBuffer)); }
 void OpenGLShadowMapRenderTarget::unbind() { __(glBindFramebuffer(GL_FRAMEBUFFER, 0)); }
-bool OpenGLShadowMapRenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height, bool bindMainFB)
+bool OpenGLShadowMapRenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height, uint32_t target, bool bindMainFB)
 {
+    (void)target;
+
     /* Setup the viewport */
     __(glViewport(dstX, dstY, width, height));
 

@@ -87,7 +87,8 @@ in vec3 io_viewNormal;
 in vec3 io_viewVertex;
 
 /* Output of this shader */
-out vec4 o_color;
+layout (location = 0) out vec4 o_color;
+layout (location = 1) out vec4 o_bright;
 
 float sRGB2Linear(float c) {
     if (c <= 0.04045) {
@@ -249,7 +250,13 @@ void main()
         _ProcessSpotLight(lightAcc, 2u, io_viewVertex);
         _ProcessSpotLight(lightAcc, 3u, io_viewVertex);
 #endif
+    o_color = vec4(vec3(texture(u_diffuseMap, io_fragUVCoord)) * lightAcc, u_material.alpha);
 
-	o_color = vec4(vec3(texture(u_diffuseMap, io_fragUVCoord)) * lightAcc, u_material.alpha);
+    float brightness = dot(o_color.rgb, vec3(0.2126, 0.7152, 0.0722));
+    if (brightness > 1.0) {
+        o_bright = o_color;
+    } else {
+        o_bright = vec4(0.0, 0.0, 0.0, 0.0);
+    }
 }
 

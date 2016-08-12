@@ -18,6 +18,7 @@ void main(void) {
     // Reinhard tone mapping
     //vec3 mapped = hdrColor.rgb / (hdrColor.rgb + vec3(1.0));
     vec3 mapped = vec3(1.0) - exp(-hdrColor.rgb * u_exposure);
+
     // Gamma correction
     //mapped = pow(mapped, vec3(1.0 / gamma));
     //vec3 mapped = hdrColor.rgb;

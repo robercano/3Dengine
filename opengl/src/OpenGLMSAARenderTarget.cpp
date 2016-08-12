@@ -17,18 +17,38 @@ OpenGLMSAARenderTarget::~OpenGLMSAARenderTarget()
 {
     __(glDeleteBuffers(1, &_vertexBuffer));
     __(glDeleteVertexArrays(1, &_vertexArray));
-    __(glDeleteTextures(1, &_colorBuffer));
+
+    for (int i = 0; i < _numTargets; ++i) {
+        __(glDeleteTextures(1, &_colorBuffer[i]));
+    }
+    delete[] _colorBuffer;
+    _colorBuffer = NULL;
+
+    delete[] _attachments;
+    _attachments = NULL;
+
     __(glDeleteRenderbuffers(1, &_depthBuffer));
     __(glDeleteFramebuffers(1, &_frameBuffer));
 }
 
-bool OpenGLMSAARenderTarget::init(uint32_t width, uint32_t height, uint32_t samples)
+bool OpenGLMSAARenderTarget::init(uint32_t width, uint32_t height, uint32_t numTargets, uint32_t samples)
 {
+    if (numTargets <= 0 || numTargets > GL_MAX_COLOR_ATTACHMENTS) {
+        log("Number of targets for render target (%d) not supported. Max. is %d\n", numTargets, GL_MAX_COLOR_ATTACHMENTS);
+    }
+
+    _numTargets = numTargets;
+
+    /* Allocate the color buffers IDs */
+    _colorBuffer = new GLuint[_numTargets];
+
     /* Texture buffer */
-    __(glGenTextures(1, &_colorBuffer));
-    __(glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, _colorBuffer));
-    {
-        __(glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, GL_RGBA8, width, height, GL_TRUE));
+    __(glGenTextures(_numTargets, _colorBuffer));
+    for (int i = 0; i < _numTargets; ++i) {
+        __(glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, _colorBuffer[i]));
+        {
+            __(glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, GL_RGBA8, width, height, GL_TRUE));
+        }
     }
     __(glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0));
 
@@ -41,10 +61,17 @@ bool OpenGLMSAARenderTarget::init(uint32_t width, uint32_t height, uint32_t samp
     __(glBindRenderbuffer(GL_RENDERBUFFER, 0));
 
     /* Framebuffer to link everything together */
+    _attachments = new GLuint[_numTargets];
+
+    /* Framebuffer to link everything together */
     __(glGenFramebuffers(1, &_frameBuffer));
     __(glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer));
     {
-        __(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, _colorBuffer, 0));
+        /* Attach all color buffers */
+        for (int i = 0; i < _numTargets; ++i) {
+            _attachments[i] = GL_COLOR_ATTACHMENT0 + i;
+            __(glFramebufferTexture2D(GL_FRAMEBUFFER, _attachments[i], GL_TEXTURE_2D_MULTISAMPLE, _colorBuffer[i], 0));
+        }
         __(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthBuffer));
 
         GLenum status;
@@ -89,6 +116,7 @@ bool OpenGLMSAARenderTarget::init(uint32_t width, uint32_t height, uint32_t samp
 void OpenGLMSAARenderTarget::bind()
 {
     __(glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer));
+    __(glDrawBuffers(_numTargets, _attachments));
     __(glEnable(GL_MULTISAMPLE));
     __(glViewport(0, 0, _width, _height));
 }
@@ -107,16 +135,25 @@ uint32_t OpenGLMSAARenderTarget::getMaxSamples()
     return (uint32_t)samples;
 }
 
-bool OpenGLMSAARenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height, bool bindMainFB)
+bool OpenGLMSAARenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height, uint32_t target, bool bindMainFB)
 {
+    if (target < 0 || target >= _numTargets) {
+        log("ERROR wrong target number %d in OpenGLFilterRenderTarget::blit, max. is %d\n", target, _numTargets - 1);
+        return false;
+    }
+
     if ((width - dstX) != _width || (height - dstY) != _height) {
         fprintf(stderr, "ERROR in OpenGLMSAARenderTarget::blit() different size for src and dest\n");
         return false;
     }
+
     __(glBindFramebuffer(GL_READ_FRAMEBUFFER, _frameBuffer));
+    __(glReadBuffer(GL_COLOR_ATTACHMENT0 + target));
+
     if (bindMainFB) {
         __(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0));
     }
+
     /* As this is a multi-sample buffer source and destination rectangles must be of
      * the same size, thus we always use GL_NEAREST and blit color and depth at the same time */
     __(glBlitFramebuffer(0, 0, _width, _height, dstX, dstY, width, height, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST));
@@ -127,6 +164,7 @@ bool OpenGLMSAARenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, 
 void OpenGLMSAARenderTarget::clear()
 {
     __(glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer));
+    __(glDrawBuffers(_numTargets, _attachments));
     __(glClearColor(_r, _g, _b, _a));
     __(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }

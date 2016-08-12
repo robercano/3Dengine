@@ -27,11 +27,6 @@ class HDRRenderTarget : public virtual RenderTarget
     static void Delete(HDRRenderTarget *target);
 
     /**
-     * Constructor
-     */
-    HDRRenderTarget() : _exposure(1.0f) {}
-
-    /**
      * Destructor
      */
     virtual ~HDRRenderTarget() {}
@@ -51,5 +46,10 @@ class HDRRenderTarget : public virtual RenderTarget
     float getExposure() { return _exposure; }
 
   protected:
+    /**
+     * Constructor
+     */
+    HDRRenderTarget() : _exposure(1.0f) {}
+
     float _exposure; /**< Exposure level used for tone mapping */
 };

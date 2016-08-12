@@ -18,11 +18,11 @@ class OpenGLShadowMapRenderTarget : public ShadowMapRenderTarget
 {
   public:
     ~OpenGLShadowMapRenderTarget();
-    bool init(uint32_t width, uint32_t height, uint32_t maxSamples);
+    bool init(uint32_t width, uint32_t height, uint32_t maxSamples = 0, uint32_t numTargets = 1);
     void bind();
     void bindDepth();
     void unbind();
-    bool blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height, bool bindMainFB = true);
+    bool blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height, uint32_t target, bool bindMainFB = true);
     void clear();
 
   private:

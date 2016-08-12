@@ -21,39 +21,57 @@ OpenGLHDRRenderTarget::~OpenGLHDRRenderTarget()
 
     __(glDeleteBuffers(1, &_vertexBuffer));
     __(glDeleteVertexArrays(1, &_vertexArray));
-    __(glDeleteTextures(1, &_colorBuffer));
+
+    for (int i = 0; i < _numTargets; ++i) {
+        __(glDeleteTextures(1, &_colorBuffer[i]));
+    }
+    delete[] _colorBuffer;
+    _colorBuffer = NULL;
+
+    delete[] _attachments;
+    _attachments = NULL;
+
     __(glDeleteRenderbuffers(1, &_depthBuffer));
     __(glDeleteFramebuffers(1, &_frameBuffer));
 }
 
-bool OpenGLHDRRenderTarget::init(uint32_t width, uint32_t height, uint32_t maxSamples)
+bool OpenGLHDRRenderTarget::init(uint32_t width, uint32_t height, uint32_t maxSamples, uint32_t numTargets)
 {
     (void)maxSamples;
 
+    if (numTargets <= 0 || numTargets > GL_MAX_COLOR_ATTACHMENTS) {
+        log("Number of targets for render target (%d) not supported. Max. is %d\n", numTargets, GL_MAX_COLOR_ATTACHMENTS);
+    }
+
+    _numTargets = numTargets;
+
+    // log("Using %d color attachments\n", _numTargets);
+
+    /* Allocate the color buffers IDs */
+    _colorBuffer = new GLuint[_numTargets];
+
+    /* Retrieve maximum anisotropy filter value */
+    GLfloat fLargest;
+    glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &fLargest);
+
+    /* TODO: Limit it to 4, this should be configurable */
+    if (fLargest > 4.0) {
+        fLargest = 4.0;
+    }
+
     /* Texture buffer */
-    __(glGenTextures(1, &_colorBuffer));
-    __(glBindTexture(GL_TEXTURE_2D, _colorBuffer));
-    {
-        GLfloat fLargest;
-        glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &fLargest);
+    __(glGenTextures(_numTargets, _colorBuffer));
+    for (int i = 0; i < _numTargets; ++i) {
+        __(glBindTexture(GL_TEXTURE_2D, _colorBuffer[i]));
+        {
+            __(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+            __(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+            __(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+            __(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+            __(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, fLargest));
 
-        /* FXAA requires a 4x anisotropic filter */
-        if (fLargest > 4.0) {
-            fLargest = 4.0;
+            __(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL));
         }
-
-        __(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-        __(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-        __(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-        __(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-        __(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, fLargest));
-
-/* Because we cannot enable GL_FRAMEBUFFER_SRGB we will use a normal
- * RGBA texture here and do the conversion in the fragment shader */
-#if 0
-        __( glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8_ALPHA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL) );
-#endif
-        __(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL));
     }
     __(glBindTexture(GL_TEXTURE_2D, 0));
 
@@ -71,10 +89,16 @@ bool OpenGLHDRRenderTarget::init(uint32_t width, uint32_t height, uint32_t maxSa
     __(glBindTexture(GL_TEXTURE_2D, 0));
 
     /* Framebuffer to link everything together */
+    _attachments = new GLuint[_numTargets];
+
     __(glGenFramebuffers(1, &_frameBuffer));
     __(glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer));
     {
-        __(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _colorBuffer, 0));
+        /* Attach all color buffers */
+        for (int i = 0; i < _numTargets; ++i) {
+            _attachments[i] = GL_COLOR_ATTACHMENT0 + i;
+            __(glFramebufferTexture2D(GL_FRAMEBUFFER, _attachments[i], GL_TEXTURE_2D, _colorBuffer[i], 0));
+        }
         __(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _depthBuffer, 0));
 
         GLenum status;
@@ -129,13 +153,19 @@ bool OpenGLHDRRenderTarget::init(uint32_t width, uint32_t height, uint32_t maxSa
 void OpenGLHDRRenderTarget::bind()
 {
     __(glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer));
+    __(glDrawBuffers(_numTargets, _attachments));
     __(glViewport(0, 0, _width, _height));
 }
 
 void OpenGLHDRRenderTarget::bindDepth() { __(glBindTexture(GL_TEXTURE_2D, _depthBuffer)); }
 void OpenGLHDRRenderTarget::unbind() { __(glBindFramebuffer(GL_FRAMEBUFFER, 0)); }
-bool OpenGLHDRRenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height, bool bindMainFB)
+bool OpenGLHDRRenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height, uint32_t target, bool bindMainFB)
 {
+    if (target < 0 || target >= _numTargets) {
+        log("ERROR wrong target number %d in OpenGLFilterRenderTarget::blit, max. is %d\n", target, _numTargets);
+        return false;
+    }
+
     /* Bind the target texture */
     if (bindMainFB) {
         __(glBindFramebuffer(GL_FRAMEBUFFER, 0));
@@ -145,11 +175,10 @@ bool OpenGLHDRRenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, u
     __(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
     __(glDisable(GL_LINE_SMOOTH));
     __(glEnable(GL_CULL_FACE));
-    __(glDisable(GL_BLEND));
 
     __(glViewport(dstX, dstY, width, height));
     __(glActiveTexture(GL_TEXTURE0));
-    __(glBindTexture(GL_TEXTURE_2D, _colorBuffer));
+    __(glBindTexture(GL_TEXTURE_2D, _colorBuffer[target]));
 
     /* Tell the shader which texture unit to use */
     _shader->attach();
@@ -177,6 +206,7 @@ bool OpenGLHDRRenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, u
 void OpenGLHDRRenderTarget::clear()
 {
     __(glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer));
+    __(glDrawBuffers(_numTargets, _attachments));
     __(glClearColor(_r, _g, _b, _a));
     __(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }

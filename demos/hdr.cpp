@@ -61,8 +61,8 @@ class Demo : public GameHandler
 
         /* Create the HDR render target */
         _scene.add("RT_HDR", HDRRenderTarget::New());
-        _scene.getRenderTarget("RT_HDR")->init(_width, _height);
-        _scene.getRenderTarget("RT_HDR")->setClearColor(0.0, 0.0, 0.0, 1.0);
+        _scene.getRenderTarget("RT_HDR")->init(_width, _height, 0, 2);
+        _scene.getRenderTarget("RT_HDR")->setClearColor(0.0, 0.0, 0.0, 0.0);
 
         /* Create the normal render target */
         _scene.add("RT_noaa", NOAARenderTarget::New());
@@ -253,6 +253,13 @@ class Demo : public GameHandler
 
         game->getRenderer()->renderScene(_scene, *_viewport);
 
+        /* Preparation for bloom effect */
+#if 0
+        if (_scene.getActiveRenderTarget() == _scene.getRenderTarget("RT_HDR")) {
+            _scene.getActiveRenderTarget()->blit(0, 0, _width, _height, 1);
+        }
+#endif
+
         game->getTextConsole()->gprintf("1=Normal, 2=HDR, Y=Increase exposure H=Decrease exposure\n");
         if (_scene.getActiveRenderTarget() == _scene.getRenderTarget("RT_HDR")) {
             game->getTextConsole()->gprintf("Exposure: %.2f\n", dynamic_cast<HDRRenderTarget*>(_scene.getRenderTarget("RT_HDR"))->getExposure());
@@ -294,7 +301,8 @@ int main()
 #if defined(_WIN32)
     game->setWindowSize(800, 600, false);
 #else
-    game->setWindowSize(2560, 1440, true);
+    //game->setWindowSize(2560, 1440, true);
+    game->setWindowSize(800, 600, false);
 #endif
     game->setFPS(60);
 
