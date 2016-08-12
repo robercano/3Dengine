@@ -84,7 +84,7 @@ bool OpenGLAsset3D::prepare()
         }
 
         /* TODO: Once we use our own format, this should not be needed */
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        __(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
         __(glBindTexture(GL_TEXTURE_2D, _texturesIDs[i]));
         {
             /* Adjust the maximum number of mipmap levels for small texture. According to OpenGL docs the maximum mipmap level

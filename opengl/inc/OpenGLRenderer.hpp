@@ -56,6 +56,11 @@ class OpenGLRenderer : public Renderer
     unsigned int _dummyTexture;
 
     /**
+     * Texture used when an object does not receive shadow
+     */
+    unsigned int _noshadowTexture;
+
+    /**
      * Shader to render light billboards
      */
     OpenGLShader _renderLightShader;

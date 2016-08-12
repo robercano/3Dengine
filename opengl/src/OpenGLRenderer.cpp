@@ -45,6 +45,22 @@ bool OpenGLRenderer::init()
      * texture, even if they are not used */
     __(glGenTextures(1, &_dummyTexture));
 
+    /* Also generate a texture for no-shadow receivers that is
+     * completely white */
+    __(glGenTextures(1, &_noshadowTexture));
+    __(glBindTexture(GL_TEXTURE_2D, _noshadowTexture));
+    {
+        unsigned char noShadow[3] = {255, 255, 255};
+
+        __(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
+        __(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, noShadow));
+        __(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+        __(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
+        __(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
+        __(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
+    }
+    __(glBindTexture(GL_TEXTURE_2D, 0));
+
     /* TODO: Once we use our own format, this should not be needed */
     __(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
     __(glBindTexture(GL_TEXTURE_2D, _dummyTexture));
@@ -196,7 +212,11 @@ bool OpenGLRenderer::renderModel3D(Model3D &model3D, Camera &camera, LightingSha
             shader.setUniformTexture2D("u_shadowMapDirectLight", textureUnit);
 
             __(glActiveTexture(GL_TEXTURE0 + textureUnit));
-            sun->getShadowMap()->bindDepth();
+            if (model3D.isShadowReceiver()) {
+                sun->getShadowMap()->bindDepth();
+            } else {
+                __(glBindTexture(GL_TEXTURE_2D, _noshadowTexture));
+            }
 
             textureUnit++;
         } else {
@@ -219,7 +239,11 @@ bool OpenGLRenderer::renderModel3D(Model3D &model3D, Camera &camera, LightingSha
             texturesArray[numLight] = textureUnit;
 
             __(glActiveTexture(GL_TEXTURE0 + textureUnit));
-            pointLights[numLight]->getShadowMap()->bindDepth();
+            if (model3D.isShadowReceiver()) {
+                pointLights[numLight]->getShadowMap()->bindDepth();
+            } else {
+                __(glBindTexture(GL_TEXTURE_2D, _noshadowTexture));
+            }
 
             textureUnit++;
         }
@@ -248,7 +272,11 @@ bool OpenGLRenderer::renderModel3D(Model3D &model3D, Camera &camera, LightingSha
             texturesArray[numLight] = textureUnit;
 
             __(glActiveTexture(GL_TEXTURE0 + textureUnit));
-            spotLights[numLight]->getShadowMap()->bindDepth();
+            if (model3D.isShadowReceiver()) {
+                spotLights[numLight]->getShadowMap()->bindDepth();
+            } else {
+                __(glBindTexture(GL_TEXTURE_2D, _noshadowTexture));
+            }
 
             textureUnit++;
         }

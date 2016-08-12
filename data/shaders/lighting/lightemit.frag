@@ -81,9 +81,9 @@ uniform uint u_enableToon;
 
 /* Input from vertex shader */
 in vec3 io_fragVertex;
-flat in vec3 io_fragNormal;
+in vec3 io_fragNormal;
 in vec2 io_fragUVCoord;
-flat in vec3 io_viewNormal;
+in vec3 io_viewNormal;
 in vec3 io_viewVertex;
 
 /* Output of this shader */

@@ -16,9 +16,9 @@ uniform mat4 u_modelMatrix;
 uniform mat3 u_normalMatrix;
 
 out vec3 io_fragVertex;
-flat out vec3 io_fragNormal;
+out vec3 io_fragNormal;
 out vec2 io_fragUVCoord;
-flat out vec3 io_viewNormal;
+out vec3 io_viewNormal;
 out vec3 io_viewVertex;
 
 uniform uint u_numPointLights;
@@ -53,7 +53,7 @@ void main()
 
     /* World-space coordinates */
     io_fragVertex = vec3(u_modelMatrix * vec4(in_vertex, 1.0f));
-    io_fragNormal = normalize(u_normalMatrix * in_normal);
+    io_fragNormal = -normalize(u_normalMatrix * in_normal);
     io_fragUVCoord = in_uvcoord;
 
     /* View-space coordinates */

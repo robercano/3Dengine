@@ -39,24 +39,4 @@ class FlatShader : public virtual LightingShader
      * @param target  Pointer to the allocated FlatShader
      */
     static void Delete(FlatShader *target);
-
-    /**
-     * Disables lighting for this object, it only renders
-     * the diffuse map with the original intensity
-     */
-    void disableLighting() { _disableLight = 1; }
-
-    /**
-     * Enables lighting for this object, rendering takes
-     * into account provided lights
-     */
-    void enableLighting() { _disableLight = 0; }
-
-  protected:
-    /**
-     * Constructor
-     */
-    FlatShader() : _disableLight(0) {}
-
-    uint32_t _disableLight; /**< Disables light calculations */
 };

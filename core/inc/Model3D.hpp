@@ -62,11 +62,11 @@ class Model3D : public Object3D
     /**
      * Constructor
      */
-    Model3D() : _lightingShader(NULL), _renderNormals(false), _isShadowCaster(true)
+    Model3D() : _lightingShader(NULL), _renderNormals(false), _isShadowCaster(true), _isShadowReceiver(true)
     {
         _asset = Asset3D::New();
     }
-    Model3D(Asset3D *asset) : _asset(asset), _lightingShader(NULL), _renderNormals(false), _isShadowCaster(true) {}
+    Model3D(Asset3D *asset) : _asset(asset), _lightingShader(NULL), _renderNormals(false), _isShadowCaster(true), _isShadowReceiver(true) {}
 
     /**
      * Destructor
@@ -117,6 +117,26 @@ class Model3D : public Object3D
     bool isShadowCaster(void) { return _isShadowCaster; }
 
     /**
+     * Enables/disables this model as a shadow receiver
+     *
+     * If disabled the model will not use the available shadow maps to render
+     * a shadow onto itself. Useful for example when an object is a light-emitting
+     * object
+     *
+     * @param flag  true (receives shadow) or false (does not receive shadow)
+     */
+    void setShadowReceiver(bool flag) { _isShadowReceiver = flag; }
+
+    /**
+     * Indicates if this model receives shadow or not
+     *
+     * @see setShadowReceiver
+     *
+     * @return true (receives shadow) or false (does not receive shadow)
+     */
+    bool isShadowReceiver(void) { return _isShadowReceiver; }
+
+    /**
      * Debug information
      */
     void setRenderNormals(bool flag) { _renderNormals = flag; }
@@ -131,6 +151,7 @@ class Model3D : public Object3D
     Asset3D *_asset;            /**< Asset containing the geometry and textures */
     bool _renderNormals;        /**< Enables normal rendering for this model */
     bool _isShadowCaster;       /**< Indicates if this model is a shadow caster */
+    bool _isShadowReceiver;     /**< Indicates if this model is a shadow receiver */
 
     LightingShader *_lightingShader; /** Lighting shader used to render this model */
 };

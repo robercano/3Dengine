@@ -9,9 +9,9 @@
 #include "HDRRenderTarget.hpp"
 #include "NOAARenderTarget.hpp"
 #include "BlinnPhongShader.hpp"
-#include "FlatShader.hpp"
+#include "LightEmitShader.hpp"
 #include "Plane.hpp"
-#include "Cube.hpp"
+#include "Sphere.hpp"
 #include "PointLight.hpp"
 #include "Logging.hpp"
 #include "Scene.hpp"
@@ -79,37 +79,51 @@ class Demo : public GameHandler
         }
 
         /* Create a Flat shader for the geometry */
-        FlatShader *shaderBlinnLight = FlatShader::New();
-        if (shaderBlinnLight->init() == false) {
+        LightEmitShader *shaderLightEmit = LightEmitShader::New();
+        if (shaderLightEmit->init() == false) {
             log("ERROR initializing flat lighting shader\n");
             return false;
         }
 
         /* Point light */
-        _scene.add("SL_light1", new SpotLight(glm::vec3(1.0f, 1.0f, 0.8f), glm::vec3(1.0f, 1.0f, 0.8f), glm::vec3(1.0f, 1.0f, 0.8f),
-                                           glm::vec3(0.0f, 150.0f, 150.0f), 30.0f, 3.0f, 0.0000099999f, 250.0f));
-        _scene.add("SL_light2", new SpotLight(glm::vec3(10.0f, 10.0f, 8.0f), glm::vec3(10.0f, 10.0f, 8.0f), glm::vec3(10.0f, 10.0f, 8.0f),
-                                           glm::vec3(120.0f, 150.0f, -100.0f), 30.0f, 3.0f, 0.0000099999f, 250.0f));
-        _scene.add("SL_light3", new SpotLight(glm::vec3(50.0f, 50.0f, 40.0f), glm::vec3(50.0f, 50.0f, 40.0f), glm::vec3(50.0f, 50.0f, 40.0f),
-                                           glm::vec3(-120.0f, 150.0f, -100.0f), 30.0f, 3.0f, 0.0000099999f, 250.0f));
+        _scene.add("SL_light1", new PointLight(glm::vec3(1.0f, 1.0f, 0.8f), glm::vec3(1.0f, 1.0f, 0.8f), glm::vec3(1.0f, 1.0f, 0.8f),
+                                           glm::vec3(0.0f, 150.0f, 150.0f), 0.0000099999f, 240.0f));
+        _scene.add("SL_light2", new PointLight(glm::vec3(10.0f, 10.0f, 8.0f), glm::vec3(10.0f, 10.0f, 8.0f), glm::vec3(10.0f, 10.0f, 8.0f),
+                                           glm::vec3(160.0f, 150.0f, -100.0f), 0.0000099999f, 240.0f));
+        _scene.add("SL_light3", new PointLight(glm::vec3(50.0f, 50.0f, 40.0f), glm::vec3(50.0f, 50.0f, 40.0f), glm::vec3(50.0f, 50.0f, 40.0f),
+                                           glm::vec3(-160.0f, 150.0f, -100.0f), 0.0000099999f, 240.0f));
 
-        _scene.getSpotLight("SL_light1")->setProjection((float)_width / 4.0f, (float)_height / 4.0f, 0.1f, 10000.0f);
-        _scene.getSpotLight("SL_light1")->getShadowMap()->init(_width, _height);
-        _scene.getSpotLight("SL_light1")->lookAt(glm::vec3(0.0f, 0.0f, 150.0f));
-        _scene.getSpotLight("SL_light2")->setProjection((float)_width / 4.0f, (float)_height / 4.0f, 0.1f, 10000.0f);
-        _scene.getSpotLight("SL_light2")->getShadowMap()->init(_width, _height);
-        _scene.getSpotLight("SL_light2")->lookAt(glm::vec3(120.0f, 0.0f, -100.0f));
-        _scene.getSpotLight("SL_light3")->setProjection((float)_width / 4.0f, (float)_height / 4.0f, 0.1f, 10000.0f);
-        _scene.getSpotLight("SL_light3")->getShadowMap()->init(_width, _height);
-        _scene.getSpotLight("SL_light3")->lookAt(glm::vec3(-120.0f, 0.0f, -100.0f));
+        _scene.getPointLight("SL_light1")->setProjection((float)_width / 4.0f, (float)_height / 4.0f, 0.1f, 10000.0f);
+        _scene.getPointLight("SL_light1")->getShadowMap()->init(_width, _height);
+        _scene.getPointLight("SL_light1")->lookAt(glm::vec3(0.0f, 0.0f, 150.0f));
+        _scene.getPointLight("SL_light2")->setProjection((float)_width / 4.0f, (float)_height / 4.0f, 0.1f, 10000.0f);
+        _scene.getPointLight("SL_light2")->getShadowMap()->init(_width, _height);
+        _scene.getPointLight("SL_light2")->lookAt(glm::vec3(120.0f, 0.0f, -100.0f));
+        _scene.getPointLight("SL_light3")->setProjection((float)_width / 4.0f, (float)_height / 4.0f, 0.1f, 10000.0f);
+        _scene.getPointLight("SL_light3")->getShadowMap()->init(_width, _height);
+        _scene.getPointLight("SL_light3")->lookAt(glm::vec3(-120.0f, 0.0f, -100.0f));
 
         /* Load the geometry */
         Asset3D *daxter = game->getRenderer()->loadAsset3D("data/models/internal/daxter.model");
         Procedural::Plane *plane = new Procedural::Plane();
-        Procedural::Plane *plane = new Procedural::Plane();
+        Procedural::Sphere *sphere1 = new Procedural::Sphere(25.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+        Procedural::Sphere *sphere2 = new Procedural::Sphere(25.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+        Procedural::Sphere *sphere3 = new Procedural::Sphere(25.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
         if (game->getRenderer()->prepareAsset3D(*plane) == false) {
             log("ERROR preparing plane asset\n");
+            return false;
+        }
+        if (game->getRenderer()->prepareAsset3D(*sphere1) == false) {
+            log("ERROR preparing sphere1 asset\n");
+            return false;
+        }
+        if (game->getRenderer()->prepareAsset3D(*sphere2) == false) {
+            log("ERROR preparing sphere2 asset\n");
+            return false;
+        }
+        if (game->getRenderer()->prepareAsset3D(*sphere3) == false) {
+            log("ERROR preparing sphere3 asset\n");
             return false;
         }
 
@@ -120,20 +134,37 @@ class Demo : public GameHandler
 
         _scene.add("M3D_daxter2", new Model3D(daxter));
         _scene.getModel("M3D_daxter2")->setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
-        _scene.getModel("M3D_daxter2")->setPosition(glm::vec3(120.0f, 0.0f, -100.0f));
+        _scene.getModel("M3D_daxter2")->setPosition(glm::vec3(160.0f, 0.0f, -100.0f));
         _scene.getModel("M3D_daxter2")->setLightingShader(shaderBlinnLight);
 
         _scene.add("M3D_daxter3", new Model3D(daxter));
         _scene.getModel("M3D_daxter3")->setScaleFactor(glm::vec3(100.0f, 100.0f, 100.0f));
-        _scene.getModel("M3D_daxter3")->setPosition(glm::vec3(-120.0f, 0.0f, -100.0f));
+        _scene.getModel("M3D_daxter3")->setPosition(glm::vec3(-160.0f, 0.0f, -100.0f));
         _scene.getModel("M3D_daxter3")->setLightingShader(shaderBlinnLight);
 
         /* Use a plane for the floor */
         _scene.add("M3D_plane", plane);
-        _scene.getModel("M3D_plane")->setScaleFactor(glm::vec3(500.0f, 1.0f, 500.0f));
+        _scene.getModel("M3D_plane")->setScaleFactor(glm::vec3(600.0f, 1.0f, 600.0f));
         _scene.getModel("M3D_plane")->setPosition(glm::vec3(0.0f, -70.0f, 0.0f));
         _scene.getModel("M3D_plane")->setLightingShader(shaderBlinnLight);
         _scene.getModel("M3D_plane")->setShadowCaster(false);
+
+        /* Add light spheres */
+        _scene.add("M3D_sphere1", sphere1);
+        _scene.getModel("M3D_sphere1")->setPosition(glm::vec3(0.0f, 150.0f, 150.0f));
+        _scene.getModel("M3D_sphere1")->setLightingShader(shaderLightEmit);
+        _scene.getModel("M3D_sphere1")->setShadowCaster(false);
+        _scene.getModel("M3D_sphere1")->setShadowReceiver(false);
+        _scene.add("M3D_sphere2", sphere2);
+        _scene.getModel("M3D_sphere2")->setPosition(glm::vec3(160.0f, 150.0f, -100.0f));
+        _scene.getModel("M3D_sphere2")->setLightingShader(shaderLightEmit);
+        _scene.getModel("M3D_sphere2")->setShadowCaster(false);
+        _scene.getModel("M3D_sphere2")->setShadowReceiver(false);
+        _scene.add("M3D_sphere3", sphere3);
+        _scene.getModel("M3D_sphere3")->setPosition(glm::vec3(-160.0f, 150.0f, -100.0f));
+        _scene.getModel("M3D_sphere3")->setLightingShader(shaderLightEmit);
+        _scene.getModel("M3D_sphere3")->setShadowCaster(false);
+        _scene.getModel("M3D_sphere3")->setShadowReceiver(false);
 
         /* Create the game camera */
         _scene.add("C_camera1", new Camera());

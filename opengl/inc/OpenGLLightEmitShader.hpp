@@ -1,10 +1,10 @@
 /**
- * @class	OpenGLFlatShader
+ * @class	OpenGLLightEmitShader
  * @author	Roberto Cano (http://www.robertocano.es)
  */
 #pragma once
 
-#include "FlatShader.hpp"
+#include "LightEmitShader.hpp"
 #include "OpenGL.h"
 #include "OpenGLLightingShader.hpp"
 #include "OpenGLShader.hpp"
@@ -12,15 +12,15 @@
 
 #pragma warning(disable : 4250)
 
-class OpenGLFlatShader : public virtual FlatShader, public OpenGLLightingShader
+class OpenGLLightEmitShader : public virtual LightEmitShader, public OpenGLLightingShader
 {
   public:
     bool init()
     {
         std::string error;
 
-        if (use("lighting/flat", error) != true) {
-            printf("ERROR loading shader lighting/flat: %s\n", error.c_str());
+        if (use("lighting/lightemit", error) != true) {
+            printf("ERROR loading shader lighting/lightemit: %s\n", error.c_str());
             return false;
         }
 
