@@ -1,5 +1,5 @@
 /**
- * @class	SolidColoringShader
+ * @class	SolidColorShader
  * @brief   Outputs all fragments of the shader with the
  *          given color
  *
@@ -9,11 +9,11 @@
 
 #include <glm/glm.hpp>
 
-class SolidColoringShader
+class SolidColorShader
 {
   public:
-    static SolidColoringShader *New();
-    static void Delete(SolidColoringShader *target);
+    static SolidColorShader *New();
+    static void Delete(SolidColorShader *target);
 
     /**
      * Sets the color for all output fragments

@@ -69,7 +69,10 @@ bool Game::init()
     _windowManager->createWindow(_name, _width, _height, _fullscreen);
     _windowManager->getWindowSize(&_width, &_height);
 
-    _renderer->init();  // only after creating the window
+    if (_renderer->init() == false) {  // only after creating the window
+        log("ERROR initializing the renderer\n");
+        return false;
+    }
 
     _windowManager->setRenderer(_renderer);
 

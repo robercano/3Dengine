@@ -152,6 +152,11 @@ bool Renderer::renderScene(Scene &scene, const Viewport &viewport)
                       0.4f, /* TODO: calculate the global ambient light */
                       *scene.getActiveRenderTarget());
 
+        /* Render overlay wireframe if requested */
+        if (getWireframeMode() == Renderer::RENDER_WIREFRAME_OVERLAY) {
+            renderModel3DWireframe(**model, glm::vec4(1.0f, 0.0f, 1.0f, 1.0f), *scene.getActiveCamera(), *scene.getActiveRenderTarget());
+        }
+
         avgRadius += (*model)->getBoundingSphere().getRadius() / glm::length((*model)->getScaleFactor());
     }
 

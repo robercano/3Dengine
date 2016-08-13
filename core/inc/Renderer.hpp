@@ -80,6 +80,19 @@ class Renderer
     bool renderScene(Scene &scene, const Viewport &viewport);
 
     /**
+     * Renders the wireframe of a model 3D from the given camera into the given renderTarget
+     * with the given color
+     *
+     * @param model         Model to be rendered
+     * @param color         Color of the wireframe
+     * @param camera        Camera to use for the rendering
+     * @param renderTarget  Render target for rendering the frame
+     *
+     * @return true or false
+     */
+    virtual bool renderModel3DWireframe(Model3D &model, const glm::vec4 &color, Camera &camera, RenderTarget &renderTarget) = 0;
+
+    /**
      * Renders a model 3D from the given camera using the provided lighting shader and the
      * different types of light into the given renderTarget
      *
@@ -221,8 +234,14 @@ class Renderer
     /**
      * Global settings for the renderer
      */
-    void setWireframeMode(bool flag) { _wireframe = flag; }
-    bool getWireframeMode() { return _wireframe; }
+    enum WireframeMode {
+        RENDER_WIREFRAME_OFF,     /**< Disables wireframe rendering */
+        RENDER_WIREFRAME_OVERLAY, /**< Enables wireframe overlay rendering, first normal model is rendered, then wireframe */
+        RENDER_WIREFRAME_ONLY     /**< Enable full wireframe rendering, normal model is NOT renderered */
+    };
+
+    void setWireframeMode(WireframeMode mode) { _wireframeMode = mode; }
+    WireframeMode getWireframeMode() { return _wireframeMode; }
     void setRenderNormals(bool flag) { _renderNormals = flag; }
     bool getRenderNormals() { return _renderNormals; }
     void setRenderBoundingVolumes(bool flag)
@@ -245,14 +264,14 @@ class Renderer
     /**
      * Constructor
      */
-    Renderer() : _wireframe(false),_renderNormals(false),
+    Renderer() : _wireframeMode(RENDER_WIREFRAME_OFF),_renderNormals(false),
                  _renderBoundingSphere(false),_renderAABB(false),_renderOOBB(false),
                  _renderLightsMarkers(false), _shaderShadow(NULL) {}
 
   private:
 
     static Renderer *_renderer;   /**< Singleton instance */
-    bool _wireframe;              /**< Enables/disables wireframe rendering */
+    WireframeMode _wireframeMode; /**< Sets the wireframe mode rendering. @see WireframeMode */
     bool _renderNormals;          /**< Global flag to enable model normals rendering */
     bool _renderBoundingSphere;   /**< Global flag to enable model bounding sphere rendering */
     bool _renderAABB;             /**< Global flag to enable model AABB rendering */

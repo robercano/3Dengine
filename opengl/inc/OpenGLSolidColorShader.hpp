@@ -1,5 +1,5 @@
 /**
- * @class	OpenGLSolidColoringShader
+ * @class	OpenGLSolidColorShader
  *
  * @author	Roberto Cano (http://www.robertocano.es)
  */
@@ -9,24 +9,25 @@
 #include "OpenGLLightingShader.hpp"
 #include "OpenGLShader.hpp"
 #include "Shader.hpp"
-#include "SolidColoringShader.hpp"
+#include "SolidColorShader.hpp"
+#include "Logging.hpp"
 
 #pragma warning(disable : 4250)
 
-class OpenGLSolidColoringShader : public virtual SolidColoringShader, public OpenGLLightingShader
+class OpenGLSolidColorShader : public virtual SolidColorShader, public OpenGLShader
 {
   public:
     bool init()
     {
         std::string error;
 
-        if (use("lighting/blinnphong_reflection", error) != true) {
-            printf("ERROR loading shader lighting/blinnphong_reflection: %s\n", error.c_str());
+        if (use("utils/render_solidcolor", error) != true) {
+            Logging::log("ERROR loading shader utils/render_solidcolor: %s\n", error.c_str());
             return false;
         }
 
-        return OpenGLLightingShader::init();
+        return true;
     }
 
-    void setCustomParams() { setUniformUint("u_enableToon", 1); }
+    void setCustomParams() { setUniformVec4("u_color", _color); }
 };

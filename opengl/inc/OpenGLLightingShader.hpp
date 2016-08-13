@@ -42,20 +42,20 @@ class OpenGLLightingShader : public virtual LightingShader, public OpenGLShader
 
         _material.init(bindingPoint++);
         if (_material.prepareForShader(_programID) != true) {
-            printf("ERROR preparing material for blinnphong_reflection shader\n");
+            printf("ERROR preparing material for generic lighting shader\n");
             return false;
         }
 
         _directLight.init(bindingPoint++);
         if (_directLight.prepareForShader(_programID) != true) {
-            printf("ERROR preparing direct light for blinnphong_reflection shader\n");
+            printf("ERROR preparing direct light for generic lighting shader\n");
             return false;
         }
 
         for (uint32_t i = 0; i < MAX_LIGHTS; ++i) {
             _pointLights[i].init(bindingPoint++, i);
             if (_pointLights[i].prepareForShader(_programID) != true) {
-                printf("ERROR preparing point light %d for blinnphong_reflection shader\n", i);
+                printf("ERROR preparing point light %d for generic lighting shader\n", i);
                 return false;
             }
         }
@@ -63,7 +63,7 @@ class OpenGLLightingShader : public virtual LightingShader, public OpenGLShader
         for (uint32_t i = 0; i < MAX_LIGHTS; ++i) {
             _spotLights[i].init(bindingPoint++, i);
             if (_spotLights[i].prepareForShader(_programID) != true) {
-                printf("ERROR preparing spot light %d for blinnphong_reflection shader\n", i);
+                printf("ERROR preparing spot light %d for generic lighting shader\n", i);
                 return false;
             }
         }
@@ -77,7 +77,7 @@ class OpenGLLightingShader : public virtual LightingShader, public OpenGLShader
     void setPointLight(uint32_t numLight, PointLight &pointLight)
     {
         if (numLight >= MAX_LIGHTS) {
-            printf("ERROR light number %d higher than max. %d in blinnphong_reflection shader\n", numLight, MAX_LIGHTS);
+            printf("ERROR light number %d higher than max. %d in generic lighting shader\n", numLight, MAX_LIGHTS);
             return;
         }
         _pointLights[numLight].copyLight(pointLight);
@@ -86,7 +86,7 @@ class OpenGLLightingShader : public virtual LightingShader, public OpenGLShader
     void setSpotLight(uint32_t numLight, SpotLight &spotLight)
     {
         if (numLight >= MAX_LIGHTS) {
-            printf("ERROR light number %d higher than max. %d in blinnphong_reflection shader\n", numLight, MAX_LIGHTS);
+            printf("ERROR light number %d higher than max. %d in generic lighting shader\n", numLight, MAX_LIGHTS);
             return;
         }
         _spotLights[numLight].copyLight(spotLight);

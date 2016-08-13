@@ -106,9 +106,9 @@ class Demo : public GameHandler
         /* Load the geometry */
         Asset3D *daxter = game->getRenderer()->loadAsset3D("data/models/internal/daxter.model");
         Procedural::Plane *plane = new Procedural::Plane();
-        Procedural::Sphere *sphere1 = new Procedural::Sphere(25.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-        Procedural::Sphere *sphere2 = new Procedural::Sphere(25.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-        Procedural::Sphere *sphere3 = new Procedural::Sphere(25.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+        Procedural::Sphere *sphere1 = new Procedural::Sphere(25.0f, glm::vec3(1.0f, 1.0f, 1.0f), 50, 50);
+        Procedural::Sphere *sphere2 = new Procedural::Sphere(25.0f, glm::vec3(1.0f, 1.0f, 1.0f), 50, 50);
+        Procedural::Sphere *sphere3 = new Procedural::Sphere(25.0f, glm::vec3(1.0f, 1.0f, 1.0f), 50, 50);
 
         if (game->getRenderer()->prepareAsset3D(*plane) == false) {
             log("ERROR preparing plane asset\n");
@@ -172,6 +172,7 @@ class Demo : public GameHandler
 
         _cameraMotion.setPosition(glm::vec3(0.0f, 250.0f, 400.0f));
         _cameraMotion.rotatePitch(40.0f);
+
         return true;
     }
 
@@ -301,8 +302,7 @@ int main()
 #if defined(_WIN32)
     game->setWindowSize(800, 600, false);
 #else
-    //game->setWindowSize(2560, 1440, true);
-    game->setWindowSize(800, 600, false);
+    game->setWindowSize(2560, 1440, true);
 #endif
     game->setFPS(60);
 

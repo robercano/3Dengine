@@ -33,7 +33,7 @@ class ShadowsDemo : public GameHandler
         _enableBoundingBox = true;
         _enableNormals = true;
         _enableLights = true;
-        _enableWireframe = true;
+        _wireframeMode = Renderer::RENDER_WIREFRAME_OVERLAY;
     }
 
     bool handleInit(Game *game)
@@ -156,7 +156,17 @@ class ShadowsDemo : public GameHandler
         _key3Pressed = _inputManager._keys['3'];
 
         if (_inputManager._keys['4'] && _key4Pressed == false) {
-            _enableWireframe = !_enableWireframe;
+            switch(_wireframeMode) {
+                case Renderer::RENDER_WIREFRAME_OFF:
+                    _wireframeMode = Renderer::RENDER_WIREFRAME_OVERLAY;
+                    break;
+                case Renderer::RENDER_WIREFRAME_OVERLAY:
+                    _wireframeMode = Renderer::RENDER_WIREFRAME_ONLY;
+                    break;
+                case Renderer::RENDER_WIREFRAME_ONLY:
+                    _wireframeMode = Renderer::RENDER_WIREFRAME_OFF;
+                    break;
+            }
         }
         _key4Pressed = _inputManager._keys['4'];
 
@@ -189,7 +199,7 @@ class ShadowsDemo : public GameHandler
         /* Apply the motion to the camera */
         _cameraMotion.applyTo(*_scene.getCamera("C_camera1"));
 
-        game->getRenderer()->setWireframeMode(_enableWireframe);
+        game->getRenderer()->setWireframeMode(_wireframeMode);
         game->getRenderer()->setRenderNormals(_enableNormals);
         game->getRenderer()->setRenderLightsMarkers(_enableLights);
 
@@ -201,7 +211,7 @@ class ShadowsDemo : public GameHandler
                                         _enableBoundingBox ? "Off" : "On",
                                         _enableNormals ? "Off" : "On",
                                         _enableLights ? "Off" : "On",
-                                        _enableWireframe ? "Off" : "On");
+                                        _wireframeMode == Renderer::RENDER_WIREFRAME_OFF ? "Off" : _wireframeMode == Renderer::RENDER_WIREFRAME_OVERLAY ? "Overlay" : "Full");
         return true;
     }
 
@@ -220,7 +230,8 @@ class ShadowsDemo : public GameHandler
     uint32_t _height;
     float _angle;
     bool _enableBoundingBox, _enableNormals;
-    bool _enableLights, _enableWireframe;
+    bool _enableLights;
+    Renderer::WireframeMode _wireframeMode;
     bool _key1Pressed, _key2Pressed, _key3Pressed, _key4Pressed;
     Viewport *_viewport;
 };

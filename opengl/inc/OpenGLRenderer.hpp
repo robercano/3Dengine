@@ -10,6 +10,7 @@
 #include <vector>
 #include "Renderer.hpp"
 #include "OpenGLShader.hpp"
+#include "OpenGLSolidColorShader.hpp"
 
 class OpenGLRenderer : public Renderer
 {
@@ -25,6 +26,7 @@ class OpenGLRenderer : public Renderer
     Shader *newShader(void);
     Asset3D *loadAsset3D(const std::string &assetName);
     bool prepareAsset3D(Asset3D &model);
+    bool renderModel3DWireframe(Model3D &model, const glm::vec4 &color, Camera &camera, RenderTarget &renderTarget);
     bool renderModel3D(Model3D &model, Camera &camera, LightingShader &shader, DirectLight *sun, std::vector<PointLight *> &pointLights,
                        std::vector<SpotLight *> &spotLights, float ambientK, RenderTarget &renderTarget, bool disableDepth = false);
     bool renderToShadowMap(Model3D &model3D, Light &light, NormalShadowMapShader &shader);
@@ -74,6 +76,11 @@ class OpenGLRenderer : public Renderer
      * Shader to render bounding spheres
      */
     OpenGLShader _renderBoundingSphere;
+
+    /**
+     * Shader to render a solid color, used for wireframe rendering
+     */
+    OpenGLSolidColorShader *_wireframeShader;
 
     /**
      * Shader to render model normals

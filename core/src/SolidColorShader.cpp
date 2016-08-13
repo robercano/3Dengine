@@ -1,10 +1,10 @@
 /**
- * @class	SolidColoringShader
+ * @class	SolidColorShader
  * @author	Roberto Cano (http://www.robertocano.es)
  */
 
-#include "SolidColoringShader.hpp"
-#include "OpenGLSolidColoringShader.hpp"
+#include "SolidColorShader.hpp"
+#include "OpenGLSolidColorShader.hpp"
 
-SolidColoringShader *SolidColoringShader::New(void) { return new OpenGLSolidColoringShader(); }
-void SolidColoringShader::Delete(SolidColoringShader *target) { delete target; }
+SolidColorShader *SolidColorShader::New(void) { return new OpenGLSolidColorShader(); }
+void SolidColorShader::Delete(SolidColorShader *target) { delete target; }
