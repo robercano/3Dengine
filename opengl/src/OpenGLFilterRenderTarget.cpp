@@ -68,7 +68,11 @@ bool OpenGLFilterRenderTarget::init(uint32_t width, uint32_t height, uint32_t ma
             __(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
             __(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, fLargest));
 
-            __(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL));
+            if (_useHDR == true) {
+                __(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL));
+            } else {
+                __(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL));
+            }
         }
     }
     __(glBindTexture(GL_TEXTURE_2D, 0));
@@ -153,7 +157,7 @@ void OpenGLFilterRenderTarget::bindDepth() { __(glBindTexture(GL_TEXTURE_2D, _de
 void OpenGLFilterRenderTarget::unbind() { __(glBindFramebuffer(GL_FRAMEBUFFER, 0)); }
 bool OpenGLFilterRenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height, uint32_t target, bool bindMainFB)
 {
-    if (target < 0 || target >= _numTargets) {
+    if (target >= _numTargets) {
         log("ERROR wrong target number %d in OpenGLFilterRenderTarget::blit, max. is %d\n", target, _numTargets - 1);
         return false;
     }
@@ -167,7 +171,18 @@ bool OpenGLFilterRenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width
     __(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
     __(glDisable(GL_LINE_SMOOTH));
     __(glEnable(GL_CULL_FACE));
-    __(glDisable(GL_BLEND));
+
+    /* Set the blending mode */
+    switch (_blendingMode) {
+        case BLENDING_ADDITIVE:
+            __(glEnable(GL_BLEND));
+            __(glBlendEquation(GL_FUNC_ADD));
+            __(glBlendFunc(GL_ONE, GL_ONE));
+            __(glDisable(GL_DEPTH_TEST));
+            break;
+        default:
+            __(glDisable(GL_BLEND));
+    }
 
     __(glViewport(dstX, dstY, width, height));
     __(glActiveTexture(GL_TEXTURE0));

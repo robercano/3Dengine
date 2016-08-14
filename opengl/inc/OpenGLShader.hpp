@@ -34,6 +34,7 @@ class OpenGLShader : public virtual Shader
     bool setUniformTexture2DArray(const std::string &name, uint32_t unitIDs[], uint32_t numItems);
     bool setUniformFloat(const std::string &name, float value);
     bool setUniformUint(const std::string &name, uint32_t value);
+    bool setUniformBool(const std::string &name, bool value);
     bool setUniformVec4(const std::string &name, glm::vec4 &value);
     bool setUniformVec3(const std::string &name, glm::vec3 &value);
     bool setUniformVec2(const std::string &name, glm::vec2 &value);

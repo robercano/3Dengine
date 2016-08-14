@@ -178,8 +178,5 @@ bool Renderer::renderScene(Scene &scene, const Viewport &viewport)
     /* Render the required light markers */
     renderLights(lightsMarkers, *scene.getActiveCamera(), *scene.getActiveRenderTarget());
 
-    /* Blit the render target to the screen */
-    scene.getActiveRenderTarget()->blit(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
-
     return true;
 }

@@ -45,11 +45,22 @@ class HDRRenderTarget : public virtual RenderTarget
      */
     float getExposure() { return _exposure; }
 
+    /**
+     * Disables tone mapping when blitting the target
+     */
+    void disableToneMapping() { _toneMapping = false; }
+
+    /**
+     * Enables tone mapping when blitting the target
+     */
+    void enableToneMapping() { _toneMapping = true; }
+
   protected:
     /**
      * Constructor
      */
-    HDRRenderTarget() : _exposure(1.0f) {}
+    HDRRenderTarget() : _exposure(1.0f), _toneMapping(true) {}
 
-    float _exposure; /**< Exposure level used for tone mapping */
+    float _exposure;   /**< Exposure level used for tone mapping */
+    bool _toneMapping; /**< Indicates if we must do tone mapping */
 };

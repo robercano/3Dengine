@@ -13,7 +13,7 @@
 class RenderTarget
 {
   public:
-    RenderTarget() : _r(0.0), _g(0.0), _b(0.0), _a(1.0) {}
+    RenderTarget() : _width(0), _height(0), _r(0.0), _g(0.0), _b(0.0), _a(1.0), _blendingMode(BLENDING_NONE) {}
     virtual bool init(uint32_t width, uint32_t height, uint32_t maxSamples = 0, uint32_t numTargets = 1) = 0;
     virtual void bind() = 0;
     virtual void bindDepth() = 0;
@@ -30,10 +30,17 @@ class RenderTarget
         _a = a;
     }
 
+    enum BlendingMode {
+        BLENDING_NONE = 0,
+        BLENDING_ADDITIVE = 1
+    };
+    virtual void setBlendingMode(BlendingMode mode) { _blendingMode = mode; }
+
     virtual uint32_t getWidth() { return _width; }
     virtual uint32_t getHeight() { return _height; }
   protected:
     uint32_t _width;
     uint32_t _height;
     float _r, _g, _b, _a;
+    BlendingMode _blendingMode;
 };

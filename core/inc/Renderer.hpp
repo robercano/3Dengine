@@ -69,6 +69,9 @@ class Renderer
      * some geometry occlusion calculations, and determines the best parameters
      * for light rendering using the camera frustum and the models bounding boxes
      *
+     * It does NOT blit the active render target. This must be done by the caller.
+     * This allows the caller to perform other operation on the rendered scene.
+     *
      * @see Scene
      *
      * @param scene     The scene to be rendered

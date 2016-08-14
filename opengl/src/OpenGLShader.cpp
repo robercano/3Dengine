@@ -258,6 +258,18 @@ bool OpenGLShader::setUniformUint(const std::string &name, uint32_t value)
     return true;
 }
 
+bool OpenGLShader::setUniformBool(const std::string &name, bool value)
+{
+    std::map<std::string, uint32_t>::iterator it = _uniformNames.find(name);
+
+    if (it == _uniformNames.end()) {
+        return false;
+    }
+
+    __(glUniform1i(it->second, value));
+    return true;
+}
+
 bool OpenGLShader::setUniformVec4(const std::string &name, glm::vec4 &value)
 {
     std::map<std::string, uint32_t>::iterator it = _uniformNames.find(name);

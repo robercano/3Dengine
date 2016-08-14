@@ -10,30 +10,30 @@
 
 #include "OpenGL.h"
 #include "HDRRenderTarget.hpp"
+#include "OpenGLFilterRenderTarget.hpp"
 #include "Shader.hpp"
 
 #pragma warning(disable : 4250)
 
-class OpenGLHDRRenderTarget : public HDRRenderTarget
+class OpenGLHDRRenderTarget : public HDRRenderTarget, public OpenGLFilterRenderTarget
 {
-  public:
-    ~OpenGLHDRRenderTarget();
-    bool init(uint32_t width, uint32_t height, uint32_t maxSamples = 0, uint32_t numTargets = 1);
-    void bind();
-    void bindDepth();
-    void unbind();
-    bool blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height, uint32_t target = 0, bool bindMainFB = true);
-    void clear();
+    public:
+        OpenGLHDRRenderTarget() : OpenGLFilterRenderTarget(true) {}
 
-  protected:
-    GLuint _frameBuffer;  /**< Frame buffer object containing the color and depth buffers */
-    uint32_t _numTargets; /**< Number of color attachments for this target */
-    GLuint *_colorBuffer; /**< Array of GL allocated IDs for the color buffers */
-    GLuint *_attachments; /**< Array of color attachments locations for the draw buffers */
-    GLuint _depthBuffer;  /**< GL allocated ID for the depth buffer */
-    GLuint _vertexArray;  /**< VAO for the render target surface */
-    GLuint _vertexBuffer; /**< VBO for the render target surface */
-
-    Shader *_shader;      /**< Shader used to render the target onto another target or
-                               framebuffer */
+    private:
+        bool customInit()
+        {
+            std::string error;
+            if (_shader->use("hdr/hdr", error) == false) {
+                printf("ERROR loading shader hdr/hdr: %s\n", error.c_str());
+                return false;
+            }
+            return true;
+        }
+        void setCustomParams(void)
+        {
+            _shader->setUniformFloat("u_exposure", _exposure);
+            _shader->setUniformBool("u_tonemapping", _toneMapping);
+        }
+        void unsetCustomParams(void) { }
 };

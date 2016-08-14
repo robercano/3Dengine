@@ -23,7 +23,7 @@ CORE_FILES=Game.cpp InputManager.cpp WindowManager.cpp TimeManager.cpp \
 		   Scene.cpp Camera.cpp \
            Renderer.cpp NOAARenderTarget.cpp MSAARenderTarget.cpp SSAARenderTarget.cpp \
 		   FXAARenderTarget.cpp FXAA2RenderTarget.cpp FBRenderTarget.cpp ToonRenderTarget.cpp \
-		   HDRRenderTarget.cpp \
+		   HDRRenderTarget.cpp GaussianBlurRenderTarget.cpp \
 		   ShadowMapRenderTarget.cpp \
 		   Shader.cpp FlatShader.cpp LightEmitShader.cpp SolidColorShader.cpp \
 		   BlinnPhongShader.cpp ToonLightingShader.cpp NormalShadowMapShader.cpp \
@@ -37,7 +37,6 @@ OPENGL_FILES=GLFWKeyManager.cpp GLFWMouseManager.cpp GLFWWindowManager.cpp \
 			 OpenGLAsset3D.cpp \
 			 OpenGLFontRenderer.cpp \
 			 OpenGLRenderer.cpp OpenGLFilterRenderTarget.cpp \
-			 OpenGLHDRRenderTarget.cpp \
              OpenGLMSAARenderTarget.cpp OpenGLSSAARenderTarget.cpp OpenGLFBRenderTarget.cpp \
 			 OpenGLShadowMapRenderTarget.cpp \
              OpenGLShader.cpp OpenGLShaderMaterial.cpp \

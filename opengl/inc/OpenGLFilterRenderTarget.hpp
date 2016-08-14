@@ -19,6 +19,7 @@
 class OpenGLFilterRenderTarget : public virtual RenderTarget
 {
   public:
+      OpenGLFilterRenderTarget(bool useHDR = false) : _useHDR(useHDR) {}
     ~OpenGLFilterRenderTarget();
     bool init(uint32_t width, uint32_t height, uint32_t maxSamples = 0, uint32_t numTargets = 1);
     void bind();
@@ -32,6 +33,8 @@ class OpenGLFilterRenderTarget : public virtual RenderTarget
     virtual void setCustomParams(void) = 0;
     virtual void unsetCustomParams(void) = 0;
 
+    bool _useHDR;         /**< Indicates this filter render target must use an HDR buffer. In that case
+                               the associated shader is responsible for the tone mapping */
     GLuint _frameBuffer;  /**< Frame buffer object containing the color and depth buffers */
     uint32_t _numTargets; /**< Number of color attachments for this target */
     GLuint *_colorBuffer; /**< Array of GL allocated IDs for the color buffers */

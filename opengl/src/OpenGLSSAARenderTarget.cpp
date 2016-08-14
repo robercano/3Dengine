@@ -135,7 +135,7 @@ void OpenGLSSAARenderTarget::bindDepth() { __(glBindTexture(GL_TEXTURE_2D, _dept
 void OpenGLSSAARenderTarget::unbind() { __(glBindFramebuffer(GL_FRAMEBUFFER, 0)); }
 bool OpenGLSSAARenderTarget::blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height, uint32_t target, bool bindMainFB)
 {
-    if (target < 0 || target >= _numTargets) {
+    if (target >= _numTargets) {
         log("ERROR wrong target number %d in OpenGLFilterRenderTarget::blit, max. is %d\n", target, _numTargets - 1);
         return false;
     }

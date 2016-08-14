@@ -10,6 +10,7 @@
 #include "NOAARenderTarget.hpp"
 #include "BlinnPhongShader.hpp"
 #include "LightEmitShader.hpp"
+#include "GaussianBlurRenderTarget.hpp"
 #include "Plane.hpp"
 #include "Sphere.hpp"
 #include "PointLight.hpp"
@@ -32,6 +33,9 @@ class Demo : public GameHandler
         _prevY = 0xFFFFFF;
         _keyPlusPressed = false;
         _keyMinusPressed = false;
+        _gaussianBlurH = NULL;
+        _gaussianBlurV = NULL;
+        _enableBloom = false;
     }
 
     bool handleInit(Game *game)
@@ -46,6 +50,7 @@ class Demo : public GameHandler
         keys.push_back('R');
         keys.push_back('1');
         keys.push_back('2');
+        keys.push_back('3');
         keys.push_back('Y');
         keys.push_back('H');
         keys.push_back(GLFW_KEY_ESCAPE);
@@ -68,6 +73,17 @@ class Demo : public GameHandler
         _scene.add("RT_noaa", NOAARenderTarget::New());
         _scene.getRenderTarget("RT_noaa")->init(_width, _height);
         _scene.getRenderTarget("RT_noaa")->setClearColor(0.0, 0.0, 0.0, 1.0);
+
+        /* Create the gaussian blur render target */
+        _gaussianBlurH = GaussianBlurRenderTarget::New();
+        _gaussianBlurH->init(_width, _height);
+        _gaussianBlurH->setClearColor(0.0, 0.0, 0.0, 1.0);
+        _gaussianBlurH->setHorizontal(true);
+
+        _gaussianBlurV = GaussianBlurRenderTarget::New();
+        _gaussianBlurV->init(_width, _height);
+        _gaussianBlurV->setClearColor(0.0, 0.0, 0.0, 1.0);
+        _gaussianBlurV->setHorizontal(false);
 
         _scene.setActiveRenderTarget("RT_noaa");
 
@@ -199,10 +215,15 @@ class Demo : public GameHandler
         }
         if (_inputManager._keys['1']) {
             _scene.setActiveRenderTarget("RT_noaa");
+            _enableBloom = false;
         }
-
         if (_inputManager._keys['2']) {
             _scene.setActiveRenderTarget("RT_HDR");
+            _enableBloom = false;
+        }
+        if (_inputManager._keys['3']) {
+            _scene.setActiveRenderTarget("RT_HDR");
+            _enableBloom = true;
         }
 
         if (_inputManager._keys['Y'] && _keyPlusPressed == false) {
@@ -253,17 +274,36 @@ class Demo : public GameHandler
         _cameraMotion.applyTo(*_scene.getCamera("C_camera1"));
 
         game->getRenderer()->renderScene(_scene, *_viewport);
+        _scene.getActiveRenderTarget()->blit();
 
-        /* Preparation for bloom effect */
-#if 0
-        if (_scene.getActiveRenderTarget() == _scene.getRenderTarget("RT_HDR")) {
-            _scene.getActiveRenderTarget()->blit(0, 0, _width, _height, 1);
+        /* Bloom effect */
+        if (_enableBloom == true && _scene.getActiveRenderTarget() == _scene.getRenderTarget("RT_HDR")) {
+            _gaussianBlurH->clear();
+            _gaussianBlurV->clear();
+
+            _gaussianBlurV->bind();
+            dynamic_cast<HDRRenderTarget*>(_scene.getActiveRenderTarget())->disableToneMapping();
+            dynamic_cast<HDRRenderTarget*>(_scene.getActiveRenderTarget())->setBlendingMode(RenderTarget::BLENDING_NONE);
+
+            _scene.getActiveRenderTarget()->blit(0, 0, _width, _height, 1, false);
+            _gaussianBlurV->unbind();
+
+            _gaussianBlurH->bind();
+            _gaussianBlurV->blit(0, 0, _width, _height, 0, false);
+            _gaussianBlurH->unbind();
+
+            _scene.getActiveRenderTarget()->bind();
+            _gaussianBlurH->blit(0, 0, _width, _height, 0, false);
+            _scene.getActiveRenderTarget()->unbind();
+
+            dynamic_cast<HDRRenderTarget*>(_scene.getActiveRenderTarget())->enableToneMapping();
+            dynamic_cast<HDRRenderTarget*>(_scene.getActiveRenderTarget())->setBlendingMode(RenderTarget::BLENDING_ADDITIVE);
+            _scene.getActiveRenderTarget()->blit();
         }
-#endif
 
-        game->getTextConsole()->gprintf("1=Normal, 2=HDR, Y=Increase exposure H=Decrease exposure\n");
+        game->getTextConsole()->gprintf("1=Normal, 2=HDR, 3=Bloom, Y=Increase exposure H=Decrease exposure\n");
         if (_scene.getActiveRenderTarget() == _scene.getRenderTarget("RT_HDR")) {
-            game->getTextConsole()->gprintf("Exposure: %.2f\n", dynamic_cast<HDRRenderTarget*>(_scene.getRenderTarget("RT_HDR"))->getExposure());
+            game->getTextConsole()->gprintf("Bloom: %s, Exposure: %.2f\n", _enableBloom ? "On" : "Off", dynamic_cast<HDRRenderTarget*>(_scene.getRenderTarget("RT_HDR"))->getExposure());
         } else {
             game->getTextConsole()->gprintf("HDR disabled\n");
         }
@@ -283,8 +323,9 @@ class Demo : public GameHandler
     int32_t _prevY;
     uint32_t _width;
     uint32_t _height;
-    bool _keyPlusPressed, _keyMinusPressed;
+    bool _enableBloom, _keyPlusPressed, _keyMinusPressed;
     Viewport *_viewport;
+    GaussianBlurRenderTarget *_gaussianBlurV, *_gaussianBlurH;
 };
 
 int main()
