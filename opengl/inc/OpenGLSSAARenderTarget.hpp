@@ -23,11 +23,10 @@ class OpenGLSSAARenderTarget : public SSAARenderTarget
     void bindDepth();
     void unbind();
     bool blit(uint32_t dstX, uint32_t dstY, uint32_t width, uint32_t height, uint32_t target = 0, bool bindMainFB = true);
-    bool blit() { return blit(0, 0, _width/_factor, _height/_factor); }
+    bool blit() { return blit(0, 0, _width / _factor, _height / _factor); }
     void clear();
 
   private:
-
     GLuint _frameBuffer;  /**< Frame buffer object containing the color and depth buffers */
     uint32_t _numTargets; /**< Number of color attachments for this target */
     GLuint *_colorBuffer; /**< Array of GL allocated IDs for the color buffers */
@@ -36,5 +35,5 @@ class OpenGLSSAARenderTarget : public SSAARenderTarget
     GLuint _vertexArray;  /**< VAO for the render target surface */
     GLuint _vertexBuffer; /**< VBO for the render target surface */
 
-    uint32_t _factor;     /**< Factor for the internal size of the SSAA framebuffer */
+    uint32_t _factor; /**< Factor for the internal size of the SSAA framebuffer */
 };

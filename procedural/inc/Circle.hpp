@@ -30,7 +30,6 @@ class Circle : public Model3D
     float getRadius() const { return _radius; }
     const glm::vec3 &getColor() const { return _color; }
     uint32_t getNumVertsSide() const { return _numVertsSide; }
-
   private:
     float _radius;
     glm::vec3 _color;

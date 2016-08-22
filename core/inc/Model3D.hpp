@@ -43,12 +43,12 @@
 #include <stdint.h>
 #include <glm/glm.hpp>
 #include <vector>
-#include "Object3D.hpp"
 #include "Asset3D.hpp"
-#include "Material.hpp"
-#include "Texture.hpp"
-#include "ProceduralUtils.hpp"
 #include "LightingShader.hpp"
+#include "Material.hpp"
+#include "Object3D.hpp"
+#include "ProceduralUtils.hpp"
+#include "Texture.hpp"
 
 class Model3D : public Object3D
 {
@@ -62,17 +62,12 @@ class Model3D : public Object3D
     /**
      * Constructor
      */
-    Model3D() : _lightingShader(NULL), _renderNormals(false), _isShadowCaster(true), _isShadowReceiver(true)
-    {
-        _asset = Asset3D::New();
-    }
+    Model3D() : _lightingShader(NULL), _renderNormals(false), _isShadowCaster(true), _isShadowReceiver(true) { _asset = Asset3D::New(); }
     Model3D(Asset3D *asset) : _asset(asset), _lightingShader(NULL), _renderNormals(false), _isShadowCaster(true), _isShadowReceiver(true) {}
-
     /**
      * Destructor
      */
     virtual ~Model3D() {}
-
     /**
      * Retrieves the model asset 3D
      *
@@ -82,21 +77,18 @@ class Model3D : public Object3D
     const Asset3D *getAsset3D() const { return _asset; }
     operator Asset3D *() { return _asset; }
     operator Asset3D &() { return *_asset; }
-
     /**
      * Sets the lighting shader used to render this model
      *
      * @param shader  Lighting shader used to render this model
      */
     void setLightingShader(LightingShader *shader) { _lightingShader = shader; }
-
     /**
      * Gets the lighting shader used to render this model
      *
      * @return Lighting shader used to render this model
      */
     LightingShader *getLightingShader(void) { return _lightingShader; }
-
     /**
      * Enables/disables this model as a shadow caster
      *
@@ -106,7 +98,6 @@ class Model3D : public Object3D
      * @param flag  true (casts a shadow) or false (does not cast a shadow)
      */
     void setShadowCaster(bool flag) { _isShadowCaster = flag; }
-
     /**
      * Indicates if this model casts a shadow or not
      *
@@ -115,7 +106,6 @@ class Model3D : public Object3D
      * @return true (casts a shadow) or false (does not cast a shadow)
      */
     bool isShadowCaster(void) { return _isShadowCaster; }
-
     /**
      * Enables/disables this model as a shadow receiver
      *
@@ -126,7 +116,6 @@ class Model3D : public Object3D
      * @param flag  true (receives shadow) or false (does not receive shadow)
      */
     void setShadowReceiver(bool flag) { _isShadowReceiver = flag; }
-
     /**
      * Indicates if this model receives shadow or not
      *
@@ -135,23 +124,21 @@ class Model3D : public Object3D
      * @return true (receives shadow) or false (does not receive shadow)
      */
     bool isShadowReceiver(void) { return _isShadowReceiver; }
-
     /**
      * Debug information
      */
     void setRenderNormals(bool flag) { _renderNormals = flag; }
     bool getRenderNormals(void) { return _renderNormals; }
-
   protected:
     /**
      * Methods from Object3D class
      */
     void _calculateBoundingVolumes();
 
-    Asset3D *_asset;            /**< Asset containing the geometry and textures */
-    bool _renderNormals;        /**< Enables normal rendering for this model */
-    bool _isShadowCaster;       /**< Indicates if this model is a shadow caster */
-    bool _isShadowReceiver;     /**< Indicates if this model is a shadow receiver */
+    Asset3D *_asset;        /**< Asset containing the geometry and textures */
+    bool _renderNormals;    /**< Enables normal rendering for this model */
+    bool _isShadowCaster;   /**< Indicates if this model is a shadow caster */
+    bool _isShadowReceiver; /**< Indicates if this model is a shadow receiver */
 
     LightingShader *_lightingShader; /** Lighting shader used to render this model */
 };

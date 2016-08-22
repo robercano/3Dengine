@@ -5,12 +5,12 @@
  */
 #pragma once
 
+#include "Logging.hpp"
 #include "OpenGL.h"
 #include "OpenGLLightingShader.hpp"
 #include "OpenGLShader.hpp"
 #include "Shader.hpp"
 #include "SolidColorShader.hpp"
-#include "Logging.hpp"
 
 #pragma warning(disable : 4250)
 

@@ -41,7 +41,6 @@ class Light : public Projection, public Object3D
      */
     void setRenderMarker(bool flag) { _renderMarker = flag; }
     bool getRenderMarker(void) { return _renderMarker; }
-
   protected:
     glm::vec3 _ambient;
     glm::vec3 _diffuse;

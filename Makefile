@@ -64,7 +64,7 @@ SHAREDGEN= -dynamiclib -Wl,-headerpad_max_install_names,-undefined,dynamic_looku
 SHAREDEXT=dylib
 PREFIX=/usr/local/lib
 else
-LDFLAGS+= -Llib -lengine -lGL -lGLEW -lglfw3 -lpng -ljpeg -lfreetype -lX11 -lXrandr -lXinerama -lXi -lXxf86vm -lXcursor -ldl -pthread -fPIC
+LDFLAGS+= -Llib -lengine -lGL -lGLEW -lglfw -lpng -ljpeg -lfreetype -lX11 -lXrandr -lXinerama -lXi -lXxf86vm -lXcursor -ldl -pthread -fPIC
 FLAGS=-I/usr/include -I/usr/include/freetype2
 SHAREDGEN= -shared
 SHAREDEXT=so
@@ -93,7 +93,7 @@ TOOLS_TARGETS=$(TOOLS_FILES:.cpp=)
 #
 # Main rules
 #
-.PHONY: release
+.PHONY: release headers
 
 all: engine $(DEMO_TARGETS) $(TOOLS_TARGETS)
 
@@ -124,7 +124,6 @@ $(LIBDIR)/$(LIBNAME): $(OBJECTS)
 
 $(OBJDIR)/%.o: %.cpp
 	@echo "- Compiling $<..."
-	@if test -n "`which clang-format`"; then clang-format -i $<; fi
 	@$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 $(OBJDIR)/%.o: %.c

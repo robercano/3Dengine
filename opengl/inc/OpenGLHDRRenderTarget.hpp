@@ -8,7 +8,6 @@
  */
 #pragma once
 
-#include "OpenGL.h"
 #include "HDRRenderTarget.hpp"
 #include "OpenGLFilterRenderTarget.hpp"
 #include "Shader.hpp"

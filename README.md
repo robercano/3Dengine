@@ -1,4 +1,4 @@
-# Generic 3D Engine
+#Generic 3D Engine
 
 ## Introduction
 This is a demo 3D engine set to showcase my 3D graphics and system programming skills. The main aim is to implement several known techniques and produce a series of demos to showcase this.
@@ -9,7 +9,15 @@ This is a demo 3D engine set to showcase my 3D graphics and system programming s
 
 You need to install the following packages in order to compile the package:
 
-    sudo apt-get install g++ cmake libglew-dev libjpeg-dev xorg-dev
+    sudo apt-get install g++ cmake libglew-dev libjpeg-dev xorg-dev libfreetype6-dev clang-format
+
+### Ubuntu 16.04 LTS
+
+You need to install the following packages in order to compile the package:
+
+    sudo apt-get install libglew-dev libglfw3-dev libjpeg-dev xorg-dev libfreetype6-dev clang-format
+
+### GLFW3 library (only for Ubuntu 14.04 LTS)
 
 libglfw3 package is also needed but it does not come with Ubuntu 14.04 LTS. You can download GLFW 3.2 [here](https://github.com/glfw/glfw/releases/download/3.2/glfw-3.2.zip).
 
@@ -60,7 +68,7 @@ TODO
 * Scene management, now all elements are added to scene class and passed to renderer
 * Procedural generation: Plane, bent plane, cylinder, torus, sphere, triangle and terrain (using Perlin noise)
 
-# Current set of demos
+#Current set of demos
 * Anti-aliasing methods showcase demo (FXAA, FXAA2, MSAA and SSAA)
 * FXAA and FXAA2 side by side comparison
 * Point lights demo

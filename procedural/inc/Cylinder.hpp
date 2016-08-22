@@ -24,9 +24,8 @@ class Cylinder : public Model3D
      *                  would yield a cube
      * @param color     Color for the default material
      */
-    Cylinder(float radius = 1.0f, float height = 1.0f,
-             const glm::vec3 &color = glm::vec3(1.0f, 1.0f, 1.0f),
-             uint32_t numVertsCap = 20, uint32_t numVertsHeight = 2);
+    Cylinder(float radius = 1.0f, float height = 1.0f, const glm::vec3 &color = glm::vec3(1.0f, 1.0f, 1.0f), uint32_t numVertsCap = 20,
+             uint32_t numVertsHeight = 2);
     /**
      * Accessors
      */
@@ -35,7 +34,6 @@ class Cylinder : public Model3D
     const glm::vec3 &getColor() const { return _color; }
     uint32_t getNumVertsCap() const { return _numVertsCap; }
     uint32_t getNumVertsHeight() const { return _numVertsHeight; }
-
   private:
     void _buildBody();
 
