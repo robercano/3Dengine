@@ -268,7 +268,7 @@ void main()
     _ProcessSpotLight(lightAcc, 3u, io_viewVertex);
 #endif
 
-    o_color = vec4(vec3(texture(u_diffuseMap, io_fragUVCoord)) * lightAcc, u_material.alpha);
+	o_color = vec4(vec3(texture(u_diffuseMap, io_fragUVCoord)) * lightAcc, u_material.alpha);
 
     float brightness = dot(o_color.rgb, vec3(0.2126, 0.7152, 0.0722));
 

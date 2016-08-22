@@ -13,5 +13,6 @@ Sphere::Sphere(float radius, const glm::vec3 &color, uint32_t numVertsLongitude,
 {
     AppendBentPlane(*this, (float)(2.0f * PI * _radius), (float)(2.0f * _radius), (float)(2.0f * PI), 0.0f, (float)(2.0f * PI),
                     _numVertsLongitude + 1, _numVertsLatitude);
+    Asset3DTransform::Translate(*this, glm::vec3(0.0, -_radius, 0.0));
     Asset3DTransform::SetUniqueMaterialFromColor(*this, _color);
 }

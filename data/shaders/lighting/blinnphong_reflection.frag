@@ -270,7 +270,7 @@ void main()
     o_color = vec4(vec3(texture(u_diffuseMap, io_fragUVCoord)) * lightAcc, u_material.alpha);
 
     float brightness = dot(o_color.rgb, vec3(0.2126, 0.7152, 0.0722));
-    if (brightness > 1.0) {
+    if (brightness > 1.2) {
         o_bright = o_color;
     } else {
         o_bright = vec4(0.0, 0.0, 0.0, 0.0);
