@@ -8,9 +8,9 @@
 #pragma once
 
 #include <vector>
-#include "Renderer.hpp"
 #include "OpenGLShader.hpp"
 #include "OpenGLSolidColorShader.hpp"
+#include "Renderer.hpp"
 
 class OpenGLRenderer : public Renderer
 {
@@ -31,11 +31,13 @@ class OpenGLRenderer : public Renderer
                        std::vector<SpotLight *> &spotLights, float ambientK, RenderTarget &renderTarget, bool disableDepth = false);
     bool renderToShadowMap(Model3D &model3D, Light &light, NormalShadowMapShader &shader);
     bool renderLight(Light &light, Camera &camera, RenderTarget &renderTarget, uint32_t lightNumber);
-    bool renderLights(std::vector<Light*> &lights, Camera &camera, RenderTarget &renderTarget);
-    bool renderBoundingBox(const BoundingBox &box, const glm::mat4 &modelMatrix, const glm::vec3 &color, Camera &camera, RenderTarget &renderTarget);
-    bool renderBoundingSphere(const BoundingSphere &sphere, const glm::vec3 &center,
-            const glm::vec3 &color, Camera &camera, RenderTarget &renderTarget);
-    bool renderBoundingVolumes(Object3D &object, Camera &camera, RenderTarget &renderTarget, bool showSphere = true, bool showAABB = true, bool showOOBB = true);
+    bool renderLights(std::vector<Light *> &lights, Camera &camera, RenderTarget &renderTarget);
+    bool renderBoundingBox(const BoundingBox &box, const glm::mat4 &modelMatrix, const glm::vec3 &color, Camera &camera,
+                           RenderTarget &renderTarget);
+    bool renderBoundingSphere(const BoundingSphere &sphere, const glm::vec3 &center, const glm::vec3 &color, Camera &camera,
+                              RenderTarget &renderTarget);
+    bool renderBoundingVolumes(Object3D &object, Camera &camera, RenderTarget &renderTarget, bool showSphere = true, bool showAABB = true,
+                               bool showOOBB = true);
     bool renderModelNormals(Model3D &model3D, Camera &camera, RenderTarget &renderTarget, float normalSize);
     bool resize(uint16_t width, uint16_t height);
     void flush();

@@ -44,13 +44,14 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include "Material.hpp"
-#include "Texture.hpp"
 #include "ProceduralUtils.hpp"
+#include "Texture.hpp"
 
-namespace Procedural {
-    class Circle;
-    class Terrain;
-    class Triangle;
+namespace Procedural
+{
+class Circle;
+class Terrain;
+class Triangle;
 };
 
 class Asset3D
@@ -65,10 +66,8 @@ class Asset3D
     friend class Procedural::Circle;
     friend class Procedural::Terrain;
     friend class Procedural::Triangle;
-    friend void Procedural::AppendBentPlane(Asset3D &asset,
-                                            float width, float height,
-                                            float angleWidth, float angleHeight, float angleRadius,
-                                            uint32_t numVertsWidth, uint32_t numVertsHeight);
+    friend void Procedural::AppendBentPlane(Asset3D &asset, float width, float height, float angleWidth, float angleHeight,
+                                            float angleRadius, uint32_t numVertsWidth, uint32_t numVertsHeight);
 
     /**
      * Vertex data of the model
@@ -106,7 +105,6 @@ class Asset3D
      * Destructor
      */
     virtual ~Asset3D() {}
-
     /**
      * Normalizes all vertex data in the Asset3D
      *
@@ -132,17 +130,15 @@ class Asset3D
     const std::vector<Texture> &getTextures() const { return _textures; }
     const std::vector<uint32_t> &getIndicesOffsets() const { return _indicesOffsets; }
     const std::vector<uint32_t> &getIndicesCount() const { return _indicesCount; }
-
   protected:
     /**
      * Constructor
      */
     Asset3D() {}
-
     std::vector<Asset3D::VertexData> _vertexData; /**< Data containing the vertex position, normal and UV coordinates */
-    std::vector<Material> _materials;            /**< List of materials used in the model */
-    std::vector<Texture> _textures;              /**< List of textures used in the model */
-    std::vector<uint32_t> _vertexIndices;        /**< List of indices containing all rendering lists together */
-    std::vector<uint32_t> _indicesOffsets;       /**< Offset in _vertexIndices of the beginning of the rendering list number 'n' */
-    std::vector<uint32_t> _indicesCount;         /**< Number of indices belonging to the rendering list number 'n' */
+    std::vector<Material> _materials;             /**< List of materials used in the model */
+    std::vector<Texture> _textures;               /**< List of textures used in the model */
+    std::vector<uint32_t> _vertexIndices;         /**< List of indices containing all rendering lists together */
+    std::vector<uint32_t> _indicesOffsets;        /**< Offset in _vertexIndices of the beginning of the rendering list number 'n' */
+    std::vector<uint32_t> _indicesCount;          /**< Number of indices belonging to the rendering list number 'n' */
 };

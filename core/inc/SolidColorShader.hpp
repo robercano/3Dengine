@@ -21,14 +21,12 @@ class SolidColorShader
      * @param color  RGBA color
      */
     void setColor(const glm::vec4 &color) { _color = color; }
-
     /**
      * Gets the color for all output fragments
      *
      * @return RGBA color used for all fragments
      */
     const glm::vec4 &getColor() { return _color; }
-
   protected:
-    glm::vec4 _color;  /**< Color used for all output fragments */
+    glm::vec4 _color; /**< Color used for all output fragments */
 };

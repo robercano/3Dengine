@@ -12,11 +12,11 @@
 class HDRRenderTarget : public virtual RenderTarget
 {
   public:
-      /**
-       * Allocates a new render target using the underlaying rendering API
-       *
-       * @return Allocated HDR render target or NULL if OOM
-       */
+    /**
+     * Allocates a new render target using the underlaying rendering API
+     *
+     * @return Allocated HDR render target or NULL if OOM
+     */
     static HDRRenderTarget *New();
 
     /**
@@ -30,26 +30,22 @@ class HDRRenderTarget : public virtual RenderTarget
      * Destructor
      */
     virtual ~HDRRenderTarget() {}
-
     /**
      * Sets the exposure level for the tone mapping
      *
      * @param exposure  Exposure level
      */
     void setExposure(float exposure) { _exposure = exposure; }
-
     /**
      * Gets the exposure level for the tone mapping
      *
      * @return Exposure level
      */
     float getExposure() { return _exposure; }
-
   protected:
     /**
      * Constructor
      */
     HDRRenderTarget() : _exposure(1.0f) {}
-
     float _exposure; /**< Exposure level used for tone mapping */
 };

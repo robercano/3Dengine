@@ -25,9 +25,8 @@ class Torus : public Model3D
      *                     vertices
      * @param color        Color for the default material
      */
-    Torus(float outerRadius = 10.0f, float innerRadius = 1.0f,
-         const glm::vec3 &color = glm::vec3(1.0f, 1.0f, 1.0f),
-         uint32_t numVertsToroidal = 20, uint32_t numVertsPoloidal = 20);
+    Torus(float outerRadius = 10.0f, float innerRadius = 1.0f, const glm::vec3 &color = glm::vec3(1.0f, 1.0f, 1.0f),
+          uint32_t numVertsToroidal = 20, uint32_t numVertsPoloidal = 20);
 
     /**
      * Accessors
@@ -37,7 +36,6 @@ class Torus : public Model3D
     const glm::vec3 &getColor() const { return _color; }
     uint32_t getNumVertsToroidal() const { return _numVertsToroidal; }
     uint32_t getNumVertsPoloidal() const { return _numVertsPoloidal; }
-
   private:
     float _outerRadius;
     float _innerRadius;

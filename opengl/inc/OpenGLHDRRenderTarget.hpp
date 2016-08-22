@@ -8,8 +8,8 @@
  */
 #pragma once
 
-#include "OpenGL.h"
 #include "HDRRenderTarget.hpp"
+#include "OpenGL.h"
 #include "Shader.hpp"
 
 #pragma warning(disable : 4250)
@@ -34,6 +34,6 @@ class OpenGLHDRRenderTarget : public HDRRenderTarget
     GLuint _vertexArray;  /**< VAO for the render target surface */
     GLuint _vertexBuffer; /**< VBO for the render target surface */
 
-    Shader *_shader;      /**< Shader used to render the target onto another target or
-                               framebuffer */
+    Shader *_shader; /**< Shader used to render the target onto another target or
+                          framebuffer */
 };

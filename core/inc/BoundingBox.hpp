@@ -32,6 +32,7 @@ class BoundingBox
 
         return tmp;
     }
+
   private:
     glm::vec3 _min; /**< Minimum values of the bounding box */
     glm::vec3 _max; /**< Maximum values of the bounding box */

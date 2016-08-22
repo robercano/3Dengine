@@ -40,6 +40,6 @@ class OpenGLFilterRenderTarget : public virtual RenderTarget
     GLuint _vertexArray;  /**< VAO for the render target surface */
     GLuint _vertexBuffer; /**< VBO for the render target surface */
 
-    Shader *_shader;      /**< Shader used to render the target onto another target or
-                               framebuffer */
+    Shader *_shader; /**< Shader used to render the target onto another target or
+                          framebuffer */
 };

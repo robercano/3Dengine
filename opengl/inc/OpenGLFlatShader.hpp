@@ -27,5 +27,5 @@ class OpenGLFlatShader : public virtual FlatShader, public OpenGLLightingShader
         return OpenGLLightingShader::init();
     }
 
-    void setCustomParams() { }
+    void setCustomParams() {}
 };

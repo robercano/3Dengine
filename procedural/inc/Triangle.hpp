@@ -25,16 +25,13 @@ class Triangle : public Model3D
      *                     vertices
      * @param color        Color for the default material
      */
-    Triangle(const glm::vec3 &vertex0,
-             const glm::vec3 &vertex1,
-             const glm::vec3 &vertex2,
+    Triangle(const glm::vec3 &vertex0, const glm::vec3 &vertex1, const glm::vec3 &vertex2,
              const glm::vec3 &color = glm::vec3(1.0f, 1.0f, 1.0f));
 
     /**
      * Accesors
      */
     const glm::vec3 &getColor() const { return _color; }
-
   private:
     glm::vec3 _color;
 };

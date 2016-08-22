@@ -47,14 +47,12 @@ class OpenGLAsset3D : public Asset3D
      * @return ID for the vertex array object
      */
     uint32_t getVertexArrayID() { return _gVAO; }
-
     /**
      * Returns the ID for the indices buffer object
      *
      * @return ID for the indices buffer object
      */
     uint32_t getIndicesArrayID() { return _indicesBO; }
-
     /**
      * Returns the vector of textures IDs associated with this
      * asset3D. The order must be the same as the order of the
@@ -63,9 +61,7 @@ class OpenGLAsset3D : public Asset3D
      * @return vector of textures IDs
      */
     const std::vector<uint32_t> &getTexturesIDs() { return _texturesIDs; }
-
   private:
-
     GLuint _gVAO;                       /**< Vertex array object ID */
     GLuint _vertexDataVBO;              /**< Vertex buffer object ID */
     GLuint _indicesBO;                  /**< Indices buffer object ID */

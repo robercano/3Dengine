@@ -13,12 +13,10 @@
 class Viewport
 {
   public:
-      /**
-       * Constructors
-       */
-    Viewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
-        : _x(x), _y(y), _width(width), _height(height) {}
-
+    /**
+     * Constructors
+     */
+    Viewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) : _x(x), _y(y), _width(width), _height(height) {}
     /**
      * Getters
      */
@@ -26,7 +24,6 @@ class Viewport
     uint32_t getY() const { return _y; }
     uint32_t getWidth() const { return _width; }
     uint32_t getHeight() const { return _height; }
-
     /**
      * Setters
      */
@@ -34,9 +31,7 @@ class Viewport
     void getY(uint32_t y) { y = _y; }
     void getWidth(uint32_t width) { width = _width; }
     void getHeight(uint32_t height) { height = _height; }
-
   private:
-
     uint32_t _x;      /**< X origin of the viewport in the window */
     uint32_t _y;      /**< Y origin of the viewport in the window */
     uint32_t _width;  /**< Width of the viewport */

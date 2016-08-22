@@ -19,7 +19,6 @@ class Camera : public Projection, public Object3D
      * Constructor
      */
     Camera() {}
-
     /**
      * Recalculates the frustum planes for geometry culling
      */
@@ -35,20 +34,12 @@ class Camera : public Projection, public Object3D
      * @return true if the object is visible, false otherwise
      */
     bool isObjectVisible(Object3D &object);
-  private:
 
+  private:
     /**
      * Enumeration to access the frustum planes
      */
-    enum {
-        PLANE_LEFT = 0,
-        PLANE_RIGHT,
-        PLANE_BOTTOM,
-        PLANE_TOP,
-        PLANE_NEAR,
-        PLANE_FAR,
-        MAX_PLANES
-    };
+    enum { PLANE_LEFT = 0, PLANE_RIGHT, PLANE_BOTTOM, PLANE_TOP, PLANE_NEAR, PLANE_FAR, MAX_PLANES };
 
     glm::vec4 _frustumPlanes[MAX_PLANES]; /**< Frustum planes */
 };

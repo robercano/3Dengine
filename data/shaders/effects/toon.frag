@@ -6,17 +6,19 @@
 
     @author Roberto Cano
 */
-#version 400 core
+#version 330 core
 
 #define MAX_LIGHTS 10
 
 /* Light definition */
-layout (std140) uniform Light {
+layout(std140) uniform Light
+{
     vec3 position;
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
-} u_light[MAX_LIGHTS];
+}
+u_light[MAX_LIGHTS];
 
 uniform uint u_numLights;
 
@@ -24,25 +26,23 @@ uniform uint u_numLights;
 uniform float u_ambientK;
 
 /* Material definition for this geometry */
-layout (std140) uniform Material {
+layout(std140) uniform Material
+{
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
     float alpha;
     float shininess;
-} u_material;
+}
+u_material;
 
 /* Texture and transformation matrices */
 uniform sampler2D u_diffuseMap;
-uniform mat4      u_viewMatrix;
-uniform mat4      u_modelMatrix;
+uniform mat4 u_viewMatrix;
+uniform mat4 u_modelMatrix;
 
 uniform vec4 u_color;
 
 out vec4 o_color;
 
-void main()
-{
-    o_color = vec4(0.0, 0.0, 0.0, 1.0);
-}
-
+void main() { o_color = vec4(0.0, 0.0, 0.0, 1.0); }

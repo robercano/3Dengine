@@ -9,10 +9,10 @@
 #include <glm/glm.hpp>
 #include <string>
 #include <vector>
-#include "Scene.hpp"
-#include "NormalShadowMapShader.hpp"
-#include "Viewport.hpp"
 #include "Asset3D.hpp"
+#include "NormalShadowMapShader.hpp"
+#include "Scene.hpp"
+#include "Viewport.hpp"
 
 class Renderer
 {
@@ -170,7 +170,7 @@ class Renderer
      *
      * @return true or false
      */
-    virtual bool renderLights(std::vector<Light*> &lights, Camera &camera, RenderTarget &renderTarget) = 0;
+    virtual bool renderLights(std::vector<Light *> &lights, Camera &camera, RenderTarget &renderTarget) = 0;
 
     /**
      * Renders the bounding box with the given color
@@ -186,7 +186,8 @@ class Renderer
      *
      * @return true or false
      */
-    virtual bool renderBoundingBox(const BoundingBox &box, const glm::mat4 &modelMatrix, const glm::vec3 &color, Camera &camera, RenderTarget &renderTarget) = 0;
+    virtual bool renderBoundingBox(const BoundingBox &box, const glm::mat4 &modelMatrix, const glm::vec3 &color, Camera &camera,
+                                   RenderTarget &renderTarget) = 0;
     /**
      *
      * Renders the bounding sphere with the given color
@@ -202,8 +203,8 @@ class Renderer
      *
      * @return true or false
      */
-    virtual bool renderBoundingSphere(const BoundingSphere &sphere, const glm::vec3 &center,
-                                      const glm::vec3 &color, Camera &camera, RenderTarget &renderTarget) = 0;
+    virtual bool renderBoundingSphere(const BoundingSphere &sphere, const glm::vec3 &center, const glm::vec3 &color, Camera &camera,
+                                      RenderTarget &renderTarget) = 0;
 
     /**
      * Renders an object 3D bounding volumes (AABB, OOBB and Bounding Sphere)
@@ -217,7 +218,8 @@ class Renderer
      *
      * @return true or false
      */
-    virtual bool renderBoundingVolumes(Object3D &object, Camera &camera, RenderTarget &renderTarget, bool showSphere = true, bool showAABB = true, bool showOOBB = true) = 0;
+    virtual bool renderBoundingVolumes(Object3D &object, Camera &camera, RenderTarget &renderTarget, bool showSphere = true,
+                                       bool showAABB = true, bool showOOBB = true) = 0;
 
     /**
      * Renders a model 3D normals
@@ -253,29 +255,33 @@ class Renderer
     void setRenderBoundingSphere(bool flag) { _renderBoundingSphere = flag; }
     void setRenderAABB(bool flag) { _renderAABB = flag; }
     void setRenderOOBB(bool flag) { _renderOOBB = flag; }
-
     bool getRenderBoundingSphere() { return _renderBoundingSphere; }
     bool getRenderAABB() { return _renderAABB; }
     bool getRenderOOBB() { return _renderOOBB; }
     void setRenderLightsMarkers(bool flag) { _renderLightsMarkers = flag; }
     bool getRenderLightsMarkers() { return _renderLightsMarkers; }
-
   protected:
     /**
      * Constructor
      */
-    Renderer() : _wireframeMode(RENDER_WIREFRAME_OFF),_renderNormals(false),
-                 _renderBoundingSphere(false),_renderAABB(false),_renderOOBB(false),
-                 _renderLightsMarkers(false), _shaderShadow(NULL) {}
+    Renderer()
+        : _wireframeMode(RENDER_WIREFRAME_OFF)
+        , _renderNormals(false)
+        , _renderBoundingSphere(false)
+        , _renderAABB(false)
+        , _renderOOBB(false)
+        , _renderLightsMarkers(false)
+        , _shaderShadow(NULL)
+    {
+    }
 
   private:
-
-    static Renderer *_renderer;   /**< Singleton instance */
-    WireframeMode _wireframeMode; /**< Sets the wireframe mode rendering. @see WireframeMode */
-    bool _renderNormals;          /**< Global flag to enable model normals rendering */
-    bool _renderBoundingSphere;   /**< Global flag to enable model bounding sphere rendering */
-    bool _renderAABB;             /**< Global flag to enable model AABB rendering */
-    bool _renderOOBB;             /**< Global flag to enable model OOBB rendering */
-    bool _renderLightsMarkers;    /**< Global flag to enable lights markers rendering */
+    static Renderer *_renderer;           /**< Singleton instance */
+    WireframeMode _wireframeMode;         /**< Sets the wireframe mode rendering. @see WireframeMode */
+    bool _renderNormals;                  /**< Global flag to enable model normals rendering */
+    bool _renderBoundingSphere;           /**< Global flag to enable model bounding sphere rendering */
+    bool _renderAABB;                     /**< Global flag to enable model AABB rendering */
+    bool _renderOOBB;                     /**< Global flag to enable model OOBB rendering */
+    bool _renderLightsMarkers;            /**< Global flag to enable lights markers rendering */
     NormalShadowMapShader *_shaderShadow; /**< Preloaded shader to render shadow maps */
 };

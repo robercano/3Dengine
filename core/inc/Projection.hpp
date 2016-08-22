@@ -77,27 +77,11 @@ class Projection
     /**
      * Getters for the projections fields
      */
-    float getFov() const
-    {
-        return _fov;
-    }
-    float getWidth() const
-    {
-        return _width;
-    }
-    float getHeight() const
-    {
-        return _height;
-    }
-    float getNear() const
-    {
-        return _near;
-    }
-    float getFar() const
-    {
-        return _far;
-    }
-
+    float getFov() const { return _fov; }
+    float getWidth() const { return _width; }
+    float getHeight() const { return _height; }
+    float getNear() const { return _near; }
+    float getFar() const { return _far; }
     /**
      * Retrieves the perspective projection matrix
      *

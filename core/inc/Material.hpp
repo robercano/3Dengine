@@ -8,8 +8,8 @@
  */
 #pragma once
 
-#include <glm/glm.hpp>
 #include <stdint.h>
+#include <glm/glm.hpp>
 
 class Material
 {

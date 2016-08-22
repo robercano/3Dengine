@@ -27,5 +27,5 @@ class OpenGLLightEmitShader : public virtual LightEmitShader, public OpenGLLight
         return OpenGLLightingShader::init();
     }
 
-    void setCustomParams() { }
+    void setCustomParams() {}
 };

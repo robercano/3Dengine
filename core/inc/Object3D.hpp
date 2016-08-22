@@ -112,14 +112,12 @@ class Object3D
         _position = position;
         _modelValid = false;
         _viewValid = false;
-
     }
     void setOrientation(const glm::mat4 &orientation)
     {
         _orientation = orientation;
         _modelValid = false;
         _viewValid = false;
-
     }
     void setScaleFactor(const glm::vec3 &factor)
     {
@@ -222,7 +220,6 @@ class Object3D
     void enable() { _enabled = true; }
     void disable() { _enabled = false; }
     bool isEnabled() { return _enabled; }
-
     /**
      * Debug information
      */
@@ -235,11 +232,9 @@ class Object3D
     void setRenderBoundingSphere(bool flag) { _renderBoundingSphere = flag; }
     void setRenderAABB(bool flag) { _renderAABB = flag; }
     void setRenderOOBB(bool flag) { _renderOOBB = flag; }
-
     bool getRenderBoundingSphere() { return _renderBoundingSphere; }
     bool getRenderAABB() { return _renderAABB; }
     bool getRenderOOBB() { return _renderOOBB; }
-
   protected:
     /**
      * Calculates the bounding volumes for a Model3D
@@ -299,9 +294,9 @@ class Object3D
     bool _oobbValid;                /**< Indicates if the cached information for the base OOBB is still valid */
     bool _boundingVolumesValid;     /**< Indicates if the cached information for the OOBB and AABB is still valid */
 
-    bool _renderBoundingSphere;     /**< Flag to enable model bounding sphere rendering */
-    bool _renderAABB;               /**< Flag to enable model AABB rendering */
-    bool _renderOOBB;               /**< Flag to enable model OOBB rendering */
+    bool _renderBoundingSphere; /**< Flag to enable model bounding sphere rendering */
+    bool _renderAABB;           /**< Flag to enable model AABB rendering */
+    bool _renderOOBB;           /**< Flag to enable model OOBB rendering */
 
-    bool _enabled;                  /**< Indicates if this object is taken into account in the pipeline */
+    bool _enabled; /**< Indicates if this object is taken into account in the pipeline */
 };

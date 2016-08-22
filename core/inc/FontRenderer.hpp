@@ -43,7 +43,6 @@ class FontRenderer
      * Destructor
      */
     virtual ~FontRenderer() {}
-
     /**
      * Sets the new font to be used for rendering
      *
