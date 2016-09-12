@@ -64,7 +64,7 @@ SHAREDGEN= -dynamiclib -Wl,-headerpad_max_install_names,-undefined,dynamic_looku
 SHAREDEXT=dylib
 PREFIX=/usr/local/lib
 else
-LDFLAGS+= -Llib -lengine -lGL -lGLEW -lglfw -lpng -ljpeg -lfreetype -lX11 -lXrandr -lXinerama -lXi -lXxf86vm -lXcursor -ldl -pthread -fPIC
+LDFLAGS+= -Llib -lengine -lGL -lGLEW -lglfw3 -lpng -ljpeg -lfreetype -lX11 -lXrandr -lXinerama -lXi -lXxf86vm -lXcursor -ldl -pthread -fPIC
 FLAGS=-I/usr/include -I/usr/include/freetype2
 SHAREDGEN= -shared
 SHAREDEXT=so
