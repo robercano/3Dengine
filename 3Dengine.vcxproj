@@ -118,8 +118,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="core\src\Asset3D.cpp" />
     <ClCompile Include="core\src\BlinnPhongShader.cpp" />
+    <ClCompile Include="core\src\Camera.cpp" />
     <ClCompile Include="core\src\FBRenderTarget.cpp" />
+    <ClCompile Include="core\src\FlatShader.cpp" />
     <ClCompile Include="core\src\FlyMotion.cpp" />
     <ClCompile Include="core\src\FontRenderer.cpp" />
     <ClCompile Include="core\src\FreeFlyMotion.cpp" />
@@ -127,6 +130,8 @@
     <ClCompile Include="core\src\FXAA2RenderTarget.cpp" />
     <ClCompile Include="core\src\FXAARenderTarget.cpp" />
     <ClCompile Include="core\src\Game.cpp" />
+    <ClCompile Include="core\src\GaussianBlurRenderTarget.cpp" />
+    <ClCompile Include="core\src\HDRRenderTarget.cpp" />
     <ClCompile Include="core\src\InputManager.cpp" />
     <ClCompile Include="core\src\Model3D.cpp" />
     <ClCompile Include="core\src\MSAARenderTarget.cpp" />
@@ -136,6 +141,7 @@
     <ClCompile Include="core\src\Scene.cpp" />
     <ClCompile Include="core\src\Shader.cpp" />
     <ClCompile Include="core\src\ShadowMapRenderTarget.cpp" />
+    <ClCompile Include="core\src\SolidColorShader.cpp" />
     <ClCompile Include="core\src\SSAARenderTarget.cpp" />
     <ClCompile Include="core\src\TextConsole.cpp" />
     <ClCompile Include="core\src\TimeManager.cpp" />
@@ -147,10 +153,10 @@
     <ClCompile Include="opengl\src\GLFWKeyManager.cpp" />
     <ClCompile Include="opengl\src\GLFWMouseManager.cpp" />
     <ClCompile Include="opengl\src\GLFWWindowManager.cpp" />
+    <ClCompile Include="opengl\src\OpenGLAsset3D.cpp" />
     <ClCompile Include="opengl\src\OpenGLFBRenderTarget.cpp" />
     <ClCompile Include="opengl\src\OpenGLFilterRenderTarget.cpp" />
     <ClCompile Include="opengl\src\OpenGLFontRenderer.cpp" />
-    <ClCompile Include="opengl\src\OpenGLModel3D.cpp" />
     <ClCompile Include="opengl\src\OpenGLMSAARenderTarget.cpp" />
     <ClCompile Include="opengl\src\OpenGLRenderer.cpp" />
     <ClCompile Include="opengl\src\OpenGLShader.cpp" />
@@ -171,11 +177,13 @@
     <ClCompile Include="procedural\src\Terrain.cpp" />
     <ClCompile Include="procedural\src\Torus.cpp" />
     <ClCompile Include="procedural\src\Triangle.cpp" />
+    <ClCompile Include="utils\src\Asset3DLoaders.cpp" />
+    <ClCompile Include="utils\src\Asset3DStorage.cpp" />
+    <ClCompile Include="utils\src\Asset3DTransform.cpp" />
     <ClCompile Include="utils\src\ImageLoaders.cpp" />
     <ClCompile Include="utils\src\Logging.cpp" />
     <ClCompile Include="utils\src\MathUtils.cpp" />
-    <ClCompile Include="utils\src\ModelLoaders.cpp" />
-    <ClCompile Include="utils\src\ModelTransform.cpp" />
+    <ClCompile Include="utils\src\ZCompression.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3rdparty\glm\core\func_common.hpp" />
@@ -360,12 +368,14 @@
     <ClInclude Include="3rdparty\windows\include\pngconf.h" />
     <ClInclude Include="3rdparty\windows\include\zconf.h" />
     <ClInclude Include="3rdparty\windows\include\zlib.h" />
+    <ClInclude Include="core\inc\Asset3D.hpp" />
     <ClInclude Include="core\inc\BlinnPhongShader.hpp" />
     <ClInclude Include="core\inc\BoundingBox.hpp" />
     <ClInclude Include="core\inc\BoundingSphere.hpp" />
     <ClInclude Include="core\inc\Camera.hpp" />
     <ClInclude Include="core\inc\DirectLight.hpp" />
     <ClInclude Include="core\inc\FBRenderTarget.hpp" />
+    <ClInclude Include="core\inc\FlatShader.hpp" />
     <ClInclude Include="core\inc\FlyMotion.hpp" />
     <ClInclude Include="core\inc\FontRenderer.hpp" />
     <ClInclude Include="core\inc\FreeFlyMotion.hpp" />
@@ -373,9 +383,12 @@
     <ClInclude Include="core\inc\FXAA2RenderTarget.hpp" />
     <ClInclude Include="core\inc\FXAARenderTarget.hpp" />
     <ClInclude Include="core\inc\Game.hpp" />
+    <ClInclude Include="core\inc\GaussianBlurRenderTarget.hpp" />
+    <ClInclude Include="core\inc\HDRRenderTarget.hpp" />
     <ClInclude Include="core\inc\InputManager.hpp" />
     <ClInclude Include="core\inc\KeyManager.hpp" />
     <ClInclude Include="core\inc\Light.hpp" />
+    <ClInclude Include="core\inc\LightEmitShader.hpp" />
     <ClInclude Include="core\inc\LightingShader.hpp" />
     <ClInclude Include="core\inc\Material.hpp" />
     <ClInclude Include="core\inc\Model3D.hpp" />
@@ -393,6 +406,7 @@
     <ClInclude Include="core\inc\Scene.hpp" />
     <ClInclude Include="core\inc\Shader.hpp" />
     <ClInclude Include="core\inc\ShadowMapRenderTarget.hpp" />
+    <ClInclude Include="core\inc\SolidColorShader.hpp" />
     <ClInclude Include="core\inc\SpotLight.hpp" />
     <ClInclude Include="core\inc\SSAARenderTarget.hpp" />
     <ClInclude Include="core\inc\TextConsole.hpp" />
@@ -417,14 +431,18 @@
     <ClInclude Include="opengl\inc\GLFWTimeManager.hpp" />
     <ClInclude Include="opengl\inc\GLFWWindowManager.hpp" />
     <ClInclude Include="opengl\inc\OpenGL.h" />
+    <ClInclude Include="opengl\inc\OpenGLAsset3D.hpp" />
     <ClInclude Include="opengl\inc\OpenGLBlinnPhongShader.hpp" />
     <ClInclude Include="opengl\inc\OpenGLFBRenderTarget.hpp" />
     <ClInclude Include="opengl\inc\OpenGLFilterRenderTarget.hpp" />
+    <ClInclude Include="opengl\inc\OpenGLFlatShader.hpp" />
     <ClInclude Include="opengl\inc\OpenGLFontRenderer.hpp" />
     <ClInclude Include="opengl\inc\OpenGLFXAA2RenderTarget.hpp" />
     <ClInclude Include="opengl\inc\OpenGLFXAARenderTarget.hpp" />
+    <ClInclude Include="opengl\inc\OpenGLGaussianBlurRenderTarget.hpp" />
+    <ClInclude Include="opengl\inc\OpenGLHDRRenderTarget.hpp" />
+    <ClInclude Include="opengl\inc\OpenGLLightEmitShader.hpp" />
     <ClInclude Include="opengl\inc\OpenGLLightingShader.hpp" />
-    <ClInclude Include="opengl\inc\OpenGLModel3D.hpp" />
     <ClInclude Include="opengl\inc\OpenGLMSAARenderTarget.hpp" />
     <ClInclude Include="opengl\inc\OpenGLNOAARenderTarget.hpp" />
     <ClInclude Include="opengl\inc\OpenGLNormalShadowMapShader.hpp" />
@@ -436,6 +454,7 @@
     <ClInclude Include="opengl\inc\OpenGLShaderPointLight.hpp" />
     <ClInclude Include="opengl\inc\OpenGLShaderSpotLight.hpp" />
     <ClInclude Include="opengl\inc\OpenGLShadowMapRenderTarget.hpp" />
+    <ClInclude Include="opengl\inc\OpenGLSolidColorShader.hpp" />
     <ClInclude Include="opengl\inc\OpenGLSSAARenderTarget.hpp" />
     <ClInclude Include="opengl\inc\OpenGLToonLightingShader.hpp" />
     <ClInclude Include="opengl\inc\OpenGLToonRenderTarget.hpp" />
@@ -451,12 +470,14 @@
     <ClInclude Include="procedural\inc\Terrain.hpp" />
     <ClInclude Include="procedural\inc\Torus.hpp" />
     <ClInclude Include="procedural\inc\Triangle.hpp" />
+    <ClInclude Include="utils\inc\Asset3DLoaders.hpp" />
+    <ClInclude Include="utils\inc\Asset3DStorage.hpp" />
+    <ClInclude Include="utils\inc\Asset3DTransform.hpp" />
     <ClInclude Include="utils\inc\ImageLoaders.hpp" />
     <ClInclude Include="utils\inc\Logging.hpp" />
     <ClInclude Include="utils\inc\MathUtils.h" />
     <ClInclude Include="utils\inc\MathUtils.hpp" />
-    <ClInclude Include="utils\inc\ModelLoaders.hpp" />
-    <ClInclude Include="utils\inc\ModelTransform.hpp" />
+    <ClInclude Include="utils\inc\ZCompression.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="3rdparty\glm\core\func_common.inl" />

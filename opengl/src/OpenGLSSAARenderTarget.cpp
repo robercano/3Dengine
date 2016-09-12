@@ -20,7 +20,7 @@ OpenGLSSAARenderTarget::~OpenGLSSAARenderTarget()
     __(glDeleteBuffers(1, &_vertexBuffer));
     __(glDeleteVertexArrays(1, &_vertexArray));
 
-    for (int i = 0; i < _numTargets; ++i) {
+    for (unsigned int i = 0; i < _numTargets; ++i) {
         __(glDeleteTextures(1, &_colorBuffer[i]));
     }
     delete[] _colorBuffer;
@@ -50,7 +50,7 @@ bool OpenGLSSAARenderTarget::init(uint32_t width, uint32_t height, uint32_t fact
 
     /* Texture buffer */
     __(glGenTextures(_numTargets, _colorBuffer));
-    for (int i = 0; i < _numTargets; ++i) {
+    for (unsigned int i = 0; i < _numTargets; ++i) {
         __(glBindTexture(GL_TEXTURE_2D, _colorBuffer[i]));
         {
             __(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
@@ -77,7 +77,7 @@ bool OpenGLSSAARenderTarget::init(uint32_t width, uint32_t height, uint32_t fact
     __(glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer));
     {
         /* Attach all color buffers */
-        for (int i = 0; i < _numTargets; ++i) {
+        for (unsigned int i = 0; i < _numTargets; ++i) {
             _attachments[i] = GL_COLOR_ATTACHMENT0 + i;
             __(glFramebufferTexture2D(GL_FRAMEBUFFER, _attachments[i], GL_TEXTURE_2D, _colorBuffer[i], 0));
         }

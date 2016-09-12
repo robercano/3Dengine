@@ -121,7 +121,7 @@ bool ZDecompression::read(std::ifstream &file, void *data, uint32_t &size)
                 case Z_DATA_ERROR:
                 case Z_MEM_ERROR:
                     (void)inflateEnd(&_strm);
-                    return ret;
+                    return false;
             }
         } while (_strm.avail_out != 0 && _strm.avail_in != 0);
     }
