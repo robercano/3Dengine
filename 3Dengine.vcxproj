@@ -133,6 +133,7 @@
     <ClCompile Include="core\src\GaussianBlurRenderTarget.cpp" />
     <ClCompile Include="core\src\HDRRenderTarget.cpp" />
     <ClCompile Include="core\src\InputManager.cpp" />
+    <ClCompile Include="core\src\LightEmitShader.cpp" />
     <ClCompile Include="core\src\Model3D.cpp" />
     <ClCompile Include="core\src\MSAARenderTarget.cpp" />
     <ClCompile Include="core\src\NOAARenderTarget.cpp" />
