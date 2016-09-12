@@ -52,11 +52,11 @@ class AntiaAliasingDemo : public GameHandler
         /* Create the viewport */
         _viewport = new Viewport(0, 0, _width, _height);
 
-        _scene.add("PL_light1", new PointLight(glm::vec3(5.0, 5.0, 5.0), glm::vec3(5.0, 5.0, 5.0), glm::vec3(5.0, 5.0, 5.0),
+        _scene.add("PL_light1", new PointLight(glm::vec3(4.0, 4.0, 4.0), glm::vec3(5.0, 5.0, 5.0), glm::vec3(5.0, 5.0, 5.0),
                                             glm::vec3(0.0, 150.0, 50.0), 0.0000099999f, 1000.0f));
-        _scene.add("PL_light2", new PointLight(glm::vec3(0.0, 0.0, 3.0), glm::vec3(0.0, 0.0, 3.0), glm::vec3(0.0, 0.0, 3.0),
+        _scene.add("PL_light2", new PointLight(glm::vec3(2.0, 2.0, 1.6), glm::vec3(0.0, 0.0, 3.0), glm::vec3(0.0, 0.0, 3.0),
                                             glm::vec3(50.0, 20.0, -150.0), 0.0000099999f, 1000.0f));
-        _scene.add("PL_light3", new PointLight(glm::vec3(3.0, 0.0, 3.0), glm::vec3(1.0, 0.0, 1.0), glm::vec3(1.0, 0.0, 1.0),
+        _scene.add("PL_light3", new PointLight(glm::vec3(2.0, 1.6, 2.0), glm::vec3(1.0, 0.0, 1.0), glm::vec3(1.0, 0.0, 1.0),
                                             glm::vec3(30.0, 20.0, 0.0), 0.0000099999f, 1000.0f));
 
         _scene.getPointLight("PL_light1")->getShadowMap()->init(1, 1);

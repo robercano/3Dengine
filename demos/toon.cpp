@@ -51,7 +51,7 @@ class Demo : public GameHandler
         /* Create the viewport */
         _viewport = new Viewport(0, 0, _width, _height);
 
-        _scene.add("PL_light1", new PointLight(glm::vec3(3.5, 3.5, 4.5), glm::vec3(3.5, 3.5, 4.5), glm::vec3(3.5, 3.5, 4.5),
+        _scene.add("PL_light1", new PointLight(glm::vec3(2.0, 2.0, 2.0), glm::vec3(2.0, 2.0, 2.0), glm::vec3(2.0, 2.0, 2.0),
                                             glm::vec3(75.0, 300.0, 150.0), 0.0000099999f, 1000.0f));
 
         _scene.getPointLight("PL_light1")->getShadowMap()->init(1, 1);

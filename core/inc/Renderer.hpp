@@ -77,10 +77,12 @@ class Renderer
      * @param scene     The scene to be rendered
      * @param viewport  Viewport for the current window. If not passed the whole window
      *                  is used
+     * @param doBlit    Indicates if the renderer does the final blit or the user wants
+     *                  to postprocess the rendering
      *
      * @return true or false
      */
-    bool renderScene(Scene &scene, const Viewport &viewport);
+    bool renderScene(Scene &scene, const Viewport &viewport, bool doBlit = true);
 
     /**
      * Renders the wireframe of a model 3D from the given camera into the given renderTarget

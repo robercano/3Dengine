@@ -38,7 +38,7 @@ bool Renderer::init()
     return true;
 }
 
-bool Renderer::renderScene(Scene &scene, const Viewport &viewport)
+bool Renderer::renderScene(Scene &scene, const Viewport &viewport, bool doBlit)
 {
     float avgRadius = 0.0f;
     std::vector<Light *> lightsMarkers;
@@ -177,6 +177,10 @@ bool Renderer::renderScene(Scene &scene, const Viewport &viewport)
 
     /* Render the required light markers */
     renderLights(lightsMarkers, *scene.getActiveCamera(), *scene.getActiveRenderTarget());
+
+    if (doBlit) {
+        scene.getActiveRenderTarget()->blit(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
+    }
 
     return true;
 }

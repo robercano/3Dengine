@@ -273,7 +273,7 @@ class Demo : public GameHandler
         /* Apply the motion to the camera */
         _cameraMotion.applyTo(*_scene.getCamera("C_camera1"));
 
-        game->getRenderer()->renderScene(_scene, *_viewport);
+        game->getRenderer()->renderScene(_scene, *_viewport, false);
         _scene.getActiveRenderTarget()->blit();
 
         /* Bloom effect */
@@ -340,11 +340,7 @@ int main()
     }
 
     game->setHandler(&demo);
-#if defined(_WIN32)
-    game->setWindowSize(800, 600, false);
-#else
     game->setWindowSize(2560, 1440, true);
-#endif
     game->setFPS(60);
 
     if (game->init() == false) {
