@@ -273,6 +273,6 @@ void main()
     if (brightness > 1.2) {
         o_bright = o_color;
     } else {
-        o_bright = vec4(0.0, 0.0, 0.0, 0.0);
+        o_bright = vec4(0.0, 0.0, 0.0, 1.0);
     }
 }

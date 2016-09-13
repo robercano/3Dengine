@@ -102,7 +102,7 @@ class Demo : public GameHandler
         }
 
         /* Point light */
-        _scene.add("SL_light1", new PointLight(glm::vec3(1.0f, 1.0f, 0.8f), glm::vec3(1.0f, 1.0f, 0.8f), glm::vec3(1.0f, 1.0f, 0.8f),
+        _scene.add("SL_light1", new PointLight(glm::vec3(0.5f, 0.5f, 0.4f), glm::vec3(1.0f, 1.0f, 0.8f), glm::vec3(1.0f, 1.0f, 0.8f),
                                            glm::vec3(0.0f, 150.0f, 150.0f), 0.0000099999f, 240.0f));
         _scene.add("SL_light2", new PointLight(glm::vec3(10.0f, 10.0f, 8.0f), glm::vec3(10.0f, 10.0f, 8.0f), glm::vec3(10.0f, 10.0f, 8.0f),
                                            glm::vec3(160.0f, 150.0f, -100.0f), 0.0000099999f, 240.0f));
@@ -340,7 +340,7 @@ int main()
     }
 
     game->setHandler(&demo);
-    game->setWindowSize(2560, 1440, true);
+    game->setWindowSize(800, 600, false);
     game->setFPS(60);
 
     if (game->init() == false) {

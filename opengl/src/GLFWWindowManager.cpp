@@ -80,6 +80,10 @@ bool GLFWWindowManager::createWindow(std::string &name, uint16_t width, uint16_t
     glfwSetWindowSizeCallback(_window, handle_resize);
     glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
+    if (fullscreen == false) {
+        glfwSetWindowPos(_window, (videoMode->width - width)/2, (videoMode->height - height)/2);
+    }
+
     return true;
 }
 
