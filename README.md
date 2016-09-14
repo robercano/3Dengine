@@ -42,10 +42,9 @@ data assets are referenced from there.
 
 ### Windows
 
-The demos have been compiled with Visual Studio Community Edition. To compile the solution open the
-solution file at the top of repository 3Dengine.sln. Build the whole solution. The demo executables
-will be generated at the root of the repository. Then copy all the DLLs in 3rparty/windows/DLL/ to
-the root of the repository and double click on any .exe to run the demo.
+You need Visual Studio Community Edition to compile the demos. Open the solution file **3Dengine.sln**
+and build the whole solution. The demo executables are generated at the root of the repository. Then copy
+all the DLLs in 3rparty/windows/DLL/ tothe root of the repository and run any of the demos.
 
 ## Current set of features
 
