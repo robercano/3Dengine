@@ -87,13 +87,45 @@ the root of the repository and double click on any .exe to run the demo.
 
 ## Screenshots
 
-# Anti-aliasing
+### Anti-aliasing
 
 <a href="/demos/screenshots/AA-MSAA.png?raw=true"><img src="/demos/screenshots/AA-MSAA.png" alt="Antialiasing - MSAA" width="250px"/></a>
 <a href="/demos/screenshots/AA-FXAA.png?raw=true"><img src="/demos/screenshots/AA-FXAA.png" alt="Antialiasing - FXAA" width="250px"/></a>
 <a href="/demos/screenshots/AA-FXAA2.png?raw=true"><img src="/demos/screenshots/AA-FXAA2.png" alt="Antialiasing - FXAA2" width="250px"/></a>
 
+### Bounding volumes
+
+<a href="/demos/screenshots/BoundingBox.png?raw=true"><img src="/demos/screenshots/BoundingBox.png" alt="Bounding Volumes" width="250px"/></a>
+
+### Debug information
+
+<a href="/demos/screenshots/DebugInfo.png?raw=true"><img src="/demos/screenshots/DebugInfo.png" alt="Debug Information" width="250px"/></a>
+
+### Procedural geometry
+
+<a href="/demos/screenshots/Procedural.png?raw=true"><img src="/demos/screenshots/Procedural.png" alt="Procedural" width="250px"/></a>
+
+### Toon effect 
+
+<a href="/demos/screenshots/Toon.png?raw=true"><img src="/demos/screenshots/Toon.png" alt="Toon Effect" width="250px"/></a>
+
+### Lights and Shadows 
+
+<a href="/demos/screenshots/shadows-pointlight.png?raw=true"><img src="/demos/screenshots/shadows-pointlight.png" alt="Shadows - Point Light" width="250px"/></a>
+<a href="/demos/screenshots/shadows-spotlight.png?raw=true"><img src="/demos/screenshots/shadows-spotlight.png" alt="Shadows - Spot Light" width="250px"/></a>
+<a href="/demos/screenshots/shadows-moon.png?raw=true"><img src="/demos/screenshots/shadows-moon.png" alt="Shadows - Moon" width="250px"/></a>
+<a href="/demos/screenshots/shadows-sun.png?raw=true"><img src="/demos/screenshots/shadows-sun.png" alt="Shadows - Sun" width="250px"/></a>
+<a href="/demos/screenshots/shadows-sunset.png?raw=true"><img src="/demos/screenshots/shadows-sunset.png" alt="Shadows - Sunset" width="250px"/></a>
+
+### HDR and Bloom effect
+
+<a href="/demos/screenshots/HDR-off.png?raw=true"><img src="/demos/screenshots/HDR-off.png" alt="HDR - Off" width="250px"/></a>
+<a href="/demos/screenshots/HDR-on.png?raw=true"><img src="/demos/screenshots/HDR-on.png" alt="HDR - On" width="250px"/></a>
+<a href="/demos/screenshots/HDR-bloom.png?raw=true"><img src="/demos/screenshots/HDR-bloom.png" alt="HDR - Bloom" width="250px"/></a>
+<a href="/demos/screenshots/HDR-bloom_exposurelow.png?raw=true"><img src="/demos/screenshots/HDR-bloom_exposurelow.png" alt="HDR - Bloom Low Exposure" width="250px"/></a>
+
 ## In the pipeline
+
 * Support for vieports when rendering a scene
 * Automatic shadow map frustum calculation for shadow map rendering
 * Cascade shadow maps
