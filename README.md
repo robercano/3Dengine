@@ -89,9 +89,7 @@ the root of the repository and double click on any .exe to run the demo.
 
 # Anti-aliasing
 
-![Antialiasing - MSAA](/demos/screenshots/AA-MSAA.png?raw=true "Antialiasing - MSAA" =250x)
-![Antialiasing - FXAA](/demos/screenshots/AA-FXAA.png?raw=true "Antialiasing - FXAA" =250x)
-![Antialiasing - FXAA2](/demos/screenshots/AA-FXAA2.png?raw=true "Antialiasing - FXAA2" = 250x)
+<a href="/demos/screenshots/AA-MSAA.png"><img src="/demos/screenshots/AA-MSAA.png" alt="Antialiasing - MSAA" width="250"></a>
 
 ## In the pipeline
 * Support for vieports when rendering a scene
