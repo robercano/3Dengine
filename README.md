@@ -80,7 +80,7 @@ all the DLLs in 3rparty/windows/DLL/ tothe root of the repository and run any of
 
 You can get a ready-to-run demos bundle here: [3D Engine Demos](https://drive.google.com/file/d/0Bw1wdAkrD4JSb3BrdU9IQTA1akE/view?usp=sharing).
 
-The bundle has been only tested in Windows 10.
+The bundle has been only tested in Windows 10. You will also need to install the MS Visual Studio redistributable package from [here](https://www.microsoft.com/en-us/download/details.aspx?id=48145).
 
 ## List of demos
 
