@@ -76,6 +76,11 @@ the root of the repository and double click on any .exe to run the demo.
 * Procedural generation: Plane, bent plane, cylinder, torus, sphere, triangle and terrain (using Perlin noise)
 
 # Demos
+
+You can get a bundle with all the demos ready to be run on Windows here: [3D Engine Demos](https://drive.google.com/file/d/0Bw1wdAkrD4JSb3BrdU9IQTA1akE/view?usp=sharing).
+
+The bundle has been only tested in Windows 10 and it contains the following demos:
+
 * Anti-aliasing methods showcase demo (FXAA, FXAA2, MSAA and SSAA)
 * FXAA and FXAA2 side by side comparison
 * Point lights demo
@@ -84,6 +89,10 @@ the root of the repository and double click on any .exe to run the demo.
 * Bounding box demo with OBB, AABB and Bounding Sphere
 * Debug info demo showing wireframe, normals, bounding volumes and lights billboards
 * Procedural generation demo using all supported models
+
+## Videos
+
+You can see videos for all demos in the following playlist: [3D Engine Videos](https://www.youtube.com/playlist?list=PLQvcMaBJsNPlOl6l40RiSa2gy1AWoUbtL).
 
 ## Screenshots
 
