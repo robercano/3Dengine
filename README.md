@@ -1,4 +1,4 @@
-#Generic 3D Engine
+# Generic 3D Engine
 
 ## Introduction
 This is a demo 3D engine set to showcase my 3D graphics and system programming skills. The main aim is to implement several known techniques and produce a series of demos to showcase this.
@@ -42,7 +42,10 @@ data assets are referenced from there.
 
 ### Windows
 
-TODO
+The demos have been compiled with Visual Studio Community Edition. To compile the solution open the
+solution file at the top of repository 3Dengine.sln. Build the whole solution. The demo executables
+will be generated at the root of the repository. Then copy all the DLLs in 3rparty/windows/DLL/ to
+the root of the repository and double click on any .exe to run the demo.
 
 ## Current set of features
 
@@ -52,23 +55,27 @@ TODO
 * Input manager (keyboard and mouse for now)
 * Window manager (based on GLFW)
 * Shader class to compile and apply shaders: vertex/geometry/fragment supported
-* OBJ format importer supporting geometry, textures and material specification
 * Render targets support
 * Anti-aliasing render targets implemented with shaders: FXAA, FXAA2, SSAA and MSAA
     FXAA2 is my own implementation of FXAA based on Timothy Lottes paper
+* HDR render target with Reinhard tone mapping
+* Bloom effect shader
 * Text rendering using TrueType fonts
 * Walk, Fly and FreeFly cameras implemented with quaternions
 * Goraud and flat illumination shaders (perhaps outdated, only goraud is used)
 * Phong and Blinn-Phong reflection model shaders
-* Simple shader demo effect for render targets (waves)
 * Dynamic lights support: point light, spot light and direct light
 * Shadow map support for all dynamic lights
 * Visual debug info: lights, normals, wireframe and bounding volumes
+* Basic geometry culling using bounding volumes
+* Basic light culling using bounding volumes (needs refinement)
 * Common game loop with input, time and screen management
+* OBJ format importer supporting geometry, textures and material specification
+* Facility to save in-memory models to disk and load them back. This includes compression of all the data written to disk
 * Scene management, now all elements are added to scene class and passed to renderer
 * Procedural generation: Plane, bent plane, cylinder, torus, sphere, triangle and terrain (using Perlin noise)
 
-#Current set of demos
+# Demos
 * Anti-aliasing methods showcase demo (FXAA, FXAA2, MSAA and SSAA)
 * FXAA and FXAA2 side by side comparison
 * Point lights demo
@@ -78,17 +85,22 @@ TODO
 * Debug info demo showing wireframe, normals, bounding volumes and lights billboards
 * Procedural generation demo using all supported models
 
+## Screenshots
+
+# Anti-aliasing
+
+![Antialiasing - MSAA](/demos/screenshots/AA-MSAA.png?raw=true "Antialiasing - MSAA")
+![Antialiasing - FXAA](/demos/screenshots/AA-FXAA.png?raw=true "Antialiasing - FXAA")
+![Antialiasing - FXAA2](/demos/screenshots/AA-FXAA2.png?raw=true "Antialiasing - FXAA2")
+
 ## In the pipeline
 * Support for vieports when rendering a scene
-* Geometry culling using bounding volumes
 * Automatic shadow map frustum calculation for shadow map rendering
 * Cascade shadow maps
 * Ambient occlusion
 * Mipmaps support
-* Facility to save in-memory models to disk and load them back
 * Bump-mapping
 * Portals implementation
-* More shaders effects like bloom effect
 * Extra anti-aliasing filters: CMAA, TXAA, MLAA
 * Anisotropic filtering support and showcase
 * Deferred rendering pipeline
