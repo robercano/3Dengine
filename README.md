@@ -77,9 +77,13 @@ the root of the repository and double click on any .exe to run the demo.
 
 # Demos
 
-You can get a bundle with all the demos ready to be run on Windows here: [3D Engine Demos](https://drive.google.com/file/d/0Bw1wdAkrD4JSb3BrdU9IQTA1akE/view?usp=sharing).
+## Windows ready-to-run demos
 
-The bundle has been only tested in Windows 10 and it contains the following demos:
+You can get a ready-to-run demos bundle here: [3D Engine Demos](https://drive.google.com/file/d/0Bw1wdAkrD4JSb3BrdU9IQTA1akE/view?usp=sharing).
+
+The bundle has been only tested in Windows 10.
+
+## List of demos
 
 * Anti-aliasing methods showcase demo (FXAA, FXAA2, MSAA and SSAA)
 * FXAA and FXAA2 side by side comparison
