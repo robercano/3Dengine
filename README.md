@@ -90,7 +90,7 @@ the root of the repository and double click on any .exe to run the demo.
 # Anti-aliasing
 
 * Antialiasing MSAA
-![Antialiasing - MSAA](/demos/screenshots/AA-MSAA.png|width=250px)
+![Antialiasing - MSAA](/demos/screenshots/AA-MSAA.png)
 * Antialiasing FXAA
 ![Antialiasing - MSAA](/demos/screenshots/AA-MSAA.png?raw=true)
 * Antialiasing MSAA
