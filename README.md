@@ -55,8 +55,7 @@ all the DLLs in 3rparty/windows/DLL/ tothe root of the repository and run any of
 * Window manager (based on GLFW)
 * Shader class to compile and apply shaders: vertex/geometry/fragment supported
 * Render targets support
-* Anti-aliasing render targets implemented with shaders: FXAA, FXAA2, SSAA and MSAA
-    FXAA2 is my own implementation of FXAA based on Timothy Lottes paper
+* Anti-aliasing render targets implemented with shaders: FXAA, FXAA2, SSAA and MSAA. FXAA2 is my own implementation of FXAA based on Timothy Lottes paper
 * HDR render target with Reinhard tone mapping
 * Bloom effect shader
 * Text rendering using TrueType fonts
