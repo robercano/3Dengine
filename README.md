@@ -74,6 +74,14 @@ all the DLLs in 3rparty/windows/DLL/ tothe root of the repository and run any of
 * Scene management, now all elements are added to scene class and passed to renderer
 * Procedural generation: Plane, bent plane, cylinder, torus, sphere, triangle and terrain (using Perlin noise)
 
+## Known issues
+
+* SSAA antialiasing is not working after some refactoring
+* The shadows pop-in and out of the camera frustum due to the geometry culling algorithm only using the models bounding volume to exclude the model from the rendering, without taking into account the shadow
+* Shadows have peter-panning problems with some configurations
+* Terrain geometry seems to produce a strange pattern when lighting is calculated
+* Input manager does not support key repetition
+
 # Demos
 
 ## Windows ready-to-run demos
