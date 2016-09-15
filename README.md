@@ -89,6 +89,8 @@ You can get a ready-to-run demos bundle here: [3D Engine Demos](https://drive.go
 
 The bundle has been only tested in Windows 10. You will also need to install the MS Visual Studio redistributable package that is inside the ZIP file. You can also download it [here](https://www.microsoft.com/en-us/download/details.aspx?id=48145), but remember you need the X86 version, as the demos are compiled only for X86.
 
+The engine also makes uses of GLSL 3.30, so a compatible card is needed.
+
 ## List of demos
 
 * Anti-aliasing methods showcase demo (FXAA, FXAA2, MSAA and SSAA)
