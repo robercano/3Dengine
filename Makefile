@@ -58,8 +58,8 @@ DEMODIR=demos
 
 #Mac OS alternate cmdline link options
 ifeq ($(UNAME), Darwin)
-LDFLAGS= -Llib -lengine -L/opt/X11/lib -lfreetype -lglew -lglfw3 -ljpeg -framework Cocoa -framework OpenGL -framework IOKit -fPIC
-FLAGS=-I/opt/X11/include -I/opt/X11/include/freetype2/ -Wno-deprecated-register
+LDFLAGS= -Llib -lengine -L/usr/local/lib/ -lfreetype -lGLEW -lglfw -ljpeg -framework Cocoa -framework OpenGL -framework IOKit -fPIC
+FLAGS=-I/opt/X11/include -I/usr/local/include/freetype2/ -Wno-deprecated-register
 SHAREDGEN= -dynamiclib -Wl,-headerpad_max_install_names,-undefined,dynamic_lookup,-compatibility_version,1.0,-current_version,1.0,-install_name,$(LIBNAME)
 SHAREDEXT=dylib
 PREFIX=/usr/local/lib

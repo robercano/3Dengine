@@ -30,7 +30,7 @@ Unzip the package, go into the library directory and perform the following comma
 
 Then you can compile the demos with:
 
-	make clean all
+    make clean all
 
 The binaries will be created in the demos directory. To run them just:
 
@@ -45,6 +45,21 @@ data assets are referenced from there.
 You need Visual Studio Community Edition to compile the demos. Open the solution file **3Dengine.sln**
 and build the whole solution. The demo executables are generated at the root of the repository. Then copy
 all the DLLs in 3rparty/windows/DLL/ tothe root of the repository and run any of the demos.
+
+### MacOS
+
+You will need to install 'brew' in order to install the engine dependencies. To install brew just run the next line
+in your terminal:
+
+    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+
+Once installed you can install the required dependencies:
+
+    brew install glew glfw freetype libjpeg
+
+Then you can just compile the demos with:
+
+    make clean all
 
 ## Current set of features
 
