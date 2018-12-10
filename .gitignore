@@ -11,3 +11,5 @@ Release
 *.pdb
 *.exe
 *.sdf
+bin
+x64
